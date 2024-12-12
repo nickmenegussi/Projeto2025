@@ -1,0 +1,150 @@
+create database CEO;
+use CEO;
+
+-- Tabela VolunteerWork
+CREATE TABLE VolunteerWork (
+    idVolunteerWork INT  primary key AUTO_INCREMENT PRIMARY KEY,
+    nameVolunteerWork VARCHAR(255),
+    address VARCHAR(255),
+    dateVolunteerWork VARCHAR(255), 
+    work_description VARCHAR(255),
+    date_at_create DATETIME
+
+);
+
+-- Tabela Book
+CREATE TABLE Book (
+    idLibrary INT AUTO_INCREMENT PRIMARY KEY,
+    nameBook VARCHAR(255),
+    author VARCHAR(255),
+    tagsBook ENUM('tag1', 'tag2', 'tag3'),
+    date_acquisition DATETIME,
+    availability ENUM('available', 'not_available'),
+    bookQuantity INT NOT NULL,
+    status_Available ENUM('available', 'reserved', 'borrowed') default 'desatived'
+);
+
+-- Tabela Loans
+CREATE TABLE Loans (
+    idLoans INT AUTO_INCREMENT PRIMARY KEY,
+    book_idLibrary INT,
+    User_idUser INT,
+    returnDate DATETIME,
+    date_at_create DATETIME,
+    Lonscat VARCHAR(255),
+    FOREIGN KEY (book_idLibrary) REFERENCES Book(idLibrary),
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Reservas
+CREATE TABLE Reserves (
+    idReserved INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    User_idUser INT NOT NULL,
+    Book_idLibrary INT NOT NULL,
+    reserveDate DATETIME,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser),
+    FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
+);
+
+-- Tabela User
+CREATE TABLE User (
+    idUser INT AUTO_INCREMENT PRIMARY KEY,
+    nameUser VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    image_profile TEXT default 'Sem imagem',
+    status_permission ENUM('SuperAdmin','User','admin'),
+	date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela Post
+CREATE TABLE Post (
+    idPost INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    image TEXT NOT NULL,
+    created_at DATETIME,
+    User_idUser INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Likes
+CREATE TABLE Likes (
+    idLikes INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Post_idPost INT NOT NULL,
+    User_idUser INT NOT NULL,
+    created_at DATETIME,
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+CREATA TABLE Lecture(
+    idLecture INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    nameLecture VARCHAR(255),
+    date VARCHAR(255),
+    time VARCHAR(255),
+    description VARCHAR(255),
+    video TEXT
+)
+
+-- Tabela Comments
+CREATE TABLE Comments (
+    idComments INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Post_idPost INT NOT NULL,
+    User_idUser INT NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    createdDate DATETIME,
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Messages
+CREATE TABLE Messages (
+    idMessages INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    created_at DATETIME NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    User_idUser INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela CalendarEvents
+CREATE TABLE CalendarEvents (
+    idCalendarEvents INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    title VARCHAR(255),
+    link VARCHAR(255),
+    description TEXT NOT NULL,
+    eventTime DATETIME ,
+    attachment TEXT NOT NULL,
+    User_idUser INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Facilitadores
+CREATE TABLE Facilitadores (
+    idFacilitadores INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    User_idUser INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    apelido VARCHAR(255) NOT NULL,
+    espiritname VARCHAR(255),
+    espiritaSinceTime INT NOT NULL,
+    memberSinceWhen DATETIME,
+    category VARCHAR(255) NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Notifications
+CREATE TABLE Notifications (
+    idNotifications INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    isRead BOOLEAN NOT NULL,
+    created_at DATETIME ,
+    User_idUser INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+CREATE TABLE OTP(
+	idOtp int primary key auto_increment not null,
+    email varchar(255) not null,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	expiresAt TIMESTAMP NOT NULL
+);
+
