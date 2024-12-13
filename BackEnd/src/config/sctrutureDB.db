@@ -8,7 +8,7 @@ CREATE TABLE VolunteerWork (
     address VARCHAR(255),
     dateVolunteerWork VARCHAR(255), 
     work_description VARCHAR(255),
-    date_at_create DATETIME
+    date_at_create DATETIME DEFAULT TIMESTAMP
 
 );
 
@@ -17,21 +17,21 @@ CREATE TABLE Book (
     idLibrary INT AUTO_INCREMENT PRIMARY KEY,
     nameBook VARCHAR(255),
     author VARCHAR(255),
+    overviewBook VARCHAR(255),
+    curiosityBook VARCHAR(255),
     tagsBook ENUM('tag1', 'tag2', 'tag3'),
-    date_acquisition DATETIME,
-    availability ENUM('available', 'not_available'),
+    date_acquisition DATETIME  DEFAULT CURRENT_TIMESTAMP,
     bookQuantity INT NOT NULL,
-    status_Available ENUM('available', 'reserved', 'borrowed') default 'desatived'
+    status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') DEFAULT 'desativado'
 );
 
 -- Tabela Loans
 CREATE TABLE Loans (
     idLoans INT AUTO_INCREMENT PRIMARY KEY,
-    book_idLibrary INT,
-    User_idUser INT,
-    returnDate DATETIME,
-    date_at_create DATETIME,
-    Lonscat VARCHAR(255),
+    book_idLibrary INT NOT NULL,
+    User_idUser INT NOT NULL,
+    returnDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_at_create DATETIME  DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (book_idLibrary) REFERENCES Book(idLibrary),
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
@@ -41,7 +41,7 @@ CREATE TABLE Reserves (
     idReserved INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     User_idUser INT NOT NULL,
     Book_idLibrary INT NOT NULL,
-    reserveDate DATETIME,
+    reserveDate DATETIME  DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
@@ -62,7 +62,7 @@ CREATE TABLE Post (
     idPost INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     content VARCHAR(255) NOT NULL,
     image TEXT NOT NULL,
-    created_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     User_idUser INT NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
@@ -72,7 +72,7 @@ CREATE TABLE Likes (
     idLikes INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Post_idPost INT NOT NULL,
     User_idUser INT NOT NULL,
-    created_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
@@ -83,7 +83,7 @@ CREATA TABLE Lecture(
     date VARCHAR(255),
     time VARCHAR(255),
     description VARCHAR(255),
-    video TEXT
+    video_url TEXT
 )
 
 -- Tabela Comments

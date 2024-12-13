@@ -55,7 +55,60 @@ exports.updateNameVolunteerWork = (req, res) => {
         })
     }
 
-    connection.query('UPDATE idVolunteerWork SET nameVolunteerWork = ? WHERE idVolunteerWork = ?', [nameVolunteerWork, idVolunteerWork], (err, result) => {
+    connection.query('SELECT * FROM VolunteerWork where idVolunteerWokr =?', [idVolunteerWork], (err, result) => {
+        if(err){
+            return res.status(500).json({
+                message: "Erro ao se conectar com o servidor.",
+                success: false,
+                data: err
+            })
+        }
+
+        if(result.length === 0){
+            return res.status(404).json({
+                message: `O Trabalho voluntário com o id ${idVolunteerWork}, não existe no nosso sistema. `,
+                success: false,
+                data: err
+            })
+        } else {
+            connection.query('UPDATE VolunteerWork SET nameVolunteerWork = ? WHERE idVolunteerWork = ?', [nameVolunteerWork, idVolunteerWork], (err, result) => {
+                if (err) {
+                    return res.status(500).json({
+                        success: false,
+                        message: "Erro ao se conectar com o servidor.",
+                        data: err,
+                    })
+                }
+        
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Não foi possível alterar a sua requisição. Por favor, tente novamente.",
+                    })
+                } else {
+                    return res.status(200).json({
+                        success: true,
+                        message: "Nome atualizado com sucesso.",
+                    })
+                }
+            })
+        }
+    })
+}
+
+// Atualizar Nome do Trabalho Voluntário
+exports.updateNameVolunteerWork = (req, res) => {
+    const idVolunteerWork = req.params.id
+    const { nameVolunteerWork } = req.body
+
+    if (!nameVolunteerWork) {
+        return res.status(400).json({
+            success: false,
+            message: "Preencha todos os campos.",
+        })
+    }
+
+    connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -64,20 +117,31 @@ exports.updateNameVolunteerWork = (req, res) => {
             })
         }
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Trabalho voluntário não encontrado.",
+                message: `O Trabalho voluntário com o id ${idVolunteerWork} não existe no nosso sistema.`,
             })
-        } else {
+        }
+
+        connection.query('UPDATE VolunteerWork SET nameVolunteerWork = ? WHERE idVolunteerWork = ?', [nameVolunteerWork, idVolunteerWork], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao atualizar o nome.",
+                    data: err,
+                })
+            }
+
             return res.status(200).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
             })
-        }
+        })
     })
 }
 
+// Atualizar Endereço do Trabalho Voluntário
 exports.updateAddressVolunteerWork = (req, res) => {
     const idVolunteerWork = req.params.id
     const { address } = req.body
@@ -89,7 +153,7 @@ exports.updateAddressVolunteerWork = (req, res) => {
         })
     }
 
-    connection.query('UPDATE idVolunteerWork SET address = ? WHERE idVolunteerWork = ?', [address, idVolunteerWork], (err, result) => {
+    connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -98,20 +162,31 @@ exports.updateAddressVolunteerWork = (req, res) => {
             })
         }
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Trabalho voluntário não encontrado.",
+                message: `O Trabalho voluntário com o id ${idVolunteerWork} não existe no nosso sistema.`,
             })
-        } else {
+        }
+
+        connection.query('UPDATE VolunteerWork SET address = ? WHERE idVolunteerWork = ?', [address, idVolunteerWork], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao atualizar o endereço.",
+                    data: err,
+                })
+            }
+
             return res.status(200).json({
                 success: true,
                 message: "Endereço atualizado com sucesso.",
             })
-        }
+        })
     })
 }
 
+// Atualizar Data do Trabalho Voluntário
 exports.updateDateVolunteerWork = (req, res) => {
     const idVolunteerWork = req.params.id
     const { dateVolunteerWork } = req.body
@@ -123,7 +198,7 @@ exports.updateDateVolunteerWork = (req, res) => {
         })
     }
 
-    connection.query('UPDATE idVolunteerWork SET dateVolunteerWork = ? WHERE idVolunteerWork = ?', [dateVolunteerWork, idVolunteerWork], (err, result) => {
+    connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -132,20 +207,31 @@ exports.updateDateVolunteerWork = (req, res) => {
             })
         }
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Trabalho voluntário não encontrado.",
-            })
-        } else {
-            return res.status(200).json({
-                success: true,
-                message: "Horário do trabalho atualizado com sucesso.",
+                message: `O Trabalho voluntário com o id ${idVolunteerWork} não existe no nosso sistema.`,
             })
         }
+
+        connection.query('UPDATE VolunteerWork SET dateVolunteerWork = ? WHERE idVolunteerWork = ?', [dateVolunteerWork, idVolunteerWork], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao atualizar a data.",
+                    data: err,
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Data do trabalho atualizada com sucesso.",
+            })
+        })
     })
 }
 
+// Atualizar Descrição do Trabalho Voluntário
 exports.updateWorkDescriptionVolunteerWork = (req, res) => {
     const idVolunteerWork = req.params.id
     const { work_description } = req.body
@@ -157,7 +243,7 @@ exports.updateWorkDescriptionVolunteerWork = (req, res) => {
         })
     }
 
-    connection.query('UPDATE idVolunteerWork SET work_description = ? WHERE idVolunteerWork = ?', [work_description, idVolunteerWork], (err, result) => {
+    connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -166,17 +252,27 @@ exports.updateWorkDescriptionVolunteerWork = (req, res) => {
             })
         }
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Trabalho voluntário não encontrado.",
-            })
-        } else {
-            return res.status(200).json({
-                success: true,
-                message: "Descrição do trabalho atualizado com sucesso.",
+                message: `O Trabalho voluntário com o id ${idVolunteerWork} não existe no nosso sistema.`,
             })
         }
+
+        connection.query('UPDATE VolunteerWork SET work_description = ? WHERE idVolunteerWork = ?', [work_description, idVolunteerWork], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao atualizar a descrição.",
+                    data: err,
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Descrição do trabalho atualizada com sucesso.",
+            })
+        })
     })
 }
 
@@ -195,7 +291,7 @@ exports.deleteVolunteerWork = (req, res) => {
         }
 
         if(result.length === 0){
-            return res.status().json({
+            return res.status(404).json({
                 message: `O usuário com o id ${idVolunteerWork}, não existe no nosso sistema. `,
                 success: false,
                 data: err
@@ -211,7 +307,7 @@ exports.deleteVolunteerWork = (req, res) => {
                 }
 
                 if(result.affectedRows === 0){
-                    return res.status(400).json({
+                    return res.status(404).json({
                         message: 'Trabalho voluntario não encontrado. Verifique os dados e tente novamente.',
                         success: false,
                         data: err
