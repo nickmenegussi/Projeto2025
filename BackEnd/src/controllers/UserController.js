@@ -1,8 +1,6 @@
 const connection = require("../config/db")
 const bcrypt = require("bcrypt")
 
-
-
 exports.viewOnlyUser = (req, res) => {
     const idUser = req.params.id
     connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
