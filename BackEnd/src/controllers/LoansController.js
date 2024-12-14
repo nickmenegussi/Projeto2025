@@ -28,7 +28,7 @@ exports.createLoan = (req, res) => {
         })
     }
 
-    connection.query('INSERT INTO Book(book_idLibrary,User_idUser, returnDate) VALUES(?, ?, CURRENT_TIMESTAMP, INTERVAL 7 DAY) ',[book_idLibrary, User_idUser ], (err, result) => {
+    connection.query('INSERT INTO Book(book_idLibrary,User_idUser, returnDate) VALUES(?, ?,  DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY)) ',[book_idLibrary, User_idUser ], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -76,7 +76,7 @@ exports.updateReturnDate = (req, res) => {
             if (err) {
                 return res.status(500).json({
                     success: false,
-                    message: "Erro ao atualizar a quantidade do livro.",
+                    message: "Erro ao atualizar a data do empréstimo do livro.",
                     data: err,
                 })
             }
@@ -92,7 +92,7 @@ exports.updateReturnDate = (req, res) => {
 exports.deleteLoan = (req, res) => {
     const idLoans = req.params.id
 
-    connection.query('SELECT idLibrary Loans Book where idLoans = ?', [idLoans], (err, result) => {
+    connection.query('SELECT idLoans Loans Book where idLoans = ?', [idLoans], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -103,12 +103,12 @@ exports.deleteLoan = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `O Livro com o id ${idLoans}, não existe no nosso sistema. `,
+                message: `O empréstimo do livro com o id ${idLoans}, não existe no nosso sistema. `,
                 success: false,
                 data: err
             })
         } else {
-            connection.query('DELETE FROM Loan where idLibrary = ?', [idLoans], (err, result) => {
+            connection.query('DELETE FROM Loan where idLoans = ?', [idLoans], (err, result) => {
                 if(err){
                     return res.status(500).json({
                         message: "Erro ao se conectar com o servidor.",
