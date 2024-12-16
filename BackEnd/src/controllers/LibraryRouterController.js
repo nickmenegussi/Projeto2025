@@ -220,7 +220,7 @@ exports.updateTagBook = (req, res) => {
 }
 
 // Atualizar Descrição do Livro
-exports.updateBookDescription = (req, res) => {
+exports.updateOverView = (req, res) => {
     const idLibrary = req.params.id
     const { overviewBook } = req.body
 
@@ -259,6 +259,7 @@ exports.updateBookDescription = (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: "Descrição do livro atualizada com sucesso.",
+                data: result
             })
         })
     })
@@ -304,6 +305,7 @@ exports.updateCuriosityBook = (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: "Curiosidade do livro atualizada com sucesso.",
+                data: result
             })
         })
     })
@@ -398,6 +400,7 @@ exports.updateStatusAvailable = (req, res) => {
                 return res.status(200).json({
                     success: true,
                     message: "Disponibilidade do livro atualizada com sucesso.",
+                    data: result
                 })
             })
         }
