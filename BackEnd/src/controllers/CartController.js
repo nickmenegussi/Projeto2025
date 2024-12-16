@@ -171,7 +171,7 @@ exports.createCart = (req, res) => {
   )
 }
 
-exports.deleteCart= (req, res) => {
+exports.deleteCart = (req, res) => {
   const idCart = req.params.id
 
   connection.query(

@@ -18,6 +18,31 @@ exports.viewVolunteerWork = (req, res) => {
     })
 }
 
+exports.viewOnlyVolunteerWork = (req, res) => {
+    const idVolunteerWork = req.params.id
+    connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork] ,(err, result) => {
+        if(err){
+            return res.status(500).json({
+                message: "Erro ao se conectar com o servidor.",
+                success: false,
+                data: err
+            })
+        }  
+        if(result.length === 0){
+            return res.status(404).json({
+                message: `Erro ao exibir o trabalho voluntário com o id ${idVolunteerWork}. Tente novamente!`
+            })
+        }
+        else {
+            return res.status(200).json({
+              message: "Sucesso ao exibir os trabalhos voluntários.",
+              success: true,
+              data: result
+            })
+          }
+    })
+}
+
 exports.createVolunteerWork = (req, res) => {
     const {nameVolunteerWork, address, dateVolunteerWork, work_description} = req.body
 

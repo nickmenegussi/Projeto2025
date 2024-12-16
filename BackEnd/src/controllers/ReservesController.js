@@ -142,7 +142,7 @@ exports.createReserves = (req, res) => {
 exports.deleteReserve = (req, res) => {
     const idReserved = req.params.id
 
-    connection.query('SELECT idReserved Reserves Book where idReserved = ?', [idReserved], (err, result) => {
+    connection.query('SELECT idReserved FROM Reserves Book where idReserved = ?', [idReserved], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",

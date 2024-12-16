@@ -180,7 +180,7 @@ exports.updateReturnDate = (req, res) => {
 exports.deleteLoan = (req, res) => {
     const idLoans = req.params.id
 
-    connection.query('SELECT idLoans Loans Book where idLoans = ?', [idLoans], (err, result) => {
+    connection.query('SELECT idLoans FROM Loans where idLoans = ?', [idLoans], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
