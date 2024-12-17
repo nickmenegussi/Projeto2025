@@ -65,7 +65,7 @@ exports.updateAction = (req, res) => {
   }
 
   connection.query(
-    "SELECT idCart FROM Cart WHERE idCart = ?",
+    "SELECT * FROM Cart WHERE idCart = ?",
     [idCart],
     (err, result) => {
       if (err) {

@@ -61,7 +61,7 @@ exports.createLoan = (req, res) => {
 
     // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
     connection.query(`
-            SELECT idCart, action FROM Cart where idCart = ?
+            SELECT * FROM Cart where idCart = ?
             
         `, [Cart_idCart], (err, result) => {
             if(err){
@@ -134,7 +134,7 @@ exports.createLoan = (req, res) => {
 }
 
 exports.updateReturnDate = (req, res) => {
-    const idLoans = req.params.id
+    const idLoans = req.params.LoansId
     const { returnDate  } = req.body
 
     if (!returnDate || !idLoans) {
@@ -144,7 +144,7 @@ exports.updateReturnDate = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLoans FROM Loans WHERE idLoans = ?', [idLoans], (err, result) => {
+    connection.query('SELECT * FROM Loans WHERE idLoans = ?', [idLoans], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -180,7 +180,7 @@ exports.updateReturnDate = (req, res) => {
 exports.deleteLoan = (req, res) => {
     const idLoans = req.params.id
 
-    connection.query('SELECT idLoans FROM Loans where idLoans = ?', [idLoans], (err, result) => {
+    connection.query('SELECT * FROM Loans where idLoans = ?', [idLoans], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
