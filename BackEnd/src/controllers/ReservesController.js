@@ -17,16 +17,34 @@ exports.viewReserves = (req, res) => {
           }
     })
 }
+// Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewReservesByUser = (req, res) => {
-    connection.query('SELECT * FROM Reserves', (err, result) => {
+    const Cart_idCart = req.params.id 
+    const idUser = req.params.id
+
+    connection.query(`SELECT * 
+        FROM Reserves r, Cart c, User u, Book b
+        WHERE r.Cart_idCart = c.idCart
+        AND u.idUser = c.User_idUser
+        AND b.idLibrary = c.Book_idLibrary
+        And u.idUser = ? AND r.Cart_idCart = ? 
+        
+        `, [idUser, Cart_idCart] ,(err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
                 data: err
             })
-        } else {
+        } 
+        if(result.length === 0) {
+            return response.status(400).json({
+                success: false,
+                message: `Não há itens reservados ainda!`,
+              })
+        }
+        else {
             return res.status(200).json({
               message: "Sucesso ao exibir os livros reservados",
               success: true,
@@ -37,80 +55,94 @@ exports.viewReservesByUser = (req, res) => {
 }
 
 exports.createReserves = (req, res) => {
-    const {User_idUser, Book_idLibrary} = req.body 
+    const Cart_idCart = req.params.id 
 
-    if(!User_idUser || !Book_idLibrary){
+    if(!Cart_idCart){
         return res.status(400).json({
             success: false,
             message: "Preencha todos os campos de cadastro",
         })
     }
 
-    connection.query('INSERT INTO Reserves(User_idUser,Book_idLibrary, reserveDate) VALUES(?, ?, CURRENT_TIMESTAMP, INTERVAL 7 DAY) ',[User_idUser, Book_idLibrary ], (err, result) => {
-        if(err){
-            return res.status(500).json({
-                message: "Erro ao se conectar com o servidor.",
-                success: false,
-                data: err
-            })
-        } else {
-            return res.status(200).json({
-                success: true,
-                message: "Livro reservado cadastrado com sucesso",
-                data: result,
-            })
-        }
-    })
-}
-
-exports.updatereserveDate = (req, res) => {
-    const idReserved = req.params.id
-    const { reserveDate  } = req.body
-
-    if (!reserveDate || !idReserved) {
-        return res.status(400).json({
-            success: false,
-            message: "Preencha todos os campos.",
-        })
-    }
-
-    connection.query('SELECT idReserved FROM Reserves WHERE idReserved = ?', [idReserved], (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: "Erro ao se conectar com o servidor.",
-                data: err,
-            })
-        }
-
-        if (result.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: `a reserva do livro com o id ${idReserved} não existe no nosso sistema.`,
-            })
-        }
-
-        connection.query('UPDATE Reserves SET reserveDate = ? WHERE idReserved = ?', [reserveDate, idReserved], (err, result) => {
-            if (err) {
+    // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
+    connection.query(`
+            SELECT idCart, action FROM Cart where idCart = ?
+            
+        `, [Cart_idCart], (err, result) => {
+            if(err){
                 return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor.",
                     success: false,
-                    message: "Erro ao atualizar a quantidade do livro.",
-                    data: err,
+                    data: err
                 })
             }
+            if(result.length === 0){
+                return res.status(404).json({
+                    success: false,
+                    message: `Não conseguimos localizar o carrinho do item. Por favor, verifique os dados e tente novamente.`,
+                })
+                
+            } else if (result[0].action !== 'reserva') {
+                return res.status(400).json({
+                    success: false,
+                    message: "Ação inválida. Apenas carrinhos com a ação 'reserva' podem gerar reserva.",
+                })
+            }
+            
+            else {
+                // verificar duplicidade de empréstimos
+                if(result[0].action === 'reserva'){
+                    connection.query('SELECT Cart_idCart FROM Reserves where Cart_idCart = ?', [Cart_idCart], (err, result) => {
+                        if(err){
+                            return res.status(500).json({
+                                message: "Erro ao verificar reservas realizados.",
+                                success: false,
+                                data: err
+                            })
+                        }
 
-            return res.status(200).json({
-                success: true,
-                message: "Retorno da reserva do livro atualizada com sucesso.",
-            })
-        })
+                        // Verifica se já existe um empréstimo para este carrinho
+
+                        if(result.length > 0){
+                            return res.status(400).json({
+                                message: 'Esse pedido já foi finalizado.',
+                                success: false
+                            })
+                        }
+
+                        connection.query('INSERT INTO Reserves(Cart_idCart) VALUES(?) ',[Cart_idCart], (errInsert, resultInsert) => {
+                            if(errInsert){
+                                return res.status(500).json({
+                                    message: "Erro ao reservar livro.",
+                                    success: false,
+                                    data: errInsert
+                                })
+                            } else {
+                                return res.status(200).json({
+                                    success: true,
+                                    message: "Livro reservado foi cadastrado com sucesso.",
+                                    data: resultInsert,
+                                })
+                            }
+                
+                        })     
+                    })
+                }  else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Ação inválida. Apenas carrinhos com a ação 'reserva' podem gerar reserva.",
+                })
+            }            
+        }
     })
+    
 }
+
 
 exports.deleteReserve = (req, res) => {
     const idReserved = req.params.id
 
-    connection.query('SELECT idReserved Reserves Book where idReserved = ?', [idReserved], (err, result) => {
+    connection.query('SELECT idReserved FROM Reserves Book where idReserved = ?', [idReserved], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -121,12 +153,12 @@ exports.deleteReserve = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `A reserva do livro com o id ${idReserved}, não existe no nosso sistema. `,
+                message: `A reserva do livro respectivo, não existe no nosso sistema. `,
                 success: false,
                 data: err
             })
         } else {
-            connection.query('DELETE FROM Loan where idReserved = ?', [idReserved], (err, result) => {
+            connection.query('DELETE FROM Reserves where idReserved = ?', [idReserved], (err, result) => {
                 if(err){
                     return res.status(500).json({
                         message: "Erro ao se conectar com o servidor.",
@@ -137,7 +169,7 @@ exports.deleteReserve = (req, res) => {
 
                 if(result.affectedRows === 0){
                     return res.status(400).json({
-                        message: `Erro ao deletar reserva do livro ${idReserved}. Verifique os dados e tente novamente.`,
+                        message: `Erro ao deletar reserva do livro. Verifique os dados e tente novamente.`,
                         success: false,
                         data: err
                     })
