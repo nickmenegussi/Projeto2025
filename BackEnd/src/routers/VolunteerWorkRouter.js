@@ -1,10 +1,11 @@
 const express = require("express")
 const router = express.Router()
-const {viewVolunteerWork,createVolunteerWork ,updateNameVolunteerWork,updateAddressVolunteerWork,updateDateVolunteerWork,updateWorkDescriptionVolunteerWork,deleteVolunteerWork} = require('../controllers/VolunteerWorkController')
+const {viewVolunteerWork, viewOnlyVolunteerWork ,createVolunteerWork ,updateNameVolunteerWork,updateAddressVolunteerWork,updateDateVolunteerWork,updateWorkDescriptionVolunteerWork,deleteVolunteerWork} = require('../controllers/VolunteerWorkController')
 
 const authMiddleware = require('../middleware/authMiddleware')
 
 router.get('/work', authMiddleware, viewVolunteerWork)
+router.get('/work/:id', authMiddleware, viewOnlyVolunteerWork)
 
 router.post('/workCreate', authMiddleware, createVolunteerWork)
 

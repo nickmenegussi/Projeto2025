@@ -86,7 +86,7 @@ exports.GenerateOtp = (req, res) => {
                     specialChars: false
                 })
 
-                connection.query('INSERT INTO Otp(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, ' CURRENT_TIMESTAMP + INTERVAL 5 MINUTE'], (err,result) => {
+                connection.query('INSERT INTO Otp(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, ' DATE_ADD(CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)'], (err,result) => {
                     if(err){
                         return res.status(500).json({
                             message: 'Erro ao se conectar com o servidor.',
