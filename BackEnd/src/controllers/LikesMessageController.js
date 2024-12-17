@@ -66,31 +66,11 @@ exports.createLikes = (req, res) => {
         })
     }
 
-    // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
-    connection.query(`
-            SELECT Post_idPost, User_idUser FROM Likes where idLIkes = ?
-            
-        `, [idLikes], (err, result) => {
-            if(err){
-                return res.status(500).json({
-                    message: "Erro ao se conectar com o servidor.",
-                    success: false,
-                    data: err
-                })
-            }
-            if(result.length === 0){
-                return res.status(404).json({
-                    success: false,
-                    message: `Não conseguimos localizar as curtidas da postagem. Por favor, verifique os dados e tente novamente.`,
-                })
-                
-            } 
-            else {
                 // verificar se a postagem já está curtida
                     connection.query('SELECT * FROM Likes where Post_idPost = ? AND User_idUser = ?', [Post_idPost, User_idUser], (err, result) => {
                         if(err){
                             return res.status(500).json({
-                                message: "Erro ao verificar reservas realizados.",
+                                message: "Erro ao verificar postagens curtidas.",
                                 success: false,
                                 data: err
                             })
@@ -122,22 +102,17 @@ exports.createLikes = (req, res) => {
                 
                         })     
                     })
-                //  else {
-                // return res.status(400).json({
-                //     success: false,
-                //     message: "Ação inválida. Apenas carrinhos com a ação 'reserva' podem gerar reserva.",
-                // })
             }            
-        }
-    )
+        
     
-}
+
+
 
 
 exports.deleteLike = (req, res) => {
     const idLikes = req.params.id
 
-    connection.query('SELECT idLikes FROM Likes Book where idLikes = ?', [idLikes], (err, result) => {
+    connection.query('SELECT idLikes FROM Likes where idLikes = ?', [idLikes], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",

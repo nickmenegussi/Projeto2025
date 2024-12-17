@@ -7,8 +7,8 @@ const authMiddleware = require('../middleware/authMiddleware')
 router.get('/cart/:id', authMiddleware ,viewCartByUser)
 router.get('/cart', authMiddleware ,viewCartAll)
 
-router.post('/cartRegister', authMiddleware, createCart)
+router.post('/cart/register', authMiddleware, createCart)
 
 router.patch('/cart/:id/action', authMiddleware, updateAction)
 
-router.delete('/cart/:id', authMiddleware, deleteCart)
+router.delete('/cart/:id/delete', authMiddleware, deleteCart)

@@ -6,10 +6,10 @@ const authMiddleware = require('../middleware/authMiddleware')
 router.get('/reserves/:id', authMiddleware, viewReserves)
 router.get('/reserves', authMiddleware, viewReservesByUser)
 
-router.post('/reservesRegister', authMiddleware, createReserves)
+router.post('/reserves/register', authMiddleware, createReserves)
 
 // router.patch('')
 
-router.delete('/reserves/:id', authMiddleware, deleteReserve)
+router.delete('/reserves/:id/delete', authMiddleware, deleteReserve)
 
 module.exports = router

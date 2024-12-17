@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware')
 router.get('/library/:id', authMiddleware, viewOnlyOneBook)
 router.get('/library', authMiddleware, viewAllBooks)
 
-router.post('/libraryRegister', authMiddleware, createBook)
+router.post('/library/register', authMiddleware, createBook)
 
 router.patch('/library/:id/nameBook', authMiddleware, updateNameBook)
 router.patch('/library/:id/authorBook', authMiddleware, updateAuthorBook)
@@ -16,7 +16,7 @@ router.patch('/library/:id/bookQuantity', authMiddleware, updateBookQuantity)
 router.patch('/library/:id/curiosityBook', authMiddleware, updateCuriosityBook)
 router.patch('/library/:id/statusAvailable', authMiddleware, updateStatusAvailable)
 
-router.delete('/library/:id')
+router.delete('/library/:id/delete')
 
 
 module.exports = router
