@@ -20,8 +20,8 @@ exports.viewAllLoans = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de empréstimo e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewLoansByUser = (req, res) => {
-    const Cart_idCart = req.params.id 
-    const idUser = req.params.id
+    const Cart_idCart = req.params.Cart_idCart 
+    const idUser = req.params.UsuarioId
 
     // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenar como um Empréstimo.
     connection.query(`SELECT * FROM 
@@ -39,9 +39,17 @@ exports.viewLoansByUser = (req, res) => {
                 success: false,
                 data: err
             })
-        } else {
+        } 
+        if(result.length === 0){
+            return res.status(404).json({
+                success: false,
+                message: `Não conseguimos achar os empréstimos dete usuário. Por favor, verifique os dados e tente novamente.`,
+            })
+            
+        }
+        else {
             return res.status(200).json({
-              message: "Sucesso ao exibir os trabalhos voluntários.",
+              message: `Sucesso ao exibir os empréstimos do usuario ${idUser}`,
               success: true,
               data: result
             })
@@ -50,7 +58,7 @@ exports.viewLoansByUser = (req, res) => {
 }
 
 exports.createLoan = (req, res) => {
-    const Cart_idCart = req.params.id 
+    const Cart_idCart = req.params.Cart_idCart 
 
     if(!Cart_idCart){
         return res.status(400).json({
@@ -172,13 +180,14 @@ exports.updateReturnDate = (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: "Retorno do livro atualizada com sucesso.",
+                data: result
             })
         })
     })
 }
 
 exports.deleteLoan = (req, res) => {
-    const idLoans = req.params.id
+    const idLoans = req.params.LoansId
 
     connection.query('SELECT * FROM Loans where idLoans = ?', [idLoans], (err, result) => {
         if(err){

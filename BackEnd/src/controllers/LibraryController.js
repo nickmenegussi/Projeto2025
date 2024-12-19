@@ -19,7 +19,7 @@ exports.viewAllBooks = (req, res) => {
 }
 
 exports.viewOnlyOneBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     connection.query('SELECT * FROM Book where idLibrary = ?', [idLibrary] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -86,7 +86,7 @@ exports.createBook = (req, res) => {
 
 // Atualizar Nome do Livro
 exports.updateNameBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { nameBook } = req.body
 
     if (!nameBook) {
@@ -96,7 +96,7 @@ exports.updateNameBook = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -131,7 +131,7 @@ exports.updateNameBook = (req, res) => {
 
 // Atualizar Autor do Livro
 exports.updateAuthorBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { author } = req.body
 
     if (!author) {
@@ -141,7 +141,7 @@ exports.updateAuthorBook = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -186,7 +186,7 @@ exports.updateTagBook = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,

@@ -110,16 +110,13 @@ CREATE TABLE Lecture (
     video_url TEXT
 );
 
--- Tabela Topics
+-- Tabela Topic
 CREATE TABLE Topic (
     idTopic INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
-    image TEXT NOT NULL,
-    Post_idPost INT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost)
+    image TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabela CalendarEvents
