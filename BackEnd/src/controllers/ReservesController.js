@@ -20,9 +20,10 @@ exports.viewReserves = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewReservesByUser = (req, res) => {
-    const Cart_idCart = req.params.id 
-    const idUser = req.params.id
-
+    const Cart_idCart = req.params.cartId // 'cartId' deve ser o nome do parâmetro na URL
+    const idUser = req.params.userId  
+    
+    
     connection.query(`SELECT * 
         FROM Reserves r, Cart c, User u, Book b
         WHERE r.Cart_idCart = c.idCart
@@ -55,7 +56,7 @@ exports.viewReservesByUser = (req, res) => {
 }
 
 exports.createReserves = (req, res) => {
-    const Cart_idCart = req.params.id 
+    const {Cart_idCart} = req.body
 
     if(!Cart_idCart){
         return res.status(400).json({
@@ -66,7 +67,7 @@ exports.createReserves = (req, res) => {
 
     // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
     connection.query(`
-            SELECT idCart, action FROM Cart where idCart = ?
+            SELECT * FROM Cart where idCart = ?
             
         `, [Cart_idCart], (err, result) => {
             if(err){
@@ -140,9 +141,9 @@ exports.createReserves = (req, res) => {
 
 
 exports.deleteReserve = (req, res) => {
-    const idReserved = req.params.id
+    const idReserved = req.params.ReserveId
 
-    connection.query('SELECT idReserved FROM Reserves Book where idReserved = ?', [idReserved], (err, result) => {
+    connection.query('SELECT * FROM Reserves where idReserved = ?', [idReserved], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -153,7 +154,7 @@ exports.deleteReserve = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `A reserva do livro respectivo, não existe no nosso sistema. `,
+                message: `A reserva do livro respectivo não existe no nosso sistema. `,
                 success: false,
                 data: err
             })
