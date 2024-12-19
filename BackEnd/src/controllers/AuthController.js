@@ -43,14 +43,14 @@ exports.login = (req, res) => {
             })
         }
 
-        const token = jwt.sign({id: user.idUser, email: user.email}, process.env.JWT_SECRET, {
+        const token = jwt.sign({id: user.idUser, email: user.email, role: user.status_permission}, process.env.JWT_SECRET, {
             expiresIn: '2h'
         })
 
         return res.status(200).json({
             message: "Login realizado com sucesso",
             success: true,
-            data: {user: token, token}
+            data: {user: user, token: token}
         })
     })
 }

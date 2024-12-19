@@ -113,7 +113,7 @@ exports.updateNameBook = (req, res) => {
         }
 
         connection.query('UPDATE Book SET nameBook = ? WHERE idLibrary = ?', [nameBook, idLibrary], (err, result) => {
-            if (err) {
+            if(err) {
                 return res.status(500).json({
                     success: false,
                     message: "Erro ao atualizar o nome do livro.",
@@ -176,7 +176,7 @@ exports.updateAuthorBook = (req, res) => {
 
 // Atualizar Data do Livro
 exports.updateTagBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { tagsBook } = req.body
 
     if (!tagsBook) {
@@ -214,6 +214,7 @@ exports.updateTagBook = (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: "Classificação do livro atualizada com sucesso.",
+                data: result
             })
         })
     })
@@ -221,7 +222,7 @@ exports.updateTagBook = (req, res) => {
 
 // Atualizar Descrição do Livro
 exports.updateOverView = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { overviewBook } = req.body
 
     if (!overviewBook) {
@@ -231,7 +232,7 @@ exports.updateOverView = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -267,7 +268,7 @@ exports.updateOverView = (req, res) => {
 
 // Atualizar Descrição do Livro
 exports.updateCuriosityBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { curiosityBook } = req.body
 
     if (!curiosityBook) {
@@ -277,7 +278,7 @@ exports.updateCuriosityBook = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -312,7 +313,7 @@ exports.updateCuriosityBook = (req, res) => {
 }
 
 exports.updateBookQuantity = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { bookQuantity } = req.body
 
     if (!bookQuantity) {
@@ -322,7 +323,7 @@ exports.updateBookQuantity = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -356,7 +357,7 @@ exports.updateBookQuantity = (req, res) => {
 }
 
 exports.updateStatusAvailable = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
     const { status_Available } = req.body
 
     if (!status_Available) {
@@ -366,7 +367,7 @@ exports.updateStatusAvailable = (req, res) => {
         })
     }
 
-    connection.query('SELECT idLibrary FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book WHERE idLibrary = ?', [idLibrary], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -408,9 +409,9 @@ exports.updateStatusAvailable = (req, res) => {
 }
 
 exports.deleteBook = (req, res) => {
-    const idLibrary = req.params.id
+    const idLibrary = req.params.LibraryId
 
-    connection.query('SELECT idLibrary FROM Book where idLibrary = ?', [idLibrary], (err, result) => {
+    connection.query('SELECT * FROM Book where idLibrary = ?', [idLibrary], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -421,7 +422,7 @@ exports.deleteBook = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `O Livro com o id ${idLibrary}, não existe no nosso sistema. `,
+                message: `O Livro com o id ${idLibrary} não existe no nosso sistema. `,
                 success: false,
                 data: err
             })
