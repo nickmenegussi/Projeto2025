@@ -2,7 +2,7 @@ const connection = require("../config/db")
 const bcrypt = require("bcrypt")
 
 exports.viewOnlyUser = (req, res) => {
-    const idUser = req.params.id
+    const idUser = req.params.userId 
     connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -76,7 +76,7 @@ exports.register = async (req, res) => {
 }
 
 exports.updateUser = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
     const {email} = req.body
  
     if(!idUser || !email){
@@ -124,7 +124,7 @@ exports.updateUser = (req, res) => {
 }
 
 exports.updateUserName = (req, res) => {
-    const idUser = req.params.id;
+    const idUser = req.params.userId ;
     const { nameUser } = req.body;
 
     if (!nameUser) {
@@ -158,7 +158,7 @@ exports.updateUserName = (req, res) => {
 };
 
 exports.updateUserPassword = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
     const {newPassword, currentPassword, confirmedPassword} = req.body
  
     if(!idUser || !newPassword || !currentPassword || !confirmedPassword){
@@ -242,7 +242,7 @@ exports.updateUserPassword = (req, res) => {
 
 exports.updateUserImageProfile = (req, res) => {
     const image_profile = req.file ? req.file.filename : null 
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
 
     if(!idUser){
         return res.status(400).json({
@@ -297,7 +297,7 @@ exports.updateUserImageProfile = (req, res) => {
 }
 
 exports.deleteAccountUser = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
 
     if(!idUser){
         return res.status(400).json({

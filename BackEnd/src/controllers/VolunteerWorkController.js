@@ -19,7 +19,7 @@ exports.viewVolunteerWork = (req, res) => {
 }
 
 exports.viewOnlyVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -70,7 +70,7 @@ exports.createVolunteerWork = (req, res) => {
 }
 
 exports.updateNameVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     const { nameVolunteerWork } = req.body
 
     if (!nameVolunteerWork) {
@@ -123,7 +123,7 @@ exports.updateNameVolunteerWork = (req, res) => {
 
 // Atualizar Nome do Trabalho Voluntário
 exports.updateNameVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     const { nameVolunteerWork } = req.body
 
     if (!nameVolunteerWork) {
@@ -168,7 +168,7 @@ exports.updateNameVolunteerWork = (req, res) => {
 
 // Atualizar Endereço do Trabalho Voluntário
 exports.updateAddressVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     const { address } = req.body
 
     if (!address) {
@@ -213,7 +213,7 @@ exports.updateAddressVolunteerWork = (req, res) => {
 
 // Atualizar Data do Trabalho Voluntário
 exports.updateDateVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     const { dateVolunteerWork } = req.body
 
     if (!dateVolunteerWork) {
@@ -258,7 +258,7 @@ exports.updateDateVolunteerWork = (req, res) => {
 
 // Atualizar Descrição do Trabalho Voluntário
 exports.updateWorkDescriptionVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
     const { work_description } = req.body
 
     if (!work_description) {
@@ -304,9 +304,9 @@ exports.updateWorkDescriptionVolunteerWork = (req, res) => {
 
 
 exports.deleteVolunteerWork = (req, res) => {
-    const idVolunteerWork = req.params.id
+    const idVolunteerWork = req.params.VolunteerWorkId
 
-    connection.query('SELECT idVolunteerWork FROM VolunteerWork where idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
+    connection.query('SELECT * FROM VolunteerWork where idVolunteerWork = ?', [idVolunteerWork], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
