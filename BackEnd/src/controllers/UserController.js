@@ -2,7 +2,7 @@ const connection = require("../config/db")
 const bcrypt = require("bcrypt")
 
 exports.viewOnlyUser = (req, res) => {
-    const idUser = req.params.id
+    const idUser = req.params.userId 
     connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -13,7 +13,7 @@ exports.viewOnlyUser = (req, res) => {
         } 
         
         if(result.length === 0){
-            return res.status().json({
+            return res.status(404).json({
                 message: `O usuário com o id ${idUser}, não existe no nosso sistema`,
                 success: false,
                 data: err
@@ -47,7 +47,7 @@ exports.viewAllUser = (req, res) => {
 }
 
 exports.register = async (req, res) => {
-    // const image_profile = req.file ? req.file.filename : null
+    const image_profile = req.file ? req.file.filename : null
     const {nameUser, email, password} = req.body
 
     if(!nameUser || !email || !password){
@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
     }
 
     const hash_password = await bcrypt.hash(password, 15)
-    connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permissao) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, 'teste', 'User'] ,(err,result) => {
+    connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permissao) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, image_profile, 'User'] ,(err,result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -76,7 +76,7 @@ exports.register = async (req, res) => {
 }
 
 exports.updateUser = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
     const {email} = req.body
  
     if(!idUser || !email){
@@ -97,7 +97,7 @@ exports.updateUser = (req, res) => {
         }
 
         if(result.length === 0){
-            return res.status(400).json({
+            return res.status(404).json({
                 message: 'Usuario não encontrado. Verifique os dados e tente novamente.',
                 success: false,
                 data: err
@@ -124,7 +124,7 @@ exports.updateUser = (req, res) => {
 }
 
 exports.updateUserName = (req, res) => {
-    const idUser = req.params.id;
+    const idUser = req.params.userId ;
     const { nameUser } = req.body;
 
     if (!nameUser) {
@@ -158,7 +158,7 @@ exports.updateUserName = (req, res) => {
 };
 
 exports.updateUserPassword = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
     const {newPassword, currentPassword, confirmedPassword} = req.body
  
     if(!idUser || !newPassword || !currentPassword || !confirmedPassword){
@@ -179,7 +179,7 @@ exports.updateUserPassword = (req, res) => {
         }
         
         if(result.length === 0){
-            return res.status(400).json({
+            return res.status(404).json({
                 message: 'Usuario não encontrado. Verifique os dados e tente novamente.',
                 success: false,
                 data: err
@@ -189,13 +189,13 @@ exports.updateUserPassword = (req, res) => {
             
             const passwordMatch = await bcrypt.compare(currentPassword, user.password)
             if(!passwordMatch){
-                return res.status(400).json({
+                return res.status(404).json({
                     message: 'A senha atual está incorreta. Por favor, digite novamente.',
                     success: false
                                 
                 })
             } else if (newPassword !== confirmedPassword){
-                return res.status(400).json({
+                return res.status(404).json({
                     message: 'A nova senha digitado não coincide com a confirmada. Por favor, digite novamente.'
                 })
             } else {
@@ -242,7 +242,7 @@ exports.updateUserPassword = (req, res) => {
 
 exports.updateUserImageProfile = (req, res) => {
     const image_profile = req.file ? req.file.filename : null 
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
 
     if(!idUser){
         return res.status(400).json({
@@ -297,7 +297,7 @@ exports.updateUserImageProfile = (req, res) => {
 }
 
 exports.deleteAccountUser = (req, res) => {
-    const idUser = req.params.id 
+    const idUser = req.params.userId  
 
     if(!idUser){
         return res.status(400).json({
@@ -305,28 +305,46 @@ exports.deleteAccountUser = (req, res) => {
             message: "Preencha todos os campos de cadastro",
         })
     }
-
-    connection.query('DELETE FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
+    connection.query('SELECT * FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
         if(err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
-                data: err
+                data: err,
             })
         }
-
-        if(result.affectedRows === 0){
+        
+        if(result.length === 0){
             return res.status(400).json({
                 message: 'Usuario não encontrado. Verifique os dados e tente novamente.',
                 success: false,
                 data: err
             })
         } else {
-            return res.status(200).json({
-                message: 'Usuário deletado com sucesso',
-                success: true,
-                data: result
-            })
+            connection.query('DELETE FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
+                if(err) {
+                    return res.status(500).json({
+                        message: "Erro ao se conectar com o servidor.",
+                        success: false,
+                        data: err
+                    })
+                }
+        
+                if(result.affectedRows === 0){
+                    return res.status(400).json({
+                        message: 'Usuario não encontrado. Verifique os dados e tente novamente.',
+                        success: false,
+                        data: err
+                    })
+                } else {
+                    return res.status(200).json({
+                        message: 'Usuário deletado com sucesso',
+                        success: true,
+                        data: result
+                    })
+                }
+             })
+    
         }
     })
 }

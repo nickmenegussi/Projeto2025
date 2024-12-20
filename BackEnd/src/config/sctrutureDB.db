@@ -110,16 +110,13 @@ CREATE TABLE Lecture (
     video_url TEXT
 );
 
--- Tabela Topics
+-- Tabela Topic
 CREATE TABLE Topic (
     idTopic INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
-    image TEXT NOT NULL,
-    Post_idPost INT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost)
+    image TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabela CalendarEvents
@@ -140,10 +137,9 @@ CREATE TABLE Facilitadores (
     User_idUser INT NOT NULL,
     description VARCHAR(255) NOT NULL,
     apelido VARCHAR(255) NOT NULL,
-    espiritname VARCHAR(255),
     espiritaSinceTime INT NOT NULL,
     memberSinceWhen DATETIME,
-    category VARCHAR(255) NOT NULL,
+    category ENUM('ESDE', 'CIEDE', 'MEDIUNIDADE') NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
 

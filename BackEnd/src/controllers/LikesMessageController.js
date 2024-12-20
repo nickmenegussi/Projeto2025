@@ -20,13 +20,13 @@ exports.viewLikeMessages = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewLikeMessagesByUser = (req, res) => {
-    const Post_idPost = req.params.id 
-    const User_idUser = req.params.id
+    const Post_idPost = req.params.PostId 
+    const User_idUser = req.params.UserId
 
     connection.query(`SELECT * 
         FROM Likes l
         JOIN Post p on l.Post_idPost = p.idPost
-        JOIN User u l.User_idUser = u.idUser
+        JOIN User u on l.User_idUser = u.idUser
         And u.idUser = ? AND l.Post_idPost = ? 
         
         `, [User_idUser, Post_idPost] ,(err, result) => {
@@ -110,9 +110,9 @@ exports.createLikes = (req, res) => {
 
 
 exports.deleteLike = (req, res) => {
-    const idLikes = req.params.id
+    const idLikes = req.params.LikesId
 
-    connection.query('SELECT idLikes FROM Likes where idLikes = ?', [idLikes], (err, result) => {
+    connection.query('SELECT * FROM Likes where idLikes = ?', [idLikes], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -123,7 +123,7 @@ exports.deleteLike = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `Não existe curtidas da atual mensagem no nosso sistema ainda.`,
+                message: `Não existe curtidas na atual mensagem no nosso sistema ainda.`,
                 success: false,
                 data: err
             })
