@@ -20,6 +20,7 @@ exports.viewVolunteerWork = (req, res) => {
 
 exports.viewOnlyVolunteerWork = (req, res) => {
     const idVolunteerWork = req.params.VolunteerWorkId
+    
     connection.query('SELECT * FROM VolunteerWork WHERE idVolunteerWork = ?', [idVolunteerWork] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -59,13 +60,13 @@ exports.createVolunteerWork = (req, res) => {
                 success: false,
                 data: err
             })
-        } else {
-            return res.status(200).json({
-                success: true,
-                message: "Trabalho Voluntário cadastrado com sucesso",
-                data: result,
-            })
-        }
+        } 
+        return res.status(200).json({
+            success: true,
+            message: "Trabalho Voluntário cadastrado com sucesso",
+            data: result,
+        })
+        
     })
 }
 
@@ -91,33 +92,27 @@ exports.updateNameVolunteerWork = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: `O Trabalho voluntário com o id ${idVolunteerWork}, não existe no nosso sistema. `,
+                message: `Trabalho voluntário não encontrado no nosso sistema. `,
                 success: false,
                 data: err
             })
-        } else {
-            connection.query('UPDATE VolunteerWork SET nameVolunteerWork = ? WHERE idVolunteerWork = ?', [nameVolunteerWork, idVolunteerWork], (err, result) => {
-                if (err) {
-                    return res.status(500).json({
-                        success: false,
-                        message: "Erro ao se conectar com o servidor.",
-                        data: err,
-                    })
-                }
-        
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({
-                        success: false,
-                        message: "Não foi possível alterar a sua requisição. Por favor, tente novamente.",
-                    })
-                } else {
-                    return res.status(200).json({
-                        success: true,
-                        message: "Nome atualizado com sucesso.",
-                    })
-                }
+        } 
+
+        connection.query('UPDATE VolunteerWork SET nameVolunteerWork = ? WHERE idVolunteerWork = ?', [nameVolunteerWork, idVolunteerWork], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao se conectar com o servidor.",
+                    data: err,
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Nome atualizado com sucesso.",
             })
-        }
+                
+         })
     })
 }
 
