@@ -26,7 +26,7 @@ exports.viewLikeMessagesByUser = (req, res) => {
     connection.query(`SELECT * 
         FROM Likes l
         JOIN Post p on l.Post_idPost = p.idPost
-        JOIN User u l.User_idUser = u.idUser
+        JOIN User u on l.User_idUser = u.idUser
         And u.idUser = ? AND l.Post_idPost = ? 
         
         `, [User_idUser, Post_idPost] ,(err, result) => {

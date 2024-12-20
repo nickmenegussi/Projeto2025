@@ -137,10 +137,9 @@ CREATE TABLE Facilitadores (
     User_idUser INT NOT NULL,
     description VARCHAR(255) NOT NULL,
     apelido VARCHAR(255) NOT NULL,
-    espiritname VARCHAR(255),
     espiritaSinceTime INT NOT NULL,
     memberSinceWhen DATETIME,
-    category VARCHAR(255) NOT NULL,
+    category ENUM('ESDE', 'CIEDE', 'MEDIUNIDADE') NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
 

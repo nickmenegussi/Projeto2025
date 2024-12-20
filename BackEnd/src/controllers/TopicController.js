@@ -78,13 +78,13 @@ exports.createTopic = async (req, res) => {
                         success: false,
                         data: err
                     })
-                } else {
-                    return res.status(200).json({
-                        success: true,
-                        message: "Tópico cadastrado com sucesso",
-                        data: result,
-                    })
-                }
+                } 
+                return res.status(200).json({
+                    success: true,
+                    message: "Tópico cadastrado com sucesso",
+                    data: result,
+                })
+                
             })
         }
     })
@@ -125,13 +125,13 @@ exports.updateTitle = (req, res) => {
                         success: true,
                         data: result
                     })
-                } else {
-                    return res.status(400).json({
-                        message: 'Não foi possível alterar as informações. Tente novamente.',
-                        success: false,
-                        data: err
-                    })
-                }
+                } 
+                return res.status(400).json({
+                    message: 'Não foi possível alterar as informações. Tente novamente.',
+                    success: false,
+                    data: err
+                })
+                
             })
         }
     })
@@ -171,13 +171,6 @@ exports.updateDescription = (req, res) => {
             })
         }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Não foi possível mudar o tópico. Tente novamente.",
-            })
-        }
-
         return res.status(200).json({
             success: true,
             message: "Tópico atualizado com sucesso.",
@@ -206,7 +199,7 @@ exports.updateTopicImage = (req, res) => {
         }
         
         if(result.length === 0){
-            return res.status(400).json({
+            return res.status(404).json({
                 message: 'Topico não encontrado. Verifique os dados e tente novamente.',
                 success: false,
                 data: err
@@ -221,20 +214,12 @@ exports.updateTopicImage = (req, res) => {
                         data: err,
                     })  
                 }
-
-                if(resultUpdateImgProfile.affectedRows === 0){
-                    return res.status(500).json({
-                        message: "Erro ao alterar a imagem do tópico. Por favor, tente novamente.",
-                        success: false,
-                        data: errUpdateImgProfile,
-                    })   
-                } else {
-                    return res.status(200).json({
-                        message: "Sucesso ao alterar a imagem do tópico.",
-                        success: true,
-                        data: resultUpdateImgProfile,
-                    })   
-                }
+                return res.status(200).json({
+                    message: "Sucesso ao alterar a imagem do tópico.",
+                    success: true,
+                    data: resultUpdateImgProfile,
+                })   
+                
             })
         }
     }
@@ -274,13 +259,12 @@ exports.deleteTopic = (req, res) => {
                         data: err
                     })
                 }
-                 else {
-                    return res.status(200).json({
-                        message: 'Tópico deletado com sucesso',
-                        success: true,
-                        data: result
-                    })
-                }
+                return res.status(200).json({
+                    message: 'Tópico deletado com sucesso',
+                    success: true,
+                    data: result
+                })
+                
              })
     
         }
