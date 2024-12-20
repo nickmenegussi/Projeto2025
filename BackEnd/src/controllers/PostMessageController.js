@@ -60,9 +60,8 @@ exports.viewPostByUser = (req, res) => {
 
 exports.createPost = (req, res) => {
   const image = req.file ? req.file.filename : null
-  const { content } = req.body
-  const Topic_idTopic = req.params.TopicId
-  const User_idUser = req.params.UserId
+  const { content, Topic_idTopic, User_idUser } = req.body
+  
 
   if (!content || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
@@ -70,6 +69,7 @@ exports.createPost = (req, res) => {
       message: "Preencha todos os campos de cadastro",
     })
   }
+
   // verificar se a postagem já está publicada
   connection.query(
     "SELECT * FROM Post where content = ? AND User_idUser = ?",
@@ -91,7 +91,7 @@ exports.createPost = (req, res) => {
           success: false,
         })
       }
-
+      // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
         "INSERT INTO Post(content, image, User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
         [content, image, User_idUser, Topic_idTopic],
@@ -235,19 +235,12 @@ exports.deletePost = (req, res) => {
           (err, result) => {
             if (err) {
               return res.status(500).json({
-                message: "Erro ao se conectar com o servidor.",
+                message: "Erro ao excluir a postagem. Tente novamente.",
                 success: false,
                 data: err,
               })
             }
-
-            if (result.affectedRows === 0) {
-              return res.status(400).json({
-                message: `Erro ao excluir postagem. Verifique os dados e tente novamente.`,
-                success: false,
-                data: err,
-              })
-            } else {
+           else {
               return res.status(200).json({
                 message: "Exclusão da postagem realizada com sucesso",
                 success: true,
