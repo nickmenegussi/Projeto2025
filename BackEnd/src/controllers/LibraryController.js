@@ -45,9 +45,9 @@ exports.viewOnlyOneBook = (req, res) => {
 }
 
 exports.createBook = (req, res) => {
-    const {namebook, author,overviewBook,curiosityBook  ,tagsBook , bookQuantity, status_Available} = req.body
+    const {namebook, author,overviewBook,curiosityBook  ,tagsBook , status_Available} = req.body
 
-    if(!namebook || !author || !tagsBook  || !overviewBook|| !curiosityBook || !bookQuantity || !status_Available){
+    if(!namebook || !author || !tagsBook  || !overviewBook|| !curiosityBook  || !status_Available){
         return res.status(400).json({
             success: false,
             message: "Preencha todos os campos de cadastro",
@@ -66,7 +66,7 @@ exports.createBook = (req, res) => {
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
         })
     } else {
-        connection.query('INSERT INTO Book(namebook,author,overviewBook,curiosityBook ,tagsBook,, bookQuantity, status_Available) VALUES(?, ?, ?, ?, ?, ?, ?) ',[namebook, author, overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available], (err, result) => {
+        connection.query('INSERT INTO Book(namebook,author,overviewBook,curiosityBook ,tagsBook, status_Available) VALUES(?, ?, ?, ?, ?, ?) ',[namebook, author, overviewBook,curiosityBook ,tagsBook ,status_Available], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",

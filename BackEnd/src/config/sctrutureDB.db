@@ -9,8 +9,6 @@ CREATE TABLE VolunteerWork (
     dateVolunteerWork DATETIME, 
     work_description VARCHAR(255),
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-    User_idUser INT, -- Opcional: caso um usuário seja responsável pelo trabalho
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
 
 -- Tabela Book
@@ -21,9 +19,8 @@ CREATE TABLE Book (
     overviewBook TEXT,
     curiosityBook TEXT,
     tagsBook ENUM('tag1', 'tag2', 'tag3'),
-    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
-    bookQuantity INT NOT NULL,
-    status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') DEFAULT 'indisponível'
+    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP
+    status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
 );
 
 -- Tabela User
@@ -32,7 +29,7 @@ CREATE TABLE User (
     nameUser VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    image_profile TEXT DEFAULT 'Sem imagem',
+    image_profile TEXT,
     status_permission ENUM('SuperAdmin', 'Admin', 'User'),
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -72,11 +69,10 @@ CREATE TABLE Post (
     image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     User_idUser INT NOT NULL,
-    Topic_idTopic INT NOT NULL
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    Topic_idTopic INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Topic_idTopic) REFERENCES Topic(idTopic)
-
-);
+)
 
 -- Tabela Comments
 CREATE TABLE Comments (
@@ -116,7 +112,9 @@ CREATE TABLE Topic (
     title VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     image TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    User_idUser INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
 
 -- Tabela CalendarEvents
