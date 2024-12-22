@@ -21,7 +21,7 @@ exports.viewReserves = (req, res) => {
 
 exports.viewReservesByUser = (req, res) => {
     const Cart_idCart = req.params.cartId // 'cartId' deve ser o nome do parâmetro na URL
-    const idUser = req.params.userId  
+    const idUser = req.data.id
     
     
     connection.query(`SELECT * 
@@ -45,13 +45,22 @@ exports.viewReservesByUser = (req, res) => {
                 message: `Não há itens reservados ainda!`,
               })
         }
-        else {
-            return res.status(200).json({
-              message: "Sucesso ao exibir os livros reservados",
-              success: true,
-              data: result
-            })
-          }
+
+        // verificar se o usuário logado é o mesmo que criou o tópico
+        if(result[0].User_idUser !== User_idUser){{
+            return res.status(403).json({
+                message: 'Você não tem permissão para alterar o tópico.',   
+                success: false,
+                data: err
+            })  
+        }}
+
+        return res.status(200).json({
+            message: "Sucesso ao exibir os livros reservados",
+            success: true,
+            data: result
+        })
+          
     })
 }
 
@@ -142,8 +151,9 @@ exports.createReserves = (req, res) => {
 
 exports.deleteReserve = (req, res) => {
     const idReserved = req.params.ReserveId
+    const idUser = req.data.id
 
-    connection.query('SELECT * FROM Reserves where idReserved = ?', [idReserved], (err, result) => {
+    connection.query(`SELECT * FROM Reserve where idReserved = ?`, [idReserved], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -158,8 +168,20 @@ exports.deleteReserve = (req, res) => {
                 success: false,
                 data: err
             })
-        } else {
-            connection.query('DELETE FROM Reserves where idReserved = ?', [idReserved], (err, result) => {
+        } 
+
+        // verificar se o usuário logado é o mesmo que criou o tópico
+        if(result[0].User_idUser !== idUser){{
+            return res.status(403).json({
+                message: 'Você não tem permissão para alterar o tópico.',   
+                success: false,
+                data: err
+            })  
+        }}
+            connection.query(`DELETE r FROM Reserves r
+                JOIN Cart c on r.Cart_idCart = c.idCart
+                JOIN User u on c.User_idUser = ? u.idUser
+                WHERE r.idReserved = ? AND u.idUser = ?`, [idReserved, idUser], (err, result) => {
                 if(err){
                     return res.status(500).json({
                         message: "Erro ao se conectar com o servidor.",
@@ -183,6 +205,6 @@ exports.deleteReserve = (req, res) => {
                 }
                 
             })
-        }
+        
     })
 }

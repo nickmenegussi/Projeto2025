@@ -21,9 +21,9 @@ exports.viewAllLoans = (req, res) => {
 
 exports.viewLoansByUser = (req, res) => {
     const Cart_idCart = req.params.Cart_idCart 
-    const idUser = req.params.UsuarioId
+    const idUser = req.data.id
 
-    // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenar como um Empréstimo.
+    // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenado como um Empréstimo.
     connection.query(`SELECT * FROM 
         Loans l, Cart c, Book b, User u
         WHERE l.Cart_idCart = c.idCart
@@ -47,13 +47,22 @@ exports.viewLoansByUser = (req, res) => {
             })
             
         }
-        else {
+
+        // verificar se o usuário logado é o mesmo que criou o tópico
+        if(result[0].User_idUser !== idUser){{
+            return res.status(403).json({
+                message: 'Você não tem permissão para alterar o tópico.',   
+                success: false,
+                data: err
+            })  
+        }}
+        
             return res.status(200).json({
               message: `Sucesso ao exibir os empréstimos do usuario ${idUser}`,
               success: true,
               data: result
             })
-          }
+          
     })
 }
 
@@ -144,6 +153,8 @@ exports.createLoan = (req, res) => {
 exports.updateReturnDate = (req, res) => {
     const idLoans = req.params.LoansId
     const { returnDate  } = req.body
+    const idUser = req.data.id
+
 
     if (!returnDate || !idLoans) {
         return res.status(400).json({
@@ -152,7 +163,7 @@ exports.updateReturnDate = (req, res) => {
         })
     }
 
-    connection.query('SELECT * FROM Loans WHERE idLoans = ?', [idLoans], (err, result) => {
+    connection.query(`SELECT * FROM Loans where idLoans = ?`, [idLoans], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -168,7 +179,22 @@ exports.updateReturnDate = (req, res) => {
             })
         }
 
-        connection.query('UPDATE Loans SET returnDate = ? WHERE idLoans = ?', [returnDate, idLoans], (err, result) => {
+        // verificar se o usuário logado é o mesmo que criou o tópico
+        if(result[0].User_idUser !== idUser){{
+            return res.status(403).json({
+                message: 'Você não tem permissão para alterar o tópico.',   
+                success: false,
+                data: err
+            })  
+        }}
+
+        connection.query(` UPDATE Loans l
+            JOIN Cart c on l.Cart_idCart = c.idCart
+            JOIN User u on c.User_idUser = u.idUser
+            SET l.returndate = ? 
+            WHERE l.idLoans = ? AND u.idUser = ?
+
+            `, [returnDate, idLoans, idUser], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     success: false,
@@ -188,8 +214,10 @@ exports.updateReturnDate = (req, res) => {
 
 exports.deleteLoan = (req, res) => {
     const idLoans = req.params.LoansId
+    const idUser = req.data.id
 
-    connection.query('SELECT * FROM Loans where idLoans = ?', [idLoans], (err, result) => {
+    connection.query(`
+        SELECT * FROM Loans where idLoans = ?`, [idLoans], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -204,8 +232,20 @@ exports.deleteLoan = (req, res) => {
                 success: false,
                 data: err
             })
-        } else {
-            connection.query('DELETE FROM Loan where idLoans = ?', [idLoans], (err, result) => {
+        } 
+
+        // verificar se o usuário logado é o mesmo que criou o tópico
+        if(result[0].User_idUser !== User_idUser){{
+            return res.status(403).json({
+                message: 'Você não tem permissão para alterar o tópico.',   
+                success: false,
+                data: err
+            })  
+        }}
+            connection.query(`DELETE l FROM Loans l
+                    JOIN Cart c on l.Cart_idCart = c.idCart
+                    JOIN User u on c.User_idUser = u.idUser
+                    WHERE l.idLoans = ? AND u.idUser = ?`, [idLoans, idUser], (err, result) => {
                 if(err){
                     return res.status(500).json({
                         message: "Erro ao se conectar com o servidor.",
@@ -229,6 +269,6 @@ exports.deleteLoan = (req, res) => {
                 }
                 
             })
-        }
+        
     })
 }

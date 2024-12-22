@@ -24,13 +24,13 @@ exports.viewPost = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewPostByUser = (req, res) => {
-  const User_idUser = req.params.UserId
+  const User_idUser = req.data.id
 
   connection.query(
     `SELECT * 
         FROM Post p
         JOIN User u on p.User_idUser = u.idUser
-        And u.idUser = ? 
+        WHERE u.idUser = ? 
         
         `,
     [User_idUser],
@@ -60,10 +60,10 @@ exports.viewPostByUser = (req, res) => {
 
 exports.createPost = (req, res) => {
   const image = req.file ? req.file.filename : null
-  const { content, Topic_idTopic, User_idUser } = req.body
+  const { content, Topic_idTopic, User_User_idUser } = req.body
   
 
-  if (!content || !Topic_idTopic || !User_idUser) {
+  if (!content || !Topic_idTopic || !User_User_idUser) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
@@ -72,8 +72,8 @@ exports.createPost = (req, res) => {
 
   // verificar se a postagem já está publicada
   connection.query(
-    "SELECT * FROM Post where content = ? AND User_idUser = ?",
-    [content, User_idUser],
+    "SELECT * FROM Post where content = ? AND User_User_idUser = ?",
+    [content, User_User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -93,8 +93,8 @@ exports.createPost = (req, res) => {
       }
       // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
-        "INSERT INTO Post(content, image, User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
-        [content, image, User_idUser, Topic_idTopic],
+        "INSERT INTO Post(content, image, User_User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
+        [content, image, User_User_idUser, Topic_idTopic],
         (errInsert, resultInsert) => {
           if (errInsert) {
             return res.status(500).json({
@@ -117,6 +117,7 @@ exports.createPost = (req, res) => {
 
 exports.updateContentPost = (req, res) => {
   const idPost = req.params.IdPost
+  const User_idUser = req.data.id
   const { content } = req.body
 
   connection.query(
@@ -138,8 +139,8 @@ exports.updateContentPost = (req, res) => {
         })
       } else {
         connection.query(
-          "UPDATE Post SET content = ? WHERE idPost = ?",
-          [content],
+          `UPDATE FROM Post where idPost = ? AND User_idUser = ?`,
+          [content, idPost, User_idUser],
           (err, result) => {
             if (err) {
               return res.status(500).json({
@@ -164,6 +165,7 @@ exports.updateContentPost = (req, res) => {
 exports.updateImagePost = (req, res) => {
   const idPost = req.params.IdPost
   const { image } = req.file ? req.file.filename : null
+  const User_idUser = req.data.id
 
   connection.query(
     "SELECT * FROM WHERE idPost = ?",
@@ -184,8 +186,9 @@ exports.updateImagePost = (req, res) => {
         })
       } else {
         connection.query(
-          "UPDATE Post SET image = ? WHERE idPost = ?",
-          [image],
+          `UPDATE FROM Post where idPost = ? AND User_idUser = ?
+          `,
+          [image, idPost, User_idUser],
           (err, result) => {
             if (err) {
               return res.status(500).json({
@@ -209,6 +212,7 @@ exports.updateImagePost = (req, res) => {
 
 exports.deletePost = (req, res) => {
   const idPost = req.params.PostId
+  const User_idUser = req.data.id
 
   connection.query(
     "SELECT * FROM Post where idPost = ?",
@@ -230,8 +234,9 @@ exports.deletePost = (req, res) => {
         })
       } else {
         connection.query(
-          "DELETE FROM Post where idPost = ?",
-          [idPost],
+          `DELETE FROM Post WHERE idPost = ? AND User_idUser = ?
+          `,
+          [idPost, User_idUser],
           (err, result) => {
             if (err) {
               return res.status(500).json({
