@@ -2,7 +2,17 @@ const connection = require("../config/db")
 const bcrypt = require("bcrypt")
 
 exports.viewOnlyUser = (req, res) => {
-    const idUser = req.data.id
+    const dataUser = req.data.id
+    const roleUser = req.data.role
+    const idUser = req.params.idUser
+
+    if(roleUser !== 'Admin' && roleUser !== 'SuperAdmin' && dataUser !== idUser){
+        return res.status(403).json({
+            message: "Você não tem permissão para acessar este usuário.",
+            success: false
+        })
+    }
+
     connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -66,7 +76,7 @@ exports.register = async (req, res) => {
                 data: err
             })
         } else {
-            return res.status(201).json({
+            return res.status(200).json({
                 success: true,
                 message: "Usuário cadastrado com sucesso",
                 data: result,
@@ -85,7 +95,6 @@ exports.updateUser = (req, res) => {
             message: "Preencha todos os campos de cadastro",
         })
     }
-
 
     connection.query('SELECT * FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
         if(err) {
@@ -106,7 +115,7 @@ exports.updateUser = (req, res) => {
             const updateInformation = 'UPDATE User set email = ? where idUser = ?'
             connection.query(updateInformation, [email, idUser], (err, result) => {
                 if(result){
-                    return res.status(201).json({
+                    return res.status(200).json({
                         message: 'Sucesso ao alterar informações do usuário.',
                         success: true,
                         data: result
@@ -165,7 +174,7 @@ exports.updateUserName = (req, res) => {
                 })
             }
     
-            return res.status(201).json({
+            return res.status(200).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
                 data: result
@@ -238,7 +247,7 @@ exports.updateUserPassword = (req, res) => {
                                 data: errUpdatePassword
                             })
                         } else {
-                            return res.status(201).json({
+                            return res.status(200).json({
                                 message: 'Sucesso ao alterar a senha',
                                 success: false,
                                 data: resultUpdatePassword
@@ -268,6 +277,7 @@ exports.updateUserImageProfile = (req, res) => {
         })
     }
 
+    
     connection.query('SELECT * FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
         if(err) {
             return res.status(500).json({
@@ -301,7 +311,7 @@ exports.updateUserImageProfile = (req, res) => {
                         data: errUpdateImgProfile,
                     })   
                 } else {
-                    return res.status(201).json({
+                    return res.status(200).json({
                         message: "Sucesso ao alterar foto de perfil.",
                         success: true,
                         data: resultUpdateImgProfile,
@@ -314,7 +324,10 @@ exports.updateUserImageProfile = (req, res) => {
 }
 
 exports.deleteAccountUser = (req, res) => {
-    const idUser = req.data.id  
+    const idUser = req.params.idUser
+    const roleUser = req.data.role
+    const dataUser = req.data.id
+
 
     if(!idUser){
         return res.status(400).json({
@@ -322,7 +335,15 @@ exports.deleteAccountUser = (req, res) => {
             message: "Preencha todos os campos de cadastro",
         })
     }
-    connection.query('SELECT * FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
+
+    if(roleUser !== 'Admin' && roleUser !== 'SuperAdmin' && dataUser !== idUser){
+        return res.status(403).json({
+            message: "Você não tem permissão para deletar este usuário.",
+            success: false
+        })
+    }
+
+    connection.query(`SELECT * FROM User WHERE idUser = ? WHERE status_permission = 'User'`, [idUser] ,(err, result) => {
         if(err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -354,7 +375,7 @@ exports.deleteAccountUser = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(201).json({
+                    return res.status(200).json({
                         message: 'Usuário deletado com sucesso',
                         success: true,
                         data: result
