@@ -2,7 +2,7 @@ const connection = require("../config/db")
 const bcrypt = require("bcrypt")
 
 exports.viewOnlyUser = (req, res) => {
-    const idUser = req.params.userId 
+    const idUser = req.data.id
     connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
@@ -76,7 +76,7 @@ exports.register = async (req, res) => {
 }
 
 exports.updateUser = (req, res) => {
-    const idUser = req.params.userId  
+    const idUser = req.data.id
     const {email} = req.body
  
     if(!idUser || !email){
@@ -124,41 +124,58 @@ exports.updateUser = (req, res) => {
 }
 
 exports.updateUserName = (req, res) => {
-    const idUser = req.params.userId ;
-    const { nameUser } = req.body;
+    const idUser = req.data.id
+    const { nameUser } = req.body
 
     if (!nameUser) {
         return res.status(400).json({
             success: false,
             message: "O campo 'nameUser' é obrigatório.",
-        });
+        })
     }
 
-    connection.query('UPDATE User SET nameUser = ? WHERE idUser = ?', [nameUser, idUser], (err, result) => {
+    connection.query('SELECT * FROM User WHERE idUser = ?', [idUser], (err, result) => {
         if (err) {
             return res.status(500).json({
                 success: false,
                 message: "Erro ao se conectar com o servidor.",
                 data: err,
-            });
+            })
         }
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: "Usuário não encontrado.",
-            });
+            })
         }
-
-        return res.status(201).json({
-            success: true,
-            message: "Nome atualizado com sucesso.",
-        });
-    });
-};
+        connection.query('UPDATE User SET nameUser = ? WHERE idUser = ?', [nameUser, idUser], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Erro ao se conectar com o servidor.",
+                    data: err,
+                })
+            }
+    
+            if (result.affectedRows === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Erro ao atualizar o nome do Usuário.",
+                })
+            }
+    
+            return res.status(201).json({
+                success: true,
+                message: "Nome atualizado com sucesso.",
+                data: result
+            })
+        })
+    })
+}
 
 exports.updateUserPassword = (req, res) => {
-    const idUser = req.params.userId  
+    const idUser = req.data.id
     const {newPassword, currentPassword, confirmedPassword} = req.body
  
     if(!idUser || !newPassword || !currentPassword || !confirmedPassword){
@@ -232,7 +249,7 @@ exports.updateUserPassword = (req, res) => {
                     return res.status(400).json({
                         message: 'Nenhuma alteração foi feita. Por favor, tente novamente.',
                         success: false,
-                    });
+                    })
                 }
             })
         
@@ -251,7 +268,7 @@ exports.updateUserImageProfile = (req, res) => {
         })
     }
 
-    connection.query('SELECT idUser FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
+    connection.query('SELECT * FROM User WHERE idUser = ?', [idUser] ,(err, result) => {
         if(err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",

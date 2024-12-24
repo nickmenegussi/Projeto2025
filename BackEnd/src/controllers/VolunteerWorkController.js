@@ -53,20 +53,38 @@ exports.createVolunteerWork = (req, res) => {
             message: "Preencha todos os campos de cadastro",
         })
     }
-    connection.query('INSERT INTO VolunteerWork(nameVolunteerWork,address,dateVolunteerWork,work_description) VALUES(?, ?, ?, ?, ?) ',[nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
+
+    connection.query('SELECT * FROM VolunteerWork where nameVolunteerWork = ? AND address = ? AND dateVolunteerWork AND work_description = ?', [nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
         if(err){
-            return res.status(500).json({
+            return res.status(500).json({   
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
                 data: err
             })
-        } 
-        return res.status(201).json({
-            success: true,
-            message: "Trabalho Voluntário cadastrado com sucesso",
-            data: result,
-        })
+        }
         
+        if(result.length > 0){ 
+            return res.status(409).json({
+                message: "Trabalho voluntário já cadastrado.",
+                success: false,
+                data: err
+            })
+        }
+        connection.query('INSERT INTO VolunteerWork(nameVolunteerWork,address,dateVolunteerWork,work_description) VALUES(?, ?, ?, ?, ?) ',[nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
+            if(err){
+                return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor.",
+                    success: false,
+                    data: err
+                })
+            } 
+            return res.status(201).json({
+                success: true,
+                message: "Trabalho Voluntário cadastrado com sucesso",
+                data: result,
+            })
+            
+        })
     })
 }
 
