@@ -47,7 +47,7 @@ exports.login = (req, res) => {
             expiresIn: '2h'
         })
 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Login realizado com sucesso",
             success: true,
             data: {user: user, token: token}
@@ -109,7 +109,7 @@ exports.GenerateOtp = (req, res) => {
                                 text: `Seu código para esse Otp é ${otp}`
                             })
     
-                            return res.status(200).json({
+                            return res.status(201).json({
                                 message: 'Succeso ao gerar a OTP',
                                 success: true,
                                 data: result
@@ -162,7 +162,7 @@ exports.VerificationOtp = (req, res) => {
                     data: err
                 })
             } else {
-                return res.status(200).json({
+                return res.status(201).json({
                     message: 'Otp verificado com sucesso!'
                 })
             }

@@ -119,7 +119,7 @@ exports.createLikes = (req, res) => {
               data: errInsert,
             })
           } else {
-            return res.status(200).json({
+            return res.status(201).json({
               success: true,
               message: "Mensagem curtida com sucesso.",
               data: resultInsert,
@@ -182,7 +182,7 @@ exports.deleteLike = (req, res) => {
                 data: err,
               })
             } else {
-              return res.status(200).json({
+              return res.status(201).json({
                 message: "Curtida desfeita com sucesso",
                 success: true,
                 data: result,

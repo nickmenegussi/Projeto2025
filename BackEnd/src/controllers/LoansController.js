@@ -130,7 +130,7 @@ exports.createLoan = (req, res) => {
                                     data: errInsert
                                 })
                             } else {
-                                return res.status(200).json({
+                                return res.status(201).json({
                                     success: true,
                                     message: "Empréstimo cadastrado com sucesso.",
                                     data: resultInsert,
@@ -203,7 +203,7 @@ exports.updateReturnDate = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Retorno do livro atualizada com sucesso.",
                 data: result
@@ -261,7 +261,7 @@ exports.deleteLoan = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Empréstimo deletado com sucesso',
                         success: true,
                         data: result

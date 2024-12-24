@@ -103,7 +103,7 @@ exports.createPost = (req, res) => {
               data: errInsert,
             })
           } else {
-            return res.status(200).json({
+            return res.status(201).json({
               success: true,
               message: "Publicação criada com sucesso.",
               data: resultInsert,
@@ -149,7 +149,7 @@ exports.updateContentPost = (req, res) => {
                 data: err,
               })
             } else {
-              return res.status(200).json({
+              return res.status(201).json({
                 message: "Conteúdo da postagem foi atualizado com sucesso!",
                 success: true,
                 data: result,
@@ -197,7 +197,7 @@ exports.updateImagePost = (req, res) => {
                 data: err,
               })
             } else {
-              return res.status(200).json({
+              return res.status(201).json({
                 message: "A imagem da postagem foi atualizada com sucesso!",
                 success: true,
                 data: result,
@@ -246,7 +246,7 @@ exports.deletePost = (req, res) => {
               })
             }
            else {
-              return res.status(200).json({
+              return res.status(201).json({
                 message: "Exclusão da postagem realizada com sucesso",
                 success: true,
                 data: result,

@@ -128,7 +128,7 @@ exports.createReserves = (req, res) => {
                                     data: errInsert
                                 })
                             } else {
-                                return res.status(200).json({
+                                return res.status(201).json({
                                     success: true,
                                     message: "Livro reservado foi cadastrado com sucesso.",
                                     data: resultInsert,
@@ -197,7 +197,7 @@ exports.deleteReserve = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Reserva do livro deletado com sucesso',
                         success: true,
                         data: result

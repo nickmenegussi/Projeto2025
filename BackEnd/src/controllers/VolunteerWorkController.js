@@ -53,20 +53,38 @@ exports.createVolunteerWork = (req, res) => {
             message: "Preencha todos os campos de cadastro",
         })
     }
-    connection.query('INSERT INTO VolunteerWork(nameVolunteerWork,address,dateVolunteerWork,work_description) VALUES(?, ?, ?, ?, ?) ',[nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
+
+    connection.query('SELECT * FROM VolunteerWork where nameVolunteerWork = ? AND address = ? AND dateVolunteerWork AND work_description = ?', [nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
         if(err){
-            return res.status(500).json({
+            return res.status(500).json({   
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
                 data: err
             })
-        } 
-        return res.status(200).json({
-            success: true,
-            message: "Trabalho Voluntário cadastrado com sucesso",
-            data: result,
-        })
+        }
         
+        if(result.length > 0){ 
+            return res.status(409).json({
+                message: "Trabalho voluntário já cadastrado.",
+                success: false,
+                data: err
+            })
+        }
+        connection.query('INSERT INTO VolunteerWork(nameVolunteerWork,address,dateVolunteerWork,work_description) VALUES(?, ?, ?, ?, ?) ',[nameVolunteerWork, address, dateVolunteerWork, work_description], (err, result) => {
+            if(err){
+                return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor.",
+                    success: false,
+                    data: err
+                })
+            } 
+            return res.status(201).json({
+                success: true,
+                message: "Trabalho Voluntário cadastrado com sucesso",
+                data: result,
+            })
+            
+        })
     })
 }
 
@@ -107,7 +125,7 @@ exports.updateNameVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
             })
@@ -153,7 +171,7 @@ exports.updateNameVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
             })
@@ -198,7 +216,7 @@ exports.updateAddressVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Endereço atualizado com sucesso.",
             })
@@ -243,7 +261,7 @@ exports.updateDateVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Data do trabalho atualizada com sucesso.",
             })
@@ -288,7 +306,7 @@ exports.updateWorkDescriptionVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Descrição do trabalho atualizada com sucesso.",
             })
@@ -333,7 +351,7 @@ exports.deleteVolunteerWork = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Trabalho voluntário deletado com sucesso',
                         success: true,
                         data: err
