@@ -5,10 +5,13 @@ const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
 router.get('/admin', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), ViewAllAdmins)
-router.get('/admin/:UserId', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), ViewOnlyAdminByUser)
+router.get('/admin/:idUser', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), ViewOnlyAdminByUser)
 
-router.patch('/admin/:UserId/permission', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), updateUserNoPermission)
-router.patch('/admin/:UserId/permission/admin', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), updateUserPermissionAdminToUser)
+// essa mudança serve para mudar o status de um user para admin
+router.patch('/admin/:idUser', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']), updateUserNoPermission)
+
+// essa mudança serve para mudar o status de um admin para user
+router.patch('/admin/:idUser', authMiddleware, verifyPermission(['SuperAdmin']), updateUserPermissionAdminToUser)
 
 
 module.exports = router
