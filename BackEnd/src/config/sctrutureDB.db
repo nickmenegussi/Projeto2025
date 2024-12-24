@@ -100,10 +100,13 @@ CREATE TABLE Likes (
 CREATE TABLE Lecture (
     idLecture INT AUTO_INCREMENT PRIMARY KEY,
     nameLecture VARCHAR(255),
-    dateLecture DATE,
-    timeLecture TIME,
-    description TEXT,
-    video_url TEXT
+    dateLecture DATETIME,
+    timeLecture varchar(255),
+    description varchar(255),
+    link_url varchar(255),
+    video_url TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+
 );
 
 -- Tabela Topic
@@ -123,7 +126,8 @@ CREATE TABLE CalendarEvents (
     title VARCHAR(255),
     link VARCHAR(255),
     description TEXT NOT NULL,
-    eventTime DATETIME,
+    start DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    end DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     attachment TEXT,
     User_idUser INT NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
