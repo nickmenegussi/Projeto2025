@@ -1,10 +1,10 @@
 const connection = require("../config/db")
 
 exports.viewOnlyTopicById = (req, res) => {
-  const idTopic = req.params.idTopic
+  const idTopic = req.params.topicId
   connection.query(
     "SELECT * FROM Topic where idTopic = ?",
-    [idTopic],
+    [idTopic, ],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -60,6 +60,8 @@ exports.createTopic = async (req, res) => {
     })
   }
 
+
+
   connection.query(
     "SELECT * FROM Topic WHERE title = ? AND description = ?",
     [title, description],
@@ -103,7 +105,7 @@ exports.createTopic = async (req, res) => {
 }
 
 exports.updateTitle = (req, res) => {
-  const idTopic = req.params.TopicId
+  const idTopic = req.params.topicId
   const { title } = req.body
   const User_idUser = req.data.id
 
@@ -115,8 +117,8 @@ exports.updateTitle = (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ?",
-    [idTopic],
+    "SELECT * FROM Topic WHERE idTopic = ? and User_idUser = ?",
+    [idTopic, User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -174,7 +176,7 @@ exports.updateTitle = (req, res) => {
 }
 
 exports.updateDescription = (req, res) => {
-  const idTopic = req.params.idTopic
+  const idTopic = req.params.topicId
   const { description } = req.body
   const User_idUser = req.data.id
 
@@ -184,9 +186,10 @@ exports.updateDescription = (req, res) => {
       message: "O campo 'descrição' é obrigatório.",
     })
   }
+
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ?",
-    [idTopic],
+    "SELECT * FROM Topic WHERE idTopic = ? WHERE User_idUser = ?",
+    [idTopic, User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -238,7 +241,7 @@ exports.updateDescription = (req, res) => {
 
 exports.updateTopicImage = (req, res) => {
   const image = req.file ? req.file.filename : null
-  const idTopic = req.params.TopicId
+  const idTopic = req.params.topicId
   const User_idUser = req.data.id
 
   if (!image) {
@@ -249,8 +252,8 @@ exports.updateTopicImage = (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ?",
-    [idTopic],
+    "SELECT * FROM Topic WHERE idTopic = ? WHERE User_idUser = ?",
+    [idTopic, User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -306,7 +309,7 @@ exports.updateTopicImage = (req, res) => {
 }
 
 exports.deleteTopic = (req, res) => {
-  const idTopic = req.params.TopicId
+  const idTopic = req.params.topicId
   const User_idUser = req.data.id
 
   if (!idTopic) {
@@ -316,8 +319,8 @@ exports.deleteTopic = (req, res) => {
     })
   }
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ?",
-    [idTopic],
+    "SELECT * FROM Topic WHERE idTopic = ? WHERE User_idUser = ?",
+    [idTopic, User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
