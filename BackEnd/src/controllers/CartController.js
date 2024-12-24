@@ -95,7 +95,7 @@ exports.updateAction = (req, res) => {
             })
           }
 
-          return res.status(200).json({
+          return res.status(201).json({
             success: true,
             message: "A categoria do item do carrinho foi atualizada com sucesso.",
             data: result
@@ -158,7 +158,7 @@ exports.createCart = (req, res) => {
                   data: err,
                 })
               } else {
-                return res.status(200).json({
+                return res.status(201).json({
                   success: true,
                   message: "Carrinho cadastrado com sucesso",
                   data: result,
@@ -213,7 +213,7 @@ exports.deleteCart = (req, res) => {
                 data: err,
               })
             } else {
-              return res.status(200).json({
+              return res.status(201).json({
                 message: "Carrinho deletado com sucesso",
                 success: true,
                 data: result,

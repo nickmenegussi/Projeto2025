@@ -66,7 +66,7 @@ exports.register = async (req, res) => {
                 data: err
             })
         } else {
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Usuário cadastrado com sucesso",
                 data: result,
@@ -106,7 +106,7 @@ exports.updateUser = (req, res) => {
             const updateInformation = 'UPDATE User set email = ? where idUser = ?'
             connection.query(updateInformation, [email, idUser], (err, result) => {
                 if(result){
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Sucesso ao alterar informações do usuário.',
                         success: true,
                         data: result
@@ -150,7 +150,7 @@ exports.updateUserName = (req, res) => {
             });
         }
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: "Nome atualizado com sucesso.",
         });
@@ -184,7 +184,7 @@ exports.updateUserPassword = (req, res) => {
                 success: false,
                 data: err
             })
-        } else {
+        } 
             const user = result[0]
             
             const passwordMatch = await bcrypt.compare(currentPassword, user.password)
@@ -221,7 +221,7 @@ exports.updateUserPassword = (req, res) => {
                                 data: errUpdatePassword
                             })
                         } else {
-                            return res.status(200).json({
+                            return res.status(201).json({
                                 message: 'Sucesso ao alterar a senha',
                                 success: false,
                                 data: resultUpdatePassword
@@ -235,14 +235,14 @@ exports.updateUserPassword = (req, res) => {
                     });
                 }
             })
-        }
+        
     }
     })
 }
 
 exports.updateUserImageProfile = (req, res) => {
     const image_profile = req.file ? req.file.filename : null 
-    const idUser = req.params.userId  
+    const idUser = req.data.id 
 
     if(!idUser){
         return res.status(400).json({
@@ -284,7 +284,7 @@ exports.updateUserImageProfile = (req, res) => {
                         data: errUpdateImgProfile,
                     })   
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: "Sucesso ao alterar foto de perfil.",
                         success: true,
                         data: resultUpdateImgProfile,
@@ -297,7 +297,7 @@ exports.updateUserImageProfile = (req, res) => {
 }
 
 exports.deleteAccountUser = (req, res) => {
-    const idUser = req.params.userId  
+    const idUser = req.data.id  
 
     if(!idUser){
         return res.status(400).json({
@@ -337,7 +337,7 @@ exports.deleteAccountUser = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Usuário deletado com sucesso',
                         success: true,
                         data: result

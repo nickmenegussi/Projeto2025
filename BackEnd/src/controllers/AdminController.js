@@ -85,7 +85,7 @@ exports.updateUserNoPermission = (req,res) => {
                     })
                 }
 
-                return res.status(200).json({
+                return res.status(201).json({
                     message: 'Sucesso ao mudar a permissão do usuário.',
                     success: true,
                     data: result
@@ -131,7 +131,7 @@ exports.updateUserPermissionAdminToUser = (req,res) => {
                     })
                 }
 
-                return res.status(200).json({
+                return res.status(201).json({
                     message: 'Sucesso ao mudar a permissão do usuário.',
                     success: true,
                     data: result

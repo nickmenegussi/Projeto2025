@@ -294,7 +294,7 @@ exports.updateTopicImage = (req, res) => {
               data: err,
             })
           }
-          return res.status(200).json({
+          return res.status(201).json({
             message: "Sucesso ao alterar a imagem do tópico.",
             success: true,
             data: resultUpdateImgProfile,
@@ -359,7 +359,7 @@ exports.deleteTopic = (req, res) => {
               data: err,
             })
           }
-          return res.status(200).json({
+          return res.status(201).json({
             message: "Tópico deletado com sucesso",
             success: true,
             data: result,

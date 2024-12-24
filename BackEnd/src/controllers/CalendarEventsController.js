@@ -78,7 +78,7 @@ exports.createEvent = (req, res) => {
         } 
         
         if(result.length > 0){
-            return res.status(404).json({
+            return res.status(400).json({
                 message: "Esse evento já foi criado.",
                 success: false,
                 data: result
@@ -142,7 +142,7 @@ exports.updateEventTitle = (req, res) => {
                   })
             } 
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Título do evento atualizado com sucesso.",
                 success: true,
                 data: result
@@ -190,7 +190,7 @@ exports.updateEventdescription = (req, res) => {
                   })
             } 
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Descrição do evento atualizada com sucesso.",
                 success: true,
                 data: result
@@ -237,7 +237,7 @@ exports.updateEventStart = (req, res) => {
                   })
             } 
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Início do evento atualizado com sucesso.",
                 success: true,
                 data: result
@@ -284,7 +284,7 @@ exports.updateEventEnd = (req, res) => {
                   })
             } 
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Fim do evento atualizado com sucesso.",
                 success: true,
                 data: result
@@ -332,7 +332,7 @@ exports.updateAttachment = (req, res) => {
                   })
             } 
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Anexo do evento atualizado com sucesso.",
                 success: true,
                 data: result

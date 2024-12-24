@@ -77,7 +77,7 @@ exports.createNotification = (req, res) => {
               })
         } 
 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Sucesso ao criar a mensagem.",
             success: true,
             data: result,
@@ -110,13 +110,13 @@ exports.getNotificationsStatusofRead = (req, res) => {
         }
 
         if(result[0].isRead === true){
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Mensagem lida.",
                 success: true,
                 data: result,
             })
         } 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Mensagem não lida.",
             success: true,
             data: result,
@@ -167,7 +167,7 @@ exports.updateNotificationStatusofRead = (req, res) => {
                   })
             } 
     
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "O status da mensagem foi atualizado.",
                 success: true,
                 data: result,
@@ -231,7 +231,7 @@ exports.updateNotificationMessage = (req, res) => {
                   })
             } 
     
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "A mensagem foi atualizada.",
                 success: true,
                 data: result,
@@ -285,7 +285,7 @@ exports.deleteNotification = (req, res) => {
                   })
             } 
     
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "A notificação foi deletada.",
                 success: true,
                 data: result,

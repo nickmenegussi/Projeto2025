@@ -62,7 +62,7 @@ exports.createLecture = (req, res) => {
               })
         } 
 
-        if(result.length === 0){
+        if(result.length > 0){
             return res.status(409).json({
                 message: "Palestra já cadastrada.",
                 success: false,
@@ -78,6 +78,12 @@ exports.createLecture = (req, res) => {
                     data: err,
                 })
                 } 
+            })
+
+            return res.status(201).json({
+                message: "Palestra criada com sucesso.",
+                success: true,
+                data: result
             })
     })
 }

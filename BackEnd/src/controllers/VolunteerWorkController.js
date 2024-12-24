@@ -61,7 +61,7 @@ exports.createVolunteerWork = (req, res) => {
                 data: err
             })
         } 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: "Trabalho Voluntário cadastrado com sucesso",
             data: result,
@@ -107,7 +107,7 @@ exports.updateNameVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
             })
@@ -153,7 +153,7 @@ exports.updateNameVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Nome atualizado com sucesso.",
             })
@@ -198,7 +198,7 @@ exports.updateAddressVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Endereço atualizado com sucesso.",
             })
@@ -243,7 +243,7 @@ exports.updateDateVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Data do trabalho atualizada com sucesso.",
             })
@@ -288,7 +288,7 @@ exports.updateWorkDescriptionVolunteerWork = (req, res) => {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: "Descrição do trabalho atualizada com sucesso.",
             })
@@ -333,7 +333,7 @@ exports.deleteVolunteerWork = (req, res) => {
                         data: err
                     })
                 } else {
-                    return res.status(200).json({
+                    return res.status(201).json({
                         message: 'Trabalho voluntário deletado com sucesso',
                         success: true,
                         data: err
