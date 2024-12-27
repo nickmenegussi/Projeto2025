@@ -21,3 +21,4 @@ const verifyPermission = (allowedRoles) => {
   }
 }
 
+module.exports = verifyPermission;
