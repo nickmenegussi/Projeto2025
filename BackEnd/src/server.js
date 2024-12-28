@@ -1,14 +1,44 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const port = 5130
+const port = 3001
 
-
+const userRouter = require('./routers/UserRouter')
+const adminRouter = require('./routers/AdminRouter')   
+const calendarRouter = require('./routers/CalendarEventsRouter')
+const libraryRouter = require('./routers/LibraryRouter')
+const volunteerWorkRouter = require('./routers/VolunteerWorkRouter')
+const topicPostRouter = require('./routers/TopicRouter')
+const postRouter = require('./routers/PostMessageRouter')
+const cart = require('./routers/CartRouter')
+const reserves = require('./routers/ReservesRouter')
+const otpRouter = require('./routers/OtpRouter')
+const notifications = require('./routers/Notifications')
+const facilitadores = require('./routers/FacilitadoresUser')
+const loans = require('./routers/LoansRouter')
+const likeMessages = require('./routers/LikesMessages')
+const lecture = require('./routers/LectureRouter')
 
 const app = express()
 app.use(cors()) // permitir que os navegadores acessem diferentes domíniose
 app.use(express.json())
 dotenv.config()
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
 
-app.listen(port, () => console.log(`Rodando na porta ${port}`));
+app.use('/user', userRouter)
+app.use('/admin', adminRouter)
+app.use('/calendar', calendarRouter)
+app.use('/library', libraryRouter)
+app.use('/volunteerWork', volunteerWorkRouter)
+app.use('/topic', topicPostRouter)
+app.use('/post', postRouter)
+app.use('/cart', cart)
+app.use('/reserves', reserves)
+app.use('/loans', loans)
+app.use('/otp', otpRouter)
+app.use('/notifications', notifications)
+app.use('/facilitadores', facilitadores)
+app.use('/likeMessages', likeMessages)
+app.use('/lecture', lecture)
+
+app.listen(port, () => console.log(`Rodando na porta ${port}`))

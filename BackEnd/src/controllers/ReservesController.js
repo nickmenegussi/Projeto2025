@@ -20,9 +20,9 @@ exports.viewReserves = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewReservesByUser = (req, res) => {
-    const Cart_idCart = req.params.cartId // 'cartId' deve ser o nome do parâmetro na URL
-    const idUser = req.data.id
-    
+    const Cart_idCart = req.params.cartId
+    const idUser = req.params.userId
+    const userData = req.data
     
     connection.query(`SELECT * 
         FROM Reserves r, Cart c, User u, Book b
@@ -47,11 +47,10 @@ exports.viewReservesByUser = (req, res) => {
         }
 
         // verificar se o usuário logado é o mesmo que criou o tópico
-        if(result[0].User_idUser !== User_idUser){{
+        if(result[0].User_idUser !== idUser && userData.role !== 'Admin' && userData.role !== 'SuperAdmin'){{
             return res.status(403).json({
-                message: 'Você não tem permissão para alterar o tópico.',   
-                success: false,
-                data: err
+                message: 'Você não tem permissão para ver o tópico.',   
+                success: false
             })  
         }}
 
@@ -152,6 +151,7 @@ exports.createReserves = (req, res) => {
 exports.deleteReserve = (req, res) => {
     const idReserved = req.params.ReserveId
     const idUser = req.data.id
+    const userData = req.data
 
     connection.query(`SELECT * FROM Reserve where idReserved = ?`, [idReserved], (err, result) => {
         if(err){
@@ -171,7 +171,7 @@ exports.deleteReserve = (req, res) => {
         } 
 
         // verificar se o usuário logado é o mesmo que criou o tópico
-        if(result[0].User_idUser !== idUser){{
+        if(result[0].User_idUser !== idUser && userData.role !== 'Admin' && userData.role !== 'SuperAdmin'){{
             return res.status(403).json({
                 message: 'Você não tem permissão para alterar o tópico.',   
                 success: false,

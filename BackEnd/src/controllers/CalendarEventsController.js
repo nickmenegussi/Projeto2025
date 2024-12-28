@@ -341,3 +341,42 @@ exports.updateAttachment = (req, res) => {
     })
 
 }
+
+exports.deleteEvent = (req, res) => {   
+    const User_idUser = req.data.id
+    const idCalendarEvents = req.params.idCalendarEvents
+
+    connection.query(`SELECT * FROM CalendarEvents WHERE idCalendarEvents = ? AND User_idUser = ?`, [idCalendarEvents, User_idUser], (err, result) => {
+        if (err) {
+            return res.status(500).json({
+                message: "Erro ao se conectar com o servidor.",
+                success: false,
+                data: err,
+              })
+        } 
+        
+        if(result.length === 0){
+            return res.status(404).json({
+                message: "Evento não encontrado.",
+                success: false,
+                data: result
+            })
+        }
+
+        connection.query(`DELETE FROM CalendarEvents WHERE idCalendarEvents = ? AND User_idUser = ?`, [idCalendarEvents, User_idUser], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor.",
+                    success: false,
+                    data: err,
+                  })
+            } 
+
+            return res.status(201).json({
+                message: "Evento deletado com sucesso.",
+                success: true,
+                data: result
+            })
+        })
+    })
+}   
