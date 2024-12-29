@@ -8,7 +8,7 @@ const RootLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false}} />
       <Stack.Screen name="profile" options={{ title: "Profile", headerBackTitle: "index"}} />
-
+      
     </Stack>
   )
 }

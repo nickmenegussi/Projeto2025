@@ -4,7 +4,7 @@ import React from 'react'
 const profile = () => {
   return (
     <View style={styles.container}>
-      <Text>Hello, i'm developing this page.</Text>
+      <Text>Hello, I'm developing this page.</Text>
     </View>
   )
 }
