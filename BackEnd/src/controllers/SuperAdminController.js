@@ -1,5 +1,4 @@
 const connection = require('../config/db')
-const bcrypt = require('bcrypt')
 
 exports.ViewAllAdmins = (req,res) => {
     connection.query(`SELECT * FROM User WHERE status_permission = 'Admin'`, (err, result) => {
@@ -62,7 +61,6 @@ exports.ViewOnlyAdminByUser = (req,res) => {
         })
     })
 }
-
 
 exports.updateUserNoPermissionToAdmin = (req,res) => {
     const userData = req.data
