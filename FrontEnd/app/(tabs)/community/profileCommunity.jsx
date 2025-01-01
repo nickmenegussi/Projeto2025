@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const RootLayout = () => {
+const ProfileCommunity = () => {
   return (
     <View>
-      <Text>RootLayout</Text>
+      <Text>ProfileCommunity</Text>
     </View>
   )
 }
 
-export default RootLayout
+export default ProfileCommunity
