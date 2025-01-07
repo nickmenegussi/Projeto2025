@@ -1,35 +1,49 @@
 import React from 'react'
 import { Slot , Tabs} from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { House } from 'lucide-react';
+import { Image, Settings, StyleSheet, Text, View } from 'react-native';
+import { LibraryIcon, GraduationCapIcon, House, MapIcon, MessagesSquare, SettingsIcon, Settings2 } from 'lucide-react-native';
 
-
-// para mostrar o icone nas tabs, nós podemos criar um arrow function e passar a imagem
-
-const TabIcon = ({icon, color, focused}) => {
-  return (
-    <View>
-      <Image />
-    </View>
-  )
-}
 
 const TabsLayout = () => {
   return (
     <>
-      <Tabs>
-      <Tabs.Screen name="home" options={{ headerShown: false, title: "Home", tabBarIcon: ( {color, focused}) => (
-        <TabIcon icon={<House/>} />
-      )}} />
-      <Tabs.Screen name="library" options={{ headerShown: false, title: "Biblioteca"}} />
-      <Tabs.Screen name="localization" options={{ headerShown: false, title: "Localização"}} />
-      <Tabs.Screen name="studyGroup" options={{ headerShown: false, title: "Estudos"}} />
-      <Tabs.Screen name="community" options={{headerShown: false, title: "Fórum"}} />
-      <Tabs.Screen name="settings" options={{headerShown: false, title: "Configurações"}} />
+      <Tabs screenOptions={{tabBarActiveTintColor: 'blue', tabBarInactiveTintColor: 'gray' ,tabBarStyle: {
+        backgroundColor: '#ffff',
+        borderTopWidth: 0,
+        borderTopColor: '#ffff',
+        height: 60,
+      }, tabBarLabelStyle: {
+         fontSize: 13,
+         fontFamily: 'Georgia',
+      }}} >
+        <Tabs.Screen name="home" options={{ headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
+            <House color={color} size={30} focused={focused} name="Home" />)}} 
+        />
+        <Tabs.Screen name="library" options={{ headerShown: false, title: "Biblioteca", tabBarIcon: ({color, size, focused}) => (
+          <LibraryIcon color={color} size={30}  focused={focused} />
+          )}} />
 
+        <Tabs.Screen name="localization" options={{ headerShown: false, title: "Casas", tabBarIcon: ({color, size, focused}) => (
+          <MapIcon color={color} size={30} focused={focused} />
+        ) }} />
+        <Tabs.Screen name="studyGroup" options={{ headerShown: false, title: "Estudos", tabBarIcon: ({color, size, focused}) => (
+          <GraduationCapIcon color={color} size={30} focused={focused} />
+        )}} />
+        <Tabs.Screen name="community" options={{headerShown: false, title: "Fórum", tabBarIcon: ({color, size, focused}) => (
+          <MessagesSquare  color={color} size={30} focused={focused} />
+        )}} />
+        <Tabs.Screen name="settings" options={{headerShown: false, title: "Perfil", tabBarIcon: ({color, size, focused}) => (
+          <SettingsIcon color={color} size={30} focused={focused} />
+        )}} />
     </Tabs>
     </>
   )
 }
-
+const styles = StyleSheet.create({  
+  container: {  
+    flex: 1,  
+    justifyContent: 'center',  
+    alignItems: 'center'  
+  },  
+});  
 export default TabsLayout
