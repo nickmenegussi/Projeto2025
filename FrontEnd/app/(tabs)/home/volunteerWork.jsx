@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const RootLayout = () => {
+const volunteerWork = () => {
   return (
     <View>
-      <Text>RootLayout</Text>
+      <Text>volunteerWork</Text>
     </View>
   )
 }
 
-export default RootLayout
+export default volunteerWork

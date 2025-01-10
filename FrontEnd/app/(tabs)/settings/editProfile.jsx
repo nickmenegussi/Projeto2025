@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const RootLayout = () => {
+const EditProfile = () => {
   return (
     <View>
-      <Text>RootLayout</Text>
+      <Text>EditProfile</Text>
     </View>
   )
 }
 
-export default RootLayout
+export default EditProfile

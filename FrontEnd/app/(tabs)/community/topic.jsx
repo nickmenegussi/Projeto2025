@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const RootLayout = () => {
+const Topic = () => {
   return (
     <View>
-      <Text>RootLayout</Text>
+      <Text>Topic</Text>
     </View>
   )
 }
 
-export default RootLayout
+export default Topic

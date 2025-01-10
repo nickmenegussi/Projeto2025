@@ -1,12 +1,14 @@
-import { View, Text } from 'react-native'
 import React from 'react'
+import { Slot , Stack} from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
 
-const RootLayoutLibrary = () => {
+const RootLayout = () => {
   return (
-    <View>
-      <Text>RootLayoutLibrary</Text>
-    </View>
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false}} />
+      
+    </Stack>
   )
 }
 
-export default RootLayoutLibrary
+export default RootLayout

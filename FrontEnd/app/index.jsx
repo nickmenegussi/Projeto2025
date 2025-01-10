@@ -1,13 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Link } from 'expo-router'
+import { View, Text, ScrollView, Image } from 'react-native'
+import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-export default function App() {
+// Use require para importar imagens estáticas
+const logo = require('../assets/images/Logo.png')
+
+const App = () => {
   return (
-    <View className="flex-1 justify-center items-center bg-white"> 
-      <Text className="text-3xl">Aora!</Text>
-      <StatusBar style="auto" />
-      <Link href="/profile" style={{color: 'blue'} }>Go to Profile</Link>
-    </View>
-  );
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView contentContainerStyle={{ height: '100%' }}>
+        <View className="w-full justify-center items-center h-full px-4">
+          {/* Use a variável logo diretamente */}
+          <Image source={logo} className="" />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
 }
+
+export default App

@@ -1,4 +1,3 @@
-// posibilita buscar informações e ate mesmo uma pagina através de uma query
 import { View, Text } from 'react-native'
 import React from 'react'
 
