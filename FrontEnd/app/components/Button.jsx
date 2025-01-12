@@ -1,12 +1,13 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const SignUp = () => {
+
+const Button = ({title, handlePress}) => {
   return (
     <View>
-      <Text>I'm developing this page!</Text>
+      <Text>{title}</Text>
     </View>
   )
 }
 
-export default SignUp
+export default Button
