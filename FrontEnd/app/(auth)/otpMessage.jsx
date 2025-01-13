@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const OtpMesssge = () => {
+const otpMessage = () => {
   return (
     <View>
       <Text>OtpMesssge</Text>
@@ -9,4 +9,4 @@ const OtpMesssge = () => {
   )
 }
 
-export default OtpMesssge
+export default otpMessage

@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, Redirect } from 'expo-router';
 
 const App = () => {
-  return <Redirect href='/sign-up' />
+  return <Redirect href='/MessagePassword' />
 }
 
 export default App

@@ -15,8 +15,7 @@ export default function forgottenPassword() {
       colors={['#003B73', '#60A3D9']} 
       end={{ x: 0, y: 1 }} 
       locations={[0, 4]} 
-      style={styles.linearGradient}
-    >
+      style={styles.linearGradient}>
       <SafeAreaView style={styles.scrollContainer}>
         <ScrollView>
             <TouchableOpacity onPress={() => router.push('/sign-up')} style={styles.returntoPage}>
@@ -24,9 +23,10 @@ export default function forgottenPassword() {
             </TouchableOpacity>
           <View style={styles.container}>
             <View style={styles.headerContainer}>
-              <Text style={[styles.text, styles.title]}>Digite seu Email</Text>
-              <Text style={[styles.text, styles.subtitle]}>Não se preocupe. Isso pode ocorrer. Por favor, preencha o campo com o email para redefinir sua senha.</Text>
-              <FormField titulo="Email" placeholder="Digite seu email"  />
+              <Text style={[styles.text, styles.title]}>Verificação de Senha</Text>
+              <Text style={[styles.text, styles.subtitle]}>Insira o código de verificação que foi para a sua caixa de email para continuar!</Text>
+                <FormField title="Nova senha" placeholder='Digite sua nova senha' />
+                <FormField title="Confirmar senha" placeholder='Confirme sua senha' />
               <Button title='Enviar Código' textStyles={styles.TextButton} buttonStyle={styles.colorButton} othersStyles={styles.Button} />
             </View>                    
           </View>
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     left: 10
   },
   scrollContainer: {
-    flex: 1,
+    flexDirection: 'column',
     paddingVertical: 20,
   },
   container: {
@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
 
   },
   headerContainer: {
-    alignItems: 'start',
-    justifyContent: 'start',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 20,
   },
   text: {
     color: '#FFFFFF',
-    textAlign: 'start',
+    textAlign: 'center',
   },
   title: {
     fontSize: 32,
@@ -79,11 +79,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginTop: 10,
+    minWidth: 360,
     maxWidth: 300,
   },colorButton: {
     backgroundColor: 'white',
   },
   TextButton: {
-    color: 'black'
+    color: 'black',
   }
 })
