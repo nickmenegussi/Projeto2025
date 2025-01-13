@@ -67,11 +67,7 @@ export default function SignIn() {
           handleChangeText={(e) => setform({...form, password: e})} 
           />
           
-          <View style={styles.forgottenPasswordContainer}>
-            <TouchableOpacity onPress={() => router.push('/forgottenPassword')} activeOpacity={0.5}>
-              <Text  style={styles.forgottenPassword}>Esqueceu sua senha?</Text>
-            </TouchableOpacity>
-          </View>
+          
           <Button title='Cadastrar'  />
 
           
@@ -91,9 +87,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   forgottenPasswordContainer:{
+    marginRight: 10 ,
     marginTop: 10,
-    paddingRight: 15,
-    marginLeft: 'auto',
   },
   forgottenPassword: {
     color: 'white', 
@@ -155,5 +150,6 @@ const styles = StyleSheet.create({
     maxWidth: 10,
     minWidth: 175,
     borderRadius: 10,
+    height: 40,
   },
 })
