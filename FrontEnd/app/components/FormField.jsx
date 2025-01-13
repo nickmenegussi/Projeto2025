@@ -2,16 +2,16 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'reac
 import React, { useState } from 'react'
 import {Eye, EyeOff, } from 'lucide-react-native'
 
-const FormField = ({title, value, placeholder ,handleChangeText, ...props}) => {
+const FormField = ({title, value, placeholder ,handleChangeText, othersStyles ,...props}) => {
   const [showPassword, setShowPassword] = useState(false)
   return (
     <View style={style.container}>
       <Text style={style.titleForms}>{title}</Text>
-      <View style={style.containerForms} >
+      <View style={[style.containerForms,othersStyles]} >
         <TextInput style={style.textoInput} value={value} onChangeText={handleChangeText} placeholder={placeholder}  secureTextEntry={title === 'Password' && !showPassword}/>
         {title === 'Password' && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={style.hideAndShow} >
-              {showPassword ? <Eye color='black' size={15} /> : <EyeOff color='black' size={19} />}
+              {showPassword ? <Eye color='black' size={19} /> : <EyeOff color='black' size={19} />}
           </TouchableOpacity>
         )}
       </View>
@@ -23,14 +23,15 @@ export default FormField
 
 const style = StyleSheet.create({
   container: {
-    marginTop: 30
+    marginTop: 10
   },
   titleForms: {
     fontSize: 15,
     color: '#FFFFFF',
   },
   textoInput: {
-    marginLeft: 10
+    marginLeft: 10,
+    width: '80%'
   },
   containerForms: {
     flexDirection: 'row',

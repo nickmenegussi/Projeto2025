@@ -4,12 +4,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Link, router } from "expo-router";
 import FormField from '../components/FormField';
 import Button from '../components/Button';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function App() {
   const [form, setform] = useState({
     email: '',
     password: ''
-  });
+  })
 
   return (
     <LinearGradient 
@@ -18,17 +19,17 @@ export default function App() {
       locations={[0, 4]} 
       style={styles.linearGradient}
     >
-      <ScrollView>
+      <ScrollView contentContainerStyle ={styles.scrollContainer} >
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Text style={[styles.text, styles.title]}>Iniciar Login</Text>
             <Text style={[styles.text, styles.subtitle]}>Crie a sua conta ou faça seu login para explorar nosso app!</Text>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity activeOpacity={0.7} style={[styles.button, styles.buttonActive]}>
-                <Link href='/sing-up' style={styles.linkText}>Login</Link>
+              <TouchableOpacity onPress={() => router.push(`/sign-up`)} activeOpacity={0.7} style={[styles.button, styles.buttonActive]}>
+                <Text style={styles.linkText}>Login</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button}>
-                <Link href='/sign-in' style={{color: '#7D7D91'}}>Cadastro</Link>
+              <TouchableOpacity onPress={() => router.push(`/sign-in`)} style={styles.button}>
+                <Text style={{color: '#7D7D91'}}>Cadastro</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -38,21 +39,18 @@ export default function App() {
           value={form.email}
           placeholder="Digite um email"
           handleChangeText={(e) => setform({ ...form, email: e })}
-        />
+          />
 
-        <FormField title="Password" value={form.password} placeholder="Digite uma senha" handleChangeText={(e) => setform({...form, password: e})} />
+          <FormField title="Password" value={form.password} placeholder="Digite uma senha" handleChangeText={(e) => setform({...form, password: e})} />
           
-        <View style={styles.forgottenPasswordContainer}>
-          <TouchableOpacity onPress={() => router.push('/forgottenPassword')} activeOpacity={0.5}>
-            <Text  style={styles.forgottenPassword}>Esqueceu sua senha?</Text>
-          </TouchableOpacity>
+          <View style={styles.forgottenPasswordContainer}>
+            <TouchableOpacity onPress={() => router.push('/forgottenPassword')} activeOpacity={0.5}>
+              <Text  style={styles.forgottenPassword}>Esqueceu sua senha?</Text>
+            </TouchableOpacity>
+          </View>
+          <Button title='Entrar'  />
+
         </View>
-      </View>
-
-      <View>
-        <Button title='Entrar' />
-      </View>
-
       </ScrollView>
     </LinearGradient>
   );
@@ -62,9 +60,14 @@ const styles = StyleSheet.create({
   linearGradient: {
     flex: 1,
   },
+  scrollContainer: {
+    flexGrow: 1, 
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
   forgottenPasswordContainer:{
     marginTop: 10,
-    paddingRight: 34,
+    paddingRight: 15,
     marginLeft: 'auto',
   },
   forgottenPassword: {
@@ -73,11 +76,9 @@ const styles = StyleSheet.create({
     fontWeight: '500', 
     },
   container: {
-    height: '100%',
     width: '100%',
     alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'center'
+    
   },
   headerContainer: {
     alignItems: 'center',
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 360,
     padding: 2,
-    marginTop: 10,
+    marginTop: 15,
     borderRadius: 10,
   },
   button: {
@@ -119,5 +120,5 @@ const styles = StyleSheet.create({
   linkText: {
     textAlign: 'center',
     color: '#003B73',
-  },
+  }
 });
