@@ -7,15 +7,21 @@ import { LibraryIcon, GraduationCapIcon, House, MapIcon, MessagesSquare, Setting
 const TabsLayout = () => {
   return (
     <>
-      <Tabs screenOptions={{tabBarActiveTintColor: 'blue', tabBarInactiveTintColor: 'gray' ,tabBarStyle: {
+      <Tabs screenOptions={{tabBarActiveTintColor: '#60A3D9', tabBarInactiveTintColor: '#003B73' ,tabBarStyle: {
         backgroundColor: '#ffff',
         borderTopWidth: 0,
         borderTopColor: '#ffff',
-        height: 60,
+        height: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
       }, tabBarLabelStyle: {
          fontSize: 13,
          fontFamily: 'Georgia',
-      }}} >
+      }, 
+      tabBarItemStyle: {
+        marginTop: 14
+      }
+      }} >
         <Tabs.Screen name="home" options={{ headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
             <House color={color} size={30} focused={focused} name="Home" />)}} 
         />
