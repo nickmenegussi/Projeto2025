@@ -5,7 +5,7 @@ import React from 'react'
 const Button = ({title, textStyles ,buttonStyle,handlePress, othersStyles}) => {
   return (
     <View style={[styles.container, othersStyles]}>
-      <TouchableOpacity style={[styles.button, buttonStyle]}>
+      <TouchableOpacity style={[styles.button, buttonStyle]} onPress={handlePress}>
         <Text style={[styles.textButton, textStyles]}>{title}</Text>
       </TouchableOpacity>
     </View>

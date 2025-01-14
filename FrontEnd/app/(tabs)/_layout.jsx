@@ -7,7 +7,7 @@ import { LibraryIcon, GraduationCapIcon, House, MapIcon, MessagesSquare, Setting
 const TabsLayout = () => {
   return (
     <>
-      <Tabs screenOptions={{tabBarActiveTintColor: 'blue', tabBarInactiveTintColor: 'gray' ,tabBarStyle: {
+      <Tabs screenOptions={{tabBarActiveTintColor: '#60A3D9', tabBarInactiveTintColor: '#+003B73' ,tabBarStyle: {
         backgroundColor: '#ffff',
         borderTopWidth: 0,
         borderTopColor: '#ffff',

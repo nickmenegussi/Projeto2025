@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, router } from "expo-router"
-import FormField from '../components/FormField'
-import Button from '../components/Button'
+import FormField from '../../components/FormField'
+import Button from '../../components/Button'
 
 export default function SignIn() {
   const [form, setform] = useState({

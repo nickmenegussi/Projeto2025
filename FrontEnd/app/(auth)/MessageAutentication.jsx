@@ -3,8 +3,9 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Button from '../../components/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
-export default function ForgottenPassword() {
+export default function MessageAutentication() {
   return (
     <LinearGradient
       colors={['#003B73', '#60A3D9']}
@@ -18,14 +19,15 @@ export default function ForgottenPassword() {
               source={require('../../assets/images/Successmark.png')}
               style={styles.image}
             />
-            <Text style={[styles.text, styles.title]}>Senha alterada!</Text>
+            <Text style={[styles.text, styles.title]}>Autenticação válida!</Text>
             <Text style={[styles.text, styles.subtitle]}>
               Insira o código de verificação que foi para a sua caixa de email para continuar!
             </Text>
             <Button
-              title="Voltar para o login"
+              title="Acessar Aplicativo"
               textStyles={styles.textButton}
               buttonStyle={styles.colorButton}
+              handlePress={() => router.push('/home')}
             />
           </View>
         </ScrollView>
