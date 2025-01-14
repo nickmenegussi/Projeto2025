@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Bell, CircleUserRoundIcon, Menu, MenuIcon} from 'lucide-react-native'
 import ButtonIcons from '../../../components/ButtonIcons'
+import Navigation from '../../../components/NavigationList'
+import Caroseul from '../../../components/Carousel'
 
 const forgottenPassword = () => {
 
@@ -15,7 +17,7 @@ const forgottenPassword = () => {
       locations={[0, 4]} 
       style={styles.linearGradient}
     >
-      <SafeAreaView style={styles.safeAreaView}>
+      <SafeAreaView >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
            <View>
             <View style={styles.containerIcons}>
@@ -32,6 +34,16 @@ const forgottenPassword = () => {
                 )} />
               </View>
             </View>
+            
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.ScrollContainerHorizontal}>
+              <Navigation title={"Palestra da casa"} />
+              <Navigation title={"Calendário da casa"} />
+              <Navigation title={"FAQ"} othersStyles={styles.ButtonContainer}/>
+              <Navigation title={"Trabalhos da casa"} />
+              <Navigation title={"Avaliações"} />
+            </ScrollView>
+
+
            </View>
         </ScrollView>
       </SafeAreaView>
@@ -42,6 +54,11 @@ const forgottenPassword = () => {
 export default forgottenPassword
 
 const styles = StyleSheet.create({
+  ScrollContainerHorizontal: {
+    flexDirection: 'row',
+    alignItems: 'start',
+    gap: 15
+  },
   linearGradient: {
     flex: 1,
   },
@@ -56,43 +73,13 @@ const styles = StyleSheet.create({
   },
   containerIcons: {
     flexDirection: 'row',
-    gap: 260,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  headerContainer: {
-    alignItems: 'start',
-    justifyContent: 'start',
-    marginTop: 20,
+    justifyContent: 'space-between'
   },
   text: {
     color: '#FFFFFF',
     textAlign: 'start',
+  }, ButtonContainer: {
+    width: 45,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    marginTop: 10,
-    maxWidth: 300,
-  },colorButton: {
-    backgroundColor: 'white',
-  },
-  TextButton: {
-    color: 'black'
-  },
-  Button : {
-    marginTop: 10
-  },
-  containerGetBackToLogin: {
-    flexDirection: 'row', 
-    gap: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20
-  },
-  textLink: {
-    color: '#34C759'
-  }
 })
