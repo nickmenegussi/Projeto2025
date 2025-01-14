@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import {Bell, CircleUserRoundIcon, Menu, MenuIcon} from 'lucide-react-native'
+import ButtonIcons from '../../../components/ButtonIcons'
 
 const forgottenPassword = () => {
 
@@ -13,9 +15,24 @@ const forgottenPassword = () => {
       locations={[0, 4]} 
       style={styles.linearGradient}
     >
-      <SafeAreaView style={styles.scrollContainer}>
-        <ScrollView>
-           
+      <SafeAreaView style={styles.safeAreaView}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+           <View>
+            <View style={styles.containerIcons}>
+              {/* Eu defino no meu componente as cores e o tamanho dele, depois, eu coloco desistruturo o meu arrow function em uma função que irá receber um obejeto com algumas características que depois irei passar no Icon*/}
+              <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
+                <MenuIcon color={color} size={size} />
+              )} />
+              <View style={styles.IconsContent}>
+                <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
+                  <Bell color={color} size={size} />
+                )} />
+                <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
+                  <CircleUserRoundIcon color={color} size={size} />
+                )} />
+              </View>
+            </View>
+           </View>
         </ScrollView>
       </SafeAreaView>
 
@@ -28,28 +45,20 @@ const styles = StyleSheet.create({
   linearGradient: {
     flex: 1,
   },
-  returntoPage: {
-    backgroundColor: '#60A3D9',
-    borderRadius: 10,
-    width: 40,
-    maxWidth: 40,
-    height: 40,
-    maxHeight: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 30,
-    left: 10
-  },
   scrollContainer: {
-    flex: 1,
+    flexGrow: 1,
+    padding: 10,
     paddingVertical: 20,
   },
-  container: {
-    width: '100%',
+  IconsContent: {
+    flexDirection: 'row',
+    gap: 15
+  },
+  containerIcons: {
+    flexDirection: 'row',
+    gap: 260,
     alignItems: 'center',
-    marginTop: 130
-
+    justifyContent: 'center'
   },
   headerContainer: {
     alignItems: 'start',
