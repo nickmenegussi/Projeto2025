@@ -18,6 +18,7 @@ const facilitadores = require('./routers/FacilitadoresUser')
 const loans = require('./routers/LoansRouter')
 const likeMessages = require('./routers/LikesMessages')
 const lecture = require('./routers/LectureRouter')
+const auth = require('./routers/AuthRouter')
 
 const app = express()
 app.use(cors()) // permitir que os navegadores acessem diferentes domíniose
@@ -40,5 +41,6 @@ app.use('/notifications', notifications)
 app.use('/facilitadores', facilitadores)
 app.use('/likeMessages', likeMessages)
 app.use('/lecture', lecture)
+app.use('/auth', auth)
 
 app.listen(port, () => console.log(`Rodando na porta ${port}`))
