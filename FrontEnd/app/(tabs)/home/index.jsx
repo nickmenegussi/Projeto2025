@@ -4,8 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Bell, CircleUserRoundIcon, Menu, MenuIcon} from 'lucide-react-native'
 import ButtonIcons from '../../../components/ButtonIcons'
-import Trending from '../../../components/Trending'
-import EmptyContent from '../../../components/EmptyContent'
+
 
 const Home = () => {
 
@@ -16,17 +15,7 @@ const Home = () => {
       locations={[0, 4]} 
       style={styles.linearGradient}
     >
-      <SafeAreaView style={styles.safeAreaView}>
-        <FlatList
-        // substituir aqui por uma data de verdade
-        // data={[{id: 1}, {id: 2}, {id: 3}]}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => <Text>{item.id}</Text>}
-
-        ListHeaderComponent={() => (
-            <View contentContainerStyle={styles.Container}>
-              <View style={styles.containerIcons}>
-                {/* Eu defino no meu componente as cores e o tamanho dele, depois, eu coloco desistruturo o meu arrow function em uma função que irá receber um obejeto com algumas características que depois irei passar no Icon*/}
+  {/* Eu defino no meu componente as cores e o tamanho dele, depois, eu coloco desistruturo o meu arrow function em uma função que irá receber um obejeto com algumas características que depois irei passar no Icon*/}
                 <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
                   <MenuIcon color={color} size={size} />
                 )} />
@@ -40,14 +29,6 @@ const Home = () => {
                 </View>
               </View>
 
-              <Trending posts={[{id: 1}, {id: 2}, {id: 3}]} />
-            </View>)}
-  
-        ListEmptyComponent={() => (
-          <EmptyContent title={"Não encontrado!"} />
-        )}
-
-        />
       </SafeAreaView>
 
     </LinearGradient>
@@ -56,6 +37,11 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
+  ScrollContainerHorizontal: {
+    flexDirection: 'row',
+    alignItems: 'start',
+    gap: 15
+  },
   linearGradient: {
     flex: 1,
   },
@@ -75,43 +61,13 @@ const styles = StyleSheet.create({
   },
   containerIcons: {
     flexDirection: 'row',
-    gap: 260,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  headerContainer: {
-    alignItems: 'start',
-    justifyContent: 'start',
-    marginTop: 20,
+    justifyContent: 'space-between'
   },
   text: {
     color: '#FFFFFF',
     textAlign: 'start',
+  }, ButtonContainer: {
+    width: 45,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    marginTop: 10,
-    maxWidth: 300,
-  },colorButton: {
-    backgroundColor: 'white',
-  },
-  TextButton: {
-    color: 'black'
-  },
-  Button : {
-    marginTop: 10
-  },
-  containerGetBackToLogin: {
-    flexDirection: 'row', 
-    gap: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20
-  },
-  textLink: {
-    color: '#34C759'
-  }
-})
+
