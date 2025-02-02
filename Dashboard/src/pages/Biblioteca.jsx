@@ -1,4 +1,10 @@
-import { RemoveFormatting, SquarePen, Trash } from "lucide-react";
+import {
+  PlusCircle,
+  PlusSquare,
+  RemoveFormatting,
+  SquarePen,
+  Trash,
+} from "lucide-react";
 import React from "react";
 import Modal from "../components/Modal";
 import ModalDeleteItem from "../components/ModalDeleteItem";
@@ -7,9 +13,17 @@ import SearchInput from "../components/SearchInput";
 export default function Biblioteca() {
   return (
     <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
-      <div className="pt-5 px-5 flex items-center gap-4 ">
-        <h1>Biblioteca</h1>
-        <SearchInput />
+      <div className="pt-5 px-5 flex items-center">
+        <h1 className="text-2xl">Biblioteca</h1>
+        <div className="ml-auto flex gap-3">
+          <Modal
+            titleButton={"Adicionar Livros"}
+            titleModal={"Adicionar Item"}
+            iconButton={<PlusSquare />}
+            otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600"
+          />
+          <SearchInput />
+        </div>
       </div>
       <div className="py-7 px-5">
         <table class="table-auto w-full rounded-lg overflow-hidden border-gray-800">
