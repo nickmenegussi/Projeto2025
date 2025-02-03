@@ -15,7 +15,7 @@ export default function Biblioteca() {
     <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Biblioteca</h1>
-        <div className="ml-auto flex gap-3">
+        <div className="ml-auto flex gap-3 items-cente">
           <Modal
             titleButton={"Adicionar Livros"}
             titleModal={"Adicionar Item"}
