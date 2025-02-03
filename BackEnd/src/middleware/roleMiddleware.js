@@ -20,5 +20,4 @@ const verifyPermission = (allowedRoles) => {
     next()
   }
 }
-
 module.exports = verifyPermission;

@@ -6,7 +6,7 @@ const verifyPermission = require('../middleware/roleMiddleware')
 router.post('/login/create', login)
 router.post('/otp/create', GenerateOtp)
 
-router.get('/otp/Verification', VerificationOtp)
+router.post('/otp/Verification', VerificationOtp)
 router.get('/otp/view', viewOtp, verifyPermission(['SuperAdmin']))
 
 module.exports = router

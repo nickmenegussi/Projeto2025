@@ -33,7 +33,7 @@ exports.login = (req, res) => {
         }
 
         const user = result[0]
-        const hashPawword = bcrypt.compare(senha, user.senha)
+        const hashPawword = bcrypt.compare(senha, user.password)
 
         if(!hashPawword){
             return res.status(400).json({
@@ -65,7 +65,7 @@ exports.GenerateOtp = (req, res) => {
             
         })
     } else {
-        connection.query('SELECT email FROM Usuario WHERE email = ?', [email], async (err, result) => {
+        connection.query('SELECT email FROM User WHERE email = ?', [email], async (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',
@@ -79,14 +79,17 @@ exports.GenerateOtp = (req, res) => {
                     message: 'Esse email não foi cadastrado no nosso sistema, por favor, se cadastre caso não possuir cadastro. Entretanto, caso possuas, digite novamente. '
                 })
             } else {
-                const otp = OtpGenerator.generate(6, {
+                const otp = OtpGenerator.generate(4, {
                     digits: true,
                     lowerCaseAlphabets: false,
                     upperCaseAlphabets: false,
                     specialChars: false
                 })
 
-                connection.query('INSERT INTO Otp(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, ' DATE_ADD(CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)'], (err,result) => {
+                const expiresAt = new Date()
+                expiresAt.setMinutes(expiresAt.getMinutes() + 5)
+
+                connection.query('INSERT INTO OTP(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, expiresAt], (err,result) => {
                     if(err){
                         return res.status(500).json({
                             message: 'Erro ao se conectar com o servidor.',
@@ -131,7 +134,7 @@ exports.VerificationOtp = (req, res) => {
     if(!email || !otp){
         return res.status(400).json({
             message: 'Preencha todos os campos',
-            success: true
+            success: false
         })
     }
 
