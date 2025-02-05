@@ -1,10 +1,28 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import FormField from "../../components/FormField";
+import api from "../../services/api";
+import { AuthContext } from "../../context/auth";
 
 export default function EmailOtp() {
+  const {OtpSendEmail} = useContext(AuthContext)
+  const [email, setEmail] = useState("")
   const navigate = useNavigate();
+
+  async function OtpEntrar(){
+    try {
+      await OtpSendEmail(email)
+      navigate('/OtpVerification')
+    } catch (error) {
+      console.error('Erro: ', error)
+
+      if(error.response) {
+        alert(`Erro: ${error.response.data.message}`)
+      }
+    }
+  }
+  
 
   return (
     <div className="w-screen flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-900 to-blue-400 p-6">
@@ -24,13 +42,12 @@ export default function EmailOtp() {
 
         </p>
         {/* Campo de e-mail */}
-        <FormField title="Email" placeholder="Digite seu email" />
-        <Link
-          to="/OtpVerification"
+        <FormField title="Email" value={email} placeholder="Digite seu email" onChange={(event) => setEmail(event.target.value)} />
+        <button onClick={OtpEntrar} 
           className="block w-full mt-6 bg-blue-600 text-white py-2 rounded-lg font-semibold text-center hover:bg-blue-700"
         >
           Entrar
-        </Link>
+        </button>
       </div>
     </div>
   );

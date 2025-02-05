@@ -1,15 +1,35 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import FormField from "../../components/FormField";
 import { ArrowLeft, ArrowLeftCircle } from "lucide-react";
+import api from "../../services/api";
+import { AuthContext } from "../../context/auth";
 
 export default function OtpVerification() {
+  const {user,otpEmail, otpDigits,OtpVerification} = useContext(AuthContext)
   const navigate = useNavigate();
+  const [otp, setOtp] = useState("")
+  
+  async function Verification(){
+      try {
+        await OtpVerification(otp)
+      } catch (error) {
+        console.error('Erro: ', error)
+
+        if(error.response){
+          alert(error.response.data.message)
+        }
+      }
+  }
+
+  if (otpEmail && otpDigits){
+    return <Navigate to={"/OtpMessage"} />
+  }
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-b from-blue-900 to-blue-400">
       <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/emailOtp")}
               className="absolute top-8 left-4 bg-blue-400 p-2 rounded-lg"
             >
               <ArrowLeft color="white" size={30} />
@@ -26,20 +46,17 @@ export default function OtpVerification() {
         </p>
 
         {/* Campos de verificação */}
-        <div className="flex justify-between mt-6 gap-2">
-          <FormField othersStyles="w-12 h-12 text-center text-xl border rounded-lg" />
-          <FormField othersStyles="w-12 h-12 text-center text-xl border rounded-lg" />
-          <FormField othersStyles="w-12 h-12 text-center text-xl border rounded-lg" />
-          <FormField othersStyles="w-12 h-12 text-center text-xl border rounded-lg" />
+        <div className="mt-6">
+          <FormField value={otp} onChange={(event) => setOtp(event.target.value)} title={'Código de Verificação'} placeholder={'Digite o código'} othersStyles="w- h-12 text-center text-xl border rounded-lg" />
         </div>
 
         {/* Botão de enviar código */}
-        <Link
-          to="/"
+        <button
+          onClick={Verification}
           className="block w-full mt-6 bg-blue-600 text-white py-2 rounded-lg font-semibold text-center hover:bg-blue-700"
         >
           Entrar
-        </Link>
+        </button>
       </div>
     </div>
   );

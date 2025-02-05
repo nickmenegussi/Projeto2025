@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router";
+import React, { useContext, useState } from "react";
+import { Link, Navigate, NavLink } from "react-router";
 import azarImage from "../assets/azar.png";
+import { AuthContext } from "../context/auth";
 
 export default function NavBar() {
   const [openProfile, setopenProfile] = useState(false);
-
+  
   return (
     <>
       <nav className="fixed top-0 z-50 w-full border-b text-white shadow-sm bg-blue-500 border-blue-500">
@@ -107,3 +108,5 @@ export default function NavBar() {
     </>
   );
 }
+
+

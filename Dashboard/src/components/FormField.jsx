@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, ...props }) => {
+const FormField = ({ title, value, placeholder, onChange  ,otherStyles, ...props}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -10,9 +10,9 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, .
       <div className={`flex items-center mt-2 w-full max-w-md p-3 bg-white rounded-lg border-1 ${otherStyles}`}>
         <input
         // para fazer com que o titulo do meu campo field seja senha ou texto, se for senha, mostre a senha
-          type={title === "Senha" && !showPassword ? "Senha" : "text"}
+          type={title === "Senha" && !showPassword ? "password" : "text"}
           value={value}
-          onChange={(e) => handleChangeText(e.target.value)}
+          onChange={onChange}
           placeholder={placeholder}
           className="w-full outline-none text-black"
         />

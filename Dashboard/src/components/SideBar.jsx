@@ -1,9 +1,9 @@
 import { Library, LibraryIcon } from "lucide-react";
-import React from "react";
-import { Link } from "react-router";
+import React, { useContext } from "react";
+import { Link, Navigate } from "react-router";
+import { AuthContext } from "../context/auth";
 
 export default function SidebarWithLogo() {
-
   return (
     <>
       <div>

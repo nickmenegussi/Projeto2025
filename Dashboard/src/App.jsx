@@ -13,21 +13,27 @@ import Lecture from './pages/Lecture';
 import SignUp from './pages/auth/sign-up';
 import EmailOtp from './pages/auth/Emailotp';
 import OtpVerification from './pages/auth/OtpVerification';
+import AuthSuccess from './pages/auth/OtpMessage';
+import PrivateRouter from './components/PrivateRouter';
 
 
 const App = () => {
   const location = useLocation()
-
-  const isAuthPage = location.pathname === '/' || location.pathname === "/emailOtp" || location.pathname === "/OtpVerification"
-
+  // para bloquear o acesso direto para o dashboard, utiliza-se esse meio, por qual o caminho da url fará com que 
+  const isAuthPage = location.pathname === '/' || location.pathname === "/emailOtp" || location.pathname === "/OtpVerification" || location.pathname === "/OtpMessage"
+  
   return (
     <>
         <div className='flex'>
-          {!isAuthPage && <SideBar />}
-          {!isAuthPage && <NavBar />}
+            {!isAuthPage && <SideBar />}
+            {!isAuthPage && <NavBar />}
             <div>
               <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={
+                  <PrivateRouter>
+                    <Dashboard />
+                  </PrivateRouter>
+                  } />
                 <Route path="/library" element={<Biblioteca />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/volunteerWork" element={<VolunteerWork />} />
@@ -38,6 +44,7 @@ const App = () => {
                 <Route path="/" element={<SignUp />} />
                 <Route path='/emailOtp' element={<EmailOtp />} />
                 <Route path='/OtpVerification' element={<OtpVerification />} />
+                <Route path='/OtpMessage' element={<AuthSuccess />} />
 
               </Routes>
           </div>
