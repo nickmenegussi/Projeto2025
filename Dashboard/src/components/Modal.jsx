@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-export default function Modal({titleModal, titleButton, iconButton, otherStyle }) {
+export default function Modal({titleModal, titleButton, value ,iconButton, otherStyle }) {
   const [OpenModal, setOpenModal] = useState(false);
-
-
+  
+  
   return (
     <>
       <button

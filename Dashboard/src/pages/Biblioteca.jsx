@@ -17,6 +17,7 @@ export default function Biblioteca() {
         <h1 className="text-2xl">Biblioteca</h1>
         <div className="ml-auto flex gap-3 items-cente">
           <Modal
+            
             titleButton={"Adicionar Livros"}
             titleModal={"Adicionar Item"}
             iconButton={<PlusSquare />}
