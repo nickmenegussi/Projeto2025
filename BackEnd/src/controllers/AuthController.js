@@ -67,7 +67,7 @@ exports.GenerateOtp = (req, res) => {
     } else {
         connection.query('SELECT email FROM User WHERE email = ?', [email], async (err, result) => {
             if(err){
-                return res.status(500).json({
+                return result.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',
                     success: false,
                     body: err
@@ -91,7 +91,7 @@ exports.GenerateOtp = (req, res) => {
 
                 connection.query('INSERT INTO OTP(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, expiresAt], (err,result) => {
                     if(err){
-                        return res.status(500).json({
+                        return result.status(500).json({
                             message: 'Erro ao se conectar com o servidor.',
                             success: false,
                             body: err
@@ -112,10 +112,19 @@ exports.GenerateOtp = (req, res) => {
                                 text: `Seu código para esse Otp é ${otp}`
                             })
     
-                            return res.status(201).json({
-                                message: 'Succeso ao gerar a OTP',
-                                success: true,
-                                data: result
+                            connection.query('SELECT * FROM  OTP where email = ?', [email] ,(errSelect, resultSelect) => {
+                                if(errSelect){
+                                    return res.status(500).json({
+                                        message: 'Não foi possível encontrar essas informações.',
+                                        success: false,
+                                        body: errSelect
+                                    })
+                                }
+                                return res.status(201).json({
+                                    message: "Sucesso ao criar OTP.",
+                                    success: true,
+                                    data: [email]
+                                })
                             })
                         } catch (erro){
                             res.status(400).send('Erro ao gerar OTP')
