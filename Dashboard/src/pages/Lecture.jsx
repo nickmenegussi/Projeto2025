@@ -1,8 +1,9 @@
 import React from 'react'
 import SearchInput from '../components/SearchInput'
-import Modal from '../components/Modal'
-import ModalDeleteItem from '../components/ModalDeleteItem'
+
 import { PlusSquare, SquarePen, Trash } from 'lucide-react'
+import Modal from '../components/Books/ModalBibliotecaAdd'
+import ModalDeleteItem from '../components/Books/ModalDeleteItem'
 
 export default function Lecture() {
   return (
