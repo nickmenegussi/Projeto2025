@@ -38,15 +38,16 @@ const Home = () => {
                   )} />
                 </View>
               </View>
-              <Trending posts={[{id: 1}, {id: 2}, {id: 3}]} />
+              <Trending posts={[{id: 1}, {id: 2}, {id: 3}] ?? []} />
             </View>)}
-  
         ListEmptyComponent={() => (
-          <EmptyContent title={"Não encontrado!"} />
+          <EmptyContent 
+            title="Ops! Nada por aqui"
+            subtitle="Tente novamente mais tarde"
+          />
         )}
         />
       </SafeAreaView>
-
     </LinearGradient>
   )
 }
@@ -68,5 +69,14 @@ const styles = StyleSheet.create({
   },
   textLink: {
     color: '#34C759'
+  },
+  containerIcons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  IconsContent: {
+    flexDirection: 'row',
+    gap: 10
   }
 })
