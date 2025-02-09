@@ -4,16 +4,20 @@ import {
   RemoveFormatting,
   SquarePen,
   Trash,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
-import SearchInput from "../components/SearchInput";
-import Modal from "../components/Books/ModalBibliotecaAdd";
-import ModalDeleteItem from "../components/Books/ModalDeleteItem";
-import api from "../services/api";
+} from "lucide-react"
+import React, { useEffect, useState } from "react"
+import SearchInput from "../components/SearchInput"
+import Modal from "../components/Books/ModalBibliotecaAdd"
+import ModalDeleteItem from "../components/Books/ModalDeleteItem"
+import api from "../services/api"
+import { Navigate, useNavigate } from "react-router"
+import ModalUpdate from "../components/Books/ModalUpdateBiblioteca"
+
 
 export default function Biblioteca() {
-  const [book, setBook] = useState([]);
-  const token = localStorage.getItem("@Auth:token");
+  const [book, setBook] = useState([])
+  const navigate = useNavigate()
+  const token = localStorage.getItem("@Auth:token")
 
   useEffect(() => {
     async function ViewBooks() {
@@ -22,24 +26,33 @@ export default function Biblioteca() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        setBook(response.data.data);
+        })
+        setBook(response.data.data)
       } catch (error) {
-        console.error("Erro: ", error);
-
         if (error.response) {
-          alert(`${error.response.data.message}`);
+
+          if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
+            alert(error.response.data.message)
+            localStorage.removeItem("@Auth:token")
+            localStorage.removeItem("@Auth:user")
+            localStorage.removeItem("@Auth:otp")
+            localStorage.removeItem("@Auth:email")
+            navigate("/") // Redireciona para a página de login
+          }
+        } else {
+          console.error("Erro na requisição:", error)
         }
       }
     }
-    ViewBooks();
-  }, []);
+
+    ViewBooks()
+  }, [navigate]) // Incluindo navigate nas dependências para evitar warning
 
   return (
-    <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
+    <div className="flex flex-col p-4 gap-5 md:ml-64  mt-14 ">
       <div className="pt-5 px-4 flex items-center">
         <h1 className="text-2xl">Biblioteca</h1>
-        <div className="ml-auto flex gap-3 items-cente">
+        <div className="ml-auto flex gap-3 items-center">
           <Modal
             titleButton={"Adicionar Livros"}
             titleModal={"Adicionar Item"}
@@ -50,7 +63,7 @@ export default function Biblioteca() {
         </div>
       </div>
       <div className="py-7 px-5 overflow-x-auto">
-        <table className="table-auto w-full rounded-lg overflow-hidden border-gray-800">
+        <table className="w-full min-w-full rounded-lg overflow-hidden border-gray-800">
           <thead className="bg-gray-900 text-white uppercase text-sm">
             <tr>
               <th className="px-4 py-3 text-left">ID</th>
@@ -78,13 +91,15 @@ export default function Biblioteca() {
                   </td>
                   <td className="px-4 py-3 text-left">
                     <div className="flex gap-2">
-                      <Modal
+                      <ModalUpdate
+                        bookContent={content}
                         titleButton="Editar"
                         titleModal="Editar"
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
                       <ModalDeleteItem
+                        bookContent={content}
                         titleButton="Excluir"
                         titleModal="Excluir"
                         iconButton={<Trash />}
@@ -123,5 +138,5 @@ export default function Biblioteca() {
         </table>
       </div>
     </div>
-  );
+  )
 }

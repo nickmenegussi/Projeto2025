@@ -1,8 +1,28 @@
 import React, { useState } from "react";
+import api from "../../services/api";
 
-export default function ModalDeleteItem({titleButton, iconButton, otherStyle }) {
+export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bookContent }) {
     const [OpenModal, setOpenModal] = useState(false);
-  
+    const [book, setBook] = useState(bookContent)
+    const token = localStorage.getItem("@Auth:token")
+
+
+    async function RemoveItem(LibraryId){
+      try {
+        const response = await api.delete(`/library/library/${bookContent.idLibrary}/delete`,{
+          LibraryId,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        alert(response.data.message)
+      } catch (error) {
+        if(error.response){
+          alert(`Erro: ${error.response.data.message}`)
+        }
+      }
+    }
+
     return (
     <>
       <button
@@ -66,6 +86,7 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle }) 
                     Are you sure you want to delete this product?
                   </h3>
                   <button
+                    onClick={RemoveItem}
                     data-modal-hide="popup-modal"
                     type="button"
                     className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"

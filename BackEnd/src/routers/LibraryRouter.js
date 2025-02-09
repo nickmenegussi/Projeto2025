@@ -11,11 +11,11 @@ router.post('/library/register', authMiddleware, verifyPermission(['SuperAdmin',
 
 router.patch('/library/:LibraryId/nameBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateNameBook)
 router.patch('/library/:LibraryId/authorBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateAuthorBook)
-router.patch('/library/:LibraryId/tagBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateTagBook)
-router.patch('/library/:LibraryId/overView', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateOverView)
+router.patch('/library/:LibraryId/tagsBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateTagBook)
+router.patch('/library/:LibraryId/overviewBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateOverView)
 router.patch('/library/:LibraryId/bookQuantity', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateBookQuantity)
 router.patch('/library/:LibraryId/curiosityBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateCuriosityBook)
-router.patch('/library/:LibraryId/statusAvailable', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateStatusAvailable)
+router.patch('/library/:LibraryId/status_Available', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateStatusAvailable)
 
 router.delete('/library/:LibraryId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), deleteBook)
 
