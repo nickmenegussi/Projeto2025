@@ -19,7 +19,6 @@ export function AuthProvider({children}){
         const dadosOtp = localStorage.getItem('@Auth:otp') || ""
         const dadosEmail = localStorage.getItem('@Auth:email') || ""
 
-
         if(dadosToken && dadosUser){
             setUser(dadosUser)
             api.defaults.headers.common["Authorization"] = `Bearer ${dadosToken}`

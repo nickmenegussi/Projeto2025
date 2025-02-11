@@ -20,36 +20,38 @@ export default function Biblioteca() {
   const token = localStorage.getItem("@Auth:token")
 
   useEffect(() => {
-    async function ViewBooks() {
-      try {
-        const response = await api.get("/library/library", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        setBook(response.data.data)
-      } catch (error) {
-        if (error.response) {
+    if(!token){
+      localStorage.clear()
+      alert("Sessão expirada. Faça login novamente.");
+      navigate('/', {replace: true})
+      return
+    } 
+    ViewBooks()
+  }, []) 
 
-          if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
-            alert(error.response.data.message)
-            localStorage.removeItem("@Auth:token")
-            localStorage.removeItem("@Auth:user")
-            localStorage.removeItem("@Auth:otp")
-            localStorage.removeItem("@Auth:email")
-            navigate("/") // Redireciona para a página de login
-          }
-        } else {
-          console.error("Erro na requisição:", error)
+  async function ViewBooks() {
+    try {
+      const response = await api.get("/library/library", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      setBook(response.data.data)
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
+          alert(error.response.data.message)
+          localStorage.clear()
+          navigate("/", { replace: true }) // Redireciona para a página de login
         }
+      } else {
+        console.error("Erro na requisição:", error)
       }
     }
-
-    ViewBooks()
-  }, [navigate]) // Incluindo navigate nas dependências para evitar warning
+  }
 
   return (
-    <div className="flex flex-col p-4 gap-5 md:ml-64  mt-14 ">
+    <div className="flex flex-col p-4 gap-5 md:ml-64  mt-14">
       <div className="pt-5 px-4 flex items-center">
         <h1 className="text-2xl">Biblioteca</h1>
         <div className="ml-auto flex gap-3 items-center">
@@ -61,15 +63,18 @@ export default function Biblioteca() {
           />
           <SearchInput />
         </div>
+      
       </div>
-      <div className="py-7 px-5 overflow-x-auto">
-        <table className="w-full min-w-full rounded-lg overflow-hidden border-gray-800">
+      <div className="py-7 px-4 overflow-x-auto w-full">
+        <table className="w-full rounded-lg overflow-hidden border-gray-800">
           <thead className="bg-gray-900 text-white uppercase text-sm">
             <tr>
               <th className="px-4 py-3 text-left">ID</th>
               <th className="px-4 py-3 text-left">Nome do Livro</th>
               <th className="px-4 py-3 text-left">Autor</th>
               <th className="px-4 py-3 text-left">Categoria do Livro</th>
+              <th className="px-4 py-3 text-left">Curiosidade do Livro</th>
+              <th className="px-4 py-3 text-left">Quantidade de Livros</th>
               <th className="px-4 py-3 text-left">Quantidade de Livros</th>
               <th className="px-4 py-3 text-left">Disponibilidade</th>
               <th className="px-4 py-3 text-left">Ações</th>
@@ -83,6 +88,12 @@ export default function Biblioteca() {
                   <td className="px-4 py-3 text-left">{content.nameBook}</td>
                   <td className="px-4 py-3 text-left">{content.author}</td>
                   <td className="px-4 py-3 text-left">{content.tagsBook}</td>
+                  <td className="px-4 py-3 text-left">
+                    {content.overviewBook}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {content.curiosityBook}
+                  </td>
                   <td className="px-4 py-3 text-left">
                     {content.bookQuantity}
                   </td>

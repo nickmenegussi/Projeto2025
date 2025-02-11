@@ -3,7 +3,7 @@ import { AuthContext } from "../context/auth";
 import { Navigate } from "react-router";
 
 export default function PrivateRouter({ children }) {
-  const { user, otpDigits,otpEmail } = useContext(AuthContext);
+  const {user, otpDigits,otpEmail } = useContext(AuthContext);
 
   if (!user) {
     return <Navigate to={"/"} />;

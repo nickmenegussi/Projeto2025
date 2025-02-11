@@ -16,6 +16,8 @@ export default function ModalUpdate({
 
 
   async function UpdateBook(LibraryId, field, value) {
+    
+
     try {
       console.log(value)
       const response = await api.patch(
@@ -39,7 +41,6 @@ export default function ModalUpdate({
   const handleConfirm = () => {
     if (selectedField) {
       UpdateBook(book.idLibrary, selectedField, book[selectedField])
-      console.log(book[selectedField])
     } else {
       alert("Por favor, selecione um campo para atualizar.")
     }
