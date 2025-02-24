@@ -14,12 +14,10 @@ export default function ModalUpdate({
   const [book, setBook] = useState(bookContent)
   const token = localStorage.getItem("@Auth:token")
 
-
   async function UpdateBook(LibraryId, field, value) {
     
 
     try {
-      console.log(value)
       const response = await api.patch(
         `/library/library/${LibraryId}/${field}`,
         {
@@ -29,7 +27,6 @@ export default function ModalUpdate({
           }
         }
       )
-      console.log(response)
       alert(response.data.message)
     } catch (error) {
       if (error.response) {

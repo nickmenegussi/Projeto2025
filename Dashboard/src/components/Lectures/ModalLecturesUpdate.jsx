@@ -1,31 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import api from "../../services/api";
 
-export default function ModalLecturesUpdate({titleModal,
+export default function ModalLecturesUpdate({
+  titleModal,
   titleButton,
   iconButton,
   otherStyle,
-  lectures}) {
-  const [OpenModal, setOpenModal] = useState(false)
-  const navigate = useNavigate()
-  const [lecture, setLecture] = useState(lectures)
+  lectureContent,
+}) {
+  const [OpenModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
+  const [lecture, setLecture] = useState(lectureContent);
+  const [selectField, setSelectField] = useState("");
+  const token = localStorage.getItem("@Auth:token");
 
-  async function UpdateLecture(){
-    
-  }
-
-  const handeSubmit = () => {
-
-  }
-
-  useEffect(() => {
-    if(!token){
-      localStorage.clear()
-      alert("Sessão expirada. Faça login novamente.")
-      navigate('/', {replace: true})
-      return
+  async function UpdateLecture(idLecture, field, value) {
+    try {
+      const response = await api.patch(
+        `/lectures/lectures/${idLecture}/${field}`,
+        {
+          [field]: value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert(response.data.message);
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+      ) {
+        localStorage.clear();
+        alert(error.response.data.message);
+        navigate("/", { replace: true });
+      } else {
+        alert(`Erro na requisição: ${error.response.data.message}`);
+      }
     }
-  }, [])
+  }
+
+  const handleSubmit = () => {
+    if (selectField) {
+      UpdateLecture(lecture.idLecture, selectField, lecture[selectField]);
+    } else {
+      alert("Por favor, selecione um campo para atualizar.");
+    }
+  };
 
   return (
     <>
@@ -42,7 +67,7 @@ export default function ModalLecturesUpdate({titleModal,
       {OpenModal && (
         <div
           id="crud-modal"
-          tabindex="-1"
+          tabIndex="-1"
           aria-hidden="true"
           className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-opacity-60"
         >
@@ -80,121 +105,155 @@ export default function ModalLecturesUpdate({titleModal,
               <form className="p-4 md:p-5">
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="nameBook"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Nome da Palestra
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Qual item você deseja mudar?
                     </label>
-                    <input
-                      type="text"
-                      name="nameLecture"
-                      value={lectures.nameLecture}
-                      onChange={(e) =>
-                        setLectures({
-                          ...lectures,
-                          nameLecture: e.target.value,
-                        })
-                      }
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Digite o nome da palestra"
-                      required=""
-                    />
+                    <select
+                      value={selectField}
+                      onChange={(e) => setSelectField(e.target.value)}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    >
+                      <option value="">Selecionar um item</option>
+                      <option value="nameLecture">Nome da Palestra</option>
+                      <option value="description">Descrição da palestra</option>
+                      <option value="dateLecture">Data da palestra</option>
+                      <option value="timeLecture">Horário da Palestra</option>
+                      <option value="link_url">
+                        O link de compartilhamento
+                      </option>
+                      <option value="video_url">Vídeo da palestra</option>
+                    </select>
                   </div>
-                  <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="nameBook"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Link da palestra
-                    </label>
-                    <input
-                      type="text"
-                      name="nameLecture"
-                      value={lectures.link_url}
-                      onChange={(e) =>
-                        setLectures({ ...lectures, link_url: e.target.value })
-                      }
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Digite o nome da palestra"
-                      required=""
-                    />
-                  </div>
-                  <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="nameBook"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Link do vídeo
-                    </label>
-                    <input
-                      type="text"
-                      value={lectures.video_url}
-                      onChange={(e) =>
-                        setLectures({ ...lectures, video_url: e.target.value })
-                      }
-                      name="nameLecture"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Digite o nome da palestra"
-                      required=""
-                    />
-                  </div>
-                  <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="nameBook"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Data da Palestra
-                    </label>
-                    <Calendar
-                      className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      value={lectures.dateLecture}
-                      onChange={(e) =>
-                        setLectures({ ...lectures, dateLecture: e.value })
-                      }
-                      showIcon
-                      dateFormat="dd/mm/yy"
-                    />
-                  </div>
-                  <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="nameBook"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Horario da palestra
-                    </label>
-                    <Calendar
-                      className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      value={lectures.timeLecture}
-                      onChange={(e) =>
-                        setLectures({ ...lectures, timeLecture: e.value })
-                      }
-                      showIcon
-                      dateFormat="dd/mm/yy"
-                    />
+
+                  <div className="col-span-2 flex flex-col gap-6">
+                    {selectField === "nameLecture" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Nome da Palestra
+                        </label>
+                        <input
+                          type="text"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Digite o nome da palestra"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {selectField === "description" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Descrição da palestra
+                        </label>
+                        <textarea
+                          rows="2"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Digite a descrição da palestra"
+                        ></textarea>
+                      </div>
+                    )}
+
+                    {selectField === "dateLecture" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Data da palestra
+                        </label>
+                        <input
+                          type="date"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {selectField === "timeLecture" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Horário da Palestra
+                        </label>
+                        <input
+                          type="time"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {selectField === "link_url" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Link de compartilhamento
+                        </label>
+                        <input
+                          type="url"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Digite o link de compartilhamento"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {selectField === "video_url" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Vídeo da palestra
+                        </label>
+                        <input
+                          type="url"
+                          value={lecture[selectField]}
+                          onChange={(e) =>
+                            setLecture({
+                              ...lecture,
+                              [selectField]: e.target.value,
+                            })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          placeholder="Digite o link do vídeo da palestra"
+                          required
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="col-span-2 sm:col-span-2">
-                  <label
-                    for="overViewBook"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Descrição da palestra
-                  </label>
-                  <textarea
-                    id="overViewBook"
-                    value={lectures.description}
-                    onChange={(e) =>
-                      setLectures({ ...lectures, description: e.target.value })
-                    }
-                    rows="2"
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Digite a visão geral do livro aqui"
-                  ></textarea>
-                </div>
+
                 <button
-                  onClick={CreateLecture}
                   type="submit"
+                  onClick={handleSubmit}
                   className="mt-5 text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   <svg
@@ -209,7 +268,7 @@ export default function ModalLecturesUpdate({titleModal,
                       clip-rule="evenodd"
                     ></path>
                   </svg>
-                  Add new product
+                  Confirmar atualizações
                 </button>
               </form>
             </div>

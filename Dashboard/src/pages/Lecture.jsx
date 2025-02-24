@@ -7,12 +7,12 @@ import AddLecturesModal from "../components/Lectures/ModalLecturesAdd";
 import UpdateLecturesModal from "../components/Lectures/ModalLecturesAdd";
 import api from "../services/api";
 import { useNavigate } from "react-router";
+import ModalLecturesUpdate from "../components/Lectures/ModalLecturesUpdate";
 
 export default function Lecture() {
   const token = localStorage.getItem("@Auth:token");
   const navigate = useNavigate()
   const [lecture, setLecture] = useState([])
-  console.log(lecture)
 
   useEffect(() => {
     if(!token){
@@ -90,15 +90,15 @@ export default function Lecture() {
                   <td className="px-4 py-3 text-left">{content.video_url}</td>
                   <td className="px-4 py-3 text-left">
                     <div className="flex gap-2">
-                      <UpdateLecturesModal
-                        lecture={content}
+                      <ModalLecturesUpdate
+                        lectureContent={content}
                         titleButton="Editar"
                         titleModal="Editar"
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
                       <ModalDeleteItem
-                        lecture={content}
+                        lectureContent={content}
                         titleButton="Excluir"
                         titleModal="Editar"
                         iconButton={<Trash />}

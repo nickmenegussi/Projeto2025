@@ -16,6 +16,7 @@ import ModalUpdate from "../components/Books/ModalUpdateBiblioteca"
 
 export default function Biblioteca() {
   const [book, setBook] = useState([])
+  console.log(book)
   const navigate = useNavigate()
   const token = localStorage.getItem("@Auth:token")
 
