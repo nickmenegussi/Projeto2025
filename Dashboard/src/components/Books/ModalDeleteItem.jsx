@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 
 export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bookContent }) {
@@ -6,7 +6,7 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bo
     const [book, setBook] = useState(bookContent)
     const token = localStorage.getItem("@Auth:token")
 
-
+    
     async function RemoveItem(LibraryId){
       try {
         const response = await api.delete(`/library/library/${bookContent.idLibrary}/delete`,{
@@ -15,6 +15,7 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bo
             Authorization: `Bearer ${token}`
           }
         })
+        console.log(LibraryId)
         alert(response.data.message)
       } catch (error) {
         if(error.response){

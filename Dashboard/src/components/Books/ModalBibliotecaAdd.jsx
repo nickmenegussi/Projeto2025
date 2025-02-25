@@ -7,8 +7,8 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
   const navigate = useNavigate()
 
   const [book, setBook] = useState({
-    nameBook: "",
-    author: "",
+    namebook: "",
+    authorBook : "",
     overviewBook: "",
     curiosityBook: "",
     tagsBook: "",
@@ -25,21 +25,21 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
       return navigate('/', { replace: true })
     }
 
-    const { nameBook, author, overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book; // Pegue os valores diretamente do state
+    const { namebook, authorBook , overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book; // Pegue os valores diretamente do state
 
     try {
       const response = await api.post('/library/library/register',{
-        namebook: nameBook, // Envie os dados com os nomes esperados no backend
-        author: author,
+        namebook: namebook, // Envie os dados com os nomes esperados no backend
+        authorBook : authorBook ,
         overviewBook: overviewBook,
         curiosityBook: curiosityBook,
         tagsBook: tagsBook,
-        bookQuantity: bookQuantity,
+        bookQuantity: parseInt(bookQuantity),
         status_Available: status_Available
       }, {
         
         headers: {
-          Authorization: `Bearer ${token}`
+           Authorizationization: `Bearer ${token}`
         }
       })
       alert(response.data.message)
@@ -112,16 +112,16 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2 sm:col-span-1">
                     <label
-                      for="nameBook"
+                      for="namebook"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Nome do Livro
                     </label>
                     <input
                       type="text"
-                      name="nameBook"
-                      value={book.nameBook}
-                      onChange={(e) => setBook({...book, nameBook: e.target.value})}
+                      name="namebook"
+                      value={book.namebook}
+                      onChange={(e) => setBook({...book, namebook: e.target.value})}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Type product name"
                       required=""
@@ -140,23 +140,23 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     >
                       <option selected="">Selecionar categoria</option>
-                      <option>Obras Básicas</option>
-                      <option>Obras complementares</option>
+                      <option value={'Obras Básicas'}>Obras Básicas</option>
+                      <option value={'Obras complementares'}>Obras complementares</option>
                     </select>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <label
-                      for="author"
+                      for="authorBook "
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Autor do Livro
                     </label>
                     <input
                       type="text"
-                      name="author"
-                      value={book.author}
-                      onChange={(e) => setBook({...book, author: e.target.value})}
-                      id="author"
+                      name="authorBook "
+                      value={book.authorBook }
+                      onChange={(e) => setBook({...book, authorBook : e.target.value})}
+                      id="authorBook "
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o autor do livro"
                       required=""
@@ -183,17 +183,17 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
                   </div>
                   <div className="col-span-2 sm:col-span-2">
                     <label
-                      for="author"
+                      for="authorBook "
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Quantidade de Livros
                     </label>
                     <input
                       type="text"
-                      name="author"
+                      name="authorBook "
                       value={book.bookQuantity}
                       onChange={(e) => setBook({...book, bookQuantity: e.target.value})}
-                      id="author"
+                      id="authorBook "
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite a quantidde de livros"
                       required=""
