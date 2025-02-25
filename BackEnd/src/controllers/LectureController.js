@@ -27,7 +27,7 @@ exports.viewAllLectures = (req, res) => {
 }
 
 exports.viewLecturesById = (req, res) => { 
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
@@ -102,7 +102,7 @@ exports.createLecture = (req, res) => {
 }
 
 exports.updateLectureName = (req, res) => {
-    const { idLecture } = req.params.idLecture 
+    const { idLecture } = req.params 
     const { nameLecture } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -149,7 +149,7 @@ exports.updateLectureName = (req, res) => {
 }
 
 exports.updateLectureDate = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { dateLecture } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -197,7 +197,7 @@ exports.updateLectureDate = (req, res) => {
 }
 
 exports.updateLectureTime = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { timeLecture } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -245,7 +245,7 @@ exports.updateLectureTime = (req, res) => {
 }
 
 exports.updateLectureDescription = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { description } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -294,7 +294,7 @@ exports.updateLectureDescription = (req, res) => {
 }
 
 exports.updateLecturelink_url = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { link_url } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -342,7 +342,7 @@ exports.updateLecturelink_url = (req, res) => {
 }
 
 exports.updateLectureVideoUrl = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { video_url  } = req.body
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
@@ -389,7 +389,7 @@ exports.updateLectureVideoUrl = (req, res) => {
 }
 
 exports.deleteLecture = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
 
     connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
