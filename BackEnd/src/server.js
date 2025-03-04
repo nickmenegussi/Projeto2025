@@ -40,7 +40,7 @@ app.use('/otp', otpRouter)
 app.use('/notifications', notifications)
 app.use('/facilitadores', facilitadores)
 app.use('/likeMessages', likeMessages)
-app.use('/lecture', lecture)
+app.use('/lectures', lecture)
 app.use('/auth', auth)
 
 app.listen(port, () => console.log(`Rodando na porta ${port}`))

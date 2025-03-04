@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "Este é o backend do projeto **[CEO/Centro Espírita Online]**, desenvolvido com Node.js e Express. Ele fornece a base para a comunicação entre o front-end e o banco de dados, incluindo autenticação, gerenciamento de usuários e recursos adicionais.",
   "dependencies": {
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

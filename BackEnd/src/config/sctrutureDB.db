@@ -8,7 +8,7 @@ CREATE TABLE VolunteerWork (
     address VARCHAR(255),
     dateVolunteerWork DATETIME, 
     work_description VARCHAR(255),
-    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabela Book
@@ -19,7 +19,7 @@ CREATE TABLE Book (
     overviewBook TEXT,
     curiosityBook TEXT,
     tagsBook ENUM('tag1', 'tag2', 'tag3'),
-    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP
+    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
     status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE Post (
     Topic_idTopic INT NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Topic_idTopic) REFERENCES Topic(idTopic)
-)
+);
 
 -- Tabela Comments
 CREATE TABLE Comments (
@@ -100,14 +100,16 @@ CREATE TABLE Likes (
 CREATE TABLE Lecture (
     idLecture INT AUTO_INCREMENT PRIMARY KEY,
     nameLecture VARCHAR(255),
-    dateLecture DATETIME,
-    timeLecture varchar(255),
+    dateLecture datetime,
+    timeLecture time,
     description varchar(255),
     link_url varchar(255),
     video_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 
 );
+
+
 
 -- Tabela Topic
 CREATE TABLE Topic (
@@ -162,3 +164,6 @@ CREATE TABLE OTP (
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expiresAt TIMESTAMP NOT NULL
 );
+
+SELECT * FROM User;
+

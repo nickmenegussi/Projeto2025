@@ -19,8 +19,8 @@ const authMiddleware = (req, res, next) => {
     } catch(err){
         return res.status(401).json({
             success: false,
-            message: 'Token inválido ou expirado.'
-            
+            message: 'Sessão expirada, por favor, faça login novamente.'
+
         })
     }
 }

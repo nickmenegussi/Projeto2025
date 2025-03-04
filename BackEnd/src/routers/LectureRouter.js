@@ -8,7 +8,7 @@ const {
   updateLectureDescription,
   updateLectureDate,
   updateLectureTime,
-  updateLectureLink,
+  updateLecturelink_url,
   updateLectureVideoUrl,
   deleteLecture,
 } = require('../controllers/LectureController')
@@ -20,13 +20,12 @@ router.get('/lectures/:idLecture', authMiddleware, verifyPermission(['SuperAdmin
 
 router.post('/lectures/create', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), createLecture)
 
-router.patch('/lectures/:idLecture/name', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureName)
+router.patch('/lectures/:idLecture/nameLecture', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureName)
 router.patch('/lectures/:idLecture/description', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureDescription)
-router.patch('/lectures/:idLecture/date', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureDate)
-router.patch('/lectures/:idLecture/time', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureTime)
-router.patch('/lectures/:idLecture/link', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureLink)
-router.patch('/lectures/:idLecture/videoUrl', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureVideoUrl)
-
+router.patch('/lectures/:idLecture/dateLecture', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureDate)
+router.patch('/lectures/:idLecture/timeLecture', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureTime)
+router.patch('/lectures/:idLecture/link_url', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLecturelink_url)
+router.patch('/lectures/:idLecture/video_url', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateLectureVideoUrl)
 router.delete('/lectures/:idLecture/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), deleteLecture)
 
 module.exports = router

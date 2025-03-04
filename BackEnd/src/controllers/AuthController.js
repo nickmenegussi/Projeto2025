@@ -33,7 +33,7 @@ exports.login = (req, res) => {
         }
 
         const user = result[0]
-        const hashPawword = bcrypt.compare(senha, user.senha)
+        const hashPawword = bcrypt.compare(senha, user.password)
 
         if(!hashPawword){
             return res.status(400).json({
@@ -65,9 +65,9 @@ exports.GenerateOtp = (req, res) => {
             
         })
     } else {
-        connection.query('SELECT email FROM Usuario WHERE email = ?', [email], async (err, result) => {
+        connection.query('SELECT email FROM User WHERE email = ?', [email], async (err, result) => {
             if(err){
-                return res.status(500).json({
+                return result.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',
                     success: false,
                     body: err
@@ -79,16 +79,19 @@ exports.GenerateOtp = (req, res) => {
                     message: 'Esse email não foi cadastrado no nosso sistema, por favor, se cadastre caso não possuir cadastro. Entretanto, caso possuas, digite novamente. '
                 })
             } else {
-                const otp = OtpGenerator.generate(6, {
+                const otp = OtpGenerator.generate(4, {
                     digits: true,
                     lowerCaseAlphabets: false,
                     upperCaseAlphabets: false,
                     specialChars: false
                 })
 
-                connection.query('INSERT INTO Otp(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, ' DATE_ADD(CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)'], (err,result) => {
+                const expiresAt = new Date()
+                expiresAt.setMinutes(expiresAt.getMinutes() + 5)
+
+                connection.query('INSERT INTO OTP(email, otp, expiresAt) VALUES(?, ?, ?)', [email, otp, expiresAt], (err,result) => {
                     if(err){
-                        return res.status(500).json({
+                        return result.status(500).json({
                             message: 'Erro ao se conectar com o servidor.',
                             success: false,
                             body: err
@@ -109,10 +112,19 @@ exports.GenerateOtp = (req, res) => {
                                 text: `Seu código para esse Otp é ${otp}`
                             })
     
-                            return res.status(201).json({
-                                message: 'Succeso ao gerar a OTP',
-                                success: true,
-                                data: result
+                            connection.query('SELECT * FROM  OTP where email = ?', [email] ,(errSelect, resultSelect) => {
+                                if(errSelect){
+                                    return res.status(500).json({
+                                        message: 'Não foi possível encontrar essas informações.',
+                                        success: false,
+                                        body: errSelect
+                                    })
+                                }
+                                return res.status(201).json({
+                                    message: "Sucesso ao criar OTP.",
+                                    success: true,
+                                    data: [email]
+                                })
                             })
                         } catch (erro){
                             res.status(400).send('Erro ao gerar OTP')
@@ -131,7 +143,7 @@ exports.VerificationOtp = (req, res) => {
     if(!email || !otp){
         return res.status(400).json({
             message: 'Preencha todos os campos',
-            success: true
+            success: false
         })
     }
 

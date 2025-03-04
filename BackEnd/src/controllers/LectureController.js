@@ -1,7 +1,7 @@
 const connection = require('../config/db')
 
 exports.viewAllLectures = (req, res) => {
-    connection.query(`SELECT * FROM lectures`, (err, result) => {
+    connection.query(`SELECT * FROM Lecture`, (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -12,18 +12,24 @@ exports.viewAllLectures = (req, res) => {
 
         if(result.length === 0){
             return res.status(404).json({
-                message: "Nenhuma aula encontrada.",
+                message: "Nenhuma palestra encontrada.",
                 success: false,
                 data: result
             })
         } 
+
+        return res.status(200).json({
+            message:"Sucesso ao exibir palestras.",
+            success: true,
+            data: result
+        })
     })
 }
 
 exports.viewLecturesById = (req, res) => { 
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -49,9 +55,16 @@ exports.viewLecturesById = (req, res) => {
 }
 
 exports.createLecture = (req, res) => {
-    const { nameLecture, description, dateLecture, link, timeLecture, link_url} = req.body
+    const { nameLecture, description, dateLecture, link_url, timeLecture, video_url } = req.body
 
-    connection.query('SELECT * FROM Lecture where nameLecture = ? AND description = ? AND dateLecture = ? AND link = ? AND timeLecture = ? AND link_url = ?', [nameLecture, description, dateLecture, link, timeLecture, link_url], (err, result) => {  
+    if(!nameLecture || !description || !dateLecture || !link_url || !timeLecture || !video_url){
+        return res.status(400).json({
+            message: 'Preencha todos os campos  de cadastro.',
+            success: false
+        })
+    }
+
+    connection.query('SELECT * FROM Lecture where nameLecture = ? AND description = ? AND dateLecture = ? AND link_url = ? AND timeLecture = ? AND video_url  = ?', [nameLecture, description, dateLecture, link_url, timeLecture, video_url ], (err, result) => {  
     
     
         if (err) {
@@ -70,7 +83,7 @@ exports.createLecture = (req, res) => {
             })
         } 
             
-         connection.query(`INSERT INTO lectures (nameLecture, description, dateLecture, link, timeLecture, link_url) VALUES (?, ?, ?, ?, ?, ?)`, [nameLecture, description, dateLecture, link, timeLecture, link_url], (err, result) => {
+         connection.query(`INSERT INTO Lecture (nameLecture,dateLecture,timeLecture, description ,link_url, video_url ) VALUES (?, ?, ?, ?, ?, ?)`, [nameLecture,dateLecture ,timeLecture, description ,link_url, video_url ], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -89,10 +102,10 @@ exports.createLecture = (req, res) => {
 }
 
 exports.updateLectureName = (req, res) => {
-    const { idLecture } = req.params.idLecture 
+    const { idLecture } = req.params 
     const { nameLecture } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -105,11 +118,11 @@ exports.updateLectureName = (req, res) => {
             return res.status(404).json({
                 message: "Nenhuma palestra encontrada.",
                 success: false,
-                data: result
+                data: err
             })
         } 
 
-        connection.query(`UPDATE lectures SET nameLecture = ? WHERE idLecture = ?`, [nameLecture, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET nameLecture = ? WHERE idLecture = ?`, [nameLecture, idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -136,10 +149,10 @@ exports.updateLectureName = (req, res) => {
 }
 
 exports.updateLectureDate = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { dateLecture } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -156,7 +169,7 @@ exports.updateLectureDate = (req, res) => {
             })
         } 
 
-        connection.query(`UPDATE lectures SET dateLecture = ? WHERE idLecture = ?`, [dateLecture, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET dateLecture = ? WHERE idLecture = ?`, [dateLecture, idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -184,10 +197,10 @@ exports.updateLectureDate = (req, res) => {
 }
 
 exports.updateLectureTime = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { timeLecture } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -200,11 +213,11 @@ exports.updateLectureTime = (req, res) => {
             return res.status(404).json({
                 message: "Nenhuma palestra encontrada.",
                 success: false,
-                data: result
+                data: err
             })
         } 
 
-        connection.query(`UPDATE lectures SET timeLecture = ? WHERE idLecture = ?`, [timeLecture, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET timeLecture = ? WHERE idLecture = ?`, [timeLecture, idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -232,10 +245,10 @@ exports.updateLectureTime = (req, res) => {
 }
 
 exports.updateLectureDescription = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
     const { description } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -248,11 +261,11 @@ exports.updateLectureDescription = (req, res) => {
             return res.status(404).json({
                 message: "Nenhuma palestra encontrada.",
                 success: false,
-                data: result
+                data: err
             })
         } 
 
-        connection.query(`UPDATE lectures SET description = ? WHERE idLecture = ?`, [description, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET description = ? WHERE idLecture = ?`, [description, idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -280,11 +293,11 @@ exports.updateLectureDescription = (req, res) => {
 
 }
 
-exports.updateLectureLink = (req, res) => {
-    const { idLecture } = req.params.idLecture
-    const { link } = req.body
+exports.updateLecturelink_url = (req, res) => {
+    const { idLecture } = req.params
+    const { link_url } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -301,7 +314,7 @@ exports.updateLectureLink = (req, res) => {
             })
         } 
 
-        connection.query(`UPDATE lectures SET link = ? WHERE idLecture = ?`, [link, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET link_url = ? WHERE idLecture = ?`, [link_url, idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -312,14 +325,14 @@ exports.updateLectureLink = (req, res) => {
 
             if(result.affectedRows === 0){
                 return res.status(400).json({
-                    message: "Erro ao atualizar o link da palestra.",
+                    message: "Erro ao atualizar o link_url da palestra.",
                     success: false,
                     data: result
                 })
             } 
 
             return res.status(200).json({
-                message: "Link da Palestra atualizado com sucesso.",
+                message: "link_url da Palestra atualizado com sucesso.",
                 success: true,
                 data: result
             })
@@ -329,10 +342,10 @@ exports.updateLectureLink = (req, res) => {
 }
 
 exports.updateLectureVideoUrl = (req, res) => {
-    const { idLecture } = req.params.idLecture
-    const { link_url } = req.body
+    const { idLecture } = req.params
+    const { video_url  } = req.body
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -349,7 +362,7 @@ exports.updateLectureVideoUrl = (req, res) => {
             })
         } 
 
-        connection.query(`UPDATE lectures SET link_url = ? WHERE idLecture = ?`, [link_url, idLecture], (err, result) => {
+        connection.query(`UPDATE Lecture SET video_url  = ? WHERE idLecture = ?`, [video_url , idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -360,14 +373,14 @@ exports.updateLectureVideoUrl = (req, res) => {
 
             if(result.affectedRows === 0){
                 return res.status(400).json({
-                    message: "Erro ao atualizar o link do vídeo da palestra.",
+                    message: "Erro ao atualizar o link_url do vídeo da palestra.",
                     success: false,
                     data: result
                 })
             } 
 
             return res.status(200).json({
-                message: "Link do vídeo da Palestra atualizado com sucesso.",
+                message: "link_url do vídeo da Palestra atualizado com sucesso.",
                 success: true,
                 data: result
             })
@@ -376,9 +389,9 @@ exports.updateLectureVideoUrl = (req, res) => {
 }
 
 exports.deleteLecture = (req, res) => {
-    const { idLecture } = req.params.idLecture
+    const { idLecture } = req.params
 
-    connection.query(`SELECT * FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+    connection.query(`SELECT * FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -395,7 +408,7 @@ exports.deleteLecture = (req, res) => {
             })
         } 
 
-        connection.query(`DELETE FROM lectures WHERE idLecture = ?`, [idLecture], (err, result) => {
+        connection.query(`DELETE FROM Lecture WHERE idLecture = ?`, [idLecture], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
