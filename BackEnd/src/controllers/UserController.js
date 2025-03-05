@@ -13,7 +13,7 @@ exports.viewOnlyUser = (req, res) => {
         })
     }
 
-    connection.query('SELECT * FROM Usuario where idUser = ?', [idUser] ,(err, result) => {
+    connection.query('SELECT * FROM User where idUser = ?', [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -39,7 +39,7 @@ exports.viewOnlyUser = (req, res) => {
 }
 
 exports.viewAllUser = (req, res) => {
-    connection.query('SELECT * FROM Usuario', (err, result) => {
+    connection.query(`SELECT * FROM User`, (err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -68,7 +68,7 @@ exports.register = async (req, res) => {
     }
 
     const hash_password = await bcrypt.hash(password, 15)
-    connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permissao) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, image_profile, 'User'] ,(err,result) => {
+    connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permission) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, image_profile, 'User'] ,(err,result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
