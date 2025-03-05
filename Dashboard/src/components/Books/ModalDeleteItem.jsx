@@ -84,7 +84,7 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bo
                     />
                   </svg>
                   <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                    Are you sure you want to delete this product?
+                    Você tem certeza que quer remover esse item?
                   </h3>
                   <button
                     onClick={RemoveItem}
@@ -92,7 +92,7 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bo
                     type="button"
                     className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
-                    Yes, I'm sure
+                    Sim, eu tenho
                   </button>
                   <button
                     onClick={() => setOpenModal(false)}

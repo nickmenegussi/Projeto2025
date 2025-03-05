@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router";
 import { AuthContext } from "../context/auth";
 
 export default function SidebarWithLogo() {
+  const role = JSON.parse(localStorage.getItem("@Auth:user"))
   return (
     <>
       <div>
@@ -59,7 +60,8 @@ export default function SidebarWithLogo() {
                   </span>
                 </Link>
               </li>
-              <li>
+              {role.status_permission === "SuperAdmin" && (
+                <li>
                 <Link
                   to={"/users"}
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-300 group"
@@ -76,6 +78,7 @@ export default function SidebarWithLogo() {
                   <span class="flex-1 ms-3 whitespace-nowrap">Usuários</span>
                 </Link>
               </li>
+              )}
               <li>
                 <Link
                   to={"/volunteerWork"}
@@ -188,5 +191,5 @@ export default function SidebarWithLogo() {
         </aside>
       </div>
     </>
-  );
+  )
 }

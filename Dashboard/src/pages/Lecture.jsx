@@ -8,6 +8,7 @@ import UpdateLecturesModal from "../components/Lectures/ModalLecturesAdd";
 import api from "../services/api";
 import { useNavigate } from "react-router";
 import ModalLecturesUpdate from "../components/Lectures/ModalLecturesUpdate";
+import ModalLecturesDelete from "../components/Lectures/ModalLecturesDelete";
 
 export default function Lecture() {
   const token = localStorage.getItem("@Auth:token");
@@ -97,7 +98,7 @@ export default function Lecture() {
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
-                      <ModalDeleteItem
+                      <ModalLecturesDelete
                         lectureContent={content}
                         titleButton="Excluir"
                         titleModal="Editar"
