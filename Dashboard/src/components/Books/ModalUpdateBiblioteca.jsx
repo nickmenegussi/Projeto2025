@@ -15,13 +15,12 @@ export default function ModalUpdate({
   const token = localStorage.getItem("@Auth:token")
 
   async function UpdateBook(LibraryId, field, value) {
-    
-
     try {
       const response = await api.patch(
         `/library/library/${LibraryId}/${field}`,
         {
-          [field]: value,
+          [field]: value
+        }, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -108,6 +107,7 @@ export default function ModalUpdate({
                       <option value="bookQuantity">Quantidade</option>
                       <option value="overviewBook">Visão Geral</option>
                       <option value="curiosityBook">Curiosidade</option>
+                      <option value="status_Available">Disponibilidade</option>
                     </select>
                   </div>
 
@@ -144,7 +144,30 @@ export default function ModalUpdate({
                         >
                           <option value="">Selecionar categoria</option>
                           <option value="Obras Básicas">Obras Básicas</option>
-                          <option value={"Obras Complementares"}>Obras Complementares</option>
+                          <option value={"Obras complementares"}>Obras Complementares</option>
+                        </select>
+                      </div>
+                    )}
+
+                    {selectedField === "status_Available" && (
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                          Categoria dos Livros
+                        </label>
+                        <select
+                        // aqui no book[selectField], seria a mesma coisa book.tagsBook
+                          value={book[selectedField]}
+                          onChange={(e) =>
+                            setBook({ ...book, [selectedField]: e.target.value })
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                        >
+                          <option value="">Selecionar categoria</option>
+                          <option value="disponível">Disponível</option>
+                          <option value="emprestado">Emprestado</option>
+                          <option value="reservado">Reservado</option>
+                          <option value="indisponível">indisponível</option>
+
                         </select>
                       </div>
                     )}

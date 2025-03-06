@@ -6,15 +6,15 @@ export default function PrivateRouter({ children }) {
   const {user, otpDigits,otpEmail } = useContext(AuthContext);
 
   if (!user) {
-    return <Navigate to={"/"} />;
+    return <Navigate to={"/"} replace/>;
   }
 
   if (!otpEmail) {
-    return <Navigate to={"/emailOtp"} />;
+    return <Navigate to={"/emailOtp"} replace/>;
   }
 
   if (!otpDigits) {
-    return <Navigate to={"/otpVerification"} />;
+    return <Navigate to={"/otpVerification"} replace/>;
   }
 
   

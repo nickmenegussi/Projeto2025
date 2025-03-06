@@ -17,7 +17,7 @@ export default function ModalUserUpdate({
   async function UpdateUserRole() {
     try {
       const response = await api.patch(
-        `/admin/admin/${user.idUser}/toAdmin`,
+        `/admin/admin/${user.idUser}/Permission`,
         {
           status_permission: status_permission
         },
@@ -96,8 +96,7 @@ export default function ModalUserUpdate({
                     >
                       <option value="">Selecionar um item</option>
                       <option value="User">User</option>
-                      <option value="Admin">User</option>
-
+                      <option value="Admin">Admin</option>
                     </select>
                   </div>
                 </div>

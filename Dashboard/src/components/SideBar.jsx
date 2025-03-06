@@ -60,7 +60,7 @@ export default function SidebarWithLogo() {
                   </span>
                 </Link>
               </li>
-              {role.status_permission === "SuperAdmin" && (
+              {role.status_permission === "SuperAdmin" || role.status_permission === "admin" && (
                 <li>
                 <Link
                   to={"/users"}

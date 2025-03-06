@@ -25,7 +25,7 @@ const App = () => {
   return (
     <>
         <div className='flex '>
-            {!isAuthPage && <SideBar />}
+            {!isAuthPage && <PrivateRouter><SideBar /></PrivateRouter>}
             {!isAuthPage && <NavBar />}
             <div>
               <Routes>
@@ -34,13 +34,13 @@ const App = () => {
                     <Dashboard />
                   </PrivateRouter>
                   } />
-                <Route path="/library" element={<Biblioteca />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/volunteerWork" element={<VolunteerWork />} />
-                <Route path="/forum" element={<Forum />} />
-                <Route path="/lecture" element={<Lecture />} />
-                <Route path="/calenderEvents" element={<CalendarEvents />} />
-                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/library" element={<PrivateRouter><Biblioteca /></PrivateRouter>} />
+                <Route path="/users" element={<PrivateRouter><Users /></PrivateRouter> } />
+                <Route path="/volunteerWork" element={<PrivateRouter><VolunteerWork /></PrivateRouter>} />
+                <Route path="/forum" element={<PrivateRouter><Forum /></PrivateRouter>} />
+                <Route path="/lecture" element={<PrivateRouter><Lecture /></PrivateRouter>} />
+                <Route path="/calenderEvents" element={<PrivateRouter><CalendarEvents /></PrivateRouter>} />
+                <Route path="/notifications" element={<PrivateRouter><Notifications /></PrivateRouter>} />
                 <Route path="/" element={<SignUp />} />
                 <Route path='/emailOtp' element={<EmailOtp />} />
                 <Route path='/OtpVerification' element={<OtpVerification />} />
