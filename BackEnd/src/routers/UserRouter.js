@@ -5,8 +5,8 @@ const authMiddleware = require('../middleware/authMidleware')
 const upload = require("../multerConfig/multer")
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/user/:userId', authMiddleware, verifyPermission(['Admin', 'SuperAdmin', 'User']),viewOnlyUser)
-router.get('/user', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']) ,viewAllUser)
+router.get('/user/:userId', authMiddleware, verifyPermission(['admin', 'SuperAdmin', 'User']),viewOnlyUser)
+router.get('/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin']) ,viewAllUser)
 
 router.post('/user/register' ,register)
 

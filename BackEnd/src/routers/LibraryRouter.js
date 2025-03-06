@@ -4,20 +4,20 @@ const {viewAllBooks, viewOnlyOneBook, createBook, updateNameBook, updateAuthorBo
 const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/library/:id', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewOnlyOneBook)
-router.get('/library', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewAllBooks)
+router.get('/library/:id', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewOnlyOneBook)
+router.get('/library', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewAllBooks)
 
-router.post('/library/register', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), createBook)
+router.post('/library/register', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), createBook)
 
-router.patch('/library/:LibraryId/nameBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateNameBook)
-router.patch('/library/:LibraryId/authorBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateAuthorBook)
-router.patch('/library/:LibraryId/tagsBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateTagBook)
-router.patch('/library/:LibraryId/overviewBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateOverView)
-router.patch('/library/:LibraryId/bookQuantity', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateBookQuantity)
-router.patch('/library/:LibraryId/curiosityBook', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateCuriosityBook)
-router.patch('/library/:LibraryId/status_Available', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateStatusAvailable)
+router.patch('/library/:LibraryId/nameBook', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateNameBook)
+router.patch('/library/:LibraryId/authorBook', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateAuthorBook)
+router.patch('/library/:LibraryId/tagsBook', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateTagBook)
+router.patch('/library/:LibraryId/overviewBook', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateOverView)
+router.patch('/library/:LibraryId/bookQuantity', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateBookQuantity)
+router.patch('/library/:LibraryId/curiosityBook', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateCuriosityBook)
+router.patch('/library/:LibraryId/status_Available', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateStatusAvailable)
 
-router.delete('/library/:LibraryId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), deleteBook)
+router.delete('/library/:LibraryId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), deleteBook)
 
 
 module.exports = router

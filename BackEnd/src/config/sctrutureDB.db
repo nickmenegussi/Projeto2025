@@ -18,7 +18,7 @@ CREATE TABLE Book (
     author VARCHAR(255),
     overviewBook TEXT,
     curiosityBook TEXT,
-    tagsBook ENUM('tag1', 'tag2', 'tag3'),
+    tagsBook ENUM('Obras Básicas', 'Obras Complementares',),
     date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
     status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
 );
@@ -161,6 +161,7 @@ CREATE TABLE Notifications (
 CREATE TABLE OTP (
     idOtp INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
+    otp varchar(255) not null,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expiresAt TIMESTAMP NOT NULL
 );

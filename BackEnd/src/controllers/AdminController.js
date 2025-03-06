@@ -62,7 +62,7 @@ exports.ViewOnlyAdminByUser = (req,res) => {
     })
 }
 
-exports.updateUserNoPermissionToAdmin = (req,res) => {
+exports.updateUserPermission = (req,res) => {
     const userData = req.data
     const idUser = req.params.idUser
     const {status_permission} = req.body  
@@ -75,7 +75,8 @@ exports.updateUserNoPermissionToAdmin = (req,res) => {
         })
     } 
 
-    connection.query(`SELECT * FROM User WHERE idUser = ? and status_permission = 'User'`, [idUser] ,(err, result) => {
+    
+    connection.query(`SELECT * FROM User WHERE idUser = ? and (status_permission = 'User' or status_permission = 'Admin')`, [idUser] ,(err, result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -90,6 +91,7 @@ exports.updateUserNoPermissionToAdmin = (req,res) => {
                 success: false,
             })
         }   
+         
             connection.query(`UPDATE User SET status_permission = ? WHERE idUser = ? `, [status_permission ,idUser] , (err, result) => {
                 if (err) {
                     return res.status(500).json({
@@ -109,51 +111,6 @@ exports.updateUserNoPermissionToAdmin = (req,res) => {
 
                
             })
-                
-    })
-}
-
-exports.updateUserPermissionAdminToUser = (req,res) => {
-    const userData = req.data
-    const idUser = req.param.idUser
-
-    if(userData.role !== 'SuperAdmin'){
-        return res.status(403).json({
-            message: "Você não tem permissão para alterar a permissão de um usuário.",
-            success: false
-        })
-    }
         
-    connection.query(`SELECT * FROM User WHERE idUser = ? and status_permission = 'Admin'`, [idUser] ,(err, result) => {
-        if(err){
-            return res.status(500).json({
-                message: "Erro ao se conectar com o servidor.",
-                success: false,
-                data: err
-            })
-        }
-
-        if(result.length === 0){
-            return res.status(404).json({
-                message: `Usuário não encontrado ou já possui permissão menor.`,
-                success: false,
-                data: err
-            })
-        }
-            connection.query(`UPDATE User SET status_permission = 'User' WHERE idUser = ? `, [idUser] , (err, result) => {
-                if (err) {
-                    return res.status(500).json({
-                        success: false,
-                        message: "Erro ao atualizar a permissão do usuário.",
-                        data: err,
-                    })
-                }
-
-                return res.status(201).json({
-                    message: 'Sucesso ao mudar a permissão do usuário.',
-                    success: true,
-                    data: result
-                })
-            })
     })
 }

@@ -9,11 +9,11 @@ const {
 const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/likes', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewLikeMessages)
-router.get('/likes/:PostId', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewLikeMessagesByUser)
+router.get('/likes', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewLikeMessages)
+router.get('/likes/:PostId', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewLikeMessagesByUser)
 
-router.post('/likes/create', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), createLikes)
+router.post('/likes/create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), createLikes)
 
-router.delete('/likes/:LikesId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), deleteLike)
+router.delete('/likes/:LikesId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), deleteLike)
 
 module.exports = router

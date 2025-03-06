@@ -59,7 +59,7 @@ exports.createBook = (req, res) => {
             success: false,
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'        })
     } 
-    else if(status_Available !== 'disponível' && status_Available !== 'reservado' && status_Available !== 'emprestado' && status_Available !== 'indisponivel'){
+    else if(status_Available !== 'disponível' && status_Available !== 'reservado' && status_Available !== 'emprestado' && status_Available !== 'indisponível'){
         return res.status(400).json({
             success: false,
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
@@ -382,10 +382,11 @@ exports.updateStatusAvailable = (req, res) => {
             })
         }
         
-        if(status_Available !== 'disponível' || status_Available !== 'reservado' || status_Available !== 'emprestado' || status_Available !== 'indisponivel'){
+        if(status_Available !== 'disponível' && status_Available !== 'reservado' && status_Available !== 'emprestado' && status_Available !== 'indisponível'){
             return res.status(400).json({
                 success: false,
-                message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
+                message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.',
+                data: err
             })
         } else {
             connection.query('UPDATE Book SET status_Available = ? WHERE idLibrary = ?', [status_Available, idLibrary], (err, result) => {
