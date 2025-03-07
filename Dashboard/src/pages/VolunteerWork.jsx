@@ -12,7 +12,7 @@ export default function VolunteerWork() {
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Trabalhos Voluntários</h1>
         <div className='ml-auto flex gap-3'>
-          <ModalWorkVolunteer titleButton={'Adicionar Livros'} titleModal={'Adicionar Item'} iconButton={<PlusSquare />} otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
+          <ModalWorkVolunteer titleButton={'Adicionar trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />} otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
           <SearchInput />
         </div>
       </div>

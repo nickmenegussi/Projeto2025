@@ -5,37 +5,29 @@ import { useNavigate } from "react-router"
 export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton, otherStyle }) {
   const [OpenModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
-  const [user, setUser] = useState({
-    nameUser: "",
-    email : "",
-    image_profile: "",
-    status_permissao: ""
+  const [volunteerWork, setVolunteerWork] = useState({
+    nameVolunteerWork: "",
+    address : "",
+    dateVolunteerWork: "",
+    work_description: ""
   })
 
   const token = localStorage.getItem('@Auth:token')
-  if (!token){
-    localStorage.clear()
-    alert("Sessão expirada. Faça login novamente.")
-    return navigate('/', { replace: true })
-  }
-
-  async function CreateBook(event){
+  
+  async function CreateVolunteerWork(event){
     event.preventDefault()
-    const { namebook, authorBook , overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book // Pegue os valores diretamente do state
+    const {nameVolunteerWork, address, dateVolunteerWork ,work_description} = volunteerWork
 
     try {
       const response = await api.post('/user/user/register',{
-        namebook: namebook, // Envie os dados com os nomes esperados no backend
-        authorBook : authorBook ,
-        overviewBook: overviewBook,
-        curiosityBook: curiosityBook,
-        tagsBook: tagsBook,
-        bookQuantity: parseInt(bookQuantity),
-        status_Available: status_Available
+        nameVolunteerWork: nameVolunteerWork, // Envie os dados com os nomes esperados no backend
+        address : address ,
+        dateVolunteerWork: dateVolunteerWork,
+        work_description: work_description,
       }, {
         
         headers: {
-           Authorizationization: `Bearer ${token}`
+          Authorizationization: `Bearer ${token}`
         }
       })
       alert(response.data.message)
@@ -47,7 +39,7 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
           navigate("/", { replace: true }) // Redireciona para a página de login
         }
       } else {
-        alert(`Erro na requisição: `, error)
+        alert(`Erro na requisição: `, error.response.data.message)
       }
 
     }
@@ -106,100 +98,37 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
 
               <form className="p-4 md:p-5">
                 <div className="grid gap-4 mb-4 grid-cols-2">
-                  <div className="col-span-2 sm:col-span-1">
+                  <div className="col-span-2">
                     <label
                       for="namebook"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Nome do Livro
+                      Nome do trabalho
                     </label>
                     <input
                       type="text"
                       name="namebook"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Type product name"
+                      placeholder="Digite o nome do trabalho"
                       required=""
                     />
                   </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <label
-                      for="category"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Categoria dos Livros
-                    </label>
-                    <select
-                      id="category"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    >
-                      <option selected="">Selecionar categoria</option>
-                      <option value={'Obras Básicas'}>Obras Básicas</option>
-                      <option value={'Obras complementares'}>Obras complementares</option>
-                    </select>
-                  </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <label
-                      for="authorBook "
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Autor do Livro
-                    </label>
-                    <input
-                      type="text"
-                      name="authorBook "
-                      id="authorBook "
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Digite o autor do livro"
-                      required=""
-                    />
-                  </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <label
-                      for="status_Available"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Disponibilidade do Livro
-                    </label>
-                    <select
-                      id="status_Available"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    >
-                      <option selected="">Selecionar disponibilidade</option>
-                      <option>reservado</option>
-                      <option>disponível</option>
-                      <option>emprestado</option>
-                      <option>indisponível</option>
-                    </select>
-                  </div>
-                  <div className="col-span-2 sm:col-span-2">
-                    <label
-                      for="authorBook "
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Quantidade de Livros
-                    </label>
-                    <input
-                      type="text"
-                      name="authorBook "
-                      id="authorBook "
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Digite a quantidde de livros"
-                      required=""
-                    />
-                  </div>
+                  
                   <div className="col-span-2">
                     <label
-                      for="overViewBook"
+                      for="authorBook "
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Visão geral sobre o Livro
+                      Endereço do Trabalho
                     </label>
-                    <textarea
-                      id="overViewBook"
-                      rows="2"
-                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Digite a visão geral do livro aqui"
-                    ></textarea>
+                    <input
+                      type="text"
+                      name="authorBook "
+                      id="authorBook "
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      placeholder="Digite o endereço do trabalho"
+                      required=""
+                    />
                   </div>
                   <div className="col-span-2">
                     <label
@@ -216,6 +145,20 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                     ></textarea>
                   </div>
                 </div>
+                <div className="col-span-2 mb-1">
+                    <label
+                      for="overViewBook"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Descrição do Trabalho voluntário
+                    </label>
+                    <textarea
+                      id="overViewBook"
+                      rows="2"
+                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Digite uma descrição para o trabalho"
+                    ></textarea>
+                  </div>
                 <button
                   type="submit"
                   className="text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -232,7 +175,7 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                       clip-rule="evenodd"
                     ></path>
                   </svg>
-                  Add new product
+                  Adicionar trabalho
                 </button>
               </form>
             </div>
