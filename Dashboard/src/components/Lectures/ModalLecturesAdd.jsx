@@ -201,7 +201,7 @@ export default function UpdateLecturesModal({
                       }
                       showIcon
                       dateFormat="dd/mm/yy"
-                    />
+                      />
                   </div>
                   <div className="col-span-2 sm:col-span-2">
                     <label

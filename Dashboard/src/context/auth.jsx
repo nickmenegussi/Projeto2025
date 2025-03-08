@@ -10,6 +10,7 @@ export function AuthProvider({children}){
     const [user, setUser] = useState(null)
     const [otpEmail, setOtpEmail] = useState(null)
     const [otpDigits, setOtpDigits] = useState(null)
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     // verificar se já existe um login
     
@@ -31,7 +32,7 @@ export function AuthProvider({children}){
         if(dadosEmail === "true"){
             setOtpEmail(dadosEmail)
         }
-
+        setLoading(false)
     }, [])
 
     // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
@@ -49,7 +50,7 @@ export function AuthProvider({children}){
             api.defaults.headers.common["Authorization"] = `Bearer ${response.data.data.token}`
             localStorage.setItem('@Auth:token', response.data.data.token)
             localStorage.setItem('@Auth:user', JSON.stringify(response.data.data.user))
-            navigate("/emailOtp"); // Redireciona após envio do OTP
+            navigate("/emailOtp") // Redireciona após envio do OTP
         }
     }
 
@@ -57,7 +58,10 @@ export function AuthProvider({children}){
 
     function logout(){
         setUser(null)
-        localStorage.clear()
+        localStorage.removeItem('@Auth:token')
+        localStorage.removeItem('@Auth:user')
+        localStorage.removeItem('@Auth:email')
+        localStorage.removeItem('@Auth:otp')
         delete api.defaults.headers.common["Authorization"]
 
         navigate('/dashboard') // troquei o Redirect do expo router, pois, o expo-router funciona somente para estruturas de pastas definidas e quando não está nao funciona
@@ -103,7 +107,7 @@ export function AuthProvider({children}){
 
     
     return (
-        <AuthContext.Provider value={{user, login, logout, otpEmail ,OtpSendEmail, otpDigits, OtpVerification}}>
+        <AuthContext.Provider value={{user, login, logout, otpEmail ,OtpSendEmail, otpDigits, OtpVerification, loading}}>
             {children}
         </AuthContext.Provider>
     )

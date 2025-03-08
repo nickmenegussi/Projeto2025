@@ -1,8 +1,12 @@
 import React, { useState } from "react"
 import api from "../../services/api"
 import { useNavigate } from "react-router"
+import { Calendar } from "primereact/calendar"
+import "primereact/resources/themes/lara-light-indigo/theme.css" // Exemplo de tema
+import "primereact/resources/primereact.min.css" // Estilos do PrimeReact
+import "primeicons/primeicons.css" // Estilos de ícones
 
-export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton, otherStyle }) {
+export default function ModalWorkVolunteerAdd({titleModal, titleButton ,iconButton, otherStyle }) {
   const [OpenModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
   const [volunteerWork, setVolunteerWork] = useState({
@@ -14,15 +18,20 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
 
   const token = localStorage.getItem('@Auth:token')
   
+  function formatDateForSQL(date) {
+    if (!date) return null;
+    return new Date(date).toLocaleDateString("fr-CA"); // Formato 'YYYY-MM-DD'
+  }
+
   async function CreateVolunteerWork(event){
     event.preventDefault()
     const {nameVolunteerWork, address, dateVolunteerWork ,work_description} = volunteerWork
 
     try {
-      const response = await api.post('/user/user/register',{
-        nameVolunteerWork: nameVolunteerWork, // Envie os dados com os nomes esperados no backend
+      const response = await api.post('/VolunteerWork/work/create',{
+        nameVolunteerWork: nameVolunteerWork,
         address : address ,
-        dateVolunteerWork: dateVolunteerWork,
+        dateVolunteerWork: formatDateForSQL(dateVolunteerWork),
         work_description: work_description,
       }, {
         
@@ -31,6 +40,7 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
         }
       })
       alert(response.data.message)
+      setOpenModal(false)
     } catch (error) {
       if(error.response){
         if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
@@ -111,6 +121,8 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o nome do trabalho"
                       required=""
+                      value={volunteerWork.nameVolunteerWork}
+                      onChange={(e) => setVolunteerWork({...volunteerWork, nameVolunteerWork: e.target.value})} 
                     />
                   </div>
                   
@@ -128,6 +140,8 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o endereço do trabalho"
                       required=""
+                      value={volunteerWork.address}
+                      onChange={(e) => setVolunteerWork({...volunteerWork, address: e.target.value})}
                     />
                   </div>
                   <div className="col-span-2">
@@ -135,17 +149,20 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                       for="curiosityBook"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Curiosidades do Livro
+                      Data do trabalho
                     </label>
-                    <textarea
-                      id="curiosityBook"
-                      rows="2"
-                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Digite a curiosidade do livro aqui"
-                    ></textarea>
+                    <Calendar
+                      className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      value={volunteerWork.dateVolunteerWork}
+                      onChange={(e) =>
+                        setVolunteerWork({ ...volunteerWork, dateVolunteerWork: e.value })
+                      }
+                      showIcon
+                      dateFormat="dd/mm/yy"
+                    />
                   </div>
                 </div>
-                <div className="col-span-2 mb-1">
+                <div className="col-span-2 mb-4">
                     <label
                       for="overViewBook"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -154,6 +171,9 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                     </label>
                     <textarea
                       id="overViewBook"
+                      name="overViewBook"
+                      value={volunteerWork.work_description}
+                      onChange={(e) => setVolunteerWork({...volunteerWork, work_description: e.target.value})}
                       rows="2"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Digite uma descrição para o trabalho"
@@ -161,6 +181,7 @@ export default function ModalWorkVolunteer({titleModal, titleButton ,iconButton,
                   </div>
                 <button
                   type="submit"
+                  onClick={CreateVolunteerWork}
                   className="text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   <svg

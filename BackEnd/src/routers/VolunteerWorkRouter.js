@@ -4,17 +4,17 @@ const {viewVolunteerWork, viewOnlyVolunteerWork ,createVolunteerWork ,updateName
 const verifyPermission = require('../middleware/roleMiddleware')
 const authMiddleware = require('../middleware/authMidleware')
 
-router.get('/work', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewVolunteerWork)
-router.get('/work/:VolunteerWorkId', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), viewOnlyVolunteerWork)
+router.get('/work', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewVolunteerWork)
+router.get('/work/:VolunteerWorkId', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewOnlyVolunteerWork)
 
-router.post('/workCreate', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']) , createVolunteerWork)
+router.post('/work/Create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) , createVolunteerWork)
 
-router.patch('/work/:VolunteerWorkId/name', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateNameVolunteerWork)
-router.patch('/work/:VolunteerWorkId/address', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']) , updateAddressVolunteerWork)
-router.patch('/work/:VolunteerWorkId/date', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateDateVolunteerWork)
-router.patch('/work/:VolunteerWorkId/description', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateWorkDescriptionVolunteerWork)
+router.patch('/work/:VolunteerWorkId/name', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateNameVolunteerWork)
+router.patch('/work/:VolunteerWorkId/address', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) , updateAddressVolunteerWork)
+router.patch('/work/:VolunteerWorkId/date', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateDateVolunteerWork)
+router.patch('/work/:VolunteerWorkId/description', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateWorkDescriptionVolunteerWork)
 
-router.delete('/work/:VolunteerWorkId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']) ,deleteVolunteerWork)
+router.delete('/work/:VolunteerWorkId/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) ,deleteVolunteerWork)
 
 
 module.exports = router
