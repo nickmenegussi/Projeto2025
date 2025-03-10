@@ -14,7 +14,7 @@ exports.viewPost = (req, res) => {
       })
     } else {
       return res.status(200).json({
-        message: "Sucesso ao exibir as mensagens curtidas.",
+        message: "Sucesso ao exibir as mensagens.",
         success: true,
         data: result,
       })
@@ -60,20 +60,26 @@ exports.viewPostByUser = (req, res) => {
 
 exports.createPost = (req, res) => {
   const image = req.file ? req.file.filename : null
-  const { content, Topic_idTopic, User_User_idUser } = req.body
+  const { content, Topic_idTopic, User_idUser } = req.body
   
 
-  if (!content || !Topic_idTopic || !User_User_idUser) {
+  if (!content || !image || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
+      data: {
+        content: content,
+        image: image,
+        Topic_idTopic: Topic_idTopic,
+        User_idUser: User_idUser
+      }
     })
   }
 
   // verificar se a postagem já está publicada
   connection.query(
-    "SELECT * FROM Post where content = ? AND User_User_idUser = ?",
-    [content, User_User_idUser],
+    "SELECT * FROM Post where content = ? AND User_idUser = ?",
+    [content, User_idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -93,8 +99,8 @@ exports.createPost = (req, res) => {
       }
       // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
-        "INSERT INTO Post(content, image, User_User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
-        [content, image, User_User_idUser, Topic_idTopic],
+        "INSERT INTO Post(content, image, User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
+        [content, image, User_idUser, Topic_idTopic],
         (errInsert, resultInsert) => {
           if (errInsert) {
             return res.status(500).json({
