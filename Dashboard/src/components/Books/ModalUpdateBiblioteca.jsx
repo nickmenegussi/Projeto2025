@@ -13,7 +13,6 @@ export default function ModalUpdate({
   const [selectedField, setSelectField] = useState("")
   const [book, setBook] = useState(bookContent)
   const token = localStorage.getItem("@Auth:token")
-
   async function UpdateBook(LibraryId, field, value) {
     try {
       const response = await api.patch(

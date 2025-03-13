@@ -8,7 +8,6 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
 
   const [forum, setForum] = useState({
     content: "",
-    image : "",
     User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser,
     Topic_idTopic: 0
   })
@@ -22,20 +21,17 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
       alert("Sessão expirada. Faça login novamente.")
       return navigate('/', { replace: true })
     }
-
-    const { content, image , User_idUser, Topic_idTopic } = forum // Pegue os valores diretamente do state
-
-    const formData = new FormData()
-    formData.append("content", content)
-    formData.append("image", image.files)
-    formData.append("User_idUser", User_idUser)
-    formData.append("Topic_idTopic", parseInt(Topic_idTopic))
-
     try {
-      const response = await api.post('/post/post/register', formData ,{
+
+      const { content , User_idUser, Topic_idTopic } = forum // pegar os valores diretamente do state
+
+      const response = await api.post('/post/post/register', {
+        content: content,
+        User_idUser: User_idUser, 
+        Topic_idTopic: Topic_idTopic
+      } ,{
         headers: {
-           Authorizationization: `Bearer ${token}`,
-           "Content-Type": "multipart/form-data"
+           Authorizationization: `Bearer ${token}`
         }
       })
       alert(response.data.message)
@@ -105,25 +101,7 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
               </div>
 
               <form className="p-4 md:p-5">
-                <div className="grid gap-4 mb-4 grid-cols-2">
-                  
-                  <div className="col-span-2">
-                    <label
-                      for="image"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Imagem do Post
-                    </label>
-                    <input
-                      type="file"
-                      name="image "
-                      onChange={(e) => setForum({...forum, image: e.target.files[0]})}
-                      id="image  "
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      required=""
-                    />
-                  </div>
-                 
+                <div className="grid gap-4 mb-4 grid-cols-2">                 
                   <div className="col-span-2">
                     <label
                       for="TopicId "
