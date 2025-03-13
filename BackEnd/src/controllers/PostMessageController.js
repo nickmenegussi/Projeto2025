@@ -59,11 +59,10 @@ exports.viewPostByUser = (req, res) => {
 }
 
 exports.createPost = (req, res) => {
-  const image = req.file ? req.file.filename : null
   const { content, Topic_idTopic, User_idUser } = req.body
   
 
-  if (!content || !image || !Topic_idTopic || !User_idUser) {
+  if (!content || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
@@ -99,8 +98,8 @@ exports.createPost = (req, res) => {
       }
       // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
-        "INSERT INTO Post(content, image, User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
-        [content, image, User_idUser, Topic_idTopic],
+        "INSERT INTO Post(content, User_idUser, Topic_idTopic) VALUES(?, ?, ?) ",
+        [content, User_idUser, Topic_idTopic],
         (errInsert, resultInsert) => {
           if (errInsert) {
             return res.status(500).json({
