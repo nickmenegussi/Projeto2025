@@ -61,18 +61,13 @@ exports.viewPostByUser = (req, res) => {
 exports.createPost = (req, res) => {
   const image = req.file ? req.file.filename : null
   const { content, Topic_idTopic, User_idUser } = req.body
-  
 
   if (!content || !image || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
-      data: {
-        content: content,
-        image: image,
-        Topic_idTopic: Topic_idTopic,
-        User_idUser: User_idUser
-      }
+      data:   console.log("Dados recebidos no backend:", req.body)
+
     })
   }
 

@@ -75,7 +75,6 @@ export function AuthProvider({children}){
             setOtpEmail(response.data.data)
             alert(response.data.message)
             localStorage.setItem('@Auth:email', email)
-            console.log(response)
         } catch (error) {
             console.error("Erro: ", error)
             
