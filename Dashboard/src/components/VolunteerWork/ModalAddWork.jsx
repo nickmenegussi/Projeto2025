@@ -2,9 +2,9 @@ import React, { useState } from "react"
 import api from "../../services/api"
 import { useNavigate } from "react-router"
 import { Calendar } from "primereact/calendar"
-import "primereact/resources/themes/lara-light-indigo/theme.css" // Exemplo de tema
-import "primereact/resources/primereact.min.css" // Estilos do PrimeReact
-import "primeicons/primeicons.css" // Estilos de ícones
+import "primereact/resources/themes/lara-light-indigo/theme.css" 
+import "primereact/resources/primereact.min.css" 
+import "primeicons/primeicons.css" 
 
 export default function ModalWorkVolunteerAdd({titleModal, titleButton ,iconButton, otherStyle }) {
   const [OpenModal, setOpenModal] = useState(false)
@@ -36,22 +36,20 @@ export default function ModalWorkVolunteerAdd({titleModal, titleButton ,iconButt
       }, {
         
         headers: {
-          Authorizationization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       alert(response.data.message)
       setOpenModal(false)
     } catch (error) {
-      if(error.response){
-        if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
+      if (error.response) { 
+        if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate("/", { replace: true }) // Redireciona para a página de login
+          navigate('/', { replace: true })
         }
       } else {
-        alert(`Erro na requisição: `, error.response.data.message)
-      }
-
+        alert(`Erro na requisição: ${error.response.data.message}`)
     }
     
   }
@@ -205,4 +203,5 @@ export default function ModalWorkVolunteerAdd({titleModal, titleButton ,iconButt
       )}
     </>
   )
+}
 }

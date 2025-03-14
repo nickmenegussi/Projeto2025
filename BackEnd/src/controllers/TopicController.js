@@ -49,7 +49,6 @@ exports.viewAllTopic = (req, res) => {
 }
 
 exports.createTopic = async (req, res) => {
-  const image = req.file ? req.file.filename : null
   const { title, description } = req.body
   const User_idUser = req.data.id
 
@@ -82,8 +81,8 @@ exports.createTopic = async (req, res) => {
         })
       } else {
         connection.query(
-          "INSERT INTO Topic(title,description,image, User_idUser) VALUES(?, ?, ?, ?)",
-          [title, description, image, User_idUser],
+          "INSERT INTO Topic(title,description, User_idUser) VALUES(?, ?, ?)",
+          [title, description, User_idUser],
           (err, result) => {
             if (err) {
               return res.status(500).json({

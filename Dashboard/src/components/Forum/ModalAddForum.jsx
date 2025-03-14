@@ -8,7 +8,6 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
 
   const [forum, setForum] = useState({
     content: "",
-    image : "",
     User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser,
     Topic_idTopic: 0
   })
@@ -26,10 +25,12 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
 
 
     try {
-
-    const formData = new FormData(forum)
     
-      const response = await api.post('/post/post/register', formData ,{
+      const response = await api.post('/post/post/register', {
+        content: content,
+        User_idUser: User_idUser, 
+        Topic_idTopic: Topic_idTopic
+      } ,{
         headers: {
           "Content-Type": "multipart/form-data",
            Authorization: `Bearer ${token}`
@@ -138,6 +139,20 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o id do Tópico Respectivo"
                       required=""
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label
+                      for="image"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Imagem
+                    </label>
+                    <input
+                      type="file"
+                      name="image"
+                      onChange={handleImageChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
                   </div>
                   <div className="col-span-2">
