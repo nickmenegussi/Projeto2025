@@ -2,37 +2,54 @@ import React, { useState } from "react"
 import api from "../../services/api"
 import { useNavigate } from "react-router"
 
-export default function ModalUpdateForum({titleModal, forumContent ,titleButton ,iconButton, otherStyle }) {
+export default function ModalUpdateForum({
+  titleModal,
+  forumContent,
+  titleButton,
+  iconButton,
+  otherStyle,
+}) {
   const [OpenModal, setOpenModal] = useState(false)
   const [content, setContent] = useState(forumContent)
   const [selectField, setSelectField] = useState("")
   const navigate = useNavigate()
   const [forum, setForum] = useState({
     content: "",
-    User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser,
-    Topic_idTopic: 0
+    image: null,
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
+    Topic_idTopic: 0,
   })
-  const token = localStorage.getItem('@Auth:token')
+  const token = localStorage.getItem("@Auth:token")
 
-  async function UpdateForum(idForum ,field, value){
+  async function UpdateForum(idPost, field, value) {
     try {
-      const { content , User_idUser, Topic_idTopic } = forum // pegar os valores diretamente do state
-
-      const response = await api.post(`/post/post/${idForum}/${field}`, {
-        [field]: value
-      },{
-        headers: {
-           Authorization: `Bearer ${token}`,
-           'Content-Type': 'application/json'
+      const response = await api.patch(
+        `/post/post/${idPost}/${field}`,
+        {
+          [field]: value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
         }
-      })
+      )
       alert(response.data.message)
+      setOpenModal(false)
+
     } catch (error) {
       if (error.response) {
-        if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
+        if (
+          error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+        ) {
           alert(error.response.data.message)
           localStorage.clear()
           navigate("/", { replace: true }) // Redireciona para a página de login
+        }
+        else{
+          alert(error.response.data.message)
         }
       } else {
         alert(`Erro na requisição: ${error.message}`)
@@ -40,11 +57,12 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
     }
   }
 
-  const handleConfirm = () => {
-    if(selectField){
-        UpdateForum(forum.idForum, selectField, forum[selectField])
+  const handleConfirm = (event) => {
+    event.preventDefault()
+    if (selectField) {
+      UpdateForum(parseInt(content.idPost), selectField, forum[selectField])
     } else {
-        alert("Por favor, selecione um campo para atualizar.")
+      alert("Por favor, selecione um campo para atualizar.")
     }
   }
 
@@ -98,7 +116,7 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
                 </button>
               </div>
 
-              <form className="p-4 md:p-5" onSubmit={CreatePost}>
+              <form className="p-4 md:p-5" onSubmit={handleConfirm}>
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2">
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -111,10 +129,11 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
                     >
                       <option value="">Selecionar um item</option>
                       <option value="Topic_idTopic">Id do Topico</option>
-                      <option value="content">Conteúdo </option>
+                      <option value="content">Conteúdo</option>
+                      <option value="image">Imagem</option>
                     </select>
-                  </div>         
-                  
+                  </div>
+
                   {selectField === "content" && (
                     <div className="col-span-2">
                       <label
@@ -127,7 +146,9 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
                         type="text"
                         name="PostContent"
                         value={forum.content}
-                        onChange={(e) => setForum({...forum, content: e.target.value})}
+                        onChange={(e) =>
+                          setForum({ ...forum, content: e.target.value })
+                        }
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Digite o Conteúdo do Post"
                         required=""
@@ -147,7 +168,9 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
                         type="number"
                         name="TopicId"
                         value={forum.Topic_idTopic}
-                        onChange={(e) => setForum({...forum, Topic_idTopic: e.target.value})}
+                        onChange={(e) =>
+                          setForum({ ...forum, Topic_idTopic: e.target.value })
+                        }
                         id="TopicId"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Digite o id do Tópico Respectivo"
@@ -155,24 +178,33 @@ export default function ModalUpdateForum({titleModal, forumContent ,titleButton 
                       />
                     </div>
                   )}
-
+                  {selectField === "image" && (
+                    <div className="col-span-2">
+                      <label
+                        htmlFor="PostContent"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Image do Post
+                      </label>
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setForum({ ...forum, image: e.target.files[0]})
+                        }
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Digite a Image do Post"
+                        required=""
+                      ></input>
+                    </div>
+                  )}
                   <button
                     type="submit"
-                    className="text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
-                    <svg
-                      className="me-1 -ms-1 w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                    Add new product
+                  
+                    Alterar Informação
                   </button>
                 </div>
               </form>

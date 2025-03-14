@@ -10,7 +10,6 @@ import ModalUpdateForum from '../components/Forum/ModalUpdateForum'
 
 export default function Forum() {
   const [forum, setForum] = useState([])
-
   const token = localStorage.getItem('@Auth:token')
 
   useEffect(() => {
@@ -49,6 +48,7 @@ export default function Forum() {
             <tr>
               <th className="px-4 py-3 text-left">ID</th>
               <th className="px-4 py-3 text-left">Conteudo</th>
+              <th className="px-4 py-3 text-left">Imagem</th>
               <th className="px-4 py-3 text-left">Criador</th>
               <th className="px-4 py-3 text-left">Topico</th>
               <th className="px-4 py-3 text-left">Horário de Criação</th>
@@ -63,6 +63,7 @@ export default function Forum() {
                     {item.idPost}
                   </td>
                   <td className="px-4 py-3 text-left">{item.content}</td>
+                  <td className="px-4 py-3 text-left">{item.image}</td>
                   <td className="px-4 py-3 text-left">{item.User_idUser}</td>
                   <td className="px-4 py-3 text-left">{item.Topic_idTopic}</td>
                   <td className="px-4 py-3 text-left">{item.created_at}</td>

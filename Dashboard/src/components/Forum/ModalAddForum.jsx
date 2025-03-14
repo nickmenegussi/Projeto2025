@@ -2,55 +2,70 @@ import React, { useState } from "react"
 import api from "../../services/api"
 import { useNavigate } from "react-router"
 
-export default function ModalAddForum({titleModal, titleButton ,iconButton, otherStyle }) {
+export default function ModalAddForum({
+  titleModal,
+  titleButton,
+  iconButton,
+  otherStyle,
+}) {
   const [OpenModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
 
   const [forum, setForum] = useState({
     content: "",
-    User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser,
-    Topic_idTopic: 0
+    image: null,
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
+    Topic_idTopic: 0,
   })
-  const token = localStorage.getItem('@Auth:token')
+  const token = localStorage.getItem("@Auth:token")
 
-  async function CreatePost(event){
+  async function CreatePost(event) {
     event.preventDefault()
 
-    if (!token){
+    if (!token) {
       localStorage.clear()
       alert("Sessão expirada. Faça login novamente.")
-      return navigate('/', { replace: true })
+      return navigate("/", { replace: true })
     }
 
-
-
     try {
-    
-      const response = await api.post('/post/post/register', {
-        content: content,
-        User_idUser: User_idUser, 
-        Topic_idTopic: Topic_idTopic
-      } ,{
-        headers: {
-          "Content-Type": "multipart/form-data",
-           Authorization: `Bearer ${token}`
-           
+      const { content, image ,User_idUser, Topic_idTopic } = forum
+
+      const formData = new FormData()
+      formData.append("content", content)
+      if(image){
+        formData.append('image', image)
+      }
+      formData.append("User_idUser", User_idUser)
+      formData.append("Topic_idTopic", Topic_idTopic)
+
+      const response = await api.post(
+        "/post/post/register",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
         }
-      })
+      )
       alert(response.data.message)
     } catch (error) {
-      if(error.response){
-        if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
+      if (error.response) {
+        if (
+          error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+        ) {
           alert(error.response.data.message)
           localStorage.clear()
           navigate("/", { replace: true }) // Redireciona para a página de login
+        } else {
+          alert(error.response.data.message)
         }
       } else {
-        alert(`Erro na requisição: `, error)
+        alert(`Erro na requisição: ${error.message}`)
       }
-
     }
-    
   }
 
   return (
@@ -71,7 +86,7 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
           tabindex="-1"
           aria-hidden="true"
           className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-opacity-60"
-          >
+        >
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -99,30 +114,12 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                       d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                     />
                   </svg>
-                  <span className="sr-only" >Close modal</span>
+                  <span className="sr-only">Close modal</span>
                 </button>
               </div>
 
               <form className="p-4 md:p-5">
                 <div className="grid gap-4 mb-4 grid-cols-2">
-                  
-                  <div className="col-span-2">
-                    <label
-                      for="image"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Imagem do Post
-                    </label>
-                    <input
-                      type="file"
-                      name="image "
-                      onChange={(e) => setForum({...forum, image: e.target.files[0].name})}
-                      id="image  "
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      required=""
-                    />
-                  </div>
-                 
                   <div className="col-span-2">
                     <label
                       for="TopicId "
@@ -134,7 +131,12 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                       type="text"
                       name="TopicId"
                       value={forum.Topic_idTopic}
-                      onChange={(e) => setForum({...forum, Topic_idTopic: e.target.value})}
+                      onChange={(e) =>
+                        setForum({
+                          ...forum,
+                          Topic_idTopic: parseInt(e.target.value),
+                        })
+                      }
                       id="TopicId "
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o id do Tópico Respectivo"
@@ -143,15 +145,18 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                   </div>
                   <div className="col-span-2">
                     <label
-                      for="image"
+                      htmlFor="PostImage"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Imagem
+                      Imagem do Post
                     </label>
                     <input
                       type="file"
+                      accept="image/*"
                       name="image"
-                      onChange={handleImageChange}
+                      onChange={(e) =>
+                        setForum({ ...forum, image: e.target.files[0]})
+                      }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
                   </div>
@@ -166,7 +171,9 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                       type="text"
                       name="PostContent"
                       value={forum.content}
-                      onChange={(e) => setForum({...forum, content: e.target.value})}
+                      onChange={(e) =>
+                        setForum({ ...forum, content: e.target.value })
+                      }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o Conteúdo do Post"
                       required=""
@@ -174,7 +181,7 @@ export default function ModalAddForum({titleModal, titleButton ,iconButton, othe
                   </div>
                 </div>
                 <button
-                    onClick={CreatePost}
+                  onClick={CreatePost}
                   type="submit"
                   className="text-white cursor-pointer inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
