@@ -41,7 +41,7 @@ export default function VolunteerWork() {
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Trabalhos Voluntários</h1>
         <div className='ml-auto flex gap-3 ps-3'>
-          <ModalWorkVolunteerAdd titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />} otherStyle="bg-blue-500  text-white h-10 w-46 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
+          <ModalWorkVolunteerAdd titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />} otherStyle="bg-blue-500  text-white h-10 w-50 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
           <SearchInput />
         </div>
       </div>
@@ -67,12 +67,14 @@ export default function VolunteerWork() {
                   <td className="px-4 py-3 text-left">
                       <div className='flex gap-2'>
                       <ModalLectureUpdate
+                        lectureContent={item}
                         titleButton="Editar"
                         titleModal="Editar"
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
                       <ModalLecturesDelete
+                        lectureContent={item}
                         titleButton="Excluir"
                         titleModal="Editar"
                         iconButton={<Trash />}

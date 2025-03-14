@@ -61,7 +61,6 @@ exports.viewPostByUser = (req, res) => {
 exports.createPost = (req, res) => {
   const { content, Topic_idTopic, User_idUser } = req.body
   
-
   if (!content || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
       success: false,
@@ -98,7 +97,7 @@ exports.createPost = (req, res) => {
       }
       // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
-        "INSERT INTO Post(content, User_idUser, Topic_idTopic) VALUES(?, ?, ?) ",
+        "INSERT INTO Post(content ,User_idUser, Topic_idTopic) VALUES(?, ?, ?) ",
         [content, User_idUser, Topic_idTopic],
         (errInsert, resultInsert) => {
           if (errInsert) {

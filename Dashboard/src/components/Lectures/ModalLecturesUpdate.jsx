@@ -15,6 +15,7 @@ export default function ModalLecturesUpdate({
   const [selectField, setSelectField] = useState("");
   const token = localStorage.getItem("@Auth:token");
 
+
   async function UpdateLecture(idLecture, field, value) {
     try {
       const response = await api.patch(
