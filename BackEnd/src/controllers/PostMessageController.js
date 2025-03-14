@@ -60,15 +60,16 @@ exports.viewPostByUser = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { content, Topic_idTopic, User_idUser } = req.body
-  
-  if (!content || !Topic_idTopic || !User_idUser) {
+  const image = req.file ? req.file.filename : null
+
+  if (!content || !image || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
-      data:   console.log("Dados recebidos no backend:", req.body)
-
+      data: console.log(content, image, Topic_idTopic, User_idUser)
     })
   }
+  
 
   // verificar se a postagem já está publicada
   connection.query(
@@ -93,8 +94,8 @@ exports.createPost = (req, res) => {
       }
       // adicionar um conexão aqui para ver se o topico existe e o usuario
       connection.query(
-        "INSERT INTO Post(content ,User_idUser, Topic_idTopic) VALUES(?, ?, ?) ",
-        [content, User_idUser, Topic_idTopic],
+        "INSERT INTO Post(content, image ,User_idUser, Topic_idTopic) VALUES(?, ?, ?, ?) ",
+        [content, image ,User_idUser, Topic_idTopic],
         (errInsert, resultInsert) => {
           if (errInsert) {
             return res.status(500).json({
@@ -163,12 +164,12 @@ exports.updateContentPost = (req, res) => {
 }
 
 exports.updateImagePost = (req, res) => {
-  const idPost = req.params.IdPost
-  const { image } = req.file ? req.file.filename : null
+  const idPost = req.params.idPost
   const User_idUser = req.data.id
+  const image = req.file ? req.file.filename : null
 
   connection.query(
-    "SELECT * FROM WHERE idPost = ?",
+    "SELECT * FROM Post WHERE idPost = ?",
     [idPost],
     (err, result) => {
       if (err) {
@@ -186,7 +187,7 @@ exports.updateImagePost = (req, res) => {
         })
       } else {
         connection.query(
-          `UPDATE FROM Post where idPost = ? AND User_idUser = ?
+          `UPDATE Post SET image = ? where idPost = ? AND User_idUser = ?
           `,
           [image, idPost, User_idUser],
           (err, result) => {

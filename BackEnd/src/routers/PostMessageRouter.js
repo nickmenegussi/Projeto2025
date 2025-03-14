@@ -5,13 +5,13 @@ const authMiddleware = require('../middleware/authMidleware')
 const upload = require("../multerConfig/multer")
 
 router.get('/post', authMiddleware, viewPost)
-router.get('/post/:id/user', authMiddleware, viewPostByUser)
+router.get('/post/:idPost/user', authMiddleware, viewPostByUser)
 
-router.post('/post/register', authMiddleware, createPost)
+router.post('/post/register', authMiddleware, upload.single('image') ,createPost)
 
-router.patch('/post/:id/content', authMiddleware, updateContentPost)
-router.patch('/post/:id/picture', upload.single('imagem') ,authMiddleware, updateImagePost)
+router.patch('/post/:idPost/content', authMiddleware, updateContentPost)
+router.patch('/post/:idPost/image', authMiddleware, upload.single('image') , updateImagePost)
 
-router.delete('/post/:id/remove', authMiddleware, deletePost)
+router.delete('/post/:idPost/remove', authMiddleware, deletePost)
 
 module.exports = router
