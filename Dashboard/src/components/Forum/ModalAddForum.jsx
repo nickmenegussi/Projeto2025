@@ -7,6 +7,7 @@ export default function ModalAddForum({
   titleButton,
   iconButton,
   otherStyle,
+  onUpdate
 }) {
   const [OpenModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
@@ -15,18 +16,12 @@ export default function ModalAddForum({
     content: "",
     image: null,
     User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
-    Topic_idTopic: 0,
+    Topic_idTopic: "",
   })
   const token = localStorage.getItem("@Auth:token")
 
   async function CreatePost(event) {
     event.preventDefault()
-
-    if (!token) {
-      localStorage.clear()
-      alert("Sessão expirada. Faça login novamente.")
-      return navigate("/", { replace: true })
-    }
 
     try {
       const { content, image ,User_idUser, Topic_idTopic } = forum
@@ -37,7 +32,7 @@ export default function ModalAddForum({
         formData.append('image', image)
       }
       formData.append("User_idUser", User_idUser)
-      formData.append("Topic_idTopic", Topic_idTopic)
+      formData.append("Topic_idTopic", parseInt(Topic_idTopic))
 
       const response = await api.post(
         "/post/post/register",
@@ -50,6 +45,8 @@ export default function ModalAddForum({
         }
       )
       alert(response.data.message)
+      setOpenModal(false)
+      onUpdate()
     } catch (error) {
       if (error.response) {
         if (
@@ -58,7 +55,7 @@ export default function ModalAddForum({
         ) {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate("/", { replace: true }) // Redireciona para a página de login
+          return navigate("/", { replace: true }) // Redireciona para a página de login
         } else {
           alert(error.response.data.message)
         }

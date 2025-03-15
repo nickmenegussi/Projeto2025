@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 
-export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bookContent }) {
+export default function ModalDeleteItem({titleButton,iconButton, otherStyle, bookContent, onUpdate }) {
     const [OpenModal, setOpenModal] = useState(false);
     const [book, setBook] = useState(bookContent)
     const token = localStorage.getItem("@Auth:token")
@@ -15,8 +15,9 @@ export default function ModalDeleteItem({titleButton, iconButton, otherStyle, bo
             Authorization: `Bearer ${token}`
           }
         })
-        console.log(LibraryId)
         alert(response.data.message)
+        setOpenModal(false)
+        onUpdate()
       } catch (error) {
         if(error.response){
           alert(`Erro: ${error.response.data.message}`)

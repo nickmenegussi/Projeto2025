@@ -7,7 +7,7 @@ export default function ModalUserUpdate({
   iconButton,
   otherStyle,
   userContent,
-  key,
+  onUpdate
 }) {
   const [OpenModal, setOpenModal] = useState(false)
   const [user, setUser] = useState(userContent)
@@ -28,6 +28,8 @@ export default function ModalUserUpdate({
         }
       )
       alert(response.data.message)
+      setOpenModal(false)
+      onUpdate()
     } catch (error) {
       if (error.response) {
         alert(`Erro: ${error.response.data.message}`)

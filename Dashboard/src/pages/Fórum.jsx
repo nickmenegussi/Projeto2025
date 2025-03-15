@@ -1,44 +1,55 @@
-import React, { useEffect, useState } from 'react'
-import SearchInput from '../components/SearchInput'
+import React, { useEffect, useState } from "react"
+import SearchInput from "../components/SearchInput"
 
-import { PlusSquare, SquarePen, Trash } from 'lucide-react'
-import Modal from '../components/Books/ModalBibliotecaAdd'
-import ModalDeleteItem from '../components/Books/ModalDeleteItem'
-import api from '../services/api'
-import ModalAddForum from '../components/Forum/ModalAddForum'
-import ModalUpdateForum from '../components/Forum/ModalUpdateForum'
+import { PlusSquare, SquarePen, Trash } from "lucide-react"
+import Modal from "../components/Books/ModalBibliotecaAdd"
+import ModalDeleteItem from "../components/Books/ModalDeleteItem"
+import api from "../services/api"
+import ModalAddForum from "../components/Forum/ModalAddForum"
+import ModalUpdateForum from "../components/Forum/ModalUpdateForum"
+import ModalDeleteFoum from "../components/Forum/ModalDeleteForum"
 
 export default function Forum() {
   const [forum, setForum] = useState([])
-  const token = localStorage.getItem('@Auth:token')
+  const token = localStorage.getItem("@Auth:token")
 
   useEffect(() => {
     ViewForum()
   }, [])
 
-  async function ViewForum(){
+  async function ViewForum() {
     try {
-      const response = await api.get('/post/post', {headers: {Authorization: `Bearer ${token}`}})
+      const response = await api.get("/post/post", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       setForum(response.data.data)
-    } catch(error){
-      console.error('Erro: ', error)
-      if(error.response){
-        if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
+    } catch (error) {
+      console.error("Erro: ", error)
+      if (error.response) {
+        if (
+          error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+        ) {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate('/', {replace: true})
-        } 
+          return navigate("/", { replace: true })
+        }
       }
     }
   }
 
-
   return (
-    <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
+    <div className="flex flex-col p-4 gap-5w-full md:ml-64 sm:ml-60 mt-14">
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Fórum</h1>
-        <div className='ml-auto flex gap-3'>
-          <ModalAddForum titleButton={'Adicionar Livros'} titleModal={'Adicionar Item'} iconButton={<PlusSquare />} otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
+        <div className="ml-auto flex gap-3">
+          <ModalAddForum
+            onUpdate={ViewForum}
+            titleButton={"Adicionar Livros"}
+            titleModal={"Adicionar Item"}
+            iconButton={<PlusSquare />}
+            otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600"
+          />
           <SearchInput />
         </div>
       </div>
@@ -59,9 +70,7 @@ export default function Forum() {
             {forum.length > 0 ? (
               forum.map((item) => (
                 <tr key={item.idPost} className="hover:bg-gray-200">
-                  <td className="px-4 py-3 text-left">
-                    {item.idPost}
-                  </td>
+                  <td className="px-4 py-3 text-left">{item.idPost}</td>
                   <td className="px-4 py-3 text-left">{item.content}</td>
                   <td className="px-4 py-3 text-left">{item.image}</td>
                   <td className="px-4 py-3 text-left">{item.User_idUser}</td>
@@ -73,14 +82,22 @@ export default function Forum() {
                         forumContent={item}
                         titleButton="Editar"
                         titleModal="Editar"
+                        onUpdate={ViewForum}
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
-                       />
+                      />
+                      <ModalDeleteFoum
+                        forumContent={item}
+                        titleButton="Excluir"
+                        titleModal="Editar"
+                        onUpdate={ViewForum}
+                        iconButton={<Trash />}
+                        otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                      />
                     </div>
                   </td>
                 </tr>
               ))
-              
             ) : (
               <tr>
                 <td colSpan="7" className="py-4 text-gray-500 text-center">

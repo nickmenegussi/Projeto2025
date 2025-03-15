@@ -17,14 +17,8 @@ export default function Users() {
 
 
   useEffect(() => {
-    if (!token) {
-      localStorage.clear()
-      alert('Sessão expirada. Faça login novamente.')
-      navigate('/', {replace: true})
-    }
     ViewUser()
-  }, [token])
-
+  }, [])
   async function ViewUser(){
     try {
       const response = await api.get('/user/user', {
@@ -38,7 +32,7 @@ export default function Users() {
         if (error.response.data.message === 'Sessão expirada, por favor, faça login novamente.') {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate('/', {replace: true})
+          return navigate('/', {replace: true})
         }
       } else {
         console.error('Erro na requisição:', error)
@@ -48,7 +42,7 @@ export default function Users() {
 
 
   return (
-    <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
+    <div className="flex flex-col p-4 gap-5w-full md:ml-64 sm:ml-60 mt-14">
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Usuários</h1>
         <div className='ml-auto flex gap-3'>
@@ -89,6 +83,7 @@ export default function Users() {
                     titleModal="Editar"
                     iconButton={<SquarePen />}
                     otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                    onUpdate={ViewUser}
                   />
                   )}
                   <ModalDeleteItem
@@ -96,6 +91,7 @@ export default function Users() {
                     titleModal="Editar"
                     iconButton={<Trash />}
                     otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                    onUpdate={ViewUser}
                   />
                 </div>
               </td>

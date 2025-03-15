@@ -64,7 +64,7 @@ export function AuthProvider({children}){
         localStorage.removeItem('@Auth:otp')
         delete api.defaults.headers.common["Authorization"]
 
-        navigate('/dashboard') // troquei o Redirect do expo router, pois, o expo-router funciona somente para estruturas de pastas definidas e quando não está nao funciona
+        navigate('/') // troquei o Redirect do expo router, pois, o expo-router funciona somente para estruturas de pastas definidas e quando não está nao funciona
     }
 
     async function OtpSendEmail(email){

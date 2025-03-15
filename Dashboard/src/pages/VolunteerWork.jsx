@@ -27,7 +27,7 @@ export default function VolunteerWork() {
         if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
           alert(error.response.data.message)
           localStorage.clear()
-          navigate("/", { replace: true }) // Redireciona para a página de login
+          return navigate("/", { replace: true }) // Redireciona para a página de login
         }
       } else {
         alert(`Erro na requisição: `, error.response.data.message)
@@ -37,7 +37,7 @@ export default function VolunteerWork() {
 
 
   return (
-    <div className="flex flex-col p-4 gap-5w-full md:ml-64 mt-14">
+    <div className="flex flex-col p-4 gap-5w-full md:ml-64 sm:ml-60 mt-14">
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Trabalhos Voluntários</h1>
         <div className='ml-auto flex gap-3 ps-3'>

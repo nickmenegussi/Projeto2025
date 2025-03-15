@@ -8,19 +8,20 @@ export default function ModalUpdateForum({
   titleButton,
   iconButton,
   otherStyle,
+  onUpdate
 }) {
   const [OpenModal, setOpenModal] = useState(false)
   const [content, setContent] = useState(forumContent)
   const [selectField, setSelectField] = useState("")
   const navigate = useNavigate()
   const [forum, setForum] = useState({
-    content: "",
+    content:  "",
     image: null,
-    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser || 0,
     Topic_idTopic: 0,
   })
-  const token = localStorage.getItem("@Auth:token")
 
+  const token = localStorage.getItem("@Auth:token")
   async function UpdateForum(idPost, field, value) {
     try {
       const response = await api.patch(
@@ -37,7 +38,7 @@ export default function ModalUpdateForum({
       )
       alert(response.data.message)
       setOpenModal(false)
-
+      onUpdate()
     } catch (error) {
       if (error.response) {
         if (
@@ -46,7 +47,7 @@ export default function ModalUpdateForum({
         ) {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate("/", { replace: true }) // Redireciona para a página de login
+          return navigate("/", { replace: true }) // Redireciona para a página de login
         }
         else{
           alert(error.response.data.message)

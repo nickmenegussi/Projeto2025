@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import api from "../../services/api"
 import { useNavigate } from "react-router"
 
-export default function ModalUserAdd({titleModal, titleButton ,iconButton, otherStyle }) {
+export default function ModalUserAdd({titleModal, titleButton ,iconButton, otherStyle, onUpdate }) {
   const [OpenModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
   const [user, setUser] = useState({
@@ -13,11 +13,6 @@ export default function ModalUserAdd({titleModal, titleButton ,iconButton, other
   })
 
   const token = localStorage.getItem('@Auth:token')
-  if (!token){
-    localStorage.clear()
-    alert("Sessão expirada. Faça login novamente.")
-    return navigate('/', { replace: true })
-  }
 
   async function CreateBook(event){
     event.preventDefault()
@@ -39,12 +34,16 @@ export default function ModalUserAdd({titleModal, titleButton ,iconButton, other
         }
       })
       alert(response.data.message)
+      setOpenModal(false)
+      onUpdate()
     } catch (error) {
       if(error.response){
         if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
           alert(error.response.data.message)
           localStorage.clear()
           navigate("/", { replace: true }) // Redireciona para a página de login
+        } else {
+          alert(error.response.data.message)
         }
       } else {
         alert(`Erro na requisição: `, error)

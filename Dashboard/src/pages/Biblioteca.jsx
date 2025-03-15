@@ -20,14 +20,8 @@ export default function Biblioteca() {
   const token = localStorage.getItem("@Auth:token")
 
   useEffect(() => {
-    if(!token){
-      localStorage.clear()
-      alert("Sessão expirada. Faça login novamente.");
-      navigate('/', {replace: true})
-      return
-    } 
     ViewBooks()
-  }, [token]) 
+  }, []) 
 
   async function ViewBooks() {
     try {
@@ -42,7 +36,7 @@ export default function Biblioteca() {
         if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
           alert(error.response.data.message)
           localStorage.clear()
-          navigate("/", { replace: true }) // Redireciona para a página de login
+          return navigate("/", { replace: true }) // Redireciona para a página de login
         }
       } else {
         console.error("Erro na requisição:", error)
@@ -51,7 +45,7 @@ export default function Biblioteca() {
   }
 
   return (
-    <div className="flex flex-col p-4 gap-5 md:ml-64  mt-14">
+    <div className="flex flex-col p-4 gap-5 md:ml-64 sm:ml-60 mt-14">
       <div className="pt-5 px-4 flex items-center">
         <h1 className="text-2xl">Biblioteca</h1>
         <div className="ml-auto flex gap-3 items-center">
@@ -108,6 +102,7 @@ export default function Biblioteca() {
                         titleModal="Editar"
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                        onUpdate={ViewBooks}
                       />
                       <ModalDeleteItem
                         bookContent={content}
@@ -115,6 +110,7 @@ export default function Biblioteca() {
                         titleModal="Excluir"
                         iconButton={<Trash />}
                         otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                        onUpdate={ViewBooks}
                       />
                     </div>
                   </td>
