@@ -19,8 +19,7 @@ export default function Lecture() {
     if(!token){
       localStorage.clear()
       alert('Sessão expirada. Faça login novamente.')
-      navigate('/', {replace: true})
-      return
+      return navigate('/', {replace: true})
     }
 
     ViewLecture()

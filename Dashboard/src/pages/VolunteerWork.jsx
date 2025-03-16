@@ -4,7 +4,7 @@ import ModalLectureUpdate from '../components/Lectures/ModalLecturesUpdate'
 import ModalLecturesDelete from '../components/Lectures/ModalLecturesDelete'
 import { PlusSquare, SquarePen, Trash } from 'lucide-react'
 import api from '../services/api'
-import ModalWorkVolunteerAdd from '../components/VolunteerWork/ModalAddWork'
+import ModalVolunteerWorkAdd from "../components/VolunteerWork/ModalWorkVolunteerAdd"
 
 export default function VolunteerWork() {
   const [data, setData] = useState([])
@@ -41,7 +41,8 @@ export default function VolunteerWork() {
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Trabalhos Voluntários</h1>
         <div className='ml-auto flex gap-3 ps-3'>
-          <ModalWorkVolunteerAdd titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />} otherStyle="bg-blue-500  text-white h-10 w-50 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600" />
+          <ModalVolunteerWorkAdd titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />}  otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600"
+ />
           <SearchInput />
         </div>
       </div>

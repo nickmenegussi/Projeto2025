@@ -48,6 +48,7 @@ export default function ModalAddForum({
       setOpenModal(false)
       onUpdate()
     } catch (error) {
+      alert(`Erro: ${error}`)
       if (error.response) {
         if (
           error.response.data.message ===
@@ -59,9 +60,8 @@ export default function ModalAddForum({
         } else {
           alert(error.response.data.message)
         }
-      } else {
-        alert(`Erro na requisição: ${error.message}`)
       }
+      
     }
   }
 

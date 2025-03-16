@@ -3,21 +3,9 @@ import Card from "../components/Card";
 import { Library } from "lucide-react";
 import { AuthContext } from "../context/auth";
 import { useNavigate } from "react-router";
+import SessionExpiredModal from "../components/SessionExpiredModal";
 
 const Dashboard = () => {
-  const {user, logout, loading} = useContext(AuthContext)
-  const [showModal, setShowModal] = useState(false)
-  const navigate = useNavigate()
- 
-  useEffect(() => {
-    if(loading){
-      return <div>Carregando...</div>
-    } else { 
-      if (!user){
-      setShowModal(true)
-    }}
-  }, [user])
-
   return (
     <>
       <div className="p-4 w-full md:ml-64">

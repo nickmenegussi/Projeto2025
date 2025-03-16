@@ -2,10 +2,11 @@ const express = require("express")
 const router = express.Router()
 const {viewAllEvents, createEvent, updateEventTitle, updateEventdescription, updateEventStart, updateEventEnd, updateAttachment, deleteEvent} = require('../controllers/CalendarEventsController')
 const authMiddleware = require('../middleware/authMidleware')
+const upload = require("../multerConfig/multer")
 const verifyPermission = require('../middleware/roleMiddleware')
 
 router.get('/calendar', authMiddleware, viewAllEvents)
-router.post('/calendar/register', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), createEvent)
+router.post('/calendar/register', authMiddleware, upload.single('attachment') ,verifyPermission(['SuperAdmin', 'Admin']), createEvent)
 
 router.patch('/calendar/:idCalendarEvents/title', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventTitle)
 router.patch('/calendar/:idCalendarEvents/description', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventdescription)

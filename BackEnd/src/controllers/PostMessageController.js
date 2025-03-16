@@ -212,7 +212,7 @@ exports.updateImagePost = (req, res) => {
 }
 
 exports.deletePost = (req, res) => {
-  const idPost = req.params.PostId
+  const idPost = req.params.idPost
   const User_idUser = req.data.id
 
   connection.query(

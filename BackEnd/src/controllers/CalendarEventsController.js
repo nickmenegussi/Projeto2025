@@ -3,7 +3,7 @@ const connection = require("../config/db")
 exports.viewEventsByUser = (req, res) => {
     const User_idUser = req.data.id
 
-    connection.query(`SELECT * FROM calendar_events 
+    connection.query(`SELECT * FROM CalendarEvents 
         WHERE User_idUser = ?
         ORDER BY createdDate DESC
         `, [User_idUser], (err, result) => {
@@ -38,8 +38,8 @@ exports.viewEventsByUser = (req, res) => {
 }
 
 exports.viewAllEvents = (req, res) => {
-    connection.query(`SELECT * FROM calendar_events 
-        ORDER BY createdDate DESC
+    connection.query(`SELECT * FROM CalendarEvents 
+        ORDER BY Start DESC
         `, (err, result) => {
         if (err) {
             return res.status(500).json({
@@ -65,10 +65,13 @@ exports.viewAllEvents = (req, res) => {
 }
 
 exports.createEvent = (req, res) => {
-    const { title, description, start, end } = req.body
+    const attachment = req.file ? req.file.filename : null
+    const { title, description, start, end, link } = req.body
     const User_idUser = req.data.id
 
-    connection.query(`SELECT * FROM CalendarEvents WHERE title = ? AND description = ? AND start = ? AND end = ? AND User_idUser = ?`, [title, description, start, end, User_idUser], (err, result) => {
+
+    
+    connection.query(`SELECT * FROM CalendarEvents WHERE title = ? AND description = ? AND start = ? AND end = ? AND User_idUser = ? AND link = ?`, [title, description, start, end, User_idUser, link], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -85,8 +88,8 @@ exports.createEvent = (req, res) => {
             })
         }
 
-        connection.query(`INSERT INTO CalendarEvents (title, description, start, end, User_idUser) 
-        VALUES (?, ?, ?, ?, ?)`, [title, description, start, end, User_idUser], (err, result) => {
+        connection.query(`INSERT INTO CalendarEvents (title, link, description, start, end, attachment ,User_idUser) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`, [title, link ,description, start, end, attachment ,User_idUser], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
