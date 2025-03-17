@@ -29,8 +29,12 @@ export default function ModalAddEvent({
 
   function formatTimeForSQL(date) {
     if (!date) return null;
-    const utcDate = new Date(date.toISOString());
-    return utcDate.toISOString().split("T")[1].slice(0, 8); // Retorna 'HH:MM:SS'  
+    const localDate = new Date(date)
+    const hours = String(localDate.getHours()).padStart(2, '0')
+    const minutes = String(localDate.getMinutes()).padStart(2, '0')
+    const seconds = String(localDate.getSeconds()).padStart(2, '0')
+
+    return `${hours}:${minutes}:${seconds}`
     }
 
   async function CreateEvent(event){

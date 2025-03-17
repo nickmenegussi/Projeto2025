@@ -7,6 +7,7 @@ import ModalDeleteItem from "../components/Books/ModalDeleteItem"
 import ModalAddEvent from "../components/Events/ModalAddEvents"
 import api from "../services/api"
 import { useNavigate } from "react-router"
+import ModalUpdateEvent from "../components/Events/ModalUpdateEvent"
 
 export default function CalendarEvents() {
   const [calendendarEvents, setcalendendarEvents] = useState([])
@@ -83,13 +84,13 @@ export default function CalendarEvents() {
                   <td className="px-2 py-3 text-left">{item.description}</td>
                   <td className="px-2 py-3 text-left">{item.start}</td>
                   <td className="px-2 py-3 text-left">{item.end}</td>
-                  {item.attachment === null ? <td className="px-2 py-3 text-left">Nenhum valor</td> : item.attachment}
+                  <td className="px-2 py-3 text-left">{item.attachment === null ? <td className="px-2 py-3 text-left">Nenhum valor</td> : item.attachment}</td>
                   <td className="px-2 py-3 text-left">{item.User_idUser}</td>
 
                   <td className="px-4 py-3 text-left">
                     <div className="flex gap-2">
-                      <Modal
-                        calendarEventsContent
+                      <ModalUpdateEvent
+                        calendarEventsContent={item}
                         titleButton="Editar"
                         titleModal="Editar"
                         iconButton={<SquarePen />}
