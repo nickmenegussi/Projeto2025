@@ -107,6 +107,53 @@ exports.createEvent = (req, res) => {
     })
 }
 
+exports.updateEventLink = (req, res) => {
+    const {link} = req.body 
+    const User_idUser = req.data.id
+    const idCalendarEvents = req.params.idCalendarEvents
+
+    if(!link) {
+        return res.status(400).json({
+            message: 'Link do evento não informado',
+            success: false
+        })
+    }
+
+    connection.query('SELECT * FROM CalendarEvents WHERE idCalendarEvents = ? AND User_idUser = ?', [idCalendarEvents, User_idUser], (err,result) => {
+        if(err){
+            return res.status(500).json({
+                message: 'Erro ao se conectar com o servidor.',
+                success: false,
+                data: err
+            })
+        }
+
+        if(result.length === 0){
+            return res.status(404).json({
+                mesasge: 'Link não encontrado',
+                success: false,
+                data: result
+            })
+        }
+
+        connection.query('Update CalendarEvents SET link = ? WHERE idCalendarEvents = ? and User_idUser = ?', [link, idCalendarEvents, User_idUser] ,(err,result) => {
+            if(err){
+                return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor",
+                    success: false,
+                    data: err
+                })
+            }
+
+            return res.status(200).json({
+                message: 'Link atualizado com sucesso.',
+                success: true,
+                data: result
+            })
+        })
+    })
+}
+
 exports.updateEventTitle = (req, res) => { 
     const { title } = req.body
     const User_idUser = req.data.id
@@ -298,7 +345,7 @@ exports.updateEventEnd = (req, res) => {
 }
 
 exports.updateAttachment = (req, res) => {
-    const { attachment } = req.body
+    const attachment = req.file ? req.file.filename : null
     const User_idUser = req.data.id
     const idCalendarEvents = req.params.idCalendarEvents
 
