@@ -6,7 +6,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css"
 import "primereact/resources/primereact.min.css"
 import "primeicons/primeicons.css"
 
-export default function ModalUpdateAdd({ titleModal, titleButton, iconButton, otherStyle }) {
+export default function ModalUpdateAdd({ titleModal, titleButton, iconButton, otherStyle, onUpdate }) {
   const [openModal, setOpenModal] = useState(false)
   const navigate = useNavigate()
   const [notifications, setNotifications] = useState({
@@ -37,6 +37,7 @@ export default function ModalUpdateAdd({ titleModal, titleButton, iconButton, ot
       )
       alert(response.data.message)
       setOpenModal(false)
+      onUpdate()
     } catch (error) {
       console.error("Erro na requisição:", error)
       if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
@@ -71,7 +72,7 @@ export default function ModalUpdateAdd({ titleModal, titleButton, iconButton, ot
               <form className="p-4 md:p-5" onSubmit={CreateVolunteerWork}>
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2">
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome do trabalho</label>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mesangem das Notificações</label>
                     <input
                       type="text"
                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import SearchInput from '../components/SearchInput'
 import { PlusSquare, SquarePen, Trash } from 'lucide-react'
-import Modal from '../components/Books/ModalBibliotecaAdd'
-import ModalDeleteItem from '../components/Books/ModalDeleteItem'
-import ModalUserAdd from '../components/Users/ModalUsersAdd'
 import ModalUserUpdate from '../components/Users/ModalUserUpdate'
 import api from '../services/api'
 import { useNavigate } from 'react-router'
+import ModalDeleteUser from '../components/Users/ModalUserDelete'
 
 
 export default function Users() {
@@ -86,12 +84,13 @@ export default function Users() {
                     onUpdate={ViewUser}
                   />
                   )}
-                  <ModalDeleteItem
+                  <ModalDeleteUser
                     titleButton="Excluir"
                     titleModal="Editar"
                     iconButton={<Trash />}
                     otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                     onUpdate={ViewUser}
+                    userContent={userItem}
                   />
                 </div>
               </td>

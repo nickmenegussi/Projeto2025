@@ -8,6 +8,7 @@ import ModalAddEvent from "../components/Events/ModalAddEvents"
 import api from "../services/api"
 import { useNavigate } from "react-router"
 import ModalUpdateEvent from "../components/Events/ModalUpdateEvent"
+import ModalDeleteEvents from "../components/Events/ModalDeleteEvents"
 
 export default function CalendarEvents() {
   const [calendendarEvents, setcalendendarEvents] = useState([])
@@ -93,12 +94,15 @@ export default function CalendarEvents() {
                         calendarEventsContent={item}
                         titleButton="Editar"
                         titleModal="Editar"
+                        onUpdate={ViewCalendarEvents}
                         iconButton={<SquarePen />}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
-                      <ModalDeleteItem
+                      <ModalDeleteEvents
                         titleButton="Excluir"
                         titleModal="Editar"
+                        calendarEventsContent={item}
+                        onUpdate={ViewCalendarEvents}
                         iconButton={<Trash />}
                         otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />

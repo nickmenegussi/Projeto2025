@@ -6,6 +6,8 @@ import Modal from '../components/Books/ModalBibliotecaAdd'
 import ModalDeleteItem from '../components/Books/ModalDeleteItem'
 import ModalUpdateAdd from '../components/notifications/ModalAddNotifications'
 import api from '../services/api'
+import ModalUpdateNotification from '../components/notifications/ModalUpdateNotifications'
+import ModalDeleteNotification from '../components/notifications/ModalDeleteNotifications'
 
 export default function Notifications() {
   const [notification, setNotification] = useState([])
@@ -66,21 +68,26 @@ export default function Notifications() {
                 {item.idNotifications}
               </td>
               <td className="px-4 py-3 text-left">{item.message}</td>
-              <td className="px-4 py-3 text-left">{item.isRead}</td>
+              <td className="px-4 py-3 text-left">
+                {item.isRead === 0 ? <td className='py-3 text-left'>Mensagem não lida</td> : item.isRead === 1 ? <td>Mensagem Lida</td> : "não possui valor algum"}</td>
               <td className="px-4 py-3 text-left">{item.User_idUser}</td>
               <td className="px-4 py-3 text-left">
                 <div className="flex gap-2">
-                  <Modal
+                  <ModalUpdateNotification
                     titleButton="Editar"
                     titleModal="Editar"
                     iconButton={<SquarePen />}
+                    notificationContent={notification}
+                    onUpdate={ViewNotification}
                     otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                   />
-                  <ModalDeleteItem
+                  <ModalDeleteNotification
                     titleButton="Excluir"
                     titleModal="Editar"
                     iconButton={<Trash />}
+                    notificationContent={notification}
                     otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
+                    onUpdate={ViewNotification}
                   />
                 </div>
               </td>

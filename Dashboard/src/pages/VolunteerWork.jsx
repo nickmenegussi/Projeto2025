@@ -5,11 +5,11 @@ import ModalLecturesDelete from '../components/Lectures/ModalLecturesDelete'
 import { PlusSquare, SquarePen, Trash } from 'lucide-react'
 import api from '../services/api'
 import ModalVolunteerWorkAdd from "../components/VolunteerWork/ModalWorkVolunteerAdd"
+import ModalUpdateVolunteerWork from '../components/VolunteerWork/ModalUpdateVolunteerWork'
 
 export default function VolunteerWork() {
   const [data, setData] = useState([])
   const token = localStorage.getItem('@Auth:token')
-
   useEffect(() => {
     ViewVolunteerWork()
   }, [])
@@ -41,7 +41,7 @@ export default function VolunteerWork() {
       <div className="pt-5 px-5 flex items-center">
         <h1 className="text-2xl">Trabalhos Voluntários</h1>
         <div className='ml-auto flex gap-3 ps-3'>
-          <ModalVolunteerWorkAdd titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />}  otherStyle="bg-blue-500 text-white h-10 w-43 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600"
+          <ModalVolunteerWorkAdd onUpdate={ViewVolunteerWork} titleButton={'Adicionar Trabalho'} titleModal={'Adicionar trabalho voluntário'} iconButton={<PlusSquare />}  otherStyle="bg-blue-500 text-white h-10 w-50 rounded-lg flex items-center p-2 gap-2 cursor-pointer hover:bg-blue-600"
  />
           <SearchInput />
         </div>
@@ -54,6 +54,7 @@ export default function VolunteerWork() {
               <th className="px-4 py-3 text-left">Nome do trabalho Voluntário</th>
               <th className="px-4 py-3 text-left">Endereço do Trabalho</th>
               <th className="px-4 py-3 text-left">Data do Trabalho</th>
+              <th className="px-4 py-3 text-left">Horário do Trabalho</th>
               <th className="px-4 py-3 text-left">Ação</th>
             </tr>
           </thead>
@@ -65,20 +66,23 @@ export default function VolunteerWork() {
                   <td className="px-4 py-3 text-left">{item.nameVolunteerWork}</td>
                   <td className="px-4 py-3 text-left">{item.address}</td>
                   <td className="px-4 py-3 text-left">{item.dateVolunteerWork}</td>
+                  <td className="px-4 py-3 text-left">{item.timeVolunteerWork}</td>
                   <td className="px-4 py-3 text-left">
                       <div className='flex gap-2'>
-                      <ModalLectureUpdate
-                        lectureContent={item}
+                      <ModalUpdateVolunteerWork
                         titleButton="Editar"
+                        content={item}
                         titleModal="Editar"
                         iconButton={<SquarePen />}
+                        onUpdate={ViewVolunteerWork}
                         otherStyle="bg-blue-400 hover:bg-blue-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
                       <ModalLecturesDelete
-                        lectureContent={item}
+                        content={item}
                         titleButton="Excluir"
                         titleModal="Editar"
                         iconButton={<Trash />}
+                        onUpdate={ViewVolunteerWork}
                         otherStyle="bg-red-400 hover:bg-red-500 p-2 w-25 flex items-center justify-evenly rounded-md cursor-pointer text-white"
                       />
                       </div>

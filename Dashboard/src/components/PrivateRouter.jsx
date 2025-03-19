@@ -4,7 +4,6 @@ import { AuthContext } from "../context/auth";
 
 export default function PrivateRouter({ children }) {
   const { user, otpDigits, otpEmail, loading } = useContext(AuthContext);
-  const navigate = useNavigate();
 //   const [showModal, setShowModal] = useState(false)
  
 //   useEffect(() => {
@@ -28,17 +27,18 @@ export default function PrivateRouter({ children }) {
 //     navigate('/')
 //   }
 
-
+if (loading) {
+  return <div className="text-black">Carregando... Aguarde</div>;
+}
   if (!user) {
-    navigate("/");
-  } else if (!otpEmail) {
-    navigate("/emailOtp");
-  } else if (!otpDigits) {
-    navigate("/otpVerification");
-  }
-
-  if (loading) {
-    return <div className="text-black">Carregando... Aguarde</div>;
+    return <Navigate to="/" />; 
+  } 
+  
+  if (!otpEmail) {
+    return <Navigate to="/emailOtp" />; 
+  } 
+  if (!otpDigits) {
+    return <Navigate to="/otpVerification" />; // Use Navigate para redirecionar
   }
 
   return children;
