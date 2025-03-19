@@ -13,14 +13,15 @@ const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
 
-router.get('/notifications/:idNotification', authMiddleware, verifyPermission('SuperAdmin', 'Admin') ,viewNotificationsByUser)
-router.get('/notifications/:idNotification/status', authMiddleware, verifyPermission('SuperAdmin', 'Admin'), getNotificationsStatusofRead)
+router.get('/notifications/:idNotification', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) ,viewNotificationsByUser)
+router.get('/notifications/:idNotification/status', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), getNotificationsStatusofRead)
+router.get('/notifications', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) ,viewAllNotifications)
 
-router.post('/notifications/create', authMiddleware, verifyPermission('SuperAdmin', 'Admin'), createNotification)
+router.post('/notifications/create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), createNotification)
 
-router.patch('/notifications/:idNotification/status', authMiddleware, verifyPermission('SuperAdmin', 'Admin'), updateNotificationStatusofRead)
-router.patch('/notifications/:idNotification/message', authMiddleware,verifyPermission('SuperAdmin', 'Admin'),  updateNotificationMessage)
+router.patch('/notifications/:idNotification/status', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateNotificationStatusofRead)
+router.patch('/notifications/:idNotification/message', authMiddleware,verifyPermission(['SuperAdmin', 'admin']),  updateNotificationMessage)
 
-router.delete('/notifications/:idNotification/delete', authMiddleware, verifyPermission('SuperAdmin', 'Admin'), deleteNotification)
+router.delete('/notifications/:idNotification/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), deleteNotification)
 
 module.exports = router
