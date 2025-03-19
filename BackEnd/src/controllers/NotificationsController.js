@@ -178,7 +178,7 @@ exports.updateNotificationStatusofRead = (req, res) => {
 }
 
 exports.updateNotificationMessage = (req, res) => {
-    const idNotifications = req.params.idNotification
+    const idNotifications = req.params.idNotifications
     const User_idUser = req.data.id
     const {message } = req.body
 
@@ -241,7 +241,7 @@ exports.updateNotificationMessage = (req, res) => {
 }
 
 exports.deleteNotification = (req, res) => {
-    const idNotifications = req.params.idNotification
+    const idNotifications = req.params.idNotifications
     const User_idUser = req.data.id
 
     connection.query(`SELECT * FROM notifications 
