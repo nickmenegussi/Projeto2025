@@ -25,7 +25,7 @@ const App = () => {
   return (
     <>
         <div className='flex '>
-            {!isAuthPage && <PrivateRouter><SideBar /></PrivateRouter>}
+            {!isAuthPage && <SideBar />}
             {!isAuthPage && <NavBar />}
             <div>
               <Routes>
