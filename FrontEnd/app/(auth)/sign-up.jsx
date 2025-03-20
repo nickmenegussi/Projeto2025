@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, router } from "expo-router";
 import FormField from '../../components/FormField';
 import Button from '../../components/Button';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import api from "../../services/api"
+import { AuthContext } from '../../context/auth';
 
 export default function App() {
-  const [form, setform] = useState({
+  const { login } = useContext(AuthContext)
+  const [loginUser, setLogin] = useState({
     email: '',
     password: ''
   })
+  console.log(loginUser)
+
+  async function Login(){
+    try {
+      await login(loginUser.email, loginUser.password)
+      alert('Login realizado com sucesso!')
+      router.push('/emailOtp')
+    } catch (error) {
+      if(error.response){
+        alert(`${error.response.data.message}`)
+      }
+    }
+  }
 
   return (
     <LinearGradient 
@@ -36,19 +52,23 @@ export default function App() {
 
           <FormField 
           title="Email"
-          value={form.email}
+          value={loginUser.email}
           placeholder="Digite um email"
-          handleChangeText={(e) => setform({ ...form, email: e })}
+          handleChangeText={(e) => setLogin({ ...loginUser, email: e })}
           />
 
-          <FormField title="Password" value={form.password} placeholder="Digite uma senha" handleChangeText={(e) => setform({...form, password: e})} />
+          <FormField 
+          title="Password" 
+          value={loginUser.password} 
+          placeholder="Digite uma senha" 
+          handleChangeText={(e) => setLogin({...loginUser, password: e})} />
           
           <View style={styles.forgottenPasswordContainer}>
             <TouchableOpacity onPress={() => router.push('/forgottenPassword')} activeOpacity={0.5}>
               <Text  style={styles.forgottenPassword}>Esqueceu sua senha?</Text>
             </TouchableOpacity>
           </View>
-          <Button title='Entrar'  />
+          <Button title='Entrar' handlePress={Login}/>
 
         </View>
       </ScrollView>

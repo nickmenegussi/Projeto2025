@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, router } from "expo-router"
@@ -6,8 +6,24 @@ import FormField from '../../components/FormField'
 import Button from '../../components/Button'
 import { ArrowLeftIcon } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { AuthContext } from '../../context/auth'
 
 export default function forgottenPassword() {
+  const [email, setEmail] = useState("")
+  const {OtpSendEmail} = useContext(AuthContext)
+
+  async function OtpEntrar(){
+    try {
+      await OtpSendEmail(email)
+      router.push('/sign-otp-verification')
+    } catch (error) {
+      console.error('Erro: ', error)
+
+      if(error.response) {
+        alert(`Erro: ${error.response.data.message}`)
+      }
+    }
+  }
 
   return (
     
@@ -26,8 +42,8 @@ export default function forgottenPassword() {
             <View style={styles.headerContainer}>
               <Text style={[styles.text, styles.title]}>Digite seu Email</Text>
               <Text style={[styles.text, styles.subtitle]}>Não se preocupe. Isso pode ocorrer. Por favor, preencha o campo com o email para redefinir sua senha.</Text>
-              <FormField titulo="Email" placeholder="Digite seu email"  />
-              <Button title='Enviar Código' textStyles={styles.TextButton} buttonStyle={styles.colorButton} othersStyles={styles.Button} />
+              <FormField titulo="Email" placeholder="Digite seu email" handleChangeText={() => setEmail(e.target.value)} />
+              <Button title='Enviar Código' textStyles={styles.TextButton} buttonStyle={styles.colorButton} othersStyles={styles.Button}  handlePress={OtpEntrar}/>
             </View>                    
           </View>
         </ScrollView>
