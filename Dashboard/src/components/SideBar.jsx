@@ -3,15 +3,17 @@ import React, { useContext } from "react";
 import { Link, Navigate } from "react-router";
 import { AuthContext } from "../context/auth";
 
-export default function SidebarWithLogo() {
+export default function SidebarWithLogo({isOpen}) {
   const role = JSON.parse(localStorage.getItem("@Auth:user") || "{}")
   return (
     <>
+    
       <div>
         <aside
           id="logo-sidebar"
-          className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full  border-r bg-blue-100 sm:translate-x-0 dark:bg-blue-500"
-          aria-label="Sidebar"
+          className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          } border-r bg-blue-500 sm:translate-x-0 dark:bg-blue-500`}          aria-label="Sidebar"
         >
           <div className="h-full px-3 pb-4 overflow-y-auto bg-blue-500">
             <ul className="space-y-2 font-medium">

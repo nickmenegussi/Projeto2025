@@ -1,21 +1,19 @@
 import React, { useState } from 'react'
 import api from '../../services/api'
-import { useNavigate } from 'react-router'
 
-export default function ModalDeleteUser({titleModal,
+export default function ModalDeleteNotification({titleModal,
   titleButton,
   iconButton,
   otherStyle,
-  onUpdate,
-  userContent,}) {
+  notificationContent,
+  onUpdate}) {
     const [OpenModal, setOpenModal] = useState(false)
-    const [user, setUser] = useState(userContent)
+    const [notification, setNotification] = useState(notificationContent)
     const token = localStorage.getItem("@Auth:token")
-    const navigate = useNavigate()
 
-    async function RemoveEvents(){
+    async function DeleteNotifications(){
       try {
-        const response = await api.delete(`/user/user/${user.idUser}/delete`, {
+        const response = await api.delete(`/notifications/notifications/${notification[0].idNotifications}/delete`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -25,15 +23,18 @@ export default function ModalDeleteUser({titleModal,
         onUpdate()
       } catch (error){
         if (error.response) {
-            if (error.response.data.message === 'Sessão expirada, por favor, faça login novamente.') {
+            if (
+              error.response.data.message ===
+              "Sessão expirada, por favor, faça login novamente."
+            ) {
               alert(error.response.data.message)
               localStorage.clear()
-              return navigate('/', {replace: true})
-            } else{
-                alert(error.response.data.message)
+              return navigate("/", { replace: true }) // Redireciona para a página de login
+            } else {
+              alert(error.response.data.message)
             }
           } else {
-            console.error('Erro na requisição:', error)
+            alert(`Erro na requisição: ${error.message}`)
           }
       }
     }
@@ -102,7 +103,7 @@ export default function ModalDeleteUser({titleModal,
                       Você tem certeza que quer remover esse item?
                     </h3>
                     <button
-                      onClick={RemoveEvents}
+                      onClick={DeleteNotifications}
                       data-modal-hide="popup-modal"
                       type="button"
                       className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
@@ -115,7 +116,7 @@ export default function ModalDeleteUser({titleModal,
                       type="button"
                       className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     >
-                      Não, cancelar.
+                      Não, sair.
                     </button>
                   </div>
                 </div>

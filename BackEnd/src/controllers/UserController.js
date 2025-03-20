@@ -328,7 +328,6 @@ exports.deleteAccountUser = (req, res) => {
     const roleUser = req.data.role
     const dataUser = req.data.id
 
-
     if(!idUser){
         return res.status(400).json({
             success: false,
@@ -336,7 +335,7 @@ exports.deleteAccountUser = (req, res) => {
         })
     }
 
-    if(roleUser !== 'Admin' && roleUser !== 'SuperAdmin' && dataUser !== idUser){
+    if(roleUser !== 'Admin' || roleUser !== 'SuperAdmin' && dataUser !== idUser){
         return res.status(403).json({
             message: "Você não tem permissão para deletar este usuário.",
             success: false

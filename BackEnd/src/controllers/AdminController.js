@@ -114,3 +114,11 @@ exports.updateUserPermission = (req,res) => {
         
     })
 }
+
+exports.DeleteUserAdmin = (req, res) => {
+    const idUser = req.params.idUser
+    const role = req.data.role
+
+
+
+}

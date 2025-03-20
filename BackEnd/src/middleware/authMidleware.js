@@ -8,7 +8,8 @@ const authMiddleware = (req, res, next) => {
     if(!token){
         return res.status(401).json({
             success: false,
-            message: 'Token não fornecido. Acesso negado.'
+            message: 'Token não fornecido. Acesso negado.',
+            loginRequired: true
         })
     }
 
@@ -19,7 +20,8 @@ const authMiddleware = (req, res, next) => {
     } catch(err){
         return res.status(401).json({
             success: false,
-            message: 'Sessão expirada, por favor, faça login novamente.'
+            message: 'Sessão expirada, por favor, faça login novamente.',
+            loginRequired: true
 
         })
     }

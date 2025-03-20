@@ -6,7 +6,7 @@ exports.viewNotificationsByUser = (req, res) => {
 
     connection.query(`"SELECT * FROM notifications 
         WHERE User_idUser = ? AND idNotifications = ?
-        ORDER BY createdAt DESC"
+        ORDER BY created_at DESC"
         `, [User_idUser, idNotifications], (err, result) => {
         if (err) {
             return res.status(500).json({
@@ -35,8 +35,8 @@ exports.viewNotificationsByUser = (req, res) => {
 }
 
 exports.viewAllNotifications = (req, res) => {
-    connection.query(`"SELECT * FROM notifications 
-        ORDER BY createdAt DESC"
+    connection.query(`SELECT * FROM notifications 
+        ORDER BY created_at DESC
         `, (err, result) => {
         if (err) {
             return res.status(500).json({
@@ -62,13 +62,12 @@ exports.createNotification = (req, res) => {
         return res.status(400).json({
             message: "Por favor, insira uma mensagem.",
             success: false,
-            data: null,
         })
     }
 
-    connection.query(`"INSERT INTO notifications (message, isRead ,User_idUser)
-        VALUES (?, isRead ,?)"
-        `, [User_idUser, false ,message], (err, result) => {
+    connection.query(`INSERT INTO notifications (message, isRead ,User_idUser)
+        VALUES (?, ? ,?)
+        `, [message, false, User_idUser], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -179,7 +178,7 @@ exports.updateNotificationStatusofRead = (req, res) => {
 }
 
 exports.updateNotificationMessage = (req, res) => {
-    const idNotifications = req.params.idNotification
+    const idNotifications = req.params.idNotifications
     const User_idUser = req.data.id
     const {message } = req.body
 
@@ -242,7 +241,7 @@ exports.updateNotificationMessage = (req, res) => {
 }
 
 exports.deleteNotification = (req, res) => {
-    const idNotifications = req.params.idNotification
+    const idNotifications = req.params.idNotifications
     const User_idUser = req.data.id
 
     connection.query(`SELECT * FROM notifications 

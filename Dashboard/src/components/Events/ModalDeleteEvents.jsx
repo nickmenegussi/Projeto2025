@@ -1,21 +1,19 @@
 import React, { useState } from 'react'
 import api from '../../services/api'
-import { useNavigate } from 'react-router'
 
 export default function ModalDeleteUser({titleModal,
   titleButton,
   iconButton,
   otherStyle,
   onUpdate,
-  userContent,}) {
+  calendarEventsContent,}) {
     const [OpenModal, setOpenModal] = useState(false)
-    const [user, setUser] = useState(userContent)
+    const [calendarEvent, setCalendarEvent] = useState(calendarEventsContent)
     const token = localStorage.getItem("@Auth:token")
-    const navigate = useNavigate()
 
     async function RemoveEvents(){
       try {
-        const response = await api.delete(`/user/user/${user.idUser}/delete`, {
+        const response = await api.delete(`/calendar/calendar/${calendarEvent.idCalendarEvents}/delete`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -25,16 +23,14 @@ export default function ModalDeleteUser({titleModal,
         onUpdate()
       } catch (error){
         if (error.response) {
-            if (error.response.data.message === 'Sessão expirada, por favor, faça login novamente.') {
-              alert(error.response.data.message)
-              localStorage.clear()
-              return navigate('/', {replace: true})
-            } else{
-                alert(error.response.data.message)
-            }
-          } else {
-            console.error('Erro na requisição:', error)
+          if (error.response.data.message === 'Sessão expirada, por favor, faça login novamente.') {
+            alert(error.response.data.message)
+            localStorage.clear()
+            return navigate('/', {replace: true})
           }
+        } else {
+          console.error('Erro na requisição:', error)
+        }
       }
     }
 
