@@ -17,7 +17,7 @@ export default function ModalUpdateNotification({
   const [notifications, setNotifications] = useState({
     message: "",
     isRead: false,
-    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser || 0,
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user"))?.idUser || 0,
   })
 
   const token = localStorage.getItem("@Auth:token")

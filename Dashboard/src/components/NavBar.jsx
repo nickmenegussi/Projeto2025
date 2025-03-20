@@ -2,17 +2,21 @@ import React, { useContext, useState } from "react";
 import { Link, Navigate, NavLink } from "react-router";
 import azarImage from "../assets/azar.png";
 import { AuthContext } from "../context/auth";
+import SidebarWithLogo from "./SideBar";
 
 export default function NavBar() {
   const [openProfile, setopenProfile] = useState(false);
+  const [IsSideBarOpen, setIsSideBarOpen] = useState(false)
   
   return (
     <>
+      <SidebarWithLogo isOpen={IsSideBarOpen} />
       <nav className="fixed top-0 z-50 w-full border-b text-white shadow-sm bg-blue-500 border-blue-500">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
               <button
+                onClick={() => setIsSideBarOpen(!IsSideBarOpen)}
                 data-drawer-target="logo-sidebar"
                 data-drawer-toggle="logo-sidebar"
                 aria-controls="logo-sidebar"

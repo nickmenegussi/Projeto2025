@@ -14,12 +14,8 @@ export default function CalendarEvents() {
   const [calendendarEvents, setcalendendarEvents] = useState([])
   const token = localStorage.getItem("@Auth:token")
   const navigate = useNavigate()
+
   useEffect(() => {
-    if (!token) {
-      localStorage.clear()
-      alert("Sessão expirada. Faça login novamente.")
-      return navigate("/", { replace: true })
-    }
     ViewCalendarEvents()
   }, [])
 

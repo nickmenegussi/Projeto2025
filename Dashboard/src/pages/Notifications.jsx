@@ -8,10 +8,12 @@ import ModalUpdateAdd from '../components/notifications/ModalAddNotifications'
 import api from '../services/api'
 import ModalUpdateNotification from '../components/notifications/ModalUpdateNotifications'
 import ModalDeleteNotification from '../components/notifications/ModalDeleteNotifications'
+import { Navigate, useNavigate } from 'react-router'
 
 export default function Notifications() {
   const [notification, setNotification] = useState([])
   const token = localStorage.getItem("@Auth:token")
+  const navigate = useNavigate();  // Inicialize o hook de navegação
 
   useEffect(() => {
     ViewNotification()
@@ -25,10 +27,10 @@ export default function Notifications() {
       setNotification(response.data.data)
     } catch (error) {
       if(error.response){
-        if(error.response.data.message === "Sessão expirada, por favor, faça login novamente."){
+        if(error.response.data.loginRequired){
           alert(error.response.data.message)
           localStorage.clear()
-          return navigate("/", { replace: true }) // Redireciona para a página de login
+          navigate("/")
         } else {
           alert(`Erro na requisição: `, error.response.data.message)
         }
@@ -63,7 +65,8 @@ export default function Notifications() {
           <tbody className="bg-gray-100 divide-y">
             {notification.length > 0 ? (
               notification.map((item) => (
-                <tr className="hover:bg-gray-200">
+                <tr className="hover:ls
+                bg-gray-200">
               <td className="px-4 py-3 text-left">
                 {item.idNotifications}
               </td>

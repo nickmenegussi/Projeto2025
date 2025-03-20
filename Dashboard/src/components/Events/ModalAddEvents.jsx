@@ -22,7 +22,7 @@ export default function ModalAddEvent({
     start : "",
     end: "",
     attachment  : null,
-    User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser
+    User_idUser: JSON.parse(localStorage.getItem('@Auth:user'))?.idUser || 0
   })
 
   const token = localStorage.getItem("@Auth:token")
