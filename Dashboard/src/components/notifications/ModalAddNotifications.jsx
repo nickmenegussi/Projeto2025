@@ -12,7 +12,7 @@ export default function ModalUpdateAdd({ titleModal, titleButton, iconButton, ot
   const [notifications, setNotifications] = useState({
     message: "",
     isRead: false,
-    User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser,
+    User_idUser: JSON.parse(localStorage.getItem('@Auth:user'))?.idUser || 0,
   })
 
   const token = localStorage.getItem('@Auth:token')

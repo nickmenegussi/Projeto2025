@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import api from "../../services/api"
-import { useNavigate } from "react-router"
+import { Navigate, useNavigate } from "react-router"
 
 export default function ModalAddForum({
   titleModal,
@@ -15,7 +15,7 @@ export default function ModalAddForum({
   const [forum, setForum] = useState({
     content: "",
     image: null,
-    User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user"))?.idUser || 0,
     Topic_idTopic: "",
   })
   const token = localStorage.getItem("@Auth:token")
@@ -51,12 +51,11 @@ export default function ModalAddForum({
       alert(`Erro: ${error}`)
       if (error.response) {
         if (
-          error.response.data.message ===
-          "Sessão expirada, por favor, faça login novamente."
+          error.response.data.loginRequired
         ) {
           alert(error.response.data.message)
           localStorage.clear()
-          return navigate("/", { replace: true }) // Redireciona para a página de login
+          return <Navigate to={'/'}/>
         } else {
           alert(error.response.data.message)
         }

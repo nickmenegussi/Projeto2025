@@ -6,10 +6,12 @@ import { PlusSquare, SquarePen, Trash } from 'lucide-react'
 import api from '../services/api'
 import ModalVolunteerWorkAdd from "../components/VolunteerWork/ModalWorkVolunteerAdd"
 import ModalUpdateVolunteerWork from '../components/VolunteerWork/ModalUpdateVolunteerWork'
+import { useNavigate } from 'react-router'
 
 export default function VolunteerWork() {
   const [data, setData] = useState([])
   const token = localStorage.getItem('@Auth:token')
+  const navigate = useNavigate()
   useEffect(() => {
     ViewVolunteerWork()
   }, [])

@@ -13,10 +13,10 @@ export default function Users() {
   const roleUserLoged = JSON.parse(localStorage.getItem('@Auth:user'))
   const navigate = useNavigate()
 
-
   useEffect(() => {
     ViewUser()
   }, [])
+
   async function ViewUser(){
     try {
       const response = await api.get('/user/user', {

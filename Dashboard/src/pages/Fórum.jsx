@@ -8,10 +8,12 @@ import api from "../services/api"
 import ModalAddForum from "../components/Forum/ModalAddForum"
 import ModalUpdateForum from "../components/Forum/ModalUpdateForum"
 import ModalDeleteFoum from "../components/Forum/ModalDeleteForum"
+import { Navigate, useNavigate } from "react-router"
 
 export default function Forum() {
   const [forum, setForum] = useState([])
   const token = localStorage.getItem("@Auth:token")
+  const navigate = useNavigate();  // Inicialize o hook de navegação
 
   useEffect(() => {
     ViewForum()
@@ -27,12 +29,11 @@ export default function Forum() {
       console.error("Erro: ", error)
       if (error.response) {
         if (
-          error.response.data.message ===
-          "Sessão expirada, por favor, faça login novamente."
+          error.response.data.loginRequired
         ) {
           alert(error.response.data.message)
           localStorage.clear()
-          return navigate("/", { replace: true })
+          navigate("/")
         }
       }
     }
