@@ -6,9 +6,9 @@ const OtpGenerator = require('otp-generator')
 
 
 exports.login = (req, res) => {
-    const {email, senha} = req.body
+    const {email, password} = req.body
 
-    if(!email || !senha){
+    if(!email || !password){
         return res.status(400).json({
             success: false,
             message: "Preencha todos os campos de login",
@@ -16,7 +16,7 @@ exports.login = (req, res) => {
         })
     }
 
-    connection.query('SELECT * FROM User where email = ?', [email], (err,result) => {
+    connection.query('SELECT * FROM User where email = ?', [email], async (err,result) => {
         if(err){
             return res.status(500).json({
                 message: 'Erro ao se conectar com o servidor.',
@@ -33,7 +33,7 @@ exports.login = (req, res) => {
         }
 
         const user = result[0]
-        const hashPawword = bcrypt.compare(senha, user.password)
+        const hashPawword = await bcrypt.compare(password, user.password)
 
         if(!hashPawword){
             return res.status(400).json({
@@ -46,7 +46,6 @@ exports.login = (req, res) => {
         const token = jwt.sign({id: user.idUser, email: user.email, role: user.status_permission}, process.env.JWT_SECRET, {
             expiresIn: '2h'
         })
-
         return res.status(201).json({
             message: "Login realizado com sucesso",
             success: true,
@@ -102,7 +101,7 @@ exports.GenerateOtp = (req, res) => {
                                 service: 'gmail',
                                 auth: {
                                     user: process.env.EMAILAPP,
-                                    pass: process.env.SENHAEMAILAPP
+                                    pass: process.env.passwordEMAILAPP
                                 }
                             })
                             transporter.sendMail({
