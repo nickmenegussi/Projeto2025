@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react"
 import api from "../services/api"
 import { useRouter } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Alert } from "react-native"
 
 export const AuthContext = createContext()
 
@@ -9,6 +10,9 @@ export const AuthContext = createContext()
 
 export function AuthProvider({children}){
     const [user, setUser] = useState(null)
+    const [otpEmail, setOtpEmail] = useState(null)
+    const [otpDigits, setOtpDigits] = useState(null)
+    const [loading, setLoading] = useState(true)
     const router = useRouter()
 
     // verificar se já existe um login
@@ -17,33 +21,78 @@ export function AuthProvider({children}){
         const loadData = async () => {
         const dadosToken = await AsyncStorage.getItem('@Auth:token')
         const dadosUser = JSON.parse(await AsyncStorage.getItem('@Auth:user') || "[]")
+        const dadosOtp = await AsyncStorage.getItem('@Auth:otp') || ""
+        const dadosEmail = await AsyncStorage.getItem('@Auth:email') || ""
 
-        if(dadosToken && dadosToken){
+        if(dadosToken && dadosUser){
             setUser(dadosUser)
             api.defaults.headers.common["Authorization"] = `Bearer ${dadosToken}`
             }
+
+        if(dadosOtp === "verificado!"){
+            setOtpDigits(dadosOtp)
         }
+        if(dadosEmail === "verificado!"){
+            setOtpEmail(dadosEmail)
+        }
+        setLoading(false)
+    }
         loadData()
     }, [])
 
-    // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
+    async function OtpSendEmail(email){
+        try {
+            const response = await api.post("/auth/otp/create", {
+                email
+            })
+            setOtpEmail(response.data.data)
+            Alert.alert('Sucesso!',response.data.message)
+            localStorage.setItem('@Auth:email', email)
+        } catch (error) {
+            console.error("Erro: ", error)
 
-    async function login(email, senha){
-        const response = await api.post('/auth/login/create', {
-            email,
-            senha
-        })
-
-        if(response.data.error){
-            alert(response.data.error)
-        } else {
-            setUser(response.data.data.user)
-            api.defaults.headers.common["Authorization"] = `Bearer ${response.data.data.token}`
-            AsyncStorage.setItem('@Auth:token', response.data.data.token)
-            AsyncStorage.setItem('@Auth:user', JSON.stringify(response.data.data.user))
+            if(error.response){
+                Alert.alert(`Erro: ${error.response.data.message}`)
+            }
         }
     }
 
+    async function OtpVerification(otp){
+        const email = localStorage.getItem('@Auth:email')
+        try {
+            const response = await api.post('/auth/otp/verification', {
+                email,
+                otp
+            })
+            Alert.alert('Sucesso!' ,response.data.message)
+            localStorage.setItem('@Auth:email', 'true')
+            localStorage.setItem('@Auth:otp', 'verificado!')
+            setOtpDigits(true)
+        } catch (error) {
+            console.error('Erro: ', error)
+
+            if(error.response){
+            Alert.alert(error.response.data.message)
+            }
+        }
+    }
+
+    // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
+
+    async function login(email, password) {
+        const response = await api.post('/auth/login/create', { email, password })
+    
+        // Verifique se a resposta está no formato correto
+        if (response.data.error) {
+            console.log('Erro', response.data.error)
+            Alert.alert('Erro', response.data.error.message)
+        } else {
+            setUser(response.data.data.user)
+            api.defaults.headers.common["Authorization"] = `Bearer ${response.data.data.token}`
+            await AsyncStorage.setItem('@Auth:token', response.data.data.token)
+            await AsyncStorage.setItem('@Auth:user', JSON.stringify(response.data.data.user))
+        }
+    }    
     // update User
 
     function logout(){
@@ -55,7 +104,7 @@ export function AuthProvider({children}){
     }
 
     return (
-        <AuthContext.Provider value={{user, login, logout}}>
+        <AuthContext.Provider value={{user, login, otpDigits, otpEmail, logout, loading, OtpSendEmail, OtpVerification}}>
             {children}
         </AuthContext.Provider>
     )

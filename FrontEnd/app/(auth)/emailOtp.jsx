@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, router } from "expo-router"
 import FormField from '../../components/FormField'
@@ -20,7 +20,7 @@ export default function forgottenPassword() {
       console.error('Erro: ', error)
 
       if(error.response) {
-        alert(`Erro: ${error.response.data.message}`)
+        Alert.alert(`Erro: ${error.response.data.message}`)
       }
     }
   }

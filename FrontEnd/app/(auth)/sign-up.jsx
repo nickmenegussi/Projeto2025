@@ -1,32 +1,42 @@
-import React, { useContext, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Link, router } from "expo-router";
-import FormField from '../../components/FormField';
-import Button from '../../components/Button';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import api from "../../services/api"
-import { AuthContext } from '../../context/auth';
+import React, { useContext, useState } from 'react'
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Link, router } from "expo-router"
+import FormField from '../../components/FormField'
+import Button from '../../components/Button'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import { AuthContext } from '../../context/auth'
 
 export default function App() {
   const { login } = useContext(AuthContext)
+  const [loading, setLoading] = useState(false)
   const [loginUser, setLogin] = useState({
     email: '',
     password: ''
   })
-  console.log(loginUser)
 
-  async function Login(){
+  async function Login() {
+    setLoading(true)
+    {!loading && (
+      Alert.alert('Carregando', 'Aguarde um momento...')
+)}
     try {
-      await login(loginUser.email, loginUser.password)
-      alert('Login realizado com sucesso!')
-      router.push('/emailOtp')
+        await login(loginUser.email, loginUser.password)
+        Alert.alert('Sucesso!','Login realizado com sucesso!')
+        router.push('/emailOtp')
+        setLoading(false)
     } catch (error) {
-      if(error.response){
-        alert(`${error.response.data.message}`)
-      }
+        setLoading(false)
+        if (error.response && error.response.data && error.response.data.message) {
+          console.log("Erro", error.response.data.message) 
+          // alert(error.response.data.message)
+          Alert.alert('Erro', 'Email ou senha incorretos')
+        } else {
+          console.log("Erro", error)
+          Alert.alert('Erro', 'Erro ao realizar login')
+        }
     }
-  }
+}
 
   return (
     <LinearGradient 
@@ -54,14 +64,14 @@ export default function App() {
           title="Email"
           value={loginUser.email}
           placeholder="Digite um email"
-          handleChangeText={(e) => setLogin({ ...loginUser, email: e })}
+          handleChangeText={(text) => setLogin({ ...loginUser, email: text})}
           />
 
           <FormField 
           title="Password" 
           value={loginUser.password} 
           placeholder="Digite uma senha" 
-          handleChangeText={(e) => setLogin({...loginUser, password: e})} />
+          handleChangeText={(text) => setLogin({...loginUser, password: text})} />
           
           <View style={styles.forgottenPasswordContainer}>
             <TouchableOpacity onPress={() => router.push('/forgottenPassword')} activeOpacity={0.5}>
@@ -69,11 +79,10 @@ export default function App() {
             </TouchableOpacity>
           </View>
           <Button title='Entrar' handlePress={Login}/>
-
         </View>
       </ScrollView>
     </LinearGradient>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -87,8 +96,8 @@ const styles = StyleSheet.create({
   },
   forgottenPasswordContainer:{
     marginTop: 10,
-    paddingRight: 15,
-    marginLeft: 'auto',
+    marginLeft: 205,
+    justifyContent: 'end',
   },
   forgottenPassword: {
     color: 'white', 
@@ -141,4 +150,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#003B73',
   }
-});
+})
