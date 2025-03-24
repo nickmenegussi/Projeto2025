@@ -5,16 +5,16 @@ const authMiddleware = require('../middleware/authMidleware')
 const upload = require("../multerConfig/multer")
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/calendar', authMiddleware, viewAllEvents)
-router.post('/calendar/register', authMiddleware, upload.single('attachment') ,verifyPermission(['SuperAdmin', 'Admin']), createEvent)
+router.get('/calendar', authMiddleware, verifyPermission(['SuperAdmin', 'admin', 'User']), viewAllEvents)
+router.post('/calendar/register', authMiddleware, upload.single('attachment'), verifyPermission(['SuperAdmin', 'admin']), createEvent)
 
-router.patch('/calendar/:idCalendarEvents/title', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventTitle)
-router.patch('/calendar/:idCalendarEvents/link', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventLink)
-router.patch('/calendar/:idCalendarEvents/description', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventdescription)
-router.patch('/calendar/:idCalendarEvents/start', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventStart)
-router.patch('/calendar/:idCalendarEvents/end', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), updateEventEnd)
-router.patch('/calendar/:idCalendarEvents/attachment', authMiddleware, upload.single('attachment') ,verifyPermission(['SuperAdmin', 'Admin']), updateAttachment)
+router.patch('/calendar/:idCalendarEvents/title', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateEventTitle)
+router.patch('/calendar/:idCalendarEvents/link', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateEventLink)
+router.patch('/calendar/:idCalendarEvents/description', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateEventdescription)
+router.patch('/calendar/:idCalendarEvents/start', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateEventStart)
+router.patch('/calendar/:idCalendarEvents/end', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateEventEnd)
+router.patch('/calendar/:idCalendarEvents/attachment', authMiddleware, upload.single('attachment') ,verifyPermission(['SuperAdmin', 'admin']), updateAttachment)
 
-router.delete('/calendar/:idCalendarEvents/delete', authMiddleware, verifyPermission(['SuperAdmin', 'Admin']), deleteEvent)
+router.delete('/calendar/:idCalendarEvents/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), deleteEvent)
 
 module.exports = router
