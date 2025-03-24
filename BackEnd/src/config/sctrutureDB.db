@@ -168,3 +168,7 @@ CREATE TABLE OTP (
 
 SELECT * FROM User;
 
+CREATE EVENT deleteExpiredOtp
+on schedule every 10 minute
+DO DELETE FROM OTP WHERE expiresAt < now();
+
