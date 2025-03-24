@@ -101,7 +101,7 @@ exports.GenerateOtp = (req, res) => {
                                 service: 'gmail',
                                 auth: {
                                     user: process.env.EMAILAPP,
-                                    pass: process.env.passwordEMAILAPP
+                                    pass: process.env.SENHAEMAILAPP
                                 }
                             })
                             transporter.sendMail({

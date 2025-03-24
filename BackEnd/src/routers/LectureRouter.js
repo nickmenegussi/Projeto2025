@@ -15,7 +15,7 @@ const {
 const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/lectures', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewAllLectures)
+router.get('/lectures', authMiddleware, verifyPermission(['SuperAdmin', 'admin', 'User']), viewAllLectures)
 router.get('/lectures/:idLecture', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewLecturesById)
 
 router.post('/lectures/create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), createLecture)
