@@ -23,7 +23,7 @@ export function AuthProvider({children}){
         const dadosUser = JSON.parse(await AsyncStorage.getItem('@Auth:user') || "[]")
         const dadosOtp = await AsyncStorage.getItem('@Auth:otp') || ""
         const dadosEmail = await AsyncStorage.getItem('@Auth:email') || ""
-
+    
         if(dadosToken && dadosUser){
             setUser(dadosUser)
             api.defaults.headers.common["Authorization"] = `Bearer ${dadosToken}`
@@ -41,42 +41,35 @@ export function AuthProvider({children}){
     }, [])
 
     async function OtpSendEmail(email){
-        try {
             const response = await api.post("/auth/otp/create", {
                 email
             })
-            setOtpEmail(response.data.data)
-            Alert.alert('Sucesso!',response.data.message)
-            localStorage.setItem('@Auth:email', email)
-        } catch (error) {
-            console.error("Erro: ", error)
-
-            if(error.response){
-                Alert.alert(`Erro: ${error.response.data.message}`)
+            if(response.data.error){
+                console.log('Erro', response.data.error)
+                Alert.alert(`Erro ${error.response.data.message}`)
+            } else {
+                setOtpEmail(response.data.data)
+                Alert.alert('Sucesso!',response.data.message)
+                await AsyncStorage.setItem('@Auth:email', email)
             }
-        }
     }
-
     async function OtpVerification(otp){
-        const email = localStorage.getItem('@Auth:email')
-        try {
+        const email = await AsyncStorage.getItem('@Auth:email')
             const response = await api.post('/auth/otp/verification', {
                 email,
                 otp
             })
-            Alert.alert('Sucesso!' ,response.data.message)
-            localStorage.setItem('@Auth:email', 'true')
-            localStorage.setItem('@Auth:otp', 'verificado!')
-            setOtpDigits(true)
-        } catch (error) {
-            console.error('Erro: ', error)
-
-            if(error.response){
-            Alert.alert(error.response.data.message)
-            }
+            if(response.data.error){
+                console.log('Erro', response.data.error)
+                Alert.alert(`Erro ${error.response.data.message}`)
+            } else {
+                Alert.alert('Sucesso!' ,response.data.message)
+                await AsyncStorage.setItem('@Auth:email', 'true')
+                await AsyncStorage.setItem('@Auth:otp', 'verificado!')
+                setOtpDigits(true)
+        
         }
     }
-
     // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
 
     async function login(email, password) {

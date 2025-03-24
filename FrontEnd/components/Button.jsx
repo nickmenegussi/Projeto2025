@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 360 ,
     maxWidth: 370 ,
-    backgroundColor: "#1D61E7",
+    backgroundColor: "#60A3D9",
     borderRadius: 10,
     marginTop: 20
   },

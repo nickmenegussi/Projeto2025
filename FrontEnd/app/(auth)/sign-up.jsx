@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, router } from "expo-router"
@@ -8,12 +8,14 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { AuthContext } from '../../context/auth'
 
 export default function App() {
-  const { login } = useContext(AuthContext)
+  const { login, user } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
   const [loginUser, setLogin] = useState({
     email: '',
     password: ''
   })
+
+  
 
   async function Login() {
     setLoading(true)
@@ -36,7 +38,8 @@ export default function App() {
           Alert.alert('Erro', 'Erro ao realizar login')
         }
     }
-}
+  }
+
 
   return (
     <LinearGradient 
