@@ -6,17 +6,22 @@ import {Bell, CircleUserRoundIcon, Menu, MenuIcon} from 'lucide-react-native'
 import ButtonIcons from '../../../components/ButtonIcons'
 import Trending from '../../../components/Trending'
 import EmptyContent from '../../../components/EmptyContent'
+import SideBar from '../../../components/Sidebar'
 
 const Home = () => {
+  const [IsSideBarOpen, setIsSideBarOpen] = useState(false)
+
 
   return (
-    <LinearGradient 
+    <>
+      <LinearGradient 
       colors={['#003B73', '#60A3D9']} 
       end={{ x: 0, y: 1 }} 
       locations={[0, 4]} 
       style={styles.linearGradient}
-    >
-      <SafeAreaView style={styles.safeAreaView}>
+    >       <SafeAreaView style={styles.safeAreaView}>
+            <SideBar isOpen={IsSideBarOpen} />
+
         <FlatList
         // substituir aqui por uma data de verdade
         // data={[{id: 1}, {id: 2}, {id: 3}]}
@@ -26,11 +31,11 @@ const Home = () => {
             <View contentContainerStyle={styles.Container}>
               <View style={styles.containerIcons}>
                 {/* Eu defino no meu componente as cores e o tamanho dele, depois, eu coloco desistruturo o meu arrow function em uma função que irá receber um obejeto com algumas características que depois irei passar no Icon*/}
-                <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
+                <ButtonIcons color={"white"} size={30} handleChange={() => setIsSideBarOpen(!IsSideBarOpen)} Icon={({color, size}) => (
                   <MenuIcon color={color} size={size} />
                 )} />
                 <View style={styles.IconsContent}>
-                  <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
+                  <ButtonIcons color={"white"} size={30}  Icon={({color, size}) => (
                     <Bell color={color} size={size} />
                   )} />
                   <ButtonIcons color={"white"} size={30} Icon={({color, size}) => (
@@ -49,6 +54,8 @@ const Home = () => {
         />
       </SafeAreaView>
     </LinearGradient>
+    </>
+    
   )
 }
 export default Home
