@@ -5,18 +5,21 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Carousel from 'react-native-reanimated-carousel' // Nova biblioteca de carrossel
 import { Bell, CircleUserRoundIcon, MenuIcon } from 'lucide-react-native'
 import ButtonIcons from '../../../components/ButtonIcons'
-import Trending from '../../../components/Trending'
+import Trending from '../../../components/Navagation'
 import EmptyContent from '../../../components/EmptyContent'
 import api from "../../../services/api"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 import { Calendar } from 'react-native-calendars';
 import FAQ from '../../../components/FAQ'
+import SideBar from "../../../components/Sidebar"
+import ReviewCard from '../../../components/ReviewCard'
 
 const Home = () => {
   const [lectures, setLectures] = useState([])
   const [VolunteerWork, setVolunteerWork] = useState([])
   const [calendar, setCalendar] = useState([])
+  const [IsSideBarOpen, setIsSideBarOpen] = useState(false)
 
   useEffect(() => {
     ViewLectures()
@@ -99,19 +102,18 @@ const Home = () => {
   }
 
   return (
-    <LinearGradient
-      colors={['#003B73', '#60A3D9']}
-      end={{ x: 0, y: 1 }}
-      locations={[0, 4]}
-      style={styles.linearGradient}
-    >
-      <SafeAreaView style={styles.safeAreaView}>
+    <>
+         <SafeAreaView style={styles.safeAreaView}>
+            <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
+
         <FlatList
           data={[{ type: 'Palestras da Casa', content: lectures 
           }, {
             type: 'Trabalho Voluntário', content: VolunteerWork
           }, {type: 'Calendário de Eventos', content: calendar},
-        {type: 'Esclarecimentos sobre o Centro Espírita', content: lectures}]}
+        {type: 'Esclarecimentos sobre o Centro Espírita'}, {
+          type: 'Avaliações'
+        }]}
           keyExtractor={(item) => item.type}
           renderItem={({ item }) => (
             <View>
@@ -177,9 +179,19 @@ const Home = () => {
                   }} />
                 
                 ) : item.type === 'Esclarecimentos sobre o Centro Espírita' ? (
-                  <View>
+                  <View style={styles.containerFaq}>
                     <FAQ />  
                   </View>
+                ) : item.type === "Avaliações" ? (
+                  <>
+                    <View style={styles.ContainerReviews}>
+                      <Text style={styles.header}>Avaliações do Centro Espírita</Text>
+                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                    </View>
+                  </>
+                  
                 ) : null
               ) : (
                 <EmptyContent
@@ -194,7 +206,7 @@ const Home = () => {
           ListHeaderComponent={() => (
             <View contentContainerStyle={styles.Container}>
               <View style={styles.containerIcons}>
-                <ButtonIcons color={"white"} size={30} Icon={({ color, size }) => (
+                <ButtonIcons color={"white"} size={30} handleChange={() => setIsSideBarOpen(!IsSideBarOpen)} Icon={({ color, size }) => (
                   <MenuIcon color={color} size={size} />
                 )} />
                 <View style={styles.IconsContent}>
@@ -206,12 +218,13 @@ const Home = () => {
                   )} />
                 </View>
               </View>
-              <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
+              <Trending navagations={[{name: 'Palestras da Casa', path: '/tabs/lectures'}] ?? []} />
             </View>
           )}
         />
       </SafeAreaView>
-    </LinearGradient>
+    </>
+    
   )
 }
 
@@ -224,7 +237,8 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flexGrow: 1,
     padding: 10,
-    paddingVertical: 20
+    paddingVertical: 20,
+    backgroundColor: '#003B73'
   },
   Container: {
     flexGrow: 1,
@@ -266,5 +280,11 @@ const styles = StyleSheet.create({
     height: 550,
     borderRadius: 10,
     marginBottom: 40
+  }, containerFaq: {
+    marginBottom: 10
+  }, ContainerReviews: {
+    backgroundColor: '#60A3D9', 
+    borderRadius: 10,
+    padding: 20
   }
 })
