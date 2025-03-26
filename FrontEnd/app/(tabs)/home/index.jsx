@@ -21,6 +21,9 @@ const Home = () => {
   const [calendar, setCalendar] = useState([])
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false)
 
+  console.log(calendar)
+  console.log(VolunteerWork)
+
   useEffect(() => {
     ViewLectures()
     ViewVolunteerWork()
@@ -218,7 +221,7 @@ const Home = () => {
                   )} />
                 </View>
               </View>
-              <Trending navagations={[{name: 'Palestras da Casa', path: '/tabs/lectures'}] ?? []} />
+              <Trending navagations={[{name: 'Palestras da Casa', path: '/home/lectures', content: ViewLectures}, {name: 'Trabalhos voluntários', path: '/home/volunteerWork'}] ?? []} />
             </View>
           )}
         />

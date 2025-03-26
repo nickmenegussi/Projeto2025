@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   scrollView: {
-    flexGrow: 1,
+    flex: 1,
     paddingLeft: 10,
   },
   menuItem: {

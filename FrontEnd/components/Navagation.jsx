@@ -1,14 +1,16 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { router } from 'expo-router'
+import { router, useRouter } from 'expo-router'
 
-const Trending = ({navagations, path}) => {
+const Trending = ({navagations, path, content}) => {
+  const router = useRouter()
+
   return (
       <FlatList style={styles.FlatListContainer}
         data={navagations}
         keyExtractor={(item) => item.name}
         renderItem={({item}) => (
-        <TouchableOpacity style={styles.CardNavagation} onPress={() => router.push('/tabs/home/lectures')} activeOpacity={0.6}>
+        <TouchableOpacity style={styles.CardNavagation} onPress={() => router.navigate({pathname: item.path})} activeOpacity={0.6}>
           <Text style={styles.TextContent}>{item.name}</Text>
         </TouchableOpacity>
     )}
