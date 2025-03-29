@@ -66,12 +66,17 @@ exports.viewAllEvents = (req, res) => {
 
 exports.createEvent = (req, res) => {
     const attachment = req.file ? req.file.filename : null
-    const { title, description, start, end, link } = req.body
+    const { title, description, start, end, link, dateEvent } = req.body
     const User_idUser = req.data.id
 
-
+    if(!title || !description || !start || !end || !link || !dateEvent || !attachment){
+        return res.status(400).json({
+            message: 'Preencha todos os campos.',
+            success: false
+        })
+    }
     
-    connection.query(`SELECT * FROM CalendarEvents WHERE title = ? AND description = ? AND start = ? AND end = ? AND User_idUser = ? AND link = ?`, [title, description, start, end, User_idUser, link], (err, result) => {
+    connection.query(`SELECT * FROM CalendarEvents WHERE title = ? AND description = ? AND start = ? AND end = ? AND User_idUser = ? AND link = ? AND dateEvent = ?`, [title, description, start, end, User_idUser, link, dateEvent], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -88,8 +93,8 @@ exports.createEvent = (req, res) => {
             })
         }
 
-        connection.query(`INSERT INTO CalendarEvents (title, link, description, start, end, attachment ,User_idUser) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)`, [title, link ,description, start, end, attachment ,User_idUser], (err, result) => {
+        connection.query(`INSERT INTO CalendarEvents (title, link, description, start, end, attachment, dateEvent, User_idUser) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [title, link ,description, start, end, attachment ,User_idUser, dateEvent], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
