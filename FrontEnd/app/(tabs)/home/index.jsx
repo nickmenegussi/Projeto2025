@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Carousel from 'react-native-reanimated-carousel' // Nova biblioteca de carrossel
@@ -10,7 +10,7 @@ import EmptyContent from '../../../components/EmptyContent'
 import api from "../../../services/api"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
-import { Calendar } from 'react-native-calendars';
+import { Agenda, Calendar } from 'react-native-calendars';
 import FAQ from '../../../components/FAQ'
 import SideBar from "../../../components/Sidebar"
 import ReviewCard from '../../../components/ReviewCard'
@@ -20,10 +20,9 @@ const Home = () => {
   const [VolunteerWork, setVolunteerWork] = useState([])
   const [calendar, setCalendar] = useState([])
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false)
-
-  console.log(calendar)
-  console.log(VolunteerWork)
-
+  const [selectedDate, setSelectedDate] = useState(null)
+  
+ 
   useEffect(() => {
     ViewLectures()
     ViewVolunteerWork()
@@ -86,7 +85,7 @@ const Home = () => {
         headers: {
           'Authorization': 'Bearer ' + token
         }
-      })
+      })      
       setCalendar(response.data.data)
     } catch (error) {
       if (error.response) {
@@ -103,7 +102,7 @@ const Home = () => {
       }
     }
   }
-
+  
   return (
     <>
          <SafeAreaView style={styles.safeAreaView}>
@@ -121,11 +120,11 @@ const Home = () => {
           renderItem={({ item }) => (
             <View>
               <Text style={styles.header}>{item.type}</Text>
-              {item.type ? (
-                item.type === 'Palestras da Casa' ? (
-                  <Carousel 
-                    width={350} // Largura do carrossel
-                    height={200} // Altura do carrossel
+              {item.type === 'Palestras da Casa' ? (
+                lectures.length > 0 ? (
+                  <Carousel
+                    width={350}
+                    height={200}
                     data={item.content}
                     renderItem={(item) => (
                       <View style={styles.carouselItem}>
@@ -135,7 +134,6 @@ const Home = () => {
                     scrollAnimationDuration={1000}
                     autoPlay={true}
                     loop={true}
-                    
                     autoPlayInterval={3000}
                     mode="parallax"
                     modeConfig={{
@@ -143,16 +141,23 @@ const Home = () => {
                       parallaxScrollingOffset: 54,
                     }}
                   />
-                ) : 
-                item.type === 'Trabalho Voluntário' ? (
-                  <Carousel 
-                    width={350} // Largura do carrossel
-                    height={200} // Altura do carrossel
+                ) : (
+                  <EmptyContent title="Ops! Nada por aqui" subtitle="Tente novamente mais tarde" />
+                )
+              ) : item.type === 'Trabalho Voluntário' ? (
+                VolunteerWork.length > 0 ? (
+                  <Carousel
+                    width={350}
+                    height={200}
                     data={item.content}
                     renderItem={(item) => (
+                      <TouchableOpacity>
+
                       <View style={styles.carouselItem}>
                         <Text style={styles.titlePost}>{item.item.nameVolunteerWork}</Text>
                       </View>
+                                        </TouchableOpacity>
+
                     )}
                     scrollAnimationDuration={1000}
                     autoPlay={true}
@@ -164,46 +169,66 @@ const Home = () => {
                       parallaxScrollingOffset: 54,
                     }}
                   />
-                ) : 
-                item.type === 'Calendário de Eventos' ? (
-                  <Calendar 
-                  style={styles.calendar}
-                  theme={{
-                    backgroundColor: '#4A90E2', // Fundo do calendário
-                    calendarBackground: '#4A90E2',
-                    textSectionTitleColor: '#fff',
-                    selectedDayBackgroundColor: '#0A73D9', // Cor do dia selecionado
-                    selectedDayTextColor: '#ffffff',
-                    todayTextColor: '#0A73D9',
-                    dayTextColor: '#ffffff',
-                    textDisabledColor: '#A0C1E8',
-                    arrowColor: '#ffffff',
-                    monthTextColor: '#ffffff',
-                  }} />
-                
-                ) : item.type === 'Esclarecimentos sobre o Centro Espírita' ? (
-                  <View style={styles.containerFaq}>
-                    <FAQ />  
-                  </View>
-                ) : item.type === "Avaliações" ? (
+                ) : (
+                  <EmptyContent title="Ops! Nada por aqui" subtitle="Tente novamente mais tarde" />
+                )
+              ) : item.type === 'Calendário de Eventos' ? (
+                calendar.length > 0 ? (
                   <>
+                      <Calendar 
+                      accessibilityLanguage='PT-BR'
+                      style={styles.calendar}
+                      markedDates={''}
+                      theme={{
+                        backgroundColor: '#4A90E2',
+                        calendarBackground: '#4A90E2',
+                        textSectionTitleColor: '#fff',
+                        selectedDayBackgroundColor: '#0A73D9',
+                        selectedDayTextColor: '#ffffff',
+                        todayTextColor: '#0A73D9',
+                        dayTextColor: '#ffffff',
+                        textDisabledColor: '#A0C1E8',
+                        arrowColor: '#ffffff',
+                        monthTextColor: '#ffffff',
+                      }}
+                      onDayPress={(day) => setSelectedDate(day.dateString)}
+                      />
+                      {/* {selectedDate && events[selectedDate] ? (
+                        <View style={styles.eventsContainer}>
+                        <Text style={styles.eventTitle}>Eventos do dia:</Text>
+                        {events[selectedDate].map((event, index) => (
+                          <View key={index} style={styles.eventItem}>
+                          <Text style={styles.eventText}>{event.title}</Text>
+                        </View>
+                        ))}
+                      </View>
+                    ) : (
+                      <View style={styles.eventsContainer}>
+                        <Text style={styles.eventText}>Nenhum evento para o dia</Text>
+                      </View>
+                    )} */}
+                  </>
+                 
+                ) : (
+                  <EmptyContent title="Ops! Nada por aqui" subtitle="Tente novamente mais tarde" />
+                )
+              ) : item.type === 'Avaliações' ? (
+               <>
                     <View style={styles.ContainerReviews}>
                       <Text style={styles.header}>Avaliações do Centro Espírita</Text>
-                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
-                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
-                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                      {/* <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> */}
+                      {/* <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />  */}
                     </View>
                   </>
                   
-                ) : null
+              ) : item.type === 'Esclarecimentos sobre o Centro Espírita' ? (
+                <View style={styles.containerFaq}>
+                  <FAQ />  
+                </View>
               ) : (
-                <EmptyContent
-              title="Ops! Nada por aqui"
-              subtitle="Tente novamente mais tarde"
-            />
-              )
-              }
-              
+                <EmptyContent title="Ops! Nada por aqui" subtitle="Tente novamente mais tarde" />
+              ) }
             </View>
           )}
           ListHeaderComponent={() => (
@@ -221,7 +246,7 @@ const Home = () => {
                   )} />
                 </View>
               </View>
-              <Trending navagations={[{name: 'Palestras da Casa', path: '/home/lectures', content: ViewLectures}, {name: 'Trabalhos voluntários', path: '/home/volunteerWork'}] ?? []} />
+              <Trending navagations={[{name: 'Palestras da Casa', path: '/home/lectures', data: lectures}, {name: 'Trabalhos voluntários', path: '/home/volunteerWork'}, {name: 'FAQ', path: '/home/faq'}] ?? []} />
             </View>
           )}
         />
@@ -289,5 +314,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#60A3D9', 
     borderRadius: 10,
     padding: 20
+  }, eventsContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 10,
+    right: 10
   }
 })

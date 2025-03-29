@@ -1,16 +1,14 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { router, useRouter } from 'expo-router'
+import { router } from 'expo-router'
 
-const Trending = ({navagations, path, content}) => {
-  const router = useRouter()
-
+const Trending = ({navagations, path}) => {
   return (
       <FlatList style={styles.FlatListContainer}
         data={navagations}
         keyExtractor={(item) => item.name}
         renderItem={({item}) => (
-        <TouchableOpacity style={styles.CardNavagation} onPress={() => router.navigate({pathname: item.path})} activeOpacity={0.6}>
+        <TouchableOpacity style={styles.CardNavagation} onPress={() => router.navigate({pathname: item.path, params: item.data})} activeOpacity={0.6}>
           <Text style={styles.TextContent}>{item.name}</Text>
         </TouchableOpacity>
     )}
@@ -33,15 +31,16 @@ const styles = StyleSheet.create({
     } , CardNavagation : {
       display: 'flex',
       backgroundColor: '#60A3D9',
-      minWidth: '100%',
-      maxWidth: '100%',
+      minWidth: '10%',
       height: 40,
       borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 10
     }, TextContent: {
-      color: 'white'
+      color: 'white',
+      textAlign: 'center',
+      paddingHorizontal: 10
     }
     
 })

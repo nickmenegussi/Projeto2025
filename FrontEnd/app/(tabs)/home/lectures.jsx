@@ -1,18 +1,22 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 
 const Lectures = () => {
-  const router = useRouter()
+  const params = useLocalSearchParams()
+  const lectures = params.data ? params.data : []
+  console.log('ola')
+  console.log(lectures)
+
   return (
     <SafeAreaView style={styles.BackGroundSafeArea}>
       <FlatList 
-      data={[{id: 2}, {id: 2}]}
-      keyExtractor={(item) => item.id}
+      // data={lectures}
+      keyExtractor={(item) => item.idLecture}
       renderItem={({item}) => (
         <View style={styles.itemContainer}>
-            <Text style={styles.itemText}>{item.id}</Text>
+            <Text style={styles.itemText}>{item.idLecture}</Text>
           </View>
       )}
       horizontal

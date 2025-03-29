@@ -6,6 +6,7 @@ import ButtonIcons from './ButtonIcons';
 
 export default function SideBar({ isOpen, setIsOpen }) {
   const navigation = useNavigation();
+  
   return (
     <View style={[styles.sidebar, { transform: [{ translateX: isOpen ? 0 : -300 }] }]}>
       <View style={styles.backgroundProfileContainer}>

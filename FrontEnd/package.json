@@ -9,10 +9,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/cli": "latest",
     "axios": "^1.7.9",
-    "expo": "^52.0.26",
+    "expo": "^52.0.41",
     "expo-constants": "~17.0.4",
     "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.4",
@@ -23,7 +23,7 @@
     "lucide-react-native": "^0.469.0",
     "nativewind": "^4.1.23",
     "react": "18.3.1",
-    "react-native": "0.76.6",
+    "react-native": "^0.76.7",
     "react-native-calendars": "^1.1310.0",
     "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "~3.16.1",
