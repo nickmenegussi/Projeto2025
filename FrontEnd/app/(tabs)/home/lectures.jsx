@@ -20,24 +20,12 @@ import { ArrowLeftIcon, Icon } from "lucide-react-native"
 import Trending from "../../../components/Navagation"
 import Carousel from "react-native-reanimated-carousel"
 import Button from "../../../components/Button"
+import CustomNavagation from "../../../components/CustomNavagation"
 
 const Lectures = () => {
-  const [selectedIndex, setSelecetIndex] = useState(0)
-  const translateX = useRef(new Animated.Value(0)).current // Controle da posição do sublinhado
-
-  // Função para mover suavemente o sublinhado
-  const handlePress = (index) => {
-    setSelecetIndex(index)
-    Animated.spring(translateX, {
-      toValue: index * 110, // Multiplica pelo tamanho do item (ajuste se necessário)
-      useNativeDriver: true,
-    }).start()
-  }
-  const trendingItems = [{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]
 
   const params = useLocalSearchParams()
   const lectures = params.data ? JSON.parse(params.data) : []
-  console.log(lectures)
   return (
     <ScrollView style={styles.BackGroundSafeArea}>
       <View style={styles.HeaderComponent}>
@@ -51,14 +39,7 @@ const Lectures = () => {
         <View>
           <View style={styles.ContentContainer}>
             <Text style={styles.TitleHeader}>Palestras da Casa</Text>
-            <View style={styles.trendingContainer}>
-              {trendingItems.map((item, index) => (
-                <TouchableOpacity key={index} onPress={() => handlePress(index)} style={styles.trendingItems} >
-                  <Text style={styles.navText}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-              <Animated.View style={[styles.underline, { transform: [{ translateX }] }]} />
+            <CustomNavagation  trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
 
           </View>
           <View style={styles.line}></View>
@@ -240,31 +221,5 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Garante que o conteúdo fique no centro
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Escurecimento suave
     borderRadius: 10,
-  }, trendingContainer: {
-    flexDirection: "row",
-    marginTop: 10,
-    position: "relative",
-    marginBottom: 30,
-    gap: 10,
-  },
-  trendingItems: {
-    width: 100,
-    alignItems: 'center',
-    backgroundColor: '#60A3D9',
-    borderRadius: 10,
-    justifyContent: 'center',
-    height: 30
-  },underline: {
-    position:'absolute',
-    bottom: 0,
-    left: 10,
-    width: 100, // Deve ser igual à largura do item
-    height: 8,
-    backgroundColor: "#60A3D9",
-    borderRadius: 10,
-  }, navText: {
-    color: 'white',
-    textAlign: "center",
-    paddingHorizontal: 10
-    }
+  }
 })

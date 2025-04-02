@@ -1,13 +1,24 @@
 import { View, Text, ImageBackground, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
-import { ArrowLeftIcon, MapIcon, TimerIcon, X } from 'lucide-react-native'
+import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapIcon, TimerIcon, X } from 'lucide-react-native'
 import { router, useLocalSearchParams } from 'expo-router'
+import EmptyContent from "../../../components/EmptyContent";
+import VideoUrl from '../../../components/VideoUrl';
 
 const AboutLecture = () => {
   const params = useLocalSearchParams()
   const data = params.data ? JSON.parse(decodeURIComponent(params.data)) : {}
   const [lecture, setLecture] = useState([data])
-  console.log(lecture)
+
+  function ConvertDateTimeTo(datetime){
+    const date = new Date(datetime)
+    const month = String(date.getMonth() + 1).padStart(2, '0') // padStart para falar o máximo de algarismo que eu ou querer e '0' por padrão.
+    const day = String(date.getDay()).padStart(2, '0')
+    const year = String(date.getFullYear()).slice(-2)
+
+    return `${month}/${day}/${year}`
+  }
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView style={styles.scrollContainer}>
@@ -26,22 +37,33 @@ const AboutLecture = () => {
 
         <View style={styles.ContainerContent}>
           <Text style={styles.textContentContainer}>Detalhes da Palestra</Text>
-          {lecture && (
+          <View style={styles.line}></View>
+          {lecture.length > 0 ? (
             <View style={styles.ContainerIcons}>
               <View style={styles.contentIcons}>
                 <MapIcon size={25} color={'white'} />
-                <Text>{lecture.nameLecture}</Text>
+                <Text style={styles.SmallTextContentIcons}>R. Coração de Maria, 341 - Centro, Esteio - RS,</Text>
               </View>
-              {lecture.dateLecture}(
-                <View style={styles.contentIcons}>
-                  <TimerIcon size={25} color={'white'} />
-                  <Text>Date: {lecture[0].dateLecture}</Text>
+              <View style={styles.contentIcons}>
+                  <CalendarIcon size={25} color={'white'} />
+                  <Text style={styles.TextContentIcons}>Data: {ConvertDateTimeTo(lecture[0].dateLecture) ? ConvertDateTimeTo(lecture[0].dateLecture) : <Text>Nenhum Conteudo encontrado</Text>}</Text>
               </View>
-              )
+              <View style={styles.contentIcons}>
+                  <ClockIcon size={25} color={'white'} />
+                  <Text style={styles.TextContentIcons}>Hora: {lecture[0].timeLecture}</Text>
+              </View>
+              <View style={styles.line}></View>
+              <Text style={styles.textChapter}>Capítulo I: {lecture[0].nameLecture}</Text>
           </View>
+          ) : (
+            <EmptyContent title={'Nenhum conteúdo Encontrado!'} />
           )} 
-          
+          <View style={styles.line}></View>
+          <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''} />
+
         </View>
+
+        
       </View>
       </ScrollView>
     </SafeAreaView>
@@ -91,5 +113,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10
+  }, TextContentIcons: {
+    color: 'white',
+  },
+  SmallTextContentIcons: {
+    color: 'white',
+    maxWidth: 280,
+  }, line: {
+    width: '100%',
+    borderWidth: 0.6,
+    borderColor: 'white'
+  }, textChapter: {
+    fontSize: 16,
+    color: 'white'
   }
 })
