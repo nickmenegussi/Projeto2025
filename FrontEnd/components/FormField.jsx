@@ -3,15 +3,17 @@ import React, { useState } from 'react'
 import {Eye, EyeOff, } from 'lucide-react-native'
 
 const FormField = ({title, value, placeholder ,handleChangeText, othersStyles ,...props}) => {
+  // ...props é para utilizar propriedades extra sem precisar escrever
   const [showPassword, setShowPassword] = useState(false)
   return (
     <View style={style.container}>
       <Text style={style.titleForms}>{title}</Text>
       <View style={[style.containerForms,othersStyles]} >
-        <TextInput style={style.textoInput} value={value} onChangeText={handleChangeText} placeholder={placeholder}  secureTextEntry={title === 'Password' && !showPassword}/>
+        <TextInput style={style.textoInput} value={value} onChangeText={handleChangeText} placeholder={placeholder} keyboardType={props.keyboardType || "default"} secureTextEntry={title === 'Password' && !showPassword}/>
         {title === 'Password' && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={style.hideAndShow} >
               {showPassword ? <Eye color='black' size={19} /> : <EyeOff color='black' size={19} />}
+
           </TouchableOpacity>
         )}
       </View>

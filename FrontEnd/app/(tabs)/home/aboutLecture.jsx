@@ -4,6 +4,7 @@ import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapIcon, TimerIcon, X } from 'l
 import { router, useLocalSearchParams } from 'expo-router'
 import EmptyContent from "../../../components/EmptyContent";
 import VideoUrl from '../../../components/VideoUrl';
+import CustomNavagation from '../../../components/CustomNavagation';
 
 const AboutLecture = () => {
   const params = useLocalSearchParams()
@@ -29,7 +30,7 @@ const AboutLecture = () => {
           source={require('../../../assets/images/Jesus-Cristo.png')}
         >
           <View>
-            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.navigate('/home')}>
+            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.navigate('/home/lectures')}>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
           </View>
@@ -59,11 +60,9 @@ const AboutLecture = () => {
             <EmptyContent title={'Nenhum conteúdo Encontrado!'} />
           )} 
           <View style={styles.line}></View>
-          <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''} />
-
+          <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''}/>
+          <CustomNavagation trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Objetivo Palestra', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={styles.trendingItems}/>
         </View>
-
-        
       </View>
       </ScrollView>
     </SafeAreaView>
@@ -127,4 +126,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white'
   }
+    
 })

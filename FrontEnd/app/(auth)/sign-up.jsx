@@ -15,6 +15,10 @@ export default function App() {
     password: ''
   })
 
+  if(user) {
+    router.push('/home')
+  }
+
   async function Login() {
     setLoading(true)
     {!loading && (

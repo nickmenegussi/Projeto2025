@@ -14,7 +14,7 @@ export default function VideoUrl({videoUrl}) {
     <View style={styles.Container}>
       {videoId ? (
         <YoutubeIframe
-          height={300}
+          height={200}
           width={'100%'}
           videoId={videoId}
         />

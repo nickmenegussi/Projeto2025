@@ -21,6 +21,7 @@ import Trending from "../../../components/Navagation"
 import Carousel from "react-native-reanimated-carousel"
 import Button from "../../../components/Button"
 import CustomNavagation from "../../../components/CustomNavagation"
+import EmptyContent from "../../../components/EmptyContent";
 
 const Lectures = () => {
 
@@ -39,13 +40,15 @@ const Lectures = () => {
         <View>
           <View style={styles.ContentContainer}>
             <Text style={styles.TitleHeader}>Palestras da Casa</Text>
-            <CustomNavagation  trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
+            <CustomNavagation disablePress={false} trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
 
           </View>
           <View style={styles.line}></View>
         </View>
       </View>
-      <Carousel
+      {lectures.length > 0 ? (
+       <>
+         <Carousel
         width={370}
         height={200}
         data={lectures}
@@ -150,6 +153,14 @@ const Lectures = () => {
           parallaxScrollingOffset: 80,
         }}
       />
+       </>
+      ) : (
+        <View style={styles.ContainerMessage}>
+          <EmptyContent title="Ops! Nada por aqui"
+                  subtitle="Tente novamente mais tarde" />
+        </View>
+        
+      )}
     </ScrollView>
   )
 }
@@ -221,5 +232,10 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Garante que o conteúdo fique no centro
     backgroundColor: "rgba(0, 0, 0, 0.4)", // Escurecimento suave
     borderRadius: 10,
+  }, ContainerMessage: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 100
   }
 })

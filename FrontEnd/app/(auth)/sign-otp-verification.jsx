@@ -64,7 +64,7 @@ export default function OtpSignIn() {
                 para continuar!
               </Text>
               <View style={styles.FormContainer}>
-                <FormField placeholder={"Digite o código aqui"} handleChangeText={(text) => setOtp(text)} value={otp}/>
+                <FormField keyboardType='numeric' placeholder={"Digite o código aqui"} handleChangeText={(text) => setOtp(text)} value={otp}/>
               </View>
               <Button
                 title="Enviar Código"
