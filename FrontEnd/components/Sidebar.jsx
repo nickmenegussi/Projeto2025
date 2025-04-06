@@ -1,24 +1,39 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { LibraryIcon, X } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import ButtonIcons from './ButtonIcons';
 
 export default function SideBar({ isOpen, setIsOpen }) {
   const navigation = useNavigation();
-  
+
+  // Ref de animação
+  const slideAnim = useRef(new Animated.Value(-300)).current;
+
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: isOpen ? 0 : -300,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [isOpen]);
+
   return (
-    <View style={[styles.sidebar, { transform: [{ translateX: isOpen ? 0 : -300 }] }]}>
+    <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
       <View style={styles.backgroundProfileContainer}>
-        <ButtonIcons color="white" size={30} handleChange={() => setIsOpen(false)} Icon={({color, size}) => ( 
-          <X color={color} size={size} />
-        )} />
+        <ButtonIcons
+          color="white"
+          size={30}
+          handleChange={() => setIsOpen(false)}
+          Icon={({ color, size }) => <X color={color} size={size} />}
+        />
         <View style={styles.profileContainer}>
           <Image source={require('../assets/images/Jesus-Cristo.png')} style={styles.profileImage} />
           <Text style={styles.profileName}>Your name</Text>
           <Text style={styles.profileSubtext}>View profile</Text>
         </View>
       </View>
+
       <ScrollView style={styles.scrollView}>
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Dashboard')}>
           <Text style={styles.iconText}>📊</Text>
@@ -60,9 +75,8 @@ export default function SideBar({ isOpen, setIsOpen }) {
           <Text style={styles.iconText}>🔑</Text>
           <Text style={styles.menuText}>Login</Text>
         </TouchableOpacity>
-        
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -74,14 +88,11 @@ const styles = StyleSheet.create({
     height: '110%',
     width: 250,
     backgroundColor: '#60A3D9',
-    zIndex: 15
-  },
-  IconX: {
-    padding: 15
+    zIndex: 15,
   },
   backgroundProfileContainer: {
     backgroundColor: '#003B73',
-    padding: 10
+    padding: 10,
   },
   profileContainer: {
     paddingVertical: 30,
@@ -109,7 +120,7 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    padding: 13,
     borderRadius: 8,
     marginVertical: 2,
   },

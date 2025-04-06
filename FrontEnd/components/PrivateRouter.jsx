@@ -5,7 +5,6 @@ import { AuthContext } from "../context/auth";
 
 export default function PrivateRouter({ children }) {
   const { user, otpDigits, otpEmail, loading } = useContext(AuthContext);
-  const navigation = useNavigation();
 
   // Exibe um carregamento enquanto os dados de autenticação são processados
   if (loading) {
@@ -13,16 +12,16 @@ export default function PrivateRouter({ children }) {
   }
 
   if (!user) {
-    navigation.navigate("/sign-in"); 
+    route.push("/sign-in"); 
     return null;
   }
   if (!otpEmail) {
-    navigation.navigate("EmailOtp"); 
+    navigation.navigate("/EmailOtp"); 
     return null;
   }
 
   if (!otpDigits) {
-    navigation.navigate("OtpVerification"); 
+    navigation.navigate("/OtpVerification"); 
     return null;
   }
 

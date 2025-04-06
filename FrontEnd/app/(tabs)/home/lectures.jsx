@@ -40,7 +40,7 @@ const Lectures = () => {
         <View>
           <View style={styles.ContentContainer}>
             <Text style={styles.TitleHeader}>Palestras da Casa</Text>
-            <CustomNavagation disablePress={false} trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
+            <CustomNavagation trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
 
           </View>
           <View style={styles.line}></View>
@@ -225,7 +225,6 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     borderRadius: 10,
-    backgroundColor: "blac",
   },
   overlay: {
     flex: 1,

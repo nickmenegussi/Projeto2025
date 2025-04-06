@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -138,13 +140,22 @@ const Home = () => {
                     height={170}
                     data={item.content}
                     renderItem={(item) => (
-                      <TouchableOpacity>
-                        <View style={styles.SmallcarouselItem}>
-                          <Text style={styles.titlePost}>
-                            {item.item.nameLecture}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                      <View style={styles.SmallcarouselItem}>
+                        <ImageBackground
+                          source={require("../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
+                          style={styles.BackgroundImage}
+                          imageStyle={styles.imageStyle}
+                        >
+                          <TouchableOpacity style={styles.overlay} activeOpacity={0.5} onPress={() => router.push({pathname: '/home/lectures', params: { data: JSON.stringify(lectures) } })}>
+                            <View style={styles.item}>
+                              <Text style={styles.titlePost}>
+                                {item.item.nameLecture}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+
+                        </ImageBackground>
+                      </View>
                     )}
                     scrollAnimationDuration={1000}
                     autoPlay={true}
@@ -157,10 +168,9 @@ const Home = () => {
                     }}
                   />
                 ) : (
-                  <EmptyContent
-                    title="Ops! Nada por aqui"
-                    subtitle="Tente novamente mais tarde"
-                  />
+                  <View>
+                    <ActivityIndicator size='large' color='0000ff'/>
+                  </View>
                 )
               ) : item.type === "Trabalho Voluntário" ? (
                 VolunteerWork.length > 0 ? (
@@ -169,13 +179,22 @@ const Home = () => {
                     height={220}
                     data={item.content}
                     renderItem={(item) => (
-                      <TouchableOpacity>
-                        <View style={styles.carouselItem}>
-                          <Text style={styles.titlePost}>
-                            {item.item.nameVolunteerWork}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                      <View style={styles.SmallcarouselItem}>
+                        <ImageBackground
+                          source={require("../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
+                          style={styles.BackgroundImage}
+                          imageStyle={styles.imageStyle}
+                        >
+                          <TouchableOpacity style={styles.overlay} activeOpacity={0.5} onPress={() => router.push('/home/volunteerWork')}>
+                            <View style={styles.item}>
+                              <Text style={styles.titlePostBigger}>
+                                {item.item.nameVolunteerWork ? item.item.nameVolunteerWork : ""}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+
+                        </ImageBackground>
+                      </View>
                     )}
                     scrollAnimationDuration={1000}
                     autoPlay={true}
@@ -352,18 +371,26 @@ const styles = StyleSheet.create({
     height: 200,
   },
   SmallcarouselItem: {
-    backgroundColor: "white",
-    padding: 15,
     borderRadius: 10,
     marginRight: 10,
-    justifyContent: "center",
-    alignItems: "start",
+    flex: 1,
+    flexDirection: "column",
     height: 150,
-  },
+  }, overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  }, item: {
+    padding: 15,
+  },  
   titlePost: {
     fontSize: 16,
-    color: "#003B73",
-    marginTop: 50,
+    color: 'white',
+    marginTop: 100,
+  },
+  titlePostBigger: {
+    fontSize: 16,
+    color: 'white',
+    marginTop: 140,
   },
   calendar: {
     height: 550,
@@ -383,5 +410,15 @@ const styles = StyleSheet.create({
     bottom: 100,
     left: 10,
     right: 10,
+  },
+  BackgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    },
+  imageStyle: {
+    borderRadius: 10,
+    resizeMode: "cover",
+    
   },
 });

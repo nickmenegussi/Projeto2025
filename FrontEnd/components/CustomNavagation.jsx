@@ -9,7 +9,7 @@ import {
 import React, { useRef, useState } from "react";
 import { router } from "expo-router";
 
-export default function CustomNavagation({ trendingItems, otherStyles, disablePress = true }) {
+export default function CustomNavagation({ trendingItems, otherStyles, disablePress = false }) {
   const [selectedIndex, setSelecetIndex] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current; // Controle da posição do sublinhado
 
@@ -33,11 +33,11 @@ export default function CustomNavagation({ trendingItems, otherStyles, disablePr
               <View style={styles.trendingContainer}>
                 <TouchableOpacity
                   key={index}
-                  onPress={() => {
+                  onPress={disablePress === false ? null : () => {
                     const encondedData = encodeURIComponent(JSON.stringify(item))
                     handlePress(index)
-                    disablePress === true ? router.navigate(`${item.path}?data=${encondedData}`)
-                    : null
+                    router.push({pathname: item.path, params: {data: encondedData}})
+                    
                   }}
                   style={[styles.trendingItems, otherStyles]}
                 >

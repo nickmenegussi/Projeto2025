@@ -6,6 +6,7 @@ import FormField from '../../components/FormField'
 import Button from '../../components/Button'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { AuthContext } from '../../context/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function App() {
   const { login, user } = useContext(AuthContext)
@@ -14,10 +15,6 @@ export default function App() {
     email: '',
     password: ''
   })
-
-  if(user) {
-    router.push('/home')
-  }
 
   async function Login() {
     setLoading(true)
@@ -33,7 +30,7 @@ export default function App() {
         setLoading(false)
         if (error.response && error.response.data && error.response.data.message) {
           console.log("Erro", error.response.data.message) 
-          // alert(error.response.data.message)
+          await AsyncStorage.clear()
           Alert.alert('Erro', 'Email ou senha incorretos')
         } else {
           console.log("Erro", error)
