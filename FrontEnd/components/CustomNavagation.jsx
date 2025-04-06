@@ -4,81 +4,81 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  FlatList,
+  ScrollView,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { router } from "expo-router";
 
-export default function CustomNavagation({ trendingItems, otherStyles, disablePress = false }) {
-  const [selectedIndex, setSelecetIndex] = useState(0);
-  const translateX = useRef(new Animated.Value(0)).current; // Controle da posição do sublinhado
+export default function CustomNavagation({
+  trendingItems,
+  otherStyles,
+  disablePress = false,
+}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const translateX = useRef(new Animated.Value(0)).current;
 
-  const handlePress = (index) => {
-    setSelecetIndex(index);
+  const handlePress = (index, item) => {
+    setSelectedIndex(index);
     Animated.spring(translateX, {
-      toValue: index * 110, // Multiplica pelo tamanho do item (ajuste se necessário)
+      toValue: index * 110, // 100 de largura + 10 de margem
       useNativeDriver: true,
     }).start();
+
+    if (disablePress !== false) {
+      const encodedData = encodeURIComponent(JSON.stringify(item));
+      router.push({
+        pathname: item.path,
+        params: { data: encodedData },
+      });
+    }
   };
+
   return (
-    <>
-      <View>
-        <FlatList
-          data={trendingItems}
-          horizontal
-          contentContainerStyle={styles.FlatListContainer}
-          keyExtractor={(item) => item.name}
-          renderItem={({ item, index }) => (
-            <View style={[styles.ContentContainer]}>
-              <View style={styles.trendingContainer}>
-                <TouchableOpacity
-                  key={index}
-                  onPress={disablePress === false ? null : () => {
-                    const encondedData = encodeURIComponent(JSON.stringify(item))
-                    handlePress(index)
-                    router.push({pathname: item.path, params: {data: encondedData}})
-                    
-                  }}
-                  style={[styles.trendingItems, otherStyles]}
-                >
-                  <Text style={styles.navText}>{item.name}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
-        <Animated.View
-          style={[
-            styles.underline,
-            {
-              transform: [{ translateX }],
-            },
-          ]}
-        />
-      </View>
-    </>
+    <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.trendingContainer}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {trendingItems.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handlePress(index, item)}
+            style={[styles.trendingItems, otherStyles]}
+          >
+            <Text style={styles.navText}>{item.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <Animated.View
+        style={[
+          styles.underline,
+          {
+            transform: [{ translateX }],
+          },
+        ]}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  FlatListContainer: {
-    gap: 10,
+  wrapper: {
+    height: 60, // espaço pra underline
+    position: "relative",
   },
   trendingContainer: {
     flexDirection: "row",
-    marginTop: 10,
-    position: "relative",
-    marginBottom: 30,
-    gap: 10,
   },
   trendingItems: {
-    minWidth: 100, // Permite que o botão cresça conforme o texto
+    width: 100 ,
     alignItems: "center",
     backgroundColor: "#60A3D9",
     borderRadius: 10,
     justifyContent: "center",
     height: 30,
-    paddingHorizontal: 15, // Adiciona um espaçamento interno
+    marginRight: 10,
   },
   navText: {
     color: "white",
@@ -92,9 +92,5 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: "#60A3D9",
     borderRadius: 10,
-  },
-  ContentContainer: {
-    flex: 1,
-    gap: 10,
   },
 });

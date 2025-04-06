@@ -61,7 +61,7 @@ const AboutLecture = () => {
           )} 
           <View style={styles.line}></View>
           <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''}/>
-          <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Objetivo Palestra', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={styles.trendingItems}/>
+          <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={styles.trendingItems}/>
         </View>
       </View>
       </ScrollView>
