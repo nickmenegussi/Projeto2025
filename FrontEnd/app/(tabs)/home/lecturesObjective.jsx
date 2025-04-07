@@ -3,6 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ArrowLeftIcon } from 'lucide-react-native'
 import { router } from 'expo-router'
+import CustomNavagation from "../../../components/CustomNavagation"
 
 const LecturesObjective = () => {
   return (
@@ -18,18 +19,28 @@ const LecturesObjective = () => {
         <View style={styles.containerContent}>
           <Text style={styles.textContent}>Qual é o objetivo das palestras Espíritas?</Text>
             <View>
+              <View style={styles.lineNavagation}></View>
+              <CustomNavagation trendingItems={[{name: 'Objetivo 1'}, {name: 'Objetivo 2'}, {name: 'Objetivo 3'}]} otherStyles={true} />
+            </View>
+
+            <View>
               <Image style={styles.ImageContent} source={require('../../../assets/images/foto.png')} />
             </View>      
             <View style={styles.line}></View>
             <View>
-              <Text>A palestra</Text>
+              <Text style={styles.textContent}>A palestra</Text>
             </View>
             <View style={styles.line}></View>
             <View>
-              <Text>O objetivo das palestras Espíritas é proporcionar um espaço de reflexão e aprendizado sobre os princípios da doutrina Espírita, promovendo o desenvolvimento moral e espiritual dos participantes.</Text>
+              <Text style={styles.SmalltextContent}>O objetivo das palestras Espíritas é proporcionar um espaço de reflexão e aprendizado sobre os princípios da doutrina Espírita, promovendo o desenvolvimento moral e espiritual dos participantes.</Text>
             </View>
+            <View style={styles.line}></View>
+            <View style={{marginTop: 20}}>
+              <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
+            </View>
+
         </View>
-        
+
       </ScrollView>
     </SafeAreaView>
   )
@@ -65,5 +76,15 @@ const styles = StyleSheet.create({
   }, textContent: {
     fontSize: 20,
     color: 'white'
+  }, SmalltextContent: {
+    color: 'white',
+    fontWeight: 'regular',
+    fontSize: 17,
+  }, lineNavagation: {
+    width: '100%',
+    borderColor: 'white',
+    borderWidth: 0.6,
+    position: 'absolute',
+    top: 1,
   }
 })

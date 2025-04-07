@@ -9,6 +9,7 @@ import CustomNavagation from '../../../components/CustomNavagation';
 const AboutLecture = () => {
   const params = useLocalSearchParams()
   const data = params.data ? JSON.parse(decodeURIComponent(params.data)) : {}
+  console.log(params.list)
   const [lecture, setLecture] = useState([data])
 
   function ConvertDateTimeTo(datetime){

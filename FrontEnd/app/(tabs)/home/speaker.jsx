@@ -74,7 +74,7 @@ const Speaker = () => {
           Encontre ele nas redes sociais abaixo:
         </Text>
         <View style={styles.socialIcons}></View>
-        <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Objetivo Palestra', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
+        <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
 
       </View>
     </ScrollView>

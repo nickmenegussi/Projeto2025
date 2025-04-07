@@ -24,7 +24,6 @@ import CustomNavagation from "../../../components/CustomNavagation"
 import EmptyContent from "../../../components/EmptyContent";
 
 const Lectures = () => {
-
   const params = useLocalSearchParams()
   const lectures = params.data ? JSON.parse(params.data) : []
   return (
@@ -67,7 +66,8 @@ const Lectures = () => {
                     buttonStyle={styles.Button}
                     handlePress={() => {
                       const encondedData = encodeURIComponent(JSON.stringify(item))
-                      router.push(`/home/aboutLecture?data=${encondedData}`)}}
+                      const lecturesEncondedData = encodeURIComponent(JSON.stringify(lectures))
+                      router.push({pathname: `/home/aboutLecture?data=${encondedData}`, params: {list: lecturesEncondedData}})}}
                   />
                 </View>
               </View>
