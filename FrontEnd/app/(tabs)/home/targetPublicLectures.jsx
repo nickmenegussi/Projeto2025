@@ -20,7 +20,7 @@ const TargetPublicLectures = () => {
              <Text style={styles.textContent}>Qual é o objetivo das palestras Espíritas?</Text>
                <View>
                  <View style={styles.lineNavagation}></View>
-                 <CustomNavagation trendingItems={[{name: 'Jovens'}, {name: 'Adulltos'}, {name: 'Avaliar Casa'}]} otherStyles={true} />
+                 <CustomNavagation trendingItems={[{name: 'Jovens'}, {name: 'Adulltos'}, {name: 'Avaliar Casa', path: '/home/reviewSociety'}]} otherStyles={true} normalPress={true} sendData={false}/>
                </View>
    
                <View>
@@ -36,7 +36,7 @@ const TargetPublicLectures = () => {
                </View>
                <View style={styles.line}></View>
                <View style={{marginTop: 20}}>
-                 <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
+                 <CustomNavagation sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
                </View>
    
            </View>

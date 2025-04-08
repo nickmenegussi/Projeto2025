@@ -9,7 +9,6 @@ import CustomNavagation from '../../../components/CustomNavagation';
 const AboutLecture = () => {
   const params = useLocalSearchParams()
   const data = params.data ? JSON.parse(decodeURIComponent(params.data)) : {}
-  console.log(params.list)
   const [lecture, setLecture] = useState([data])
 
   function ConvertDateTimeTo(datetime){
@@ -31,7 +30,11 @@ const AboutLecture = () => {
           source={require('../../../assets/images/Jesus-Cristo.png')}
         >
           <View>
-            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.navigate('/home/lectures')}>
+            <TouchableOpacity style={styles.ButtonIcon} onPress={() => {
+              console.log(params.lecture)
+              const lecturesEncondedData = encodeURIComponent(JSON.stringify(lecture))
+              router.push(`/home/lectures?data=${lecturesEncondedData}`)
+            }}>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
           </View>
@@ -62,7 +65,7 @@ const AboutLecture = () => {
           )} 
           <View style={styles.line}></View>
           <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''}/>
-          <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={styles.trendingItems}/>
+          <CustomNavagation sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={false}/>
         </View>
       </View>
       </ScrollView>

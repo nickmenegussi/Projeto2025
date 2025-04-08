@@ -12,7 +12,8 @@ import { router } from "expo-router";
 export default function CustomNavagation({
   trendingItems,
   otherStyles = false,
-  disablePress = false,
+  sendData = false,
+  normalPress = false,
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
@@ -31,12 +32,18 @@ export default function CustomNavagation({
       useNativeDriver: true,
     }).start();
 
-    if (disablePress !== false) {
+    if (sendData !== false && normalPress === false) {
       const encodedData = encodeURIComponent(JSON.stringify(item));
       router.push({
         pathname: item.path,
         params: { data: encodedData },
       });
+    }
+
+    if(normalPress === true){
+      router.push({
+        pathname: item.path
+      })
     }
   };
 

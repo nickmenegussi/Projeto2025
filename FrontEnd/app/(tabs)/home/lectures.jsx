@@ -26,6 +26,7 @@ import EmptyContent from "../../../components/EmptyContent";
 const Lectures = () => {
   const params = useLocalSearchParams()
   const lectures = params.data ? JSON.parse(params.data) : []
+  const lecturesData = params.lecturesData
   return (
     <ScrollView style={styles.BackGroundSafeArea}>
       <View style={styles.HeaderComponent}>
@@ -67,7 +68,7 @@ const Lectures = () => {
                     handlePress={() => {
                       const encondedData = encodeURIComponent(JSON.stringify(item))
                       const lecturesEncondedData = encodeURIComponent(JSON.stringify(lectures))
-                      router.push({pathname: `/home/aboutLecture?data=${encondedData}`, params: {list: lecturesEncondedData}})}}
+                      router.push(`/home/aboutLecture?data=${encondedData}&lecture=${lecturesEncondedData}`)}}
                   />
                 </View>
               </View>

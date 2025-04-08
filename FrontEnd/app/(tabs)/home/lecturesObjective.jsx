@@ -36,7 +36,7 @@ const LecturesObjective = () => {
             </View>
             <View style={styles.line}></View>
             <View style={{marginTop: 20}}>
-              <CustomNavagation disablePress={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
+              <CustomNavagation sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
             </View>
 
         </View>
