@@ -32,7 +32,7 @@ export default function CustomNavagation({
       useNativeDriver: true,
     }).start();
 
-    if (sendData !== false && normalPress === false) {
+    if (sendData === true) {
       const encodedData = encodeURIComponent(JSON.stringify(item));
       router.push({
         pathname: item.path,
@@ -40,7 +40,7 @@ export default function CustomNavagation({
       });
     }
 
-    if(normalPress === true){
+    if(normalPress === false){
       router.push({
         pathname: item.path
       })

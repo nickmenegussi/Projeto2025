@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, 
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ArrowLeftIcon } from 'lucide-react-native'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import CustomNavagation from "../../../components/CustomNavagation"
 
 const LecturesObjective = () => {
@@ -11,7 +11,9 @@ const LecturesObjective = () => {
       <ScrollView>
         <ImageBackground imageStyle={styles.imageStyle} style={styles.BackGround} source={require("../../../assets/images/Jesus-Cristo.png")}>
           <View>
-            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.push('/home/lectures')}>
+            <TouchableOpacity style={styles.ButtonIcon} onPress={() =>
+              router.back('/home/aboutLecture')
+            }>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
           </View>
@@ -20,7 +22,7 @@ const LecturesObjective = () => {
           <Text style={styles.textContent}>Qual é o objetivo das palestras Espíritas?</Text>
             <View>
               <View style={styles.lineNavagation}></View>
-              <CustomNavagation trendingItems={[{name: 'Objetivo 1'}, {name: 'Objetivo 2'}, {name: 'Objetivo 3'}]} otherStyles={true} />
+              <CustomNavagation trendingItems={[{name: 'Objetivo 1'}, {name: 'Objetivo 2'}, {name: 'Objetivo 3'}]} normalPress={false} sendData={false} otherStyles={true} />
             </View>
 
             <View>
@@ -36,7 +38,7 @@ const LecturesObjective = () => {
             </View>
             <View style={styles.line}></View>
             <View style={{marginTop: 20}}>
-              <CustomNavagation sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
+              <CustomNavagation sendData={true} normalPress={false} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]}/>
             </View>
 
         </View>

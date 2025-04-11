@@ -14,10 +14,10 @@ const AboutLecture = () => {
   function ConvertDateTimeTo(datetime){
     const date = new Date(datetime)
     const month = String(date.getMonth() + 1).padStart(2, '0') // padStart para falar o máximo de algarismo que eu ou querer e '0' por padrão.
-    const day = String(date.getDay()).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
     const year = String(date.getFullYear()).slice(-2)
 
-    return `${month}/${day}/${year}`
+    return `${day}/${month}/${year}`
   }
 
   return (
@@ -65,7 +65,7 @@ const AboutLecture = () => {
           )} 
           <View style={styles.line}></View>
           <VideoUrl videoUrl={lecture[0].link_url ? lecture[0].link_url : ''}/>
-          <CustomNavagation sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker'}, {name: 'Propósito', path: '/home/lecturesObjective'} , {name: 'Público alvo', path: '/home/targetPublicLectures'}]} otherStyles={false}/>
+          <CustomNavagation normalPress={true} sendData={true} trendingItems={[{name: 'Palestrante', path: '/home/speaker',}, {name: 'Propósito', path: '/home/lecturesObjective', data: lecture} , {name: 'Público alvo', path: '/home/targetPublicLectures', data: lecture}]} otherStyles={false}/>
         </View>
       </View>
       </ScrollView>

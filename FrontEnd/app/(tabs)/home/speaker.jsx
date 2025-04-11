@@ -23,7 +23,7 @@ const Speaker = () => {
           source={require("../../../assets/images/Jesus-Cristo.png")}
         >
           <View>
-            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.push('/home/lectures')}>
+            <TouchableOpacity style={styles.ButtonIcon} onPress={() => router.back('/home/lectures')}>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
           </View>
