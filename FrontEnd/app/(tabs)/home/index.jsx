@@ -8,6 +8,8 @@ import {
   View,
   ImageBackground,
   ActivityIndicator,
+  ScrollView,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,11 +22,22 @@ import api from "../../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Agenda, Calendar } from "react-native-calendars";
-import FAQ from "../../../components/FAQ";
 import SideBar from "../../../components/Sidebar";
 import ReviewCard from "../../../components/ReviewCard";
+import FAQ from "../../../components/FAQ";
 
 const Home = () => {
+  const objetivos = [{
+    id: 1, 
+    title: 'Objetivo #1',
+    icon: require('../../../assets/images/adaptive-icon.png') ,
+    description: 'Oferecemos palestras e estudos aberto ao público.',
+    navigation: '/home/faq'
+  }, {
+    id: 2, 
+    title: 'Objetivo #2',
+    description: 'Realizamos campanhas solidárias e trabalhos voluntários.'
+  }]
   const [lectures, setLectures] = useState([]);
   const [VolunteerWork, setVolunteerWork] = useState([]);
   const [calendar, setCalendar] = useState([]);
@@ -126,6 +139,9 @@ const Home = () => {
             { type: "Calendário de Eventos", content: calendar },
             { type: "Esclarecimentos sobre o Centro Espírita" },
             {
+              type: "Quem Somos - Sociedade Espírita Gabriel Delanne",
+            },
+            {
               type: "Avaliações",
             },
           ]}
@@ -146,14 +162,22 @@ const Home = () => {
                           style={styles.BackgroundImage}
                           imageStyle={styles.imageStyle}
                         >
-                          <TouchableOpacity style={styles.overlay} activeOpacity={0.5} onPress={() => router.push({pathname: '/home/lectures', params: { data: JSON.stringify(lectures) } })}>
+                          <TouchableOpacity
+                            style={styles.overlay}
+                            activeOpacity={0.5}
+                            onPress={() =>
+                              router.push({
+                                pathname: "/home/lectures",
+                                params: { data: JSON.stringify(lectures) },
+                              })
+                            }
+                          >
                             <View style={styles.item}>
                               <Text style={styles.titlePost}>
                                 {item.item.nameLecture}
                               </Text>
                             </View>
                           </TouchableOpacity>
-
                         </ImageBackground>
                       </View>
                     )}
@@ -169,7 +193,7 @@ const Home = () => {
                   />
                 ) : (
                   <View>
-                    <ActivityIndicator size='large' color='0000ff'/>
+                    <ActivityIndicator size="large" color="0000ff" />
                   </View>
                 )
               ) : item.type === "Trabalho Voluntário" ? (
@@ -179,20 +203,30 @@ const Home = () => {
                     height={220}
                     data={item.content}
                     renderItem={(item) => (
-                      <View style={styles.SmallcarouselItem}>
+                      <View style={styles.SmallcarouselItem} key={item.idVolunteerWork}>
                         <ImageBackground
                           source={require("../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
                           style={styles.BackgroundImage}
                           imageStyle={styles.imageStyle}
                         >
-                          <TouchableOpacity style={styles.overlay} activeOpacity={0.5} onPress={() => router.push('/home/volunteerWork')}>
+                          <TouchableOpacity
+                            style={styles.overlay}
+                            activeOpacity={0.5}
+                            onPress={() =>
+                              router.push({
+                                pathname: "/home/volunteerWork",
+                                params: { data: JSON.stringify(item.item) },
+                              })
+                            }
+                          >
                             <View style={styles.item}>
                               <Text style={styles.titlePostBigger}>
-                                {item.item.nameVolunteerWork ? item.item.nameVolunteerWork : ""}
+                                {item.item.nameVolunteerWork
+                                  ? item.item.nameVolunteerWork
+                                  : ""}
                               </Text>
                             </View>
                           </TouchableOpacity>
-
                         </ImageBackground>
                       </View>
                     )}
@@ -219,8 +253,8 @@ const Home = () => {
                       accessibilityLanguage="PT-BR"
                       style={styles.calendar}
                       theme={{
-                        backgroundColor: "#4A90E2",
-                        calendarBackground: "#4A90E2",
+                        backgroundColor: "#60A3D9",
+                        calendarBackground: "#60A3D9",
                         textSectionTitleColor: "#fff",
                         selectedDayBackgroundColor: "#0A73D9",
                         selectedDayTextColor: "#ffffff",
@@ -268,6 +302,24 @@ const Home = () => {
                 <View style={styles.containerFaq}>
                   <FAQ />
                 </View>
+              ) : item.type ===
+                "Quem Somos - Sociedade Espírita Gabriel Delanne" ? (
+                      <ScrollView style={styles.container}>
+                        <Text style={styles.title}>
+                          Saiba mais sobre Nossa Casa Espírita
+                        </Text>
+                        {objetivos.map((item) => (
+                          <TouchableOpacity key={item.id} activeOpacity={0.6} style={styles.card} onPress={() => {item.navigation ? router.push(item.navigation) : Alert.alert('Erro ao navegar. Por favor, tente novamente.', 'Conteúdo ainda não definido.')}}>
+                            <Image source={item.icon} style={styles.icon} />
+                            <View style={styles.textContainer}>
+                              <Text style={styles.cardTitle}>{item.title}</Text>
+                              <Text style={styles.cardDescription}>
+                                {item.description}
+                              </Text>
+                            </View>
+                        </TouchableOpacity>
+                        ))}
+                      </ScrollView>
               ) : (
                 <EmptyContent
                   title="Ops! Nada por aqui"
@@ -312,10 +364,7 @@ const Home = () => {
                       path: "/home/lectures",
                       data: lectures,
                     },
-                    {
-                      name: "Trabalhos voluntários",
-                      path: "/home/volunteerWork",
-                    },
+                    
                     { name: "FAQ", path: "/home/faq" },
                   ] ?? []
                 }
@@ -376,20 +425,22 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     height: 150,
-  }, overlay: {
+  },
+  overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
-  }, item: {
+  },
+  item: {
     padding: 15,
-  },  
+  },
   titlePost: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
     marginTop: 100,
   },
   titlePostBigger: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
     marginTop: 140,
   },
   calendar: {
@@ -398,7 +449,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   containerFaq: {
-    marginBottom: 10,
+    marginBottom: 40,
   },
   ContainerReviews: {
     backgroundColor: "#60A3D9",
@@ -415,10 +466,54 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    },
+  },
   imageStyle: {
     borderRadius: 10,
     resizeMode: "cover",
-    
+  },container: {
+    flex: 1,
+    backgroundColor: "#60A3D9",
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 40
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  icon: {
+    width: 48,
+    height: 48,
+    marginRight: 16,
+    resizeMode: "contain",
+  },
+  textContainer: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#003B73",
+    marginBottom: 4,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: "#555",
   },
 });

@@ -6,14 +6,13 @@ const FormField = ({title, value, placeholder ,handleChangeText, othersStyles ,.
   // ...props é para utilizar propriedades extra sem precisar escrever
   const [showPassword, setShowPassword] = useState(false)
   return (
-    <View style={style.container}>
+    <View style={[style.container, othersStyles]}>
       <Text style={style.titleForms}>{title}</Text>
       <View style={[style.containerForms,othersStyles]} >
         <TextInput style={style.textoInput} value={value} onChangeText={handleChangeText} placeholder={placeholder} keyboardType={props.keyboardType || "default"} secureTextEntry={title === 'Password' && !showPassword}/>
         {title === 'Password' && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={style.hideAndShow} >
               {showPassword ? <Eye color='black' size={19} /> : <EyeOff color='black' size={19} />}
-
           </TouchableOpacity>
         )}
       </View>
@@ -33,7 +32,7 @@ const style = StyleSheet.create({
   },
   textoInput: {
     marginLeft: 10,
-    width: '80%'
+    width: '100%'
   },
   containerForms: {
     flexDirection: 'row',

@@ -40,7 +40,7 @@ export default function CustomNavagation({
       });
     }
 
-    if(normalPress === false){
+    if(normalPress === true){
       router.push({
         pathname: item.path
       })
