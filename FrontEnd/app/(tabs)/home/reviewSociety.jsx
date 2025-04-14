@@ -6,12 +6,19 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ArrowLeftIcon } from "lucide-react-native";
 import CustomNavagation from "../../../components/CustomNavagation";
 import FormField from "../../../components/FormField";
+import { router } from "expo-router";
 
 export default function ReviewSociety() {
+  const [reviewUser, setReviewUser] = useState({
+    description: '',
+    ratingNumber: null
+  })
+
+
   return (
     <ScrollView style={styles.BackGroundSafeArea}>
       <ImageBackground
@@ -22,7 +29,7 @@ export default function ReviewSociety() {
         <View>
           <TouchableOpacity
             style={styles.ButtonIcon}
-            onPress={() => router.back("/home/lectures")}
+            onPress={() => router.back("/home/faq")}
           >
             <ArrowLeftIcon color="black" size={40} />
           </TouchableOpacity>
@@ -40,7 +47,17 @@ export default function ReviewSociety() {
           sendData={false}
         />
         <Text style={styles.textContainerView}>Seja o Primeiro a adicionar uma avaliação!</Text>
-        <FormField placeholder={'Fazer uma avaliação.'} othersStyles={styles.buttonContainer}/>
+        <FormField
+        title="Review"
+        placeholder="Digite uma senha"
+        value={reviewUser.description}
+        handleChangeText={(text) =>
+          setReviewUser((e) => ({ ...e, description: text }))
+        }
+        othersStyles={styles.buttonContainer}
+        textInputSmall={styles.textInputSmall}
+        IconStyle={styles.ReviewButton}
+      />
      </View>
     </ScrollView>
   );
@@ -51,7 +68,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#003B73",
   }, buttonContainer: {
-    marginTop: 0
+    marginTop: 15,
+    maxWidth: 330,
+    minWidth: 330,
   },
   containerView: {
     flex: 1,
@@ -73,5 +92,11 @@ const styles = StyleSheet.create({
   }, textContainerView: {
     color: 'white',
     fontSize: 18
+  }, textInputSmall: {
+    width: '80%'
+  }, ReviewButton:{
+    padding: 0,
+    right: 10,
+    position: 'relative'
   }
 });
