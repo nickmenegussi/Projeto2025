@@ -10,6 +10,7 @@ import {
 import React from "react";
 import { ArrowLeftIcon } from "lucide-react-native";
 import CustomNavagation from "../../../components/CustomNavagation";
+import { router } from "expo-router";
 
 const FAQ = () => {
   return (
@@ -23,7 +24,7 @@ const FAQ = () => {
           <View>
             <TouchableOpacity
               style={styles.ButtonIcon}
-              onPress={() => router.back("/home/lectures")}
+              onPress={() => router.back("/home/index")}
             >
               <ArrowLeftIcon color="black" size={40} />
             </TouchableOpacity>

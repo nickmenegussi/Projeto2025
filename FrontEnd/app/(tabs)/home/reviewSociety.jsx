@@ -5,19 +5,53 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react-native";
 import CustomNavagation from "../../../components/CustomNavagation";
 import FormField from "../../../components/FormField";
 import { router } from "expo-router";
+import api from "../../../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ReviewSociety() {
   const [reviewUser, setReviewUser] = useState({
     description: '',
     ratingNumber: null
   })
+  const [review, setReview] = useState([])
+  console.log(review)
 
+  useEffect(() => {
+    GetReview()
+  }, [])
+
+  async function GetReview(){
+    try {
+      const token = await AsyncStorage.getItem('@Auth:token')
+      const response = await api.get('/review/reviewSociety',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`}
+        })
+      setReview(response.data.data)
+    } catch (error) {
+      if(error.response){
+        if(error.response.data.loginRequired === true){
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
+        } else {
+            console.log("Erro", error.response.data);
+            Alert.alert("Erro", error.response.data.message);
+        }
+      } else {
+        console.log("Erro", error)
+      }
+    }
+  }
 
   return (
     <ScrollView style={styles.BackGroundSafeArea}>
@@ -58,6 +92,17 @@ export default function ReviewSociety() {
         textInputSmall={styles.textInputSmall}
         IconStyle={styles.ReviewButton}
       />
+
+        {review.length > 0 ? (
+          review.map((item, index) => (
+            <View key={item.idReviewSociety}>
+              <Text style={styles.textContainerView}>{item.description}</Text>
+              <Text style={styles.textContainerView}>{item.ratingNumber}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.textContainerView}>Nenhum review encontrado</Text>
+        )}
      </View>
     </ScrollView>
   );
@@ -93,7 +138,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18
   }, textInputSmall: {
-    width: '80%'
+    width: '80%',
   }, ReviewButton:{
     padding: 0,
     right: 10,

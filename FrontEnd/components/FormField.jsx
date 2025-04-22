@@ -39,7 +39,7 @@ const style = StyleSheet.create({
   },
   textoInput: {
     marginLeft: 10,
-    width: '100%'
+    flex: 1
   },
   containerForms: {
     flexDirection: 'row',
