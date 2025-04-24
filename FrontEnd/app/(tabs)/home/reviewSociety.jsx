@@ -6,46 +6,117 @@ import {
   ImageBackground,
   TouchableOpacity,
   Alert,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { ArrowLeftIcon } from "lucide-react-native";
-import CustomNavagation from "../../../components/CustomNavagation";
-import FormField from "../../../components/FormField";
-import { router } from "expo-router";
-import api from "../../../services/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+  Image,
+} from "react-native"
+import { AirbnbRating } from "react-native-ratings"
+import React, { use, useEffect, useState } from "react"
+import { ArrowLeftIcon } from "lucide-react-native"
+import CustomNavagation from "../../../components/CustomNavagation"
+import FormField from "../../../components/FormField"
+import { router } from "expo-router"
+import api from "../../../services/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import Button from "../../../components/Button"
 
 export default function ReviewSociety() {
+  
   const [reviewUser, setReviewUser] = useState({
-    description: '',
-    ratingNumber: null
+    descriptionReview: "",
+    ratingReview: 0,
+    userId: null,
   })
-  const [review, setReview] = useState([])
-  console.log(review)
-
+  const [review, setReview] = useState([])  
   useEffect(() => {
     GetReview()
   }, [])
 
-  async function GetReview(){
+  function formatDate(date) {
+    const dataRecebida = new Date(date)
+    const dataAtual = new Date()
+
+    const ms = dataAtual - dataRecebida
+    const min = Math.floor(ms / 60000)
+    const hours = Math.floor(min / 60)
+    const dias = Math.floor(hours / 24)
+
+    if (min < 1) {
+      return <Text style={styles.titleDate}>Publicado agora mesmo</Text>
+    } else if (min < 60) {
+      return (
+        <Text style={styles.titleDate}>
+          Publicado há {min} minutos atrás
+        </Text>
+      )
+    } else if (hours < 24) {
+      return (
+        <Text style={styles.titleDate}>
+          Publicado há {hours} horas atrás
+        </Text>
+      )
+    } else {
+      return (
+        <Text style={styles.titleDate}>
+          Publicado há {dias} dias atrás
+        </Text>
+      )
+    }
+  }
+
+  async function GetReview() {
     try {
-      const token = await AsyncStorage.getItem('@Auth:token')
-      const response = await api.get('/review/reviewSociety',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`}
-        })
+      const token = await AsyncStorage.getItem("@Auth:token")
+      const user = await AsyncStorage.getItem("@Auth:user")
+      const userId = JSON.parse(user).idUser
+      
+      if(userId){
+        setReviewUser(() => ({ ...reviewUser, userId: userId}))
+      }
+
+      const response = await api.get("/review/reviewSociety?sortOrder=newSet", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       setReview(response.data.data)
     } catch (error) {
-      if(error.response){
-        if(error.response.data.loginRequired === true){
-          console.log("Erro", error.response.data);
-          Alert.alert("Erro", error.response.data.message);
-          router.push("/sign-up");
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          Alert.alert("Erro", error.response.data.message)
+          router.push("/sign-up")
         } else {
-            console.log("Erro", error.response.data);
-            Alert.alert("Erro", error.response.data.message);
+          Alert.alert("Erro", error.response.data.message)
+        }
+      } else {
+        console.log("Erro", error)
+      }
+    }
+  }
+
+  async function handleRegisterReview(){
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token")
+      console.log(reviewUser)
+      const response = await api.post("/review/reviewSociety/create", {
+        descriptionReview: reviewUser.descriptionReview,
+        ratingReview: reviewUser.ratingReview,
+        userId: reviewUser.userId
+      }
+      , {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      Alert.alert("Sucesso", response.data.message)
+      GetReview()
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          Alert.alert("Erro", error.response.data.message)
+          router.push("/sign-up")
+        } else {
+          Alert.alert("Erro", error.response.data.message)
         }
       } else {
         console.log("Erro", error)
@@ -60,15 +131,14 @@ export default function ReviewSociety() {
         style={styles.BackGround}
         source={require("../../../assets/images/Jesus-Cristo.png")}
       >
-        <View>
-          <TouchableOpacity
-            style={styles.ButtonIcon}
-            onPress={() => router.back("/home/faq")}
-          >
-            <ArrowLeftIcon color="black" size={40} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.ButtonIcon}
+          onPress={() => router.back("/home/faq")}
+        >
+          <ArrowLeftIcon color="black" size={40} />
+        </TouchableOpacity>
       </ImageBackground>
+
       <View style={styles.containerView}>
         <CustomNavagation
           trendingItems={[
@@ -80,50 +150,112 @@ export default function ReviewSociety() {
           normalPress={true}
           sendData={false}
         />
-        <Text style={styles.textContainerView}>Seja o Primeiro a adicionar uma avaliação!</Text>
-        <FormField
-        title="Review"
-        placeholder="Digite uma senha"
-        value={reviewUser.description}
-        handleChangeText={(text) =>
-          setReviewUser((e) => ({ ...e, description: text }))
-        }
-        othersStyles={styles.buttonContainer}
-        textInputSmall={styles.textInputSmall}
-        IconStyle={styles.ReviewButton}
-      />
+
+        <Text style={styles.textContainerView}>
+          Seja o Primeiro a adicionar uma avaliação!
+        </Text>
+
+        <View style={styles.containerReview}>
+          <FormField
+            title="Avaliar o Centro Espírita"
+            placeholder="Digite uma avaliação"
+            value={reviewUser.descriptionReview}
+            handleChangeText={(text) =>
+              setReviewUser((e) => ({ ...e, descriptionReview: text }))
+            }
+            othersStyles={styles.buttonContainer}
+            IconStyle={styles.ReviewButton}
+          />
+          <AirbnbRating
+            count={5}
+            defaultRating={0}
+            size={30}
+            selectedColor="#FFA500"
+            showRating={false}
+            starContainerStyle={{right: 100, position: 'relative', marginTop: 15}}
+            onFinishRating={(rating) => setReviewUser({...reviewUser, ratingReview: rating })}
+          />
+          <Button title={'Avaliar'} handlePress={handleRegisterReview} opacityNumber={0.6} />
+        </View>
+
+        <Text style={styles.textContainerView}>
+          {review.length} Comments
+        </Text>
 
         {review.length > 0 ? (
-          review.map((item, index) => (
-            <View key={item.idReviewSociety}>
-              <Text style={styles.textContainerView}>{item.description}</Text>
-              <Text style={styles.textContainerView}>{item.ratingNumber}</Text>
-            </View>
-          ))
+            <ScrollView
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingVertical: 5 }}
+              style={styles.reviewsContainer}
+            >
+              {review.map((item) => (
+                <>
+                  <View style={styles.feedback} key={item.idReviewSociety}>
+                    <Image
+                      style={styles.imageProfile}
+                      source={
+                        item.image_profile
+                          ? { uri: item.image_profile }
+                          : require("../../../assets/images/default-profile.jpg")
+                      }
+                    />
+                    <View style={styles.feedbackContent}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text style={styles.titleFeedback}>
+                          {item.nameUser}
+                        </Text>
+                        <AirbnbRating
+                          defaultRating={item.ratingReview}
+                          size={14}
+                          showRating={false}
+                          selectedColor="#FFA500"
+                          isDisabled
+                        />
+                      </View>
+                      <Text style={styles.feedbackText}>
+                        {item.descriptionReview}
+                      </Text>
+                      {formatDate(item.create_at)}
+                    </View>
+                  </View>
+                  <View style={styles.line} />
+                </>
+              ))}
+            </ScrollView>
         ) : (
-          <Text style={styles.textContainerView}>Nenhum review encontrado</Text>
+          <Text style={styles.textContainerView}>
+            Nenhum review encontrado
+          </Text>
         )}
-     </View>
+      </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   BackGroundSafeArea: {
     flex: 1,
     backgroundColor: "#003B73",
-  }, buttonContainer: {
+  },
+  buttonContainer: {
     marginTop: 15,
-    maxWidth: 330,
-    minWidth: 330,
+    maxWidth: 350,
+    minWidth: 350,
   },
   containerView: {
     flex: 1,
     padding: 20,
-    gap: 20
+    gap: 20,
   },
   ButtonIcon: {
-    position: "relative",
+    position: "absolute",
     top: 40,
     left: 20,
   },
@@ -134,14 +266,71 @@ const styles = StyleSheet.create({
   imageStyle: {
     resizeMode: "cover",
     borderRadius: 10,
-  }, textContainerView: {
-    color: 'white',
-    fontSize: 18
-  }, textInputSmall: {
-    width: '80%',
-  }, ReviewButton:{
+  },
+  textContainerView: {
+    color: "white",
+    fontSize: 18,
+  },
+  textInputSmall: {
+    width: "760%",
+  },
+  ReviewButton: {
     padding: 0,
     right: 10,
-    position: 'relative'
+    position: "relative",
+  },
+  reviewsContainer: {
+    height: 300,
+    width: "100%",
+    marginVertical: 10,
+  },
+  feedback: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  feedbackText: {
+    color: "white",
+    fontSize: 15,
+    maxWidth: 300,
+  },
+  imageProfile: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: "white",
+    marginBottom: 70
+  },
+  feedbackContent: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 15,
+    padding: 5,
+    backgroundColor: "#003B73",
+    borderRadius: 10,
+  },
+  titleFeedback: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  textFeedback: {
+    color: "white",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  line: {
+    width: "100%",
+    borderWidth: 0.6,
+    borderColor: "white",
+    marginTop: 10
+  },
+  titleDate: {
+    color: "white",
+    fontSize: 15,
+    fontWeight: "bold",
   }
-});
+})

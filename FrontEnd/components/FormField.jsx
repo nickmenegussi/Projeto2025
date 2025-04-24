@@ -15,7 +15,7 @@ const FormField = ({title, value, placeholder ,handleChangeText, othersStyles ,.
               {showPassword ? <Eye color='black' size={19} /> : <EyeOff color='black' size={19} />}
           </TouchableOpacity>
         )}
-        {title === 'Review' && (
+        {title === 'Avaliar o Centro Espírita' && (
           <TouchableOpacity onChangeText={handleChangeText} style={props.IconStyle} >
           <ArrowRight color={'black'} size={30} /> 
       </TouchableOpacity>

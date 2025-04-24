@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { AirbnbRating } from "react-native-ratings";
 
-const ReviewCard = ({ name, comment, rating }) => {
+const ReviewCard = ({ name, comment, rating = 0 }) => {
   return (
     <View style={styles.card}>
       <Image style={styles.avatar} />

@@ -24,7 +24,6 @@ const LecturesObjective = () => {
               <View style={styles.lineNavagation}></View>
               <CustomNavagation trendingItems={[{name: 'Objetivo 1'}, {name: 'Objetivo 2'}, {name: 'Objetivo 3'}]} normalPress={false} sendData={false} otherStyles={true} />
             </View>
-
             <View>
               <Image style={styles.ImageContent} source={require('../../../assets/images/foto.png')} />
             </View>      
