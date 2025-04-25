@@ -11,6 +11,22 @@ CREATE TABLE VolunteerWork (
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE ReviewSociety(
+	idReviewSociety INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    descriptionReview varchar(255) NOT NULL,
+    ratingReview int not null,
+    userId int not null,
+    create_at DATETIME default current_timestamp,
+	foreign key (userId) references User(idUser)
+);
+
+
+INSERT INTO ReviewSociety (descriptionReview, ratingReview, userId)
+VALUES 
+('Ótimo projeto! Contribuiu bastante para a comunidade.', 5, 1),
+('Gostei da iniciativa, mas pode melhorar em alguns pontos.', 4, 1),
+('Faltou organização nas atividades propostas.', 3, 1);
+
 -- Tabela Book
 CREATE TABLE Book (
     idLibrary INT AUTO_INCREMENT PRIMARY KEY,
