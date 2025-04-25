@@ -20,8 +20,8 @@ exports.CreateReviewSociety = (req, res) => {
         }
 
         if(result.length > 0){
-            return res.status(400).json({
-                message: 'Você já fez uma avaliação .',
+            return res.status(422).json({
+                message: 'Você já fez uma avalição com os mesmos comentários e avaliações. Faça outro diferente.',
                 success: false
             })
         }
@@ -70,9 +70,92 @@ exports.ViewReviewSociety = (req, res) => {
 }
 
 exports.UpdateReviewSociety = (req, res) => {
-    
+    const {descriptionReview, ratingReview} = req.body 
+    const {idReviewSociey} = req.params
+
+    if(!idReviewSociey || !descriptionReview || !ratingReview){
+        return res.status(400).json({
+            message: 'Preencha todos os campos.',
+            success: false
+        })
+    }
+
+    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ?', [idReviewSociey], (err, result) => {
+        if(err){
+            return res.status(500).json({
+                message: 'Erro ao se conectar com o servidor.',
+                success: false,
+                data: err
+            })
+        }
+
+        if(result.length === 0){
+            return res.status(400).json({
+                message: 'Essa avaliação ainda não existe.',
+                success: false,
+                data: err
+            })
+        }
+        connection.query('Update ReviewSociety SET descriptionReview = ?, ratingReview = ? idReviewSociety = ? AND userId = ?', [idReviewSociey, userId], (err, result) => {
+            if(err){
+                return res.status(500).json({
+                    message: 'Erro ao se conectar com o servidor.',
+                    success: false,
+                    data: err
+                })
+            }
+
+            return res.status(200).json({
+                message: 'Avaliação deletada com sucesso.',
+                success: true,
+                data: result
+            })
+        })
+    })
+
 }
 
 exports.DeleteReviewSociety = (req, res) => {
+    const {idReviewSociey} = req.params 
+    const {userId} = req.body
 
+    if(!idReviewSociey || !userId){
+        return res.status(400).json({
+            message: 'Preencha todos os campos.',
+            success: false
+        })
+    }
+
+    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ? and userId = ?', [idReviewSociey, userId], (err, result) => {
+        if(err){
+            return res.status(500).json({
+                message: 'Erro ao se conectar com o servidor.',
+                success: false,
+                data: err
+            })
+        }
+
+        if(result.length === 0){
+            return res.status(400).json({
+                message: 'Essa avaliação ainda não existe.',
+                success: false,
+                data: err
+            })
+        }
+        connection.query('DELETE FROM ReviewSociety WHERE idReviewSociety = ? AND userId = ?', [idReviewSociey, userId], (err, result) => {
+            if(err){
+                return res.status(500).json({
+                    message: 'Erro ao se conectar com o servidor.',
+                    success: false,
+                    data: err
+                })
+            }
+
+            return res.status(200).json({
+                message: 'Avaliação deletada com sucesso.',
+                success: true,
+                data: result
+            })
+        })
+    })
 }
