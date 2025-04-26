@@ -18,12 +18,14 @@ import api from "../../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../../../components/Button";
 import CustomModal from "../../../components/ModalCustom";
+import ReviewCard from "../../../components/ReviewCard";
 
 export default function ReviewSociety() {
   const [reviewUser, setReviewUser] = useState({
     descriptionReview: "",
     ratingReview: 0,
     userId: null,
+    currentReviewId: null
   });
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -32,31 +34,6 @@ export default function ReviewSociety() {
     GetReview();
   }, []);
 
-  function formatDate(date) {
-    const dataRecebida = new Date(date);
-    const dataAtual = new Date();
-
-    const ms = dataAtual - dataRecebida;
-    const min = Math.floor(ms / 60000);
-    const hours = Math.floor(min / 60);
-    const dias = Math.floor(hours / 24);
-
-    if (min < 1) {
-      return <Text style={styles.titleDate}>Publicado agora mesmo</Text>;
-    } else if (min < 60) {
-      return (
-        <Text style={styles.titleDate}>Publicado há {min} minutos atrás</Text>
-      );
-    } else if (hours < 24) {
-      return (
-        <Text style={styles.titleDate}>Publicado há {hours} horas atrás</Text>
-      );
-    } else {
-      return (
-        <Text style={styles.titleDate}>Publicado há {dias} dias atrás</Text>
-      );
-    }
-  }
 
   async function GetReview() {
     try {
@@ -94,7 +71,6 @@ export default function ReviewSociety() {
   async function handleRegisterReview() {
     try {
       const token = await AsyncStorage.getItem("@Auth:token");
-      console.log(reviewUser);
       const response = await api.post(
         "/review/reviewSociety/create",
         {
@@ -165,6 +141,7 @@ export default function ReviewSociety() {
       const response = await api.put(`/review/reviewSociety/${idReviewSociety}/update`, {
         descriptionReview: reviewUser.descriptionReview,
         ratingReview: reviewUser.ratingReview,
+        userId: reviewUser.userId
       } ,{
         headers: {
           "Content-Type": "application/json",
@@ -173,7 +150,9 @@ export default function ReviewSociety() {
       })
       Alert.alert("Sucesso", response.data.message)
       GetReview()
+      setReviewUser({ ...reviewUser, descriptionReview: "", ratingReview: 0 })
       setModalVisible(false)
+
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
@@ -266,120 +245,55 @@ export default function ReviewSociety() {
             {review.map((item, index) => (
               // transforma em um componente separado
               // <ReviewCard
-              <View key={item.idReviewSociety}>
-                <View style={styles.feedback}>
-                  <Image
-                    style={styles.imageProfile}
-                    source={
-                      item.image_profile
-                        ? { uri: item.image_profile }
-                        : require("../../../assets/images/default-profile.jpg")
-                    }
-                  />
-                  <View style={styles.feedbackContent}>
-                    {modalVisible && (
-                      <CustomModal
-                        visible={modalVisible}
-                        onClose={() => setModalVisible(false)}
-                        title="Atualizar Avaliação"
-                        description="Você tem certeza que deseja atualizar essa avaliação?"
-                        confirmText="Atualizar"
-                        formField={true}
-                        descriptionReview={reviewUser.descriptionReview}
-                        onChangeDescription={(text) => setReviewUser({...reviewUser, descriptionReview: text})}
-                        ratingReview={true}
-                        ratingReviewValue={review.ratingReview}
-                        onChangeRating={(rating) => setReviewUser({...reviewUser, ratingReview: rating})}
-                        onConfirm={() => {
-                          handleUpdateReview(item.idReviewSociety);
-                          ratingReviewValue(0)
-                          descriptionReview("")
-                        }}
-                      />
-                    )}
+              <View>
+                <ReviewCard 
+                dataReview={item ? item : {}}
+                isCurrentUser={item.userId === reviewUser.userId}
+                onEdit={() => {
+                  Alert.alert("Atualizar Avaliação", "Deseja atualizar a avaliação?", [
+                    {text: "Cancelar", style: "cancel"},
+                    {text: "Atualizar", onPress: () => {
+                      setModalVisible(true)
+                      setReviewUser({...reviewUser, currentReviewId: item.idReviewSociety, descriptionReview: item.descriptionReview, ratingReview: item.ratingReview})
+                      console.log(reviewUser.currentReviewId)
 
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text style={styles.titleFeedback}>{item.nameUser}</Text>
-                      <AirbnbRating
-                        defaultRating={item.ratingReview}
-                        size={14}
-                        showRating={false}
-                        selectedColor="#FFA500"
-                        isDisabled
-                      />
-                    </View>
-                    <Text style={styles.feedbackText}>
-                      {item.descriptionReview}
-                    </Text>
-                    {formatDate(item.create_at)}
-                    {item.userId === reviewUser.userId && (
-                      <>
-                        <View style={{ flexDirection: "row", gap: 10 }}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              Alert.alert(
-                                "Atualizar avaliação",
-                                "Você tem certeza que deseja atualizar essa avaliação?",
-                                [
-                                  {
-                                    text: "Cancelar",
-                                    style: "cancel",
-                                  },
-                                  {
-                                    text: "Atualizar",
-                                    onPress: () => {
-                                      setModalVisible(true);
-                                    },
-                                  },
-                                ]
-                              );
-                            }}
-                          >
-                            <Text style={styles.textFeedbackUpdate}>
-                              Modificar
-                            </Text>
-                          </TouchableOpacity>
+                    }}
+                  ])
+                }}
+                onDelete={() => {
+                  Alert.alert("Deletar Avaliação", "Deseja deletar a avaliação?", [
+                    {text: "Cancelar", style: "cancel"},
+                    {text: "Deletar", onPress: () => handleDeleteReview(item.idReviewSociety, item.userId)}
+                  ])
+                }}
 
-                          <TouchableOpacity
-                            onPress={() => {
-                              Alert.alert(
-                                "Excluir avaliação",
-                                "Você tem certeza que deseja deletar essa avaliação?",
-                                [
-                                  {
-                                    text: "Cancelar",
-                                    style: "cancel",
-                                  },
-                                  {
-                                    text: "Deletar",
-                                    onPress: () =>
-                                      handleDeleteReview(
-                                        item.idReviewSociety,
-                                        item.userId
-                                      ),
-                                  },
-                                ]
-                              );
-                            }}
-                          >
-                            <Text style={styles.textFeedbackDelete}>
-                              Deletar
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.line} />
+                />
               </View>
             ))}
+            {modalVisible && (
+                  <CustomModal
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    title="Atualizar Avaliação"
+                    description="Atualize sua avaliação"
+                    confirmText="Atualizar"
+                    formField={true}
+                    descriptionReview={reviewUser.descriptionReview }
+                    onChangeDescription={(text) => setReviewUser({...reviewUser, descriptionReview: text})}
+                    ratingReview={true}
+                    ratingReviewValue={reviewUser.ratingReview}
+                    onChangeRating={(rating) => setReviewUser({...reviewUser, ratingReview: rating})}
+                    onConfirm={() => {
+                      if(reviewUser.currentReviewId){
+                        handleUpdateReview(reviewUser.currentReviewId)
+                      }
+                    }
+                    }
+
+                  
+                  />
+                  
+                )}
           </ScrollView>
         ) : (
           <Text style={styles.textContainerView}>Nenhum review encontrado</Text>

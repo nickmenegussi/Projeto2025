@@ -64,7 +64,7 @@ const CustomModal = ({
               {ratingReview === true ? (
                 <AirbnbRating
                   count={5}
-                  defaultRating={ratingReview}
+                  defaultRating={0}
                   size={20}
                   showRating={false}
                   selectedColor="#FFA500"

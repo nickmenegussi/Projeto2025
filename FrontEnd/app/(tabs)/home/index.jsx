@@ -14,7 +14,13 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Carousel from "react-native-reanimated-carousel"; // Nova biblioteca de carrossel
-import { Bell, CircleUserRoundIcon, MenuIcon } from "lucide-react-native";
+import {
+  Bell,
+  CircleUserRoundIcon,
+  MenuIcon,
+  Pencil,
+  PencilIcon,
+} from "lucide-react-native";
 import ButtonIcons from "../../../components/ButtonIcons";
 import Trending from "../../../components/Navagation";
 import EmptyContent from "../../../components/EmptyContent";
@@ -25,29 +31,36 @@ import { Agenda, Calendar } from "react-native-calendars";
 import SideBar from "../../../components/Sidebar";
 import ReviewCard from "../../../components/ReviewCard";
 import FAQ from "../../../components/FAQ";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const Home = () => {
-  const objetivos = [{
-    id: 1, 
-    title: 'Objetivo #1',
-    icon: require('../../../assets/images/adaptive-icon.png') ,
-    description: 'Oferecemos palestras e estudos aberto ao público.',
-    navigation: '/home/faq'
-  }, {
-    id: 2, 
-    title: 'Objetivo #2',
-    description: 'Realizamos campanhas solidárias e trabalhos voluntários.'
-  }]
+  const objetivos = [
+    {
+      id: 1,
+      title: "Objetivo #1",
+      icon: require("../../../assets/images/adaptive-icon.png"),
+      description: "Oferecemos palestras e estudos aberto ao público.",
+      navigation: "/home/faq",
+    },
+    {
+      id: 2,
+      title: "Objetivo #2",
+      description: "Realizamos campanhas solidárias e trabalhos voluntários.",
+    },
+  ];
   const [lectures, setLectures] = useState([]);
   const [VolunteerWork, setVolunteerWork] = useState([]);
   const [calendar, setCalendar] = useState([]);
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [review, setReview] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     ViewLectures();
     ViewVolunteerWork();
     ViewCalendar();
+    GetReview();
   }, []);
 
   async function ViewLectures() {
@@ -124,6 +137,33 @@ const Home = () => {
     }
   }
 
+  async function GetReview() {
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const user = await AsyncStorage.getItem("@Auth:user");
+      const response = await api.get("/review/reviewSociety?sortOrder=newSEt", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setReview(response.data.data);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
+        } else {
+          Alert.alert("Erro", error.response.data.message);
+          console.log("Erro", error.response.data.message);
+        }
+      } else {
+        Alert.alert("Erro", error);
+        console.log("Erro", error);
+      }
+    }
+  }
+
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -142,7 +182,8 @@ const Home = () => {
               type: "Quem Somos - Sociedade Espírita Gabriel Delanne",
             },
             {
-              type: "Avaliações",
+              type: "Avaliações do Centro Espírita",
+              content: review,
             },
           ]}
           keyExtractor={(item) => item.type}
@@ -203,7 +244,10 @@ const Home = () => {
                     height={220}
                     data={item.content}
                     renderItem={(item) => (
-                      <View style={styles.SmallcarouselItem} key={item.idVolunteerWork}>
+                      <View
+                        style={styles.SmallcarouselItem}
+                        key={item.idVolunteerWork}
+                      >
                         <ImageBackground
                           source={require("../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
                           style={styles.BackgroundImage}
@@ -266,20 +310,30 @@ const Home = () => {
                       }}
                       onDayPress={(day) => setSelectedDate(day.dateString)}
                     />
-                    {/* {selectedDate && events[selectedDate] ? (
-                        <View style={styles.eventsContainer}>
+
+                    {selectedDate ? (
+                      <View style={styles.eventsContainer}>
                         <Text style={styles.eventTitle}>Eventos do dia:</Text>
-                        {events[selectedDate].map((event, index) => (
-                          <View key={index} style={styles.eventItem}>
-                          <Text style={styles.eventText}>{event.title}</Text>
+                        <View>
+                        <Text style={styles.eventTitle}>Eventos do dia:</Text>
+                        <Text style={styles.eventTitle}>algo novo</Text>
                         </View>
-                        ))}
+                        {item.content[0].status_permission === "admin" ||
+                        item.content[0].status_permission === "SuperAdmin" ? (
+                          <View style={styles.eventContent}>
+                            <TouchableOpacity>
+                              <PencilIcon color="black" size={20} />
+                            </TouchableOpacity>
+                          </View>
+                        ) : null}
                       </View>
                     ) : (
                       <View style={styles.eventsContainer}>
-                        <Text style={styles.eventText}>Nenhum evento para o dia</Text>
+                        <Text style={styles.eventText}>
+                          Nenhum evento para o dia
+                        </Text>
                       </View>
-                    )} */}
+                    )}
                   </>
                 ) : (
                   <EmptyContent
@@ -287,15 +341,76 @@ const Home = () => {
                     subtitle="Tente novamente mais tarde"
                   />
                 )
-              ) : item.type === "Avaliações" ? (
+              ) : item.type === "Avaliações do Centro Espírita" ? (
                 <>
                   <View style={styles.ContainerReviews}>
-                    <Text style={styles.header}>
-                      Avaliações do Centro Espírita
-                    </Text>
-                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> 
-                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
-                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> 
+                    <View style={styles.reviewsHeader}>
+                      <Text style={styles.header}>Avaliações</Text>
+
+                      <DropDownPicker
+                        open={open}
+                        setOpen={setOpen}
+                        value={null}
+                        setValue={null}
+                        items={[{ label: "Mais recente", value: "newSEt" }]}
+                        placeholder="Mais antigo"
+                        style={styles.picker}
+                        dropDownContainerStyle={styles.item}
+                      />
+                    </View>
+                    {review.length > 0 ? (
+                      <ScrollView
+                        nestedScrollEnabled
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingVertical: 5 }}
+                        style={styles.reviewsContainer}
+                      >
+                        {review.map((item, index) => (
+                          // transforma em um componente separado
+                          // <ReviewCard
+                          <View>
+                            <ReviewCard
+                              cardContainer={styles.cardContainer}
+                              dataReview={item ? item : {}}
+                              onEdit={() => {
+                                Alert.alert(
+                                  "Atualizar Avaliação",
+                                  "Deseja atualizar a avaliação?",
+                                  [
+                                    { text: "Cancelar", style: "cancel" },
+                                    {
+                                      text: "Atualizar",
+                                      onPress: () => {
+                                        setModalVisible(true);
+                                      },
+                                    },
+                                  ]
+                                );
+                              }}
+                              onDelete={() => {
+                                Alert.alert(
+                                  "Deletar Avaliação",
+                                  "Deseja deletar a avaliação?",
+                                  [
+                                    { text: "Cancelar", style: "cancel" },
+                                    {
+                                      text: "Deletar",
+                                      onPress: () =>
+                                        handleDeleteReview(
+                                          item.idReviewSociety,
+                                          item.userId
+                                        ),
+                                    },
+                                  ]
+                                );
+                              }}
+                            />
+                          </View>
+                        ))}
+                      </ScrollView>
+                    ) : (
+                      <Text>Nenhum review encontrado</Text>
+                    )}
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -304,22 +419,34 @@ const Home = () => {
                 </View>
               ) : item.type ===
                 "Quem Somos - Sociedade Espírita Gabriel Delanne" ? (
-                      <ScrollView style={styles.container}>
-                        <Text style={styles.title}>
-                          Saiba mais sobre Nossa Casa Espírita
+                <ScrollView style={styles.container}>
+                  <Text style={styles.title}>
+                    Saiba mais sobre Nossa Casa Espírita
+                  </Text>
+                  {objetivos.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      activeOpacity={0.6}
+                      style={styles.card}
+                      onPress={() => {
+                        item.navigation
+                          ? router.push(item.navigation)
+                          : Alert.alert(
+                              "Erro ao navegar. Por favor, tente novamente.",
+                              "Conteúdo ainda não definido."
+                            );
+                      }}
+                    >
+                      <Image source={item.icon} style={styles.icon} />
+                      <View style={styles.textContainer}>
+                        <Text style={styles.cardTitle}>{item.title}</Text>
+                        <Text style={styles.cardDescription}>
+                          {item.description}
                         </Text>
-                        {objetivos.map((item) => (
-                          <TouchableOpacity key={item.id} activeOpacity={0.6} style={styles.card} onPress={() => {item.navigation ? router.push(item.navigation) : Alert.alert('Erro ao navegar. Por favor, tente novamente.', 'Conteúdo ainda não definido.')}}>
-                            <Image source={item.icon} style={styles.icon} />
-                            <View style={styles.textContainer}>
-                              <Text style={styles.cardTitle}>{item.title}</Text>
-                              <Text style={styles.cardDescription}>
-                                {item.description}
-                              </Text>
-                            </View>
-                        </TouchableOpacity>
-                        ))}
-                      </ScrollView>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
               ) : (
                 <EmptyContent
                   title="Ops! Nada por aqui"
@@ -364,7 +491,7 @@ const Home = () => {
                       path: "/home/lectures",
                       data: lectures,
                     },
-                    
+
                     { name: "FAQ", path: "/home/faq" },
                   ] ?? []
                 }
@@ -383,11 +510,26 @@ const styles = StyleSheet.create({
   linearGradient: {
     flex: 1,
   },
+  cardContainer: {
+    backgroundColor: "#003B73",
+    padding: 10,
+    borderRadius: 10,
+  },
   safeAreaView: {
     flexGrow: 1,
     padding: 10,
     paddingVertical: 20,
     backgroundColor: "#003B73",
+  },
+  eventContent: {
+    backgroundColor: "#fff",
+    width: "12%",
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 10,
+    top:50,
+    left: '88%',
+    position: 'relative'
   },
   Container: {
     flexGrow: 1,
@@ -395,11 +537,23 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   header: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "bold",
     color: "#fff",
     marginVertical: 10,
     marginBottom: 25,
+  },
+  picker: {
+    height: 55,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderColor: "#fff",
+    width: "50%",
+  },
+  item: {
+    width: "50%",
+    borderColor: "#fff",
+    height: 55,
   },
   containerIcons: {
     flexDirection: "row",
@@ -430,9 +584,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
-  item: {
-    padding: 15,
-  },
   titlePost: {
     fontSize: 16,
     color: "white",
@@ -456,7 +607,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
   },
+  reviewsHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  },
   eventsContainer: {
+    justifyContent: "space-between",
     position: "absolute",
     bottom: 100,
     left: 10,
@@ -470,12 +628,13 @@ const styles = StyleSheet.create({
   imageStyle: {
     borderRadius: 10,
     resizeMode: "cover",
-  },container: {
+  },
+  container: {
     flex: 1,
     backgroundColor: "#60A3D9",
     padding: 20,
     borderRadius: 10,
-    marginBottom: 40
+    marginBottom: 40,
   },
   title: {
     fontSize: 20,
@@ -515,5 +674,10 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: "#555",
+  },
+  reviewsContainer: {
+    height: 300,
+    width: "100%",
+    marginVertical: 10,
   },
 });

@@ -1,67 +1,132 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { AirbnbRating } from "react-native-ratings";
 
-const ReviewCard = ({ name, comment, rating = 0 }) => {
+const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) => {
+  if (!dataReview) return null;
+  const formatDate = (date) => {
+    const dataRecebida = new Date(date);
+    const dataAtual = new Date();
+    const ms = dataAtual - dataRecebida;
+    const min = Math.floor(ms / 60000);
+    const hours = Math.floor(min / 60);
+    const dias = Math.floor(hours / 24);
+
+    if (min < 1) return "Publicado agora mesmo";
+    if (min < 60) return `Publicado há ${min} minutos atrás`;
+    if (hours < 24) return `Publicado há ${hours} horas atrás`;
+    return `Publicado há ${dias} dias atrás`;
+  };
+
   return (
-    <View style={styles.card}>
-      <Image style={styles.avatar} />
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.name}>{name}</Text>
-          <AirbnbRating defaultRating={rating} size={14} showRating={false} isDisabled />
+    <View style={styles.cardContainer}>
+      <View style={[styles.feedback, , props.cardContainer]}>
+        <Image
+          style={styles.imageProfile}
+          source={
+            dataReview.image_profile
+              ? { uri: dataReview.image_profile }
+              : require("../assets/images/default-profile.jpg")
+          }
+        />
+        <View style={styles.feedbackContent}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.titleFeedback}>{dataReview.nameUser}</Text>
+            <AirbnbRating
+              defaultRating={dataReview.ratingReview}
+              size={14}
+              showRating={false}
+              selectedColor="#FFA500"
+              isDisabled
+            />
+          </View>
+          <Text style={styles.feedbackText}>{dataReview.descriptionReview}</Text>
+          <Text style={styles.titleDate}>{formatDate(dataReview.create_at)}</Text>
+
+          {isCurrentUser && (
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity onPress={onEdit}>
+                <Text style={styles.textFeedbackUpdate}>Modificar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onDelete}>
+                <Text style={styles.textFeedbackDelete}>Deletar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-        <Text style={styles.comment}>{comment}</Text>
       </View>
+      <View style={styles.line} />
     </View>
   );
 };
 
-export default ReviewCard;
-
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#003B73", // Azul claro para o fundo
-    padding: 10,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    marginVertical: 5,
-    alignItems: "center",
+  cardContainer: {
+    marginBottom: 15,
   },
-  avatar: {
+  feedback: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  imageProfile: {
     width: 50,
     height: 50,
-    borderRadius: 120,
-    backgroundColor: "#60A3D9", // Azul escuro
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
+    borderRadius: 25,
+    backgroundColor: "white",
   },
-  avatarText: {
-    color: "#FFFFFFF",
+  feedbackContent: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 8,
+    padding: 10,
+    borderRadius: 10,
+  },
+  line: {
+    width: "100%",
+    borderWidth: 0.6,
+    borderColor: "white",
+    marginTop: 10,
+  },
+  titleFeedback: {
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
-  content: {
-    flex: 1,
+  feedbackText: {
+    color: "white",
+    fontSize: 14,
+    lineHeight: 20,
   },
-  header: {
+  titleDate: {
+    color: "white",
+    fontSize: 12,
+    opacity: 0.8,
+  },
+  textFeedbackDelete: {
+    color: "#FF0000",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  textFeedbackUpdate: {
+    color: "#4A90E2",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    gap: 15,
+    marginTop: 5,
+  },
+  headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 5,
-  },
-  name: {
-    fontWeight: "bold",
-    fontSize: 16,
-    color: "#FFFFFF", // Azul escuro
-  },
-  comment: {
-    fontSize: 14,
-    color: "#FFFFFF",
-  },
+  }
 });
+
+export default ReviewCard;

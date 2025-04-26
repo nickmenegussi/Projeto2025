@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/cli": "latest",
+    "@react-native-picker/picker": "2.9.0",
     "axios": "^1.7.9",
     "expo": "^52.0.42",
     "expo-constants": "~17.0.8",
@@ -26,6 +27,7 @@
     "react": "18.3.1",
     "react-native": "0.76.9",
     "react-native-calendars": "^1.1310.0",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "~3.16.1",
     "react-native-reanimated-carousel": "^4.0.2",
