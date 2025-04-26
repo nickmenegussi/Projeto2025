@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const ButtonIcons = ({color, size, Icon}) => {
+const ButtonIcons = ({color, size, Icon, handleChange}) => {
   return (
     <View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleChange}>
         <Icon color={color} size={size} />
       </TouchableOpacity>
     </View>

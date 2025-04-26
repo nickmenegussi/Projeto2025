@@ -4,7 +4,7 @@ const {viewVolunteerWork, updateTimeVolunteerWork, viewOnlyVolunteerWork ,create
 const verifyPermission = require('../middleware/roleMiddleware')
 const authMiddleware = require('../middleware/authMidleware')
 
-router.get('/work', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewVolunteerWork)
+router.get('/work', authMiddleware, verifyPermission(['SuperAdmin', 'admin', 'User']), viewVolunteerWork)
 router.get('/work/:idVolunteerWork', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewOnlyVolunteerWork)
 
 router.post('/work/Create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']) , createVolunteerWork)

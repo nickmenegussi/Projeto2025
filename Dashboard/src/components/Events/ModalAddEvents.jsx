@@ -1,10 +1,10 @@
-import React, { useState } from "react"
-import api from "../../services/api"
-import { useNavigate } from "react-router"
-import "primereact/resources/themes/lara-light-indigo/theme.css"
-import "primereact/resources/primereact.min.css"
-import "primeicons/primeicons.css"
-import { Calendar } from "primereact/calendar"
+import React, { useState } from "react";
+import api from "../../services/api";
+import { useNavigate } from "react-router";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import { Calendar } from "primereact/calendar";
 
 export default function ModalAddEvent({
   titleModal,
@@ -13,74 +13,90 @@ export default function ModalAddEvent({
   otherStyle,
   onUpdate,
 }) {
-  const [OpenModal, setOpenModal] = useState(false)
-  const navigate = useNavigate()
+  const [OpenModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
   const [calendarEvents, setCalendarEvents] = useState({
-    title : "",
-    link : "",
-    description : "",
-    start : "",
+    title: "",
+    link: "",
+    description: "",
+    start: "",
     end: "",
-    attachment  : null,
-    User_idUser: JSON.parse(localStorage.getItem('@Auth:user'))?.idUser || 0
-  })
+    attachment: null,
+    dateEvent: "",
+    User_idUser: JSON.parse(localStorage.getItem("@Auth:user"))?.idUser || 0,
+  });
 
-  const token = localStorage.getItem("@Auth:token")
+  const token = localStorage.getItem("@Auth:token");
 
   function formatTimeForSQL(date) {
     if (!date) return null;
-    const localDate = new Date(date)
-    const hours = String(localDate.getHours()).padStart(2, '0')
-    const minutes = String(localDate.getMinutes()).padStart(2, '0')
-    const seconds = String(localDate.getSeconds()).padStart(2, '0')
+    const localDate = new Date(date);
+    const hours = String(localDate.getHours()).padStart(2, "0");
+    const minutes = String(localDate.getMinutes()).padStart(2, "0");
+    const seconds = String(localDate.getSeconds()).padStart(2, "0");
 
-    return `${hours}:${minutes}:${seconds}`
-    }
-
-  async function CreateEvent(event){
-    event.preventDefault()
+    return `${hours}:${minutes}:${seconds}`;
+  }
+  function formatDateForSQL(date) {
+    if (!date) return null;
+    return new Date(date).toLocaleDateString("fr-CA"); // Formato 'YYYY-MM-DD'
+  }
+  async function CreateEvent(event) {
+    event.preventDefault();
 
     try {
-        const {title, link, description, start, end, attachment, User_idUser} = calendarEvents
+      const {
+        title,
+        link,
+        description,
+        start,
+        end,
+        attachment,
+        date,
+        User_idUser,
+      } = calendarEvents;
 
-        const formdata = new FormData()
-        formdata.append('title', title)
-        formdata.append('link', link)
-        formdata.append('description', description)
-        formdata.append('start', formatTimeForSQL(start))
-        formdata.append('end', formatTimeForSQL(end))
-        formdata.append('attachment', attachment)
-        formdata.append('User_idUser', parseInt(User_idUser))
+      const formdata = new FormData();
+      formdata.append("title", title);
+      formdata.append("link", link);
+      formdata.append("description", description);
+      formdata.append("start", formatTimeForSQL(start));
+      formdata.append("end", formatTimeForSQL(end));
+      formdata.append("attachment", attachment);
+      formdata.append("attachment", formatDateForSQL(date));
+      formdata.append("User_idUser", parseInt(User_idUser));
 
-        const response = await api.post('/calendar/calendar/register', formdata, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data"
-            }
-        })
-        alert(response.data.message)
-        setCalendarEvents({title : "",
-            link : "",
-            description : "",
-            start : "",
-            end: "",
-            attachment  : null,
-            User_idUser: JSON.parse(localStorage.getItem('@Auth:user')).idUser})
-        setOpenModal(false)
-        onUpdate()
+      const response = await api.post("/calendar/calendar/register", formdata, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert(response.data.message);
+      setCalendarEvents({
+        title: "",
+        link: "",
+        description: "",
+        start: "",
+        end: "",
+        attachment: null,
+        User_idUser: JSON.parse(localStorage.getItem("@Auth:user")).idUser,
+      });
+      setOpenModal(false);
+      onUpdate();
     } catch (error) {
-        if (error.response) {
-            if (
-              error.response.data.message ===
-              "Sessão expirada, por favor, faça login novamente."
-            ) {
-              alert(error.response.data.message)
-              localStorage.clear()
-              return navigate("/", { replace: true }) // Redireciona para a página de login
-            } else {
-              alert(error.response.data.message)
-            }
-          }          
+      if (error.response) {
+        if (
+          error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+        ) {
+          alert(error.response.data.message);
+          localStorage.clear();
+          return navigate("/", { replace: true }); // Redireciona para a página de login
+        } else {
+          alert(error.response.data.message);
+        }
+      }
     }
   }
 
@@ -147,7 +163,12 @@ export default function ModalAddEvent({
                       type="text"
                       name="eventTitle"
                       value={calendarEvents.title}
-                      onChange={(e) => setCalendarEvents({...calendarEvents, title: e.target.value})}
+                      onChange={(e) =>
+                        setCalendarEvents({
+                          ...calendarEvents,
+                          title: e.target.value,
+                        })
+                      }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-white-400 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o título do Evento"
                       required=""
@@ -164,7 +185,12 @@ export default function ModalAddEvent({
                       type="text"
                       name="EventLink "
                       value={calendarEvents.link}
-                      onChange={(e) => setCalendarEvents({...calendarEvents, link: e.target.value})}
+                      onChange={(e) =>
+                        setCalendarEvents({
+                          ...calendarEvents,
+                          link: e.target.value,
+                        })
+                      }
                       id="EventLink "
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-white-400 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite o autor do livro"
@@ -179,13 +205,15 @@ export default function ModalAddEvent({
                       Horário do Início Evento
                     </label>
                     <Calendar
-                    timeOnly
-                    showIcon
-                    showTime
-                    hourFormat="24"
-                    value={calendarEvents.start}
-                    onChange={(e) => setCalendarEvents({...calendarEvents, start: e.value})}
-                    className="border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
+                      timeOnly
+                      showIcon
+                      showTime
+                      hourFormat="24"
+                      value={calendarEvents.start}
+                      onChange={(e) =>
+                        setCalendarEvents({ ...calendarEvents, start: e.value })
+                      }
+                      className="border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
                     />
                   </div>
                   <div className="col-span-2">
@@ -196,13 +224,15 @@ export default function ModalAddEvent({
                       Horário do Final do Evento
                     </label>
                     <Calendar
-                    timeOnly
-                    showIcon
-                    showTime
-                    hourFormat="24"
-                    value={calendarEvents.end}
-                    onChange={(e) => setCalendarEvents({...calendarEvents, end: e.value})}
-                    className="border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
+                      timeOnly
+                      showIcon
+                      showTime
+                      hourFormat="24"
+                      value={calendarEvents.end}
+                      onChange={(e) =>
+                        setCalendarEvents({ ...calendarEvents, end: e.value })
+                      }
+                      className="border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
                     />
                   </div>
                   <div className="col-span-2">
@@ -216,7 +246,12 @@ export default function ModalAddEvent({
                       id="attachment"
                       rows="2"
                       type="file"
-                      onChange={(e) => setCalendarEvents({... calendarEvents, attachment: e.target.files[0]})}
+                      onChange={(e) =>
+                        setCalendarEvents({
+                          ...calendarEvents,
+                          attachment: e.target.files[0],
+                        })
+                      }
                       name="attachment"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-white-400 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Digite a curiosidade do livro aqui"
@@ -235,10 +270,32 @@ export default function ModalAddEvent({
                       type="text"
                       name="description"
                       value={calendarEvents.description}
-                      onChange={(e) => setCalendarEvents({... calendarEvents, description: e.target.value})}
+                      onChange={(e) =>
+                        setCalendarEvents({
+                          ...calendarEvents,
+                          description: e.target.value,
+                        })
+                      }
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-white-400 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Digite a curiosidade do livro aqui"
                     ></textarea>
+                  </div>
+                  <div className="col-span-2 sm:col-span-2">
+                    <label
+                      for="dateEvent"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Data da Palestra
+                    </label>
+                    <Calendar
+                      className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      value={calendarEvents.dateEvent}
+                      onChange={(e) =>
+                        setCalendarEvents({ ...calendarEvents, dateEvent: e.value })
+                      }
+                      showIcon
+                      dateFormat="dd/mm/yy"
+                    />
                   </div>
                 </div>
                 <button
@@ -266,5 +323,5 @@ export default function ModalAddEvent({
         </div>
       )}
     </>
-  )
+  );
 }
