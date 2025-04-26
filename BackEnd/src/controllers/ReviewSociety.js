@@ -2,7 +2,6 @@ const connection = require('../config/db')
 
 exports.CreateReviewSociety = (req, res) => {
     const { descriptionReview, ratingReview, userId } = req.body
-
     if(!descriptionReview || !ratingReview || !userId){
         return res.status(400).json({
             message: 'Preencha todos os campos.',
@@ -71,16 +70,16 @@ exports.ViewReviewSociety = (req, res) => {
 
 exports.UpdateReviewSociety = (req, res) => {
     const {descriptionReview, ratingReview} = req.body 
-    const {idReviewSociey} = req.params
+    const {idReviewSociety} = req.params
 
-    if(!idReviewSociey || !descriptionReview || !ratingReview){
+    if(!idReviewSociety || !descriptionReview || !ratingReview){
         return res.status(400).json({
             message: 'Preencha todos os campos.',
             success: false
         })
     }
 
-    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ?', [idReviewSociey], (err, result) => {
+    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ?', [idReviewSociety], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: 'Erro ao se conectar com o servidor.',
@@ -96,7 +95,7 @@ exports.UpdateReviewSociety = (req, res) => {
                 data: err
             })
         }
-        connection.query('Update ReviewSociety SET descriptionReview = ?, ratingReview = ? idReviewSociety = ? AND userId = ?', [idReviewSociey, userId], (err, result) => {
+        connection.query('Update ReviewSociety SET descriptionReview = ?, ratingReview = ? WHERE idReviewSociety = ?', [descriptionReview, ratingReview ,idReviewSociety], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',
@@ -116,17 +115,17 @@ exports.UpdateReviewSociety = (req, res) => {
 }
 
 exports.DeleteReviewSociety = (req, res) => {
-    const {idReviewSociey} = req.params 
+    const {idReviewSociety} = req.params 
     const {userId} = req.body
 
-    if(!idReviewSociey || !userId){
+    if(!idReviewSociety || !userId){
         return res.status(400).json({
             message: 'Preencha todos os campos.',
             success: false
         })
     }
 
-    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ? and userId = ?', [idReviewSociey, userId], (err, result) => {
+    connection.query('SELECT * FROM ReviewSociety WHERE idReviewSociety = ? and userId = ?', [idReviewSociety, userId], (err, result) => {
         if(err){
             return res.status(500).json({
                 message: 'Erro ao se conectar com o servidor.',
@@ -134,7 +133,6 @@ exports.DeleteReviewSociety = (req, res) => {
                 data: err
             })
         }
-
         if(result.length === 0){
             return res.status(400).json({
                 message: 'Essa avaliação ainda não existe.',
@@ -142,7 +140,7 @@ exports.DeleteReviewSociety = (req, res) => {
                 data: err
             })
         }
-        connection.query('DELETE FROM ReviewSociety WHERE idReviewSociety = ? AND userId = ?', [idReviewSociey, userId], (err, result) => {
+        connection.query('DELETE FROM ReviewSociety WHERE idReviewSociety = ? AND userId = ?', [idReviewSociety, userId], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',

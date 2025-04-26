@@ -48,7 +48,7 @@ exports.login = (req, res) => {
         { id: user.idUser, email: user.email, role: user.status_permission },
         process.env.JWT_SECRET,
         {
-          expiresIn: "2h",
+          expiresIn: "4days",
         }
       );
       return res.status(201).json({
