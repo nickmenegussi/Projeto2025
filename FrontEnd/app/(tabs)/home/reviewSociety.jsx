@@ -7,119 +7,185 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-} from "react-native"
-import { AirbnbRating } from "react-native-ratings"
-import React, { use, useEffect, useState } from "react"
-import { ArrowLeftIcon } from "lucide-react-native"
-import CustomNavagation from "../../../components/CustomNavagation"
-import FormField from "../../../components/FormField"
-import { router } from "expo-router"
-import api from "../../../services/api"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import Button from "../../../components/Button"
+} from "react-native";
+import { AirbnbRating } from "react-native-ratings";
+import React, { use, useEffect, useState } from "react";
+import { ArrowLeftIcon } from "lucide-react-native";
+import CustomNavagation from "../../../components/CustomNavagation";
+import FormField from "../../../components/FormField";
+import { router } from "expo-router";
+import api from "../../../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Button from "../../../components/Button";
+import CustomModal from "../../../components/ModalCustom";
 
 export default function ReviewSociety() {
-  
   const [reviewUser, setReviewUser] = useState({
     descriptionReview: "",
     ratingReview: 0,
     userId: null,
-  })
-  const [review, setReview] = useState([])  
+  });
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [review, setReview] = useState([]);
   useEffect(() => {
-    GetReview()
-  }, [])
+    GetReview();
+  }, []);
 
   function formatDate(date) {
-    const dataRecebida = new Date(date)
-    const dataAtual = new Date()
+    const dataRecebida = new Date(date);
+    const dataAtual = new Date();
 
-    const ms = dataAtual - dataRecebida
-    const min = Math.floor(ms / 60000)
-    const hours = Math.floor(min / 60)
-    const dias = Math.floor(hours / 24)
+    const ms = dataAtual - dataRecebida;
+    const min = Math.floor(ms / 60000);
+    const hours = Math.floor(min / 60);
+    const dias = Math.floor(hours / 24);
 
     if (min < 1) {
-      return <Text style={styles.titleDate}>Publicado agora mesmo</Text>
+      return <Text style={styles.titleDate}>Publicado agora mesmo</Text>;
     } else if (min < 60) {
       return (
-        <Text style={styles.titleDate}>
-          Publicado há {min} minutos atrás
-        </Text>
-      )
+        <Text style={styles.titleDate}>Publicado há {min} minutos atrás</Text>
+      );
     } else if (hours < 24) {
       return (
-        <Text style={styles.titleDate}>
-          Publicado há {hours} horas atrás
-        </Text>
-      )
+        <Text style={styles.titleDate}>Publicado há {hours} horas atrás</Text>
+      );
     } else {
       return (
-        <Text style={styles.titleDate}>
-          Publicado há {dias} dias atrás
-        </Text>
-      )
+        <Text style={styles.titleDate}>Publicado há {dias} dias atrás</Text>
+      );
     }
   }
 
   async function GetReview() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const user = await AsyncStorage.getItem("@Auth:user")
-      const userId = JSON.parse(user).idUser
-      
-      if(userId){
-        setReviewUser(() => ({ ...reviewUser, userId: userId}))
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const user = await AsyncStorage.getItem("@Auth:user");
+      const userId = JSON.parse(user).idUser;
+
+      if (userId) {
+        setReviewUser(() => ({ ...reviewUser, userId: userId }));
       }
 
-      const response = await api.get("/review/reviewSociety?sortOrder=newSet", {
+      const response = await api.get("/review/reviewSociety?sortOrder=newSEt", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      setReview(response.data.data)
+      });
+      setReview(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          Alert.alert("Erro", error.response.data.message)
+          Alert.alert("Erro", error.response.data.message);
+          console.log("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        Alert.alert("Erro", error);
+        console.log("Erro", error);
       }
     }
   }
 
-  async function handleRegisterReview(){
+  async function handleRegisterReview() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      console.log(reviewUser)
-      const response = await api.post("/review/reviewSociety/create", {
-        descriptionReview: reviewUser.descriptionReview,
-        ratingReview: reviewUser.ratingReview,
-        userId: reviewUser.userId
-      }
-      , {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+      const token = await AsyncStorage.getItem("@Auth:token");
+      console.log(reviewUser);
+      const response = await api.post(
+        "/review/reviewSociety/create",
+        {
+          descriptionReview: reviewUser.descriptionReview,
+          ratingReview: reviewUser.ratingReview,
+          userId: reviewUser.userId,
         },
-      })
-      Alert.alert("Sucesso", response.data.message)
-      GetReview()
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      Alert.alert("Sucesso", response.data.message);
+      GetReview();
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          Alert.alert("Erro", error.response.data.message)
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        Alert.alert("Erro", error);
+        console.log("Erro", error);
+      }
+    }
+  }
+
+  async function handleDeleteReview(idReviewSociety, userId) {
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.delete(
+        `/review/reviewSociety/${idReviewSociety}/delete`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {
+            userId: userId,
+          },
+        }
+      )
+      Alert.alert("Sucesso", response.data.message);
+      GetReview();
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
+        } else {
+          Alert.alert("Erro", error.response.data.message);
+        }
+      } else {
+        Alert.alert("Erro", error);
+        console.log("Erro", error);
+      }
+    }
+  }
+
+  async function handleUpdateReview(idReviewSociety){
+    console.log(idReviewSociety)
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.put(`/review/reviewSociety/${idReviewSociety}/update`, {
+        descriptionReview: reviewUser.descriptionReview,
+        ratingReview: reviewUser.ratingReview,
+      } ,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      })
+      Alert.alert("Sucesso", response.data.message)
+      GetReview()
+      setModalVisible(false)
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
+        } else {
+          Alert.alert("Erro", error.response.data.message);
+          console.log("Erro", error.response.data.message);
+        }
+      } else {
+        Alert.alert("Erro", error);
+        console.log("Erro", error);
       }
     }
   }
@@ -172,71 +238,155 @@ export default function ReviewSociety() {
             size={30}
             selectedColor="#FFA500"
             showRating={false}
-            starContainerStyle={{right: 100, position: 'relative', marginTop: 15}}
-            onFinishRating={(rating) => setReviewUser({...reviewUser, ratingReview: rating })}
+            starContainerStyle={{
+              right: 90,
+              position: "relative",
+              marginTop: 15,
+            }}
+            onFinishRating={(rating) =>
+              setReviewUser({ ...reviewUser, ratingReview: rating })
+            }
           />
-          <Button title={'Avaliar'} handlePress={handleRegisterReview} opacityNumber={0.6} />
+          <Button
+            title={"Avaliar"}
+            handlePress={handleRegisterReview}
+            opacityNumber={0.6}
+          />
         </View>
 
-        <Text style={styles.textContainerView}>
-          {review.length} Comments
-        </Text>
+        <Text style={styles.textContainerView}>{review.length} Comments</Text>
 
         {review.length > 0 ? (
-            <ScrollView
-              nestedScrollEnabled
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingVertical: 5 }}
-              style={styles.reviewsContainer}
-            >
-              {review.map((item) => (
-                <>
-                  <View style={styles.feedback} key={item.idReviewSociety}>
-                    <Image
-                      style={styles.imageProfile}
-                      source={
-                        item.image_profile
-                          ? { uri: item.image_profile }
-                          : require("../../../assets/images/default-profile.jpg")
-                      }
-                    />
-                    <View style={styles.feedbackContent}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
+          <ScrollView
+            nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingVertical: 5 }}
+            style={styles.reviewsContainer}
+          >
+            {review.map((item, index) => (
+              // transforma em um componente separado
+              // <ReviewCard
+              <View key={item.idReviewSociety}>
+                <View style={styles.feedback}>
+                  <Image
+                    style={styles.imageProfile}
+                    source={
+                      item.image_profile
+                        ? { uri: item.image_profile }
+                        : require("../../../assets/images/default-profile.jpg")
+                    }
+                  />
+                  <View style={styles.feedbackContent}>
+                    {modalVisible && (
+                      <CustomModal
+                        visible={modalVisible}
+                        onClose={() => setModalVisible(false)}
+                        title="Atualizar Avaliação"
+                        description="Você tem certeza que deseja atualizar essa avaliação?"
+                        confirmText="Atualizar"
+                        formField={true}
+                        descriptionReview={reviewUser.descriptionReview}
+                        onChangeDescription={(text) => setReviewUser({...reviewUser, descriptionReview: text})}
+                        ratingReview={true}
+                        ratingReviewValue={review.ratingReview}
+                        onChangeRating={(rating) => setReviewUser({...reviewUser, ratingReview: rating})}
+                        onConfirm={() => {
+                          handleUpdateReview(item.idReviewSociety);
+                          ratingReviewValue(0)
+                          descriptionReview("")
                         }}
-                      >
-                        <Text style={styles.titleFeedback}>
-                          {item.nameUser}
-                        </Text>
-                        <AirbnbRating
-                          defaultRating={item.ratingReview}
-                          size={14}
-                          showRating={false}
-                          selectedColor="#FFA500"
-                          isDisabled
-                        />
-                      </View>
-                      <Text style={styles.feedbackText}>
-                        {item.descriptionReview}
-                      </Text>
-                      {formatDate(item.create_at)}
+                      />
+                    )}
+
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Text style={styles.titleFeedback}>{item.nameUser}</Text>
+                      <AirbnbRating
+                        defaultRating={item.ratingReview}
+                        size={14}
+                        showRating={false}
+                        selectedColor="#FFA500"
+                        isDisabled
+                      />
                     </View>
+                    <Text style={styles.feedbackText}>
+                      {item.descriptionReview}
+                    </Text>
+                    {formatDate(item.create_at)}
+                    {item.userId === reviewUser.userId && (
+                      <>
+                        <View style={{ flexDirection: "row", gap: 10 }}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              Alert.alert(
+                                "Atualizar avaliação",
+                                "Você tem certeza que deseja atualizar essa avaliação?",
+                                [
+                                  {
+                                    text: "Cancelar",
+                                    style: "cancel",
+                                  },
+                                  {
+                                    text: "Atualizar",
+                                    onPress: () => {
+                                      setModalVisible(true);
+                                    },
+                                  },
+                                ]
+                              );
+                            }}
+                          >
+                            <Text style={styles.textFeedbackUpdate}>
+                              Modificar
+                            </Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            onPress={() => {
+                              Alert.alert(
+                                "Excluir avaliação",
+                                "Você tem certeza que deseja deletar essa avaliação?",
+                                [
+                                  {
+                                    text: "Cancelar",
+                                    style: "cancel",
+                                  },
+                                  {
+                                    text: "Deletar",
+                                    onPress: () =>
+                                      handleDeleteReview(
+                                        item.idReviewSociety,
+                                        item.userId
+                                      ),
+                                  },
+                                ]
+                              );
+                            }}
+                          >
+                            <Text style={styles.textFeedbackDelete}>
+                              Deletar
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                    )}
                   </View>
-                  <View style={styles.line} />
-                </>
-              ))}
-            </ScrollView>
+                </View>
+                <View style={styles.line} />
+              </View>
+            ))}
+          </ScrollView>
         ) : (
-          <Text style={styles.textContainerView}>
-            Nenhum review encontrado
-          </Text>
+          <Text style={styles.textContainerView}>Nenhum review encontrado</Text>
         )}
       </View>
     </ScrollView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -301,7 +451,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 50,
     backgroundColor: "white",
-    marginBottom: 70
+    marginBottom: 70,
   },
   feedbackContent: {
     flex: 1,
@@ -326,11 +476,24 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 0.6,
     borderColor: "white",
-    marginTop: 10
+    marginTop: 10,
   },
   titleDate: {
     color: "white",
     fontSize: 15,
     fontWeight: "bold",
-  }
-})
+  },
+  textFeedbackDelete: {
+    color: "#FF0000",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  textFeedbackUpdate: {
+    color: "#4A90E2",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  containerReview: {
+    gap: 10,
+  }, 
+});

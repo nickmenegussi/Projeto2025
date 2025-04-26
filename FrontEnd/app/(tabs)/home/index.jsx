@@ -293,9 +293,9 @@ const Home = () => {
                     <Text style={styles.header}>
                       Avaliações do Centro Espírita
                     </Text>
-                    {/* <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> */}
-                    {/* <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
-                      <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />  */}
+                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> 
+                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} />
+                    <ReviewCard name={'Teste'} comment={'Lorem'} rating={4} /> 
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (

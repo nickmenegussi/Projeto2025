@@ -19,7 +19,7 @@ export default function VideoUrl({videoUrl}) {
           videoId={videoId}
         />
       ) : (
-        <Text style={styles.errorText}>Erro: URL inválida</Text>
+        <Text style={styles.errorText}>Erro:  Não conseguimos carregar o vídeo.A Vídeo fornecida é inválido ou houve um problema ao acessar o conteúdo</Text>
       )}
     </View>
   )

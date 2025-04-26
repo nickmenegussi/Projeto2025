@@ -7,7 +7,7 @@ const FormField = ({title, value, placeholder ,handleChangeText, othersStyles ,.
   const [showPassword, setShowPassword] = useState(false)
   return (
     <View style={[style.container, ]}>
-      <Text style={style.titleForms}>{title}</Text>
+      <Text style={[style.titleForms, props.titleForms]}>{title}</Text>
       <View style={[style.containerForms,othersStyles]} >
         <TextInput style={[style.textoInput, props.textInputSmall]}  value={value} onChangeText={handleChangeText} placeholder={placeholder} keyboardType={props.keyboardType || "default"} secureTextEntry={title === 'Password' && !showPassword}/>
         {title === 'Password' && (
