@@ -69,10 +69,9 @@ exports.ViewReviewSociety = (req, res) => {
 }
 
 exports.UpdateReviewSociety = (req, res) => {
-    const {descriptionReview, ratingReview} = req.body 
+    const {descriptionReview, ratingReview, userId} = req.body 
     const {idReviewSociety} = req.params
-
-    if(!idReviewSociety || !descriptionReview || !ratingReview){
+    if(!idReviewSociety || !descriptionReview || !ratingReview || !userId){
         return res.status(400).json({
             message: 'Preencha todos os campos.',
             success: false
@@ -95,7 +94,7 @@ exports.UpdateReviewSociety = (req, res) => {
                 data: err
             })
         }
-        connection.query('Update ReviewSociety SET descriptionReview = ?, ratingReview = ? WHERE idReviewSociety = ?', [descriptionReview, ratingReview ,idReviewSociety], (err, result) => {
+        connection.query('Update ReviewSociety SET descriptionReview = ?, ratingReview = ? WHERE idReviewSociety = ? AND userId = ?', [descriptionReview, ratingReview ,idReviewSociety, userId], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: 'Erro ao se conectar com o servidor.',
@@ -105,7 +104,7 @@ exports.UpdateReviewSociety = (req, res) => {
             }
 
             return res.status(200).json({
-                message: 'Avaliação deletada com sucesso.',
+                message: 'Avaliação atualizada com sucesso.',
                 success: true,
                 data: result
             })
