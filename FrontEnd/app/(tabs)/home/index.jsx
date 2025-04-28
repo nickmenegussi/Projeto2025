@@ -32,6 +32,7 @@ import SideBar from "../../../components/Sidebar";
 import ReviewCard from "../../../components/ReviewCard";
 import FAQ from "../../../components/FAQ";
 import DropDownPicker from "react-native-dropdown-picker";
+import Button from "../../../components/Button";
 
 const Home = () => {
   const objetivos = [
@@ -55,7 +56,13 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [review, setReview] = useState([]);
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Mais recente", value: "newSet" },
+    { label: "Mais antigo", value: "oldest" },
+  ]);
 
+  
   useEffect(() => {
     ViewLectures();
     ViewVolunteerWork();
@@ -141,12 +148,15 @@ const Home = () => {
     try {
       const token = await AsyncStorage.getItem("@Auth:token");
       const user = await AsyncStorage.getItem("@Auth:user");
-      const response = await api.get("/review/reviewSociety?sortOrder=newSEt", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get(
+        `/review/reviewSociety?sortOrder=${value}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setReview(response.data.data);
     } catch (error) {
       if (error.response) {
@@ -197,7 +207,10 @@ const Home = () => {
                     height={170}
                     data={item.content}
                     renderItem={(item) => (
-                      <View style={styles.SmallcarouselItem}>
+                      <View
+                        style={styles.SmallcarouselItem}
+                        key={item.item.idLecture}
+                      >
                         <ImageBackground
                           source={require("../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
                           style={styles.BackgroundImage}
@@ -314,10 +327,7 @@ const Home = () => {
                     {selectedDate ? (
                       <View style={styles.eventsContainer}>
                         <Text style={styles.eventTitle}>Eventos do dia:</Text>
-                        <View>
-                        <Text style={styles.eventTitle}>Eventos do dia:</Text>
-                        <Text style={styles.eventTitle}>algo novo</Text>
-                        </View>
+                        <View></View>
                         {item.content[0].status_permission === "admin" ||
                         item.content[0].status_permission === "SuperAdmin" ? (
                           <View style={styles.eventContent}>
@@ -350,12 +360,17 @@ const Home = () => {
                       <DropDownPicker
                         open={open}
                         setOpen={setOpen}
-                        value={null}
-                        setValue={null}
-                        items={[{ label: "Mais recente", value: "newSEt" }]}
-                        placeholder="Mais antigo"
+                        value={value}
+                        setValue={setValue}
+                        items={items}
+                        setItems={setItems}
+                        onChangeValue={(value) => {
+                          setValue(value);
+                          GetReview();
+                        }}
+                        placeholder="Ordenar por"
                         style={styles.picker}
-                        dropDownContainerStyle={styles.item}
+                        dropDownContainerStyle={styles.itemDropDrown}
                       />
                     </View>
                     {review.length > 0 ? (
@@ -366,9 +381,7 @@ const Home = () => {
                         style={styles.reviewsContainer}
                       >
                         {review.map((item, index) => (
-                          // transforma em um componente separado
-                          // <ReviewCard
-                          <View>
+                          <View key={item.idReviewSociety}>
                             <ReviewCard
                               cardContainer={styles.cardContainer}
                               dataReview={item ? item : {}}
@@ -411,6 +424,7 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
+                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -524,12 +538,12 @@ const styles = StyleSheet.create({
   eventContent: {
     backgroundColor: "#fff",
     width: "12%",
-    alignItems: 'center',
+    alignItems: "center",
     padding: 10,
     borderRadius: 10,
-    top:50,
-    left: '88%',
-    position: 'relative'
+    top: 50,
+    left: "88%",
+    position: "relative",
   },
   Container: {
     flexGrow: 1,
@@ -550,10 +564,11 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     width: "50%",
   },
-  item: {
-    width: "50%",
-    borderColor: "#fff",
-    height: 55,
+  itemDropDrown: {
+    backgroundColor: "#fff",
+    borderWidth: 0,
+    borderRadius: 8,
+    width: "50%", // Mesma largura do picker
   },
   containerIcons: {
     flexDirection: "row",
@@ -587,12 +602,18 @@ const styles = StyleSheet.create({
   titlePost: {
     fontSize: 16,
     color: "white",
-    marginTop: 100,
+    position: "relative",
+    top: 110,
+    left: 20,
+    right: 10,
   },
   titlePostBigger: {
     fontSize: 16,
     color: "white",
-    marginTop: 140,
+    position: "relative",
+    top: 160,
+    left: 20,
+    right: 10,
   },
   calendar: {
     height: 550,
@@ -610,6 +631,7 @@ const styles = StyleSheet.create({
   reviewsHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: 70,
     alignItems: "center",
     width: "100%",
   },
