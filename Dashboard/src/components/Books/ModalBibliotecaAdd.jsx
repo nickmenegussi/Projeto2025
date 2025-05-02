@@ -9,6 +9,7 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
   const [book, setBook] = useState({
     namebook: "",
     authorBook : "",
+    image: null,
     overviewBook: "",
     curiosityBook: "",
     tagsBook: "",
@@ -25,21 +26,26 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
       return navigate('/', { replace: true })
     }
 
-    const { namebook, authorBook , overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book; // Pegue os valores diretamente do state
+    const { namebook, authorBook , image, overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book; // Pegue os valores diretamente do state
 
     try {
-      const response = await api.post('/library/library/register',{
-        namebook: namebook, // Envie os dados com os nomes esperados no backend
-        authorBook : authorBook ,
-        overviewBook: overviewBook,
-        curiosityBook: curiosityBook,
-        tagsBook: tagsBook,
-        bookQuantity: parseInt(bookQuantity),
-        status_Available: status_Available
-      }, {
+      const formData = new FormData()
+      formData.append("namebook", namebook)
+      console.log(image)
+      if (image) {
+        formData.append("image", image) 
+      }
+      formData.append("authorBook", authorBook)
+      formData.append("overviewBook", overviewBook)
+      formData.append("curiosityBook", curiosityBook)
+      formData.append("tagsBook", tagsBook)
+      formData.append("bookQuantity", parseInt(bookQuantity))
+      formData.append("status_Available", status_Available)
+
+      const response = await api.post('/library/library/register', formData, {
         
         headers: {
-           Authorizationization: `Bearer ${token}`
+           Authorization: `Bearer ${token}`
         }
       })
       alert(response.data.message)
@@ -197,6 +203,23 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Digite a quantidde de livros"
                       required=""
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="BooImage"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Imagem do Livro
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      name="image"
+                      onChange={(e) =>
+                        setBook({ ...book, image: e.target.files[0] })
+                      }
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
                   </div>
                   <div className="col-span-2">

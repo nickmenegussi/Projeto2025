@@ -45,12 +45,15 @@ exports.viewOnlyOneBook = (req, res) => {
 }
 
 exports.createBook = (req, res) => {
-    const {namebook, authorBook,overviewBook,curiosityBook  ,tagsBook , bookQuantity ,status_Available} = req.body
+    const image = req.file ? req.file.filename : null
 
-    if(!namebook || !authorBook || !tagsBook  || !overviewBook|| !curiosityBook  || !bookQuantity || !status_Available){
+    const {namebook, authorBook,overviewBook,curiosityBook ,tagsBook , bookQuantity ,status_Available} = req.body
+
+    if(!namebook || !authorBook || !tagsBook  || !overviewBook || !image || !curiosityBook  || !bookQuantity || !status_Available){
         return res.status(400).json({
             success: false,
             message: "Preencha todos os campos de cadastro",
+            data: console.log(namebook, authorBook,overviewBook, image, curiosityBook ,tagsBook , bookQuantity ,status_Available)
         })
     }
 
@@ -65,20 +68,36 @@ exports.createBook = (req, res) => {
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
         })
     } else {
-        connection.query('INSERT INTO Book(namebook,author,overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available) VALUES(?, ?, ?, ?, ?, ?, ?) ',[namebook, authorBook, overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available], (err, result) => {
+        connection.query('SELECT * FROM Book WHERE status_Available = ? AND image = ? AND namebook = ? AND authorBook = ? AND tagsBook = ? AND overviewBook = ? AND curiosityBook = ?',
+  [status_Available, image, namebook, authorBook, tagsBook, overviewBook, curiosityBook], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
                     success: false,
                     data: err
                 })
-            } else {
-                return res.status(201).json({
-                    success: true,
-                    message: "Livro cadastrado com sucesso",
-                    data: result,
+            }
+
+            if(result.length > 0){
+                return res.status(400).json({
+                    message: 'Esse livro já possui um cadastro, por favor, tente outras informações.'
                 })
             }
+            connection.query('INSERT INTO Book(namebook,authorBook, image ,overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available) VALUES(?, ?, ?, ?, ?, ?, ?, ?) ',[namebook, authorBook, image, overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available], (err, result) => {
+                if(err){
+                    return res.status(500).json({
+                        message: "Erro ao se conectar com o servidor.",
+                        success: false,
+                        data: err
+                    })
+                } else {
+                    return res.status(201).json({
+                        success: true,
+                        message: "Livro cadastrado com sucesso",
+                        data: result,
+                    })
+                }
+            })
         })
     }
 }

@@ -14,10 +14,11 @@ export default function SignUp() {
       alert("Login realizado com sucesso!");
     } catch (error) {
       // qualquer erro que seja por conta do js ou do frontend
-      console.error("Erro:", error);
-
       if (error.response) {
         alert(`Erro: ${error.response.data.response}`);
+      } else {
+        console.error("Erro:", error);
+
       }
     }
   }
@@ -57,7 +58,7 @@ export default function SignUp() {
 
         <div className="flex justify-end mt-3">
           <Link
-            to="/forgottenPassword"
+            to="/sign-up"
             className="text-blue-500 hover:underline"
           >
             Esqueceu sua senha?

@@ -6,14 +6,47 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Trending from "../../../components/Navagation";
 import { Bell, CircleUserRoundIcon, MenuIcon } from "lucide-react-native";
 import ButtonIcons from "../../../components/ButtonIcons";
 import SideBar from "../../../components/Sidebar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../../services/api";
 
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [library, setLibrary] = useState([]);
+  console.log(library)
+  
+  useEffect(() => {
+    viewBooks()
+  }, [])
+
+  async function viewBooks() {
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.get("/library/library", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setLibrary(response.data.data);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.loginRequired === true) {
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
+        } else {
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+        }
+      } else {
+        console.log("Erro", error);
+      }
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -66,21 +99,17 @@ const HomeLibrary = () => {
                   {
                     type: "Navegação",
                     name: "Acervo Encomendas",
-                    path: "/library/ReservesCollection",
+                    path: "/library/reserves",
                   },
 
-                  { name: "Acervo Empréstimos", 
-                    path: "/home/LoansCollection" 
-                  }, 
-                  { name: "Buscar Livros", 
-                    path: "/home/LoansCollection" 
-                  }, { name: "Minha Biblioteca", 
-                    path: "/home/LoansCollection" 
-                  },{ name: "Histórico de movimentos", 
-                    path: "/home/LoansCollection" 
-                  },{ name: "Explorar", 
-                    path: "/home/LoansCollection" 
-                  }
+                  { name: "Acervo Empréstimos", path: "/library/loans" },
+                  { name: "Buscar Livros", path: "/library/createBook" },
+                  { name: "Minha Biblioteca", path: "/library/myLibrary" },
+                  {
+                    name: "Histórico de movimentos",
+                    path: "/library/historicalRequests",
+                  },
+                  { name: "Explorar", path: "/library/explore" },
                 ] ?? []
               }
               textTitlle={true}
