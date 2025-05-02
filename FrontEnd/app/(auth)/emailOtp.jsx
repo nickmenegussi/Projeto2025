@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import {
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,7 +14,6 @@ import { Link, router } from "expo-router"
 import FormField from "../../components/FormField"
 import Button from "../../components/Button"
 import { ArrowLeftIcon } from "lucide-react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 import { AuthContext } from "../../context/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 

@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native'
 import { ArrowLeftIcon } from 'lucide-react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import CustomNavagation from "../../../components/CustomNavagation"

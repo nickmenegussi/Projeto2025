@@ -12,7 +12,7 @@ import {
   Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native'
 import Carousel from "react-native-reanimated-carousel"; // Nova biblioteca de carrossel
 import {
   Bell,

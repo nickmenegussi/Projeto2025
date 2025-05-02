@@ -9,7 +9,7 @@ import {
   Animated,
 } from "react-native"
 import React, { useRef, useState } from "react"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView } from 'react-native'
 import {
   router,
   useLocalSearchParams,

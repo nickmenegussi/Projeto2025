@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native'
 import { ArrowLeftIcon, MapIcon } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import EmptyContent from "../../../components/EmptyContent";

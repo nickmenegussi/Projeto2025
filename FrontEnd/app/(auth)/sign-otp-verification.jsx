@@ -13,7 +13,7 @@ import { Link, router } from "expo-router"
 import FormField from "../../components/FormField"
 import Button from "../../components/Button"
 import { ArrowLeftIcon } from "lucide-react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView } from 'react-native'
 import { AuthContext } from "../../context/auth"
 
 export default function OtpSignIn() {
