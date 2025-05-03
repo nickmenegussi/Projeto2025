@@ -51,12 +51,13 @@ export default function FAQ() {
               style={styles.questionContainer}
             >
               <Text style={styles.questionText}>{item.question}</Text>
-
-              {pergunta === item.id ? (
-                <MinusIcon size={20} color={"white"} />
-              ) : (
-                <PlusIcon size={20} color={"white"} />
-              )}
+              <View style={styles.iconContainer}>
+                {pergunta === item.id ? (
+                  <MinusIcon size={20} color={"white"} />
+                ) : (
+                  <PlusIcon size={20} color={"white"} />
+                )}
+              </View>
             </TouchableOpacity>
             {pergunta === item.id && (
               <Text style={styles.answerText}>{item.answer}</Text>
@@ -77,10 +78,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#60A3D9",
     borderRadius: 10,
-  },buttonNavagation: {
-    backgroundColor: '#003B73',
+  },
+  buttonNavagation: {
+    backgroundColor: "#003B73",
     flex: 1,
-    width: '100% auto'
+    width: "100% auto",
   },
   title: {
     fontSize: 24,
@@ -123,5 +125,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#888",
     fontSize: 16,
+  },
+  iconContainer: {
+    right: 30
   },
 });

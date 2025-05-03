@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import { Slot , Tabs} from 'expo-router';
 import { Image, Settings, StyleSheet, Text, View } from 'react-native';
 import { LibraryIcon, GraduationCapIcon, House, MapIcon, MessagesSquare, SettingsIcon, Settings2 } from 'lucide-react-native';
@@ -22,7 +22,7 @@ const TabsLayout = () => {
         marginTop: 14
       }
       }} >
-        <Tabs.Screen name="home" options={{ headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
+        <Tabs.Screen name="home"  options={{ headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
             <House color={color} size={30} focused={focused} name="Home" />)}} 
         />
         <Tabs.Screen name="library" options={{ headerShown: false, title: "Biblioteca", tabBarIcon: ({color, size, focused}) => (

@@ -20,7 +20,7 @@ const TargetPublicLectures = () => {
              <Text style={styles.textContent}>Qual é o objetivo das palestras Espíritas?</Text>
                <View>
                  <View style={styles.lineNavagation}></View>
-                 <CustomNavagation trendingItems={[{name: 'Jovens'}, {name: 'Adulltos'}, {name: 'Avaliar Casa', path: '/home/reviewSociety'}]} otherStyles={true} normalPress={true} sendData={false}/>
+                 <CustomNavagation trendingItems={[{name: 'Jovens'}, {name: 'Adulltos'}, {name: 'Avaliar Casa', path: '/home/ReviewSociety'}]} otherStyles={true} normalPress={true} sendData={false}/>
                </View>
    
                <View>

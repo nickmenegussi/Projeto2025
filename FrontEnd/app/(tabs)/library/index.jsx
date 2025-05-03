@@ -13,15 +13,15 @@ import ButtonIcons from "../../../components/ButtonIcons";
 import SideBar from "../../../components/Sidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../services/api";
+import CardCustom from "../../../components/CardCustom";
 
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [library, setLibrary] = useState([]);
-  console.log(library)
+  const [books, setBooks] = useState([]);
   
   useEffect(() => {
-    viewBooks()
-  }, [])
+    viewBooks();
+  }, []);
 
   async function viewBooks() {
     try {
@@ -31,7 +31,7 @@ const HomeLibrary = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setLibrary(response.data.data);
+      setBooks(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
@@ -52,17 +52,36 @@ const HomeLibrary = () => {
     <SafeAreaView style={styles.safeAreaView}>
       <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <FlatList
-        data={[{ type: "Gêneros" }]}
+        data={[
+          { type: "Gêneros" },
+          { type: "Acervo para Encomendas", data: books },
+          {type: 'Acervo para Reservas'}
+        ]}
         keyExtractor={(item) => item.type}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View>
             <Text style={styles.headerTitle}>{item.type}</Text>
             {item.type === "Gêneros" ? (
-              <Text>Hello</Text>
+              <Trending
+                navagations={[
+                  { name: "Todos", path: "" },
+                  { name: "Obras Básicas", path: "" },
+                  { name: "Obras Complementares", path: "" },
+                ]}
+                textTitlle={false}
+              />
+            ) : item.type === "Acervo para Encomendas" ? (
+                  <View>
+                    <CardCustom data={item.data} />
+                  </View>
+            ) : item.type === "Acervo para Reservas" ? (
+              <Text>{item.type}</Text>
+            ) : item.type === "Reflexões" ? (
+              <Text>{item.type}</Text>
             ) : (
               <View style={styles.errorDataFlatlistContent}>
                 <Text>Carregando item</Text>
-                <ActivityIndicator size="large" color="0000ff" />
+                <ActivityIndicator size="large" color="#0000ff" />
               </View>
             )}
           </View>
@@ -135,7 +154,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginVertical: 10,
-    marginBottom: 25,
   },
   errorDataFlatlistContent: {
     flexDirection: "row",

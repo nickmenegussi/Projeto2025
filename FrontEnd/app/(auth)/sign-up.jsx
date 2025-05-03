@@ -39,6 +39,9 @@ export default function App() {
     }
   }
 
+  if(user){
+    return router.push('/home')
+  }
 
   return (
     <LinearGradient 

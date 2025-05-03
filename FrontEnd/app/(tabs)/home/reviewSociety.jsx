@@ -198,7 +198,7 @@ export default function ReviewSociety() {
           trendingItems={[
             { name: "Objetivo #1" },
             { name: "Objetivo #2" },
-            { name: "Avaliar Casa", path: "/home/reviewSociety" },
+            { name: "Avaliar Casa",  },
           ]}
           otherStyles={true}
           normalPress={true}

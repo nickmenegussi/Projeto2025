@@ -20,12 +20,15 @@ const likeMessages = require('./routers/LikesMessages')
 const lecture = require('./routers/LectureRouter')
 const auth = require('./routers/AuthRouter')
 const review = require('./routers/ReviewRouter')
+const path = require('path');
 
 const app = express()
 app.use(cors()) // permitir que os navegadores acessem diferentes domíniose
 app.use(express.json())
 dotenv.config()
 app.use(express.urlencoded({ extended: true }))
+// deiaxar a pasta de uploads exposta
+app.use('/uploads', express.static('./uploads'));
 
 app.use('/user', userRouter)
 app.use('/admin', adminRouter)

@@ -8,9 +8,9 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 import FormField from "./FormField";
-import { AirbnbRating } from "react-native-ratings";
+import { AirbnbRating, Rating } from "react-native-ratings";
 import { XIcon } from "lucide-react-native";
 import ButtonIcons from "./ButtonIcons";
 
@@ -62,7 +62,7 @@ const CustomModal = ({
             <View style={{ marginBottom: 20 }}>
               <Text style={styles.modalTitle}>Avaliação</Text>
               {ratingReview === true ? (
-                <AirbnbRating
+                <Rating
                   count={5}
                   defaultRating={0}
                   size={20}

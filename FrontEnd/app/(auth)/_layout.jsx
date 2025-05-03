@@ -16,8 +16,6 @@ const RootLayout = () => {
         <Stack.Screen name='otpPassword' options={{ headerShown: false }} />
         <Stack.Screen name='newPassword' options={{ headerShown: false }} />
         <Stack.Screen name='MessagePassword' options={{ headerShown: false }} />
-        <Stack.Screen name='ReviewSociety' options={{ headerShown: false }} />
-
       </Stack>
     </AuthProvider>
   )

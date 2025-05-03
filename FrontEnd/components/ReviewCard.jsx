@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { AirbnbRating } from "react-native-ratings";
+import { Rating } from "react-native-ratings";
 
 const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) => {
   if (!dataReview) return null;
@@ -32,7 +32,7 @@ const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) =
         <View style={styles.feedbackContent}>
           <View style={styles.headerContainer}>
             <Text style={styles.titleFeedback}>{dataReview.nameUser}</Text>
-            <AirbnbRating
+            <Rating
               defaultRating={dataReview.ratingReview}
               size={14}
               showRating={false}
