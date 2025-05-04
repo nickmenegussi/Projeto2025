@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Link, router } from "expo-router"
+import { Link, router, useNavigation } from "expo-router"
 import FormField from '../../components/FormField'
 import Button from '../../components/Button'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function App() {
   const { login, user } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
+  const navagation = useNavigation()
   const [loginUser, setLogin] = useState({
     email: '',
     password: ''
@@ -40,7 +41,7 @@ export default function App() {
   }
 
   if(user){
-    return router.push('/home')
+    router.push('/home')
   }
 
   return (

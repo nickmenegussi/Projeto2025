@@ -17,7 +17,7 @@ import CardCustom from "../../../components/CardCustom";
 
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [books, setBooks] = useState([]);
+  const [booksLoan, setBooks] = useState([]);
   
   useEffect(() => {
     viewBooks();
@@ -54,7 +54,7 @@ const HomeLibrary = () => {
       <FlatList
         data={[
           { type: "Gêneros" },
-          { type: "Acervo para Encomendas", data: books },
+          { type: "Acervo para Encomendas", data: booksLoan },
           {type: 'Acervo para Reservas'}
         ]}
         keyExtractor={(item) => item.type}
@@ -71,9 +71,7 @@ const HomeLibrary = () => {
                 textTitlle={false}
               />
             ) : item.type === "Acervo para Encomendas" ? (
-                  <View>
-                    <CardCustom data={item.data} />
-                  </View>
+                <CardCustom data={item.data} />
             ) : item.type === "Acervo para Reservas" ? (
               <Text>{item.type}</Text>
             ) : item.type === "Reflexões" ? (
@@ -81,7 +79,7 @@ const HomeLibrary = () => {
             ) : (
               <View style={styles.errorDataFlatlistContent}>
                 <Text>Carregando item</Text>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#FFFFFF" />
               </View>
             )}
           </View>

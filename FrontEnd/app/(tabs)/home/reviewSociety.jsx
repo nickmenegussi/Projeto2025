@@ -287,12 +287,7 @@ export default function ReviewSociety() {
                           text: "Atualizar",
                           onPress: () => {
                             setModalVisible(true)
-                            setReviewUser({
-                              ...reviewUser,
-                              currentReviewId: item.idReviewSociety,
-                              descriptionReview: item.descriptionReview,
-                              ratingReview: item.ratingReview,
-                            })
+                            
                           },
                         },
                       ]

@@ -424,7 +424,7 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
-                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
+                    <Button title={"Ver mais"} handlePress={() => router.push('/home/ReviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (

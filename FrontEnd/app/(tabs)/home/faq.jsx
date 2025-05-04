@@ -41,7 +41,7 @@ const FAQ = () => {
               trendingItems={[
                 { name: "Objetivo #1" },
                 { name: "Objetivo #2" },
-                { name: "Avaliar Casa", path: "/home/reviewSociety" },
+                { name: "Avaliar Casa", path: "/home/ReviewSociety" },
               ]}
               otherStyles={true}
               normalPress={true}
