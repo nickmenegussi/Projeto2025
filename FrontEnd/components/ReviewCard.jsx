@@ -32,13 +32,13 @@ const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) =
         <View style={styles.feedbackContent}>
           <View style={styles.headerContainer}>
             <Text style={styles.titleFeedback}>{dataReview.nameUser}</Text>
-            <Rating
+            {/* <Rating
               defaultRating={dataReview.ratingReview}
               size={14}
               showRating={false}
               selectedColor="#FFA500"
               isDisabled
-            />
+            /> */}
           </View>
           <Text style={styles.feedbackText}>{dataReview.descriptionReview}</Text>
           <Text style={styles.titleDate}>{formatDate(dataReview.create_at)}</Text>

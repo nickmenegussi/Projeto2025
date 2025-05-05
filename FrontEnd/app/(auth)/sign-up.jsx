@@ -17,6 +17,13 @@ export default function App() {
     password: ''
   })
 
+  useEffect(() => {
+    if(user){
+      router.push('/home')
+    }
+  }, [user])
+  
+
   async function Login() {
     setLoading(true)
     {!loading && (
@@ -38,10 +45,6 @@ export default function App() {
           Alert.alert('Erro', 'Erro ao realizar login')
         }
     }
-  }
-
-  if(user){
-    router.push('/home')
   }
 
   return (

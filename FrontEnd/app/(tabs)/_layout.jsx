@@ -7,7 +7,7 @@ import { LibraryIcon, GraduationCapIcon, House, MapIcon, MessagesSquare, Setting
 const TabsLayout = () => {
   return (
     <>
-      <Tabs screenOptions={{tabBarActiveTintColor: '#60A3D9', tabBarInactiveTintColor: '#003B73' ,tabBarStyle: {
+      <Tabs screenOptions={{ lazy: true, tabBarActiveTintColor: '#60A3D9', tabBarInactiveTintColor: '#003B73' ,tabBarStyle: {
         backgroundColor: '#ffff',
         borderTopWidth: 0,
         borderTopColor: '#ffff',
@@ -22,10 +22,10 @@ const TabsLayout = () => {
         marginTop: 14
       }
       }} >
-        <Tabs.Screen name="home"  options={{ headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
+        <Tabs.Screen name="home"  options={{lazy: true, headerShown: false, title: 'Home' ,tabBarIcon: ({color, size, focused}) => (
             <House color={color} size={30} focused={focused} name="Home" />)}} 
         />
-        <Tabs.Screen name="library" options={{ headerShown: false, title: "Biblioteca", tabBarIcon: ({color, size, focused}) => (
+        <Tabs.Screen name="library" options={{lazy: true, headerShown: false, title: "Biblioteca", tabBarIcon: ({color, size, focused}) => (
           <LibraryIcon color={color} size={30}  focused={focused} />
           )}} />
 

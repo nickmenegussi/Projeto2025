@@ -12,25 +12,7 @@ export default function FAQ() {
       question: "O que é o Centro Espírita?",
       answer:
         "É um local onde se realiza práticas e estudos espíritas, como palestras, cursos, e trabalhos voluntários.",
-    },
-    {
-      id: 2,
-      question: "Como posso me tornar um voluntário?",
-      answer:
-        "Basta entrar em contato com a nossa equipe para mais informações sobre como participar.",
-    },
-    {
-      id: 3,
-      question: "Quando acontecem as palestras?",
-      answer:
-        "As palestras acontecem todas as semanas, confira nossa programação no calendário.",
-    },
-    {
-      id: 4,
-      question: "Quem pode ir ao centro Espírita?",
-      answer:
-        "Sim, as portas estão abertas para todos os interessados em conhecer o trabalho.",
-    },
+    }
   ];
 
   // lidar com a questão de abrir e fechar a question

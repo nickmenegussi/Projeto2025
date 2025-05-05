@@ -19,6 +19,7 @@ const Trending = ({
     <FlatList
       style={styles.FlatListContainer}
       data={navagations}
+      nestedScrollEnabled={true}
       keyExtractor={(item) => item.name}
       renderItem={({ item }) => (
         <>

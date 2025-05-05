@@ -20,163 +20,20 @@ import Button from "../../../components/Button"
 import CustomModal from "../../../components/ModalCustom"
 import ReviewCard from "../../../components/ReviewCard"
 import DropDownPicker from "react-native-dropdown-picker"
+import useReview from "../../../hooks/useReview"
 
 export default function ReviewSociety() {
-  const [reviewUser, setReviewUser] = useState({
-    descriptionReview: "",
-    ratingReview: 0,
-    userId: null,
-    currentReviewId: null,
-  })
-  const [modalVisible, setModalVisible] = useState(false)
+  const {review, reviewUser, fetchReview, sortOrder, setSortOrder} = useReview()
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState(null)
   const [items, setItems] = useState([
     { label: "Mais recente", value: "newSet" },
     { label: "Mais antigo", value: "oldest" },
   ])
+   useEffect(() => {
+      fetchReview()
+    }, [sortOrder])
 
-  const [review, setReview] = useState([])
-  useEffect(() => {
-    GetReview()
-  }, [])
-
-  async function GetReview() {
-    try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const user = await AsyncStorage.getItem("@Auth:user")
-      const userId = JSON.parse(user).idUser
-
-      if (userId) {
-        setReviewUser(() => ({ ...reviewUser, userId: userId }))
-      }
-
-      const response = await api.get(`/review/reviewSociety?sortOrder=${value}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      setReview(response.data.data)
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
-        } else {
-          Alert.alert("Erro", error.response.data.message)
-          console.log("Erro", error.response.data.message)
-        }
-      } else {
-        Alert.alert("Erro", error)
-        console.log("Erro", error)
-      }
-    }
-  }
-
-  async function handleRegisterReview() {
-    try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const response = await api.post(
-        "/review/reviewSociety/create",
-        {
-          descriptionReview: reviewUser.descriptionReview,
-          ratingReview: reviewUser.ratingReview,
-          userId: reviewUser.userId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      Alert.alert("Sucesso", response.data.message)
-      GetReview()
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
-        } else {
-          Alert.alert("Erro", error.response.data.message)
-        }
-      } else {
-        Alert.alert("Erro", error)
-        console.log("Erro", error)
-      }
-    }
-  }
-
-  async function handleDeleteReview(idReviewSociety, userId) {
-    try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const response = await api.delete(
-        `/review/reviewSociety/${idReviewSociety}/delete`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: {
-            userId: userId,
-          },
-        }
-      )
-      Alert.alert("Sucesso", response.data.message)
-      GetReview()
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
-        } else {
-          Alert.alert("Erro", error.response.data.message)
-        }
-      } else {
-        Alert.alert("Erro", error)
-        console.log("Erro", error)
-      }
-    }
-  }
-
-  async function handleUpdateReview(idReviewSociety) {
-    console.log(idReviewSociety)
-    try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const response = await api.put(
-        `/review/reviewSociety/${idReviewSociety}/update`,
-        {
-          descriptionReview: reviewUser.descriptionReview,
-          ratingReview: reviewUser.ratingReview,
-          userId: reviewUser.userId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      Alert.alert("Sucesso", response.data.message)
-      GetReview()
-      setReviewUser({ ...reviewUser, descriptionReview: "", ratingReview: 0 })
-      setModalVisible(false)
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.loginRequired === true) {
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
-        } else {
-          Alert.alert("Erro", error.response.data.message)
-          console.log("Erro", error.response.data.message)
-        }
-      } else {
-        Alert.alert("Erro", error)
-        console.log("Erro", error)
-      }
-    }
-  }
+  
 
   return (
     <ScrollView style={styles.BackGroundSafeArea}>
@@ -213,13 +70,13 @@ export default function ReviewSociety() {
             title="Avaliar o Centro Espírita"
             placeholder="Digite uma avaliação"
             value={reviewUser.descriptionReview}
-            handleChangeText={(text) =>
-              setReviewUser((e) => ({ ...e, descriptionReview: text }))
-            }
+            // handleChangeText={(text) =>
+            //   setReviewUser((e) => ({ ...e, descriptionReview: text }))
+            // }
             othersStyles={styles.buttonContainer}
             IconStyle={styles.ReviewButton}
           />
-          <AirbnbRating
+          {/* <AirbnbRating
             count={5}
             defaultRating={0}
             size={30}
@@ -233,10 +90,10 @@ export default function ReviewSociety() {
             onFinishRating={(rating) =>
               setReviewUser({ ...reviewUser, ratingReview: rating })
             }
-          />
+          /> */}
           <Button
             title={"Avaliar"}
-            handlePress={handleRegisterReview}
+            // handlePress={handleRegisterReview}
             opacityNumber={0.6}
           />
         </View>
@@ -246,14 +103,13 @@ export default function ReviewSociety() {
           <DropDownPicker
             open={open}
             setOpen={setOpen}
-            value={value}
-            setValue={setValue}
+            value={sortOrder}
+            setValue={setSortOrder}
             items={items}
             setItems={setItems}
             onChangeValue={(value) => {
               if(value){
-                setValue(value)
-                GetReview()
+                setSortOrder(value)
               }
             }}
             placeholder="Ordenar por"
@@ -301,11 +157,11 @@ export default function ReviewSociety() {
                         { text: "Cancelar", style: "cancel" },
                         {
                           text: "Deletar",
-                          onPress: () =>
-                            handleDeleteReview(
-                              item.idReviewSociety,
-                              item.userId
-                            ),
+                        //   onPress: () =>
+                        //     handleDeleteReview(
+                        //       item.idReviewSociety,
+                        //       item.userId
+                        //     ),
                         },
                       ]
                     )
@@ -313,7 +169,7 @@ export default function ReviewSociety() {
                 />
               </View>
             ))}
-            {modalVisible && (
+            {/* {modalVisible && (
               <CustomModal
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
@@ -336,7 +192,7 @@ export default function ReviewSociety() {
                   }
                 }}
               />
-            )}
+            )} */}
           </ScrollView>
         ) : (
           <Text style={styles.textContainerView}>Nenhum review encontrado</Text>

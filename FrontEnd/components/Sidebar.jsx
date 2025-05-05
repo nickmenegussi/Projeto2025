@@ -4,7 +4,7 @@ import { LibraryIcon, X } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import ButtonIcons from './ButtonIcons';
 
-export default function SideBar({ isOpen, setIsOpen }) {
+export default  React.memo(function SideBar({ isOpen, setIsOpen }) {
   const navigation = useNavigation();
 
   // Ref de animação
@@ -78,7 +78,7 @@ export default function SideBar({ isOpen, setIsOpen }) {
       </ScrollView>
     </Animated.View>
   );
-}
+})
 
 const styles = StyleSheet.create({
   sidebar: {

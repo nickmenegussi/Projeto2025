@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { getReview, RegisterReview, UpdateReview } from "../services/reviewService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useState } from "react"
+import { getReview, RegisterReview, UpdateReview } from "../services/reviewService"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function useReview() {
   const [reviewUser, setReviewUser] = useState({
@@ -8,69 +8,66 @@ export default function useReview() {
     ratingReview: 0,
     userId: null,
     currentReviewId: null,
-  });
-  const [review, setReview] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [sortOrder, setSortOrder] = useState(null);
+  })
+  const [review, setReview] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [sortOrder, setSortOrder] = useState(null)
 
   // para buscar os dados automatiamente semrpe que a página for att
-  useEffect(() => {
-    fetchReview();
-  }, [sortOrder]);
 
-  const fetchReview = async () => {
+  const fetchReview = useCallback(async () => {
     try {
-      const user = await AsyncStorage.getItem("@Auth:user");
-      const userId = JSON.parse(user).idUser;
+      const user = await AsyncStorage.getItem("@Auth:user")
+      const userId = JSON.parse(user).idUser
       if (userId) {
-        setReviewUser(() => ({ ...reviewUser, userId: userId }));
+        setReviewUser(() => ({ ...reviewUser, userId: userId }))
       }
-      setLoading(true);
-      const data = await getReview(sortOrder || "newSet");
+      setLoading(true)
+      const data = await getReview(sortOrder || "newSet")
       if (data) {
-        setReview(data);
+        setReview(data)
       }
     } catch (error) {
-      console.error("Falha ao carrega os dados das avaliaçõoes", error);
+      console.error("Falha ao carrega os dados das avaliaçõoes", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  })
 
   const createReview = async () => {
     try {
-      const newReview = await RegisterReview(reviewUser);
+      const newReview = await RegisterReview(reviewUser)
       if (newReview) {
-        setModalVisible(false);
+        setModalVisible(false)
         setReviewUser({
           descriptionReview: "",
           ratingReview: 0,
           userId: null,
           currentReviewId: null,
-        });
+        })
       }
     } catch {
-      console.error("Erro ao criar avaliação", error);
+      console.error("Erro ao criar avaliação", error)
     }
-  };
+  }
 
   const updateReview = async (idReviewSociety) => {
     try {
-        const updateReview = await UpdateReview(reviewUser, idReviewSociety);
+        const updateReview = await UpdateReview(reviewUser, idReviewSociety)
         if (updateReview) {
-          setModalVisible(false);
+          setModalVisible(false)
           setReviewUser({
             descriptionReview: "",
             ratingReview: 0,
             userId: null,
             currentReviewId: null,
-          });
+          })
         }
     } catch {
-        console.error("Erro ao criar avaliação", error);
+        console.error("Erro ao criar avaliação", error)
     }
-  };
+  }
 
   return {
     review,
@@ -84,5 +81,5 @@ export default function useReview() {
     sortOrder,
     updateReview,
     setSortOrder,
-  };
+  }
 }
