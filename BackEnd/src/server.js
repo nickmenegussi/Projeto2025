@@ -21,12 +21,16 @@ const lecture = require('./routers/LectureRouter')
 const auth = require('./routers/AuthRouter')
 const review = require('./routers/ReviewRouter')
 const path = require('path');
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocs = require('./docs/swagger.json')
 
 const app = express()
 app.use(cors()) // permitir que os navegadores acessem diferentes domíniose
 app.use(express.json())
 dotenv.config()
 app.use(express.urlencoded({ extended: true }))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+
 // deiaxar a pasta de uploads exposta
 app.use('/uploads', express.static('./uploads'));
 
@@ -48,4 +52,4 @@ app.use('/lectures', lecture)
 app.use('/review', review)
 app.use('/auth', auth)
 
-app.listen(port, () => console.log(`Rodando na porta ${port}`))
+app.listen(port, () => console.log(`Rodando na porta ${port}\nDocumentação do Swagger disponível em http://localhost:${port}/api-docs`))
