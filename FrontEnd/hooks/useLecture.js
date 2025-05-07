@@ -1,15 +1,15 @@
 import { View, Text } from "react-native"
-import React, { useCallback, useState } from "react"
-import { getReview } from "../services/reviewService"
+import React, { useCallback, useEffect, useState } from "react"
+import { getLecture } from "../services/lectureService"
 
 export default function useLecture() {
   const [lecture, setLecture] = useState([])
   const [loading, setLoading] = useState(false)
-
-  const fetchReview = useCallback(async () => {
+  
+  const fetchLectures  = useCallback(async () => {
+    setLoading(true)
     try {
-      setLoading(true)
-      const data = await getReview()
+      const data = await getLecture()
       if (data) {
         setLecture(data)
       }
@@ -18,10 +18,12 @@ export default function useLecture() {
     } finally {
       setLoading(false)
     }
-  })
-
+  }, [])
+  useEffect(() => {
+    fetchLectures();
+  }, [])
   return {
-    fetchReview,
+    fetchLectures ,
     lecture,
     loading,
   }

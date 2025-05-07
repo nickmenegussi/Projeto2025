@@ -8,6 +8,7 @@ export default function useBooks() {
 
   useEffect(() => {
     const fetchBooks = async () => {
+      setLoading(true)
       try {
         const data = await getBooks()
         setBooks(data)

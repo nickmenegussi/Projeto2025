@@ -7,7 +7,7 @@ export const handleApiError = (error) => {
       console.log("Sessão expirada", error.response.data.message);
       Alert.alert("Sessão expirada", error.response.data.message);
       router.push("/sign-up");
-      return { shouldRetry: false }; // nao tentar novamente
+      return null
     } else {
       console.log(
         "Erro ao exibir os trabalhos voluntários",
@@ -17,10 +17,10 @@ export const handleApiError = (error) => {
         "Erro ao exibir os dados",
         error.response.data.message
       );
-      return { shouldRetry: true }; // pode tentar novamente a chamada
     }
+    return null
   } else {
     console.log("Erro ao exibir os dados", error);
-    return { shouldRetry: true }; // pode tentar novamente
+    return null
   }
 };

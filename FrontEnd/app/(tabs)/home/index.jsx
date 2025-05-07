@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   StyleSheet,
   View,
@@ -15,6 +16,7 @@ import ButtonIcons from "../../../components/ButtonIcons";
 import Trending from "../../../components/Navagation";
 import SideBar from "../../../components/Sidebar";
 import RenderItemContent from "../../../components/RenderItemContent";
+import useLecture from "../../../hooks/useLecture";
 
 const Home = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -23,9 +25,12 @@ const Home = () => {
     { label: "Mais recente", value: "newSet" },
     { label: "Mais antigo", value: "oldest" },
   ]);
+  const {lecture, loading, setLoading} = useLecture()
+  
+  if (loading) return <ActivityIndicator />;
 
   const sections = [
-    { type: "Palestras da Casa" },
+    { type: "Palestras da Casa", data: lecture },
     { type: "Trabalho Voluntário" },
     { type: "Calendário de Eventos" },
     { type: "Esclarecimentos sobre o Centro Espírita" },

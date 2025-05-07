@@ -1,31 +1,17 @@
 import { View, Text, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FAQ from "./FAQ";
 import CalendarCustom from "./CalendarCustom";
-import useReview from "../hooks/useReview";
+import useLecture from "../hooks/useLecture";
 import Calendar from "./CaroseulCustom";
 
 export default React.memo(function RenderItemContent({ item }) {
-  const [data, setData] = useState([{
-    lectures: [],
-    trabalhos: [],
-    eventos: [],
-    reviews: [],
-  }])
-
-  const fetchData = async () => {
-    if(item.type === "Palestras da Casa"){
-      const response = await getLecture
-    }
-  }
-
-
   switch (item.type) {
     case "Palestras da Casa":
       return (
         <View>
           <Text style={styles.title}>{item.type}</Text>
-          <Calendar content={console.log(item)} pathname={'/home/volunteerWork'} />
+          <Calendar content={item.data} pathname={'/home/volunteerWork'} />
         </View>
       )
     case "Trabalho Voluntário":
@@ -63,7 +49,7 @@ export default React.memo(function RenderItemContent({ item }) {
           {/* Componente correspondente */}
         </View>
       )
-    default: null
+    default: return null
     
   }
 })

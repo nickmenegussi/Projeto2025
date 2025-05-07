@@ -17,12 +17,9 @@ export default function App() {
     password: ''
   })
 
-  useEffect(() => {
-    if(user){
-      router.push('/home')
-    }
-  }, [user])
-  
+  if(user){
+    router.push('/home')
+  }
 
   async function Login() {
     setLoading(true)

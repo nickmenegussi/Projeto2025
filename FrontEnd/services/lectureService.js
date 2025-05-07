@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { router } from "expo-router";
 import { handleApiError } from "../utils/handleApiError";
 
-export default getLecture = async () => {
+export const getLecture = async () => {
   try {
     const token = await AsyncStorage.getItem("@Auth:token");
     const response = await api.get("/lectures/lectures", {
