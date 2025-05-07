@@ -8,9 +8,9 @@ export default function Calendar({content, pathname}) {
     <Carousel
       width={350}
       height={220}
-      data={content}
-      renderItem={(item) => (
-        <View style={styles.SmallcarouselItem} key={item.idVolunteerWork}>
+      data={console.log(content)}
+      renderItem={(item, index) => (
+        <View style={styles.SmallcarouselItem} key={item.index}>
           <ImageBackground
             source={require("../assets/images/Jesus-Cristo.png")} // URL da sua imagem
             style={styles.BackgroundImage}
@@ -28,9 +28,7 @@ export default function Calendar({content, pathname}) {
             >
               <View style={styles.item}>
                 <Text style={styles.titlePostBigger}>
-                  {item.item.nameVolunteerWork
-                    ? item.item.nameVolunteerWork
-                    : ""}
+                  {console.log(item)}
                 </Text>
               </View>
             </TouchableOpacity>
