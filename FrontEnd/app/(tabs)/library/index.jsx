@@ -14,11 +14,16 @@ import SideBar from "../../../components/Sidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../services/api";
 import CardCustom from "../../../components/CardCustom";
+import QuoteCard from "../../../components/MotivationalCard";
+import { router } from "expo-router";
 
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [booksLoan, setBooks] = useState([]);
-  
+  const [data, setData] = useState({
+    booksEncomendas: [],
+    booksReserves: [],
+  });
+
   useEffect(() => {
     viewBooks();
   }, []);
@@ -31,7 +36,15 @@ const HomeLibrary = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setBooks(response.data.data);
+
+      const allBooks = response.data.data;
+      const booksLoans = allBooks.filter(
+        (books) => books.bookCategory === "encomenda"
+      );
+      const booksReserves = allBooks.filter(
+        (books) => books.bookCategory === "reserva"
+      );
+      setData({ booksEncomendas: booksLoans, booksReserves: booksReserves });
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
@@ -53,29 +66,21 @@ const HomeLibrary = () => {
       <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <FlatList
         data={[
-          { type: "Gêneros" },
-          { type: "Acervo para Encomendas", data: booksLoan },
-          {type: 'Acervo para Reservas'}
+          { type: "Acervo para Encomendas", data: data.booksEncomendas },
+          { type: "Acervo para Reservas", data: data.booksReserves },
+          { type: "Reflexões" },
         ]}
         keyExtractor={(item) => item.type}
-        renderItem={({item}) => (
-          <View>
+        renderItem={({ item }) => (
+          <View style={styles.sectionContainer}>
             <Text style={styles.headerTitle}>{item.type}</Text>
-            {item.type === "Gêneros" ? (
-              <Trending
-                navagations={[
-                  { name: "Todos", path: "" },
-                  { name: "Obras Básicas", path: "" },
-                  { name: "Obras Complementares", path: "" },
-                ]}
-                textTitlle={false}
-              />
-            ) : item.type === "Acervo para Encomendas" ? (
-                <CardCustom data={item.data} />
+
+            {item.type === "Acervo para Encomendas" ? (
+              <CardCustom data={item.data} loan={true} reserves={false}/>
             ) : item.type === "Acervo para Reservas" ? (
-              <Text>{item.type}</Text>
+              <CardCustom data={item.data} loan={false} reserves={true}/>
             ) : item.type === "Reflexões" ? (
-              <Text>{item.type}</Text>
+              <QuoteCard />
             ) : (
               <View style={styles.errorDataFlatlistContent}>
                 <Text>Carregando item</Text>
@@ -110,27 +115,41 @@ const HomeLibrary = () => {
                 />
               </View>
             </View>
-            <Trending
-              navagations={
-                [
-                  {
-                    type: "Navegação",
-                    name: "Acervo Encomendas",
-                    path: "/library/reserves",
-                  },
+            <View>
+              <View style={styles.navigationContainer}>
+                <Text style={styles.sectionTitle}>Navegação</Text>
+                <Trending
+                  navagations={[
+                    {
+                      type: "Navegação",
+                      name: "Acervo Encomendas",
+                      path: "/library/reserves",
+                    },
+                    { name: "Acervo Empréstimos", path: "/library/loans" },
+                    { name: "Buscar Livros", path: "/library/createBook" },
+                    { name: "Minha Biblioteca", path: "/library/myLibrary" },
+                    {
+                      name: "Histórico de movimentos",
+                      path: "/library/historicalRequests",
+                    },
+                    { name: "Explorar", path: "/library/explore" },
+                  ]}
+                  textTitlle={false}
+                />
+              </View>
 
-                  { name: "Acervo Empréstimos", path: "/library/loans" },
-                  { name: "Buscar Livros", path: "/library/createBook" },
-                  { name: "Minha Biblioteca", path: "/library/myLibrary" },
-                  {
-                    name: "Histórico de movimentos",
-                    path: "/library/historicalRequests",
-                  },
-                  { name: "Explorar", path: "/library/explore" },
-                ] ?? []
-              }
-              textTitlle={true}
-            />
+              <View style={styles.genresContainer}>
+                <Text style={styles.sectionTitle}>Gêneros</Text>
+                <Trending
+                  navagations={[
+                    { name: "Todos", path: "" },
+                    { name: "Obras Básicas", path: "" },
+                    { name: "Obras Complementares", path: "" },
+                  ]}
+                  textTitlle={false}
+                />
+              </View>
+            </View>
           </View>
         )}
       />
@@ -146,6 +165,11 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingVertical: 20,
     backgroundColor: "#003B73",
+  },
+  sectionContainer: {
+    flex: 1,
+    gap: 15, // Espaço entre o título e o conteúdo abaixo
+    marginBottom: 15, // Espaço entre cada seção (ex: "Gêneros" e "Acervo para Encomendas")
   },
   headerTitle: {
     fontSize: 17,
@@ -172,5 +196,12 @@ const styles = StyleSheet.create({
   IconsContent: {
     flexDirection: "row",
     gap: 10,
+  },
+  
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
+    color: '#fff',  // Assumindo tema escuro pelo código anterior
   },
 });

@@ -7,7 +7,8 @@ const RootLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false}} />
       <Stack.Screen name="reserves" options={{ headerShown: false}} />
-      
+      <Stack.Screen name="LoanCollection" options={{ headerShown: false}} />
+
 
     </Stack>
   )

@@ -10,8 +10,9 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { BookKey, Star } from "lucide-react-native";
+import { router } from "expo-router";
 
-export default function CardCustom({ data }) {
+export default function CardCustom({ data, loan = false, reserves = false }) {
   const [books, setBooks] = useState(data || []);
 
   useEffect(() => {
@@ -44,7 +45,16 @@ export default function CardCustom({ data }) {
 
               <Text style={styles.tags}>{item.tagsBook}</Text>
 
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                  if(loan === true){
+                    router.push('/library/LoanCollection')
+                  } 
+                  if(reserves === true){
+                    router.push('/library/reserves')
+
+                  }
+              }
+              }>
                 <Text style={styles.buttonText}>Ver mais</Text>
               </TouchableOpacity>
             </View>
@@ -60,8 +70,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 12,
-    marginHorizontal: 5,
     shadowColor: "#000",
+    marginHorizontal: 5,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
