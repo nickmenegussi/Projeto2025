@@ -47,9 +47,9 @@ exports.viewOnlyOneBook = (req, res) => {
 exports.createBook = (req, res) => {
     const image = req.file ? req.file.filename : null
 
-    const {namebook, authorBook,overviewBook,curiosityBook ,tagsBook , bookQuantity ,status_Available} = req.body
+    const {namebook, authorBook,overviewBook,curiosityBook ,tagsBook , bookQuantity ,status_Available, bookCategory} = req.body
 
-    if(!namebook || !authorBook || !tagsBook  || !overviewBook || !image || !curiosityBook  || !bookQuantity || !status_Available){
+    if(!namebook || !authorBook || !tagsBook  || !overviewBook || !image || !curiosityBook  || !bookQuantity || !status_Available || !bookCategory){
         return res.status(400).json({
             success: false,
             message: "Preencha todos os campos de cadastro",
@@ -62,14 +62,23 @@ exports.createBook = (req, res) => {
             success: false,
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'        })
     } 
-    else if(status_Available !== 'disponível' && status_Available !== 'reservado' && status_Available !== 'emprestado' && status_Available !== 'indisponível'){
+    
+    if(status_Available !== 'disponível' && status_Available !== 'reservado' && status_Available !== 'emprestado' && status_Available !== 'indisponível'){
         return res.status(400).json({
             success: false,
             message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
         })
-    } else {
-        connection.query('SELECT * FROM Book WHERE status_Available = ? AND image = ? AND namebook = ? AND authorBook = ? AND tagsBook = ? AND overviewBook = ? AND curiosityBook = ?',
-  [status_Available, image, namebook, authorBook, tagsBook, overviewBook, curiosityBook], (err, result) => {
+    }  
+
+    if(bookCategory !== 'empréstimo' && bookCategory !== "reserva" ){
+        return res.status(400).json({
+            success: false,
+            message: 'Você digitou uma opção que não é válida no nosso sistema. Tente novamente.'
+        })
+    }  
+
+        connection.query('SELECT * FROM Book WHERE status_Available = ? AND image = ? AND bookCategory = ? AND namebook = ? AND authorBook = ? AND tagsBook = ? AND overviewBook = ? AND curiosityBook = ?',
+  [status_Available, image, namebook, authorBook, tagsBook, overviewBook, curiosityBook, bookCategory], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
@@ -83,7 +92,7 @@ exports.createBook = (req, res) => {
                     message: 'Esse livro já possui um cadastro, por favor, tente outras informações.'
                 })
             }
-            connection.query('INSERT INTO Book(namebook,authorBook, image ,overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available) VALUES(?, ?, ?, ?, ?, ?, ?, ?) ',[namebook, authorBook, image, overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available], (err, result) => {
+            connection.query('INSERT INTO Book(namebook,authorBook, image ,overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available, bookCategory) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) ',[namebook, authorBook, image, overviewBook,curiosityBook ,tagsBook, bookQuantity ,status_Available, bookCategory], (err, result) => {
                 if(err){
                     return res.status(500).json({
                         message: "Erro ao se conectar com o servidor.",
@@ -99,7 +108,7 @@ exports.createBook = (req, res) => {
                 }
             })
         })
-    }
+    
 }
 
 // Atualizar Nome do Livro
