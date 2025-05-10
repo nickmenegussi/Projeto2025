@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 
 export default function QuoteCard() {
   return (
@@ -22,7 +22,7 @@ export default function QuoteCard() {
           source={require('../assets/images/default-profile.jpg')}
           style={styles.avatar}
         />
-        <View>
+        <View style={styles.authorInfo}>
           <Text style={styles.author}>Warren Buffett</Text>
           <Text style={styles.company}>Berkshire Hathaway</Text>
         </View>
@@ -34,67 +34,90 @@ export default function QuoteCard() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#7FBFFF',
-    padding: 20,
-    borderRadius: 10,
-    width: '70%',
-    
-    marginTop: 10,
+    padding: 25,
+    borderRadius: 16,
+    width: '75%',
+    marginVertical: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 8,
   },
   quoteMarkLeft: {
     position: 'absolute',
-    top: 10,
-    left: 20,
-    fontSize: 100,
-    color: 'rgba(46, 46, 46, 0.1)', // Cor clara e transparente
+    top: 0,
+    left: 15,
+    fontSize: 120,
+    color: 'rgba(255, 255, 255, 0.3)',
     fontFamily: 'serif',
-    zIndex: 0, 
+    zIndex: 0,
+    lineHeight: 120,
   },
   quoteMarkRight: {
     position: 'absolute',
-    bottom: 10,
-    right: 20,
-    fontSize: 100,
-    color: 'rgba(46, 46, 46, 0.1)',
+    bottom: -20,
+    right: 10,
+    fontSize: 120,
+    color: 'rgba(255, 255, 255, 0.3)',
     fontFamily: 'serif',
     zIndex: 0,
+    lineHeight: 120,
   },
   hashtag: {
     color: '#2E2E2E',
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 20,
-    textAlign: 'center', // ou 'left' conforme a imagem
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 25,
+    textAlign: 'center',
+    letterSpacing: 1,
   },
   quote: {
-    fontSize: 22,
+    fontSize: 24,
     color: '#2E2E2E',
-    lineHeight: 32,
+    lineHeight: 36,
     fontWeight: '400',
-    marginBottom: 20,
+    marginBottom: 25,
     textAlign: 'center',
-    zIndex: 1, 
+    zIndex: 1,
+    fontStyle: 'italic',
   },
   bold: {
-    fontWeight: '700',
+    fontWeight: '800',
+    color: '#1A1A1A',
   },
   authorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    justifyContent: 'center', // Centraliza o autor (ou ajuste para 'flex-start')
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    alignSelf: 'center',
+  },
+  authorInfo: {
+    marginLeft: 10,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
   },
   author: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 15,
+    color: '#1A1A1A',
   },
   company: {
-    fontSize: 12,
-    color: '#555',
+    fontSize: 13,
+    color: '#444',
+    fontStyle: 'italic',
   },
 });

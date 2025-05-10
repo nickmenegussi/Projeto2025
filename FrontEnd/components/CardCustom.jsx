@@ -3,16 +3,21 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
-  TouchableOpacity,
   ImageBackground,
+  TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { BookKey, Star } from "lucide-react-native";
+import { Star } from "lucide-react-native";
 import { router } from "expo-router";
 
-export default function CardCustom({ data, loan = false, reserves = false }) {
+export default function CardCustom({
+  data,
+  loan = false,
+  reserves = false,
+  aboutBookLoan = false,
+  aboutBookReserves = false,
+}) {
   const [books, setBooks] = useState(data || []);
 
   useEffect(() => {
@@ -20,12 +25,16 @@ export default function CardCustom({ data, loan = false, reserves = false }) {
   }, [data]);
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContainer} // Adicione este estilo
+    >
       {books.length > 0 ? (
         books.map((item) => (
           <View style={styles.card} key={item.idLibrary}>
             <ImageBackground
-              source={{ uri: `http://192.168.1.10:3001/uploads/${item.image}` }}
+              source={{ uri: `http://192.168.1.17:3001/uploads/${item.image}` }}
               style={styles.image}
               resizeMode="cover"
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
@@ -45,16 +54,32 @@ export default function CardCustom({ data, loan = false, reserves = false }) {
 
               <Text style={styles.tags}>{item.tagsBook}</Text>
 
-              <TouchableOpacity style={styles.button} onPress={() => {
-                  if(loan === true){
-                    router.push('/library/LoanCollection')
-                  } 
-                  if(reserves === true){
-                    router.push('/library/reserves')
-
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  if (aboutBookLoan === true) {
+                    const encodedData = encodeURIComponent(
+                      JSON.stringify([item])
+                    );
+                    router.push(`/library/aboutBook?data=${encodedData}`);
+                  } else if (loan === true) {
+                    const encodedData = encodeURIComponent(
+                      JSON.stringify(books)
+                    );
+                    router.push(`/library/LoanCollection?data=${encodedData}`);
+                  } else if (aboutBookReserves === true) {
+                    const encodedData = encodeURIComponent(
+                      JSON.stringify([item])
+                    );
+                    router.push(`/library/aboutBook?data=${encodedData}`);
+                  } else if (reserves === true) {
+                    const encodedData = encodeURIComponent(
+                      JSON.stringify(books)
+                    );
+                    router.push(`/library/reserves?data=${encodedData}`);
                   }
-              }
-              }>
+                }}
+              >
                 <Text style={styles.buttonText}>Ver mais</Text>
               </TouchableOpacity>
             </View>
@@ -66,18 +91,23 @@ export default function CardCustom({ data, loan = false, reserves = false }) {
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingHorizontal: 0, // Espaço nas laterais
+    paddingVertical: 0, // Espaço vertical se necessário
+  },
   card: {
     backgroundColor: "#fff",
     borderRadius: 12,
     shadowColor: "#000",
-    marginHorizontal: 5,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 4,
     overflow: "hidden",
     width: 175,
+    marginRight: 7, // Espaço entre os cards
   },
   image: {
     width: "100%",
@@ -108,12 +138,6 @@ const styles = StyleSheet.create({
     color: "#facc15",
     marginLeft: 4,
   },
-  buttons: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginTop: 0,
-    gap: 20,
-  },
   button: {
     backgroundColor: "#3b82f6",
     paddingVertical: 8,
@@ -124,10 +148,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
     fontSize: 14,
-  },
-  textTagsBook: {
-    color: "black",
-    fontSize: 13,
   },
   tags: {
     fontSize: 12,

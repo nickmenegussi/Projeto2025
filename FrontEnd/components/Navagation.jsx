@@ -17,6 +17,7 @@ const Trending = ({
 }) => {
   return (
     <FlatList
+      showsHorizontalScrollIndicator={false}
       style={styles.FlatListContainer}
       data={navagations}
       nestedScrollEnabled={true}

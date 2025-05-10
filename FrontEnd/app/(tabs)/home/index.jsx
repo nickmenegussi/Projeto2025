@@ -534,7 +534,7 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default React.memo(Home)
 
 const styles = StyleSheet.create({
   linearGradient: {

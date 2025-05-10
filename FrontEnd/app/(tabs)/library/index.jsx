@@ -20,7 +20,7 @@ import { router } from "expo-router";
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
   const [data, setData] = useState({
-    booksEncomendas: [],
+    booksLoans: [],
     booksReserves: [],
   });
 
@@ -39,12 +39,12 @@ const HomeLibrary = () => {
 
       const allBooks = response.data.data;
       const booksLoans = allBooks.filter(
-        (books) => books.bookCategory === "encomenda"
+        (books) => books.bookCategory === "empréstimo"
       );
       const booksReserves = allBooks.filter(
         (books) => books.bookCategory === "reserva"
       );
-      setData({ booksEncomendas: booksLoans, booksReserves: booksReserves });
+      setData({ booksLoans: booksLoans, booksReserves: booksReserves });
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
@@ -65,8 +65,10 @@ const HomeLibrary = () => {
     <SafeAreaView style={styles.safeAreaView}>
       <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <FlatList
+        showsVerticalScrollIndicator={false}
+        
         data={[
-          { type: "Acervo para Encomendas", data: data.booksEncomendas },
+          { type: "Acervo para Encomendas", data: data.booksLoans },
           { type: "Acervo para Reservas", data: data.booksReserves },
           { type: "Reflexões" },
         ]}
@@ -76,9 +78,9 @@ const HomeLibrary = () => {
             <Text style={styles.headerTitle}>{item.type}</Text>
 
             {item.type === "Acervo para Encomendas" ? (
-              <CardCustom data={item.data} loan={true} reserves={false}/>
+              <CardCustom data={item.data} loan={true}/>
             ) : item.type === "Acervo para Reservas" ? (
-              <CardCustom data={item.data} loan={false} reserves={true}/>
+              <CardCustom data={item.data} reserves={true}/>
             ) : item.type === "Reflexões" ? (
               <QuoteCard />
             ) : (
@@ -157,7 +159,7 @@ const HomeLibrary = () => {
   );
 };
 
-export default HomeLibrary;
+export default React.memo(HomeLibrary);
 
 const styles = StyleSheet.create({
   safeAreaView: {

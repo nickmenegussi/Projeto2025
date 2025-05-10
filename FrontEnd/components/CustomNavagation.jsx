@@ -14,6 +14,7 @@ export default function CustomNavagation({
   otherStyles = false,
   sendData = false,
   normalPress = false,
+  ...props
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
@@ -60,11 +61,13 @@ export default function CustomNavagation({
             onPress={() => handlePress(index, item)}
             style={[
               styles.trendingItems,
+              props.itemStyle,
+              
               otherStyles && styles.NavagationItem,
               selectedIndex !== index && styles.trendimItemsUnselected,
             ]}            
           > 
-            <Text style={selectedIndex === index ? styles.navText : styles.unselectedText}>{item.name}</Text>
+            <Text style={selectedIndex === index ? styles.navText && props.textStyle : styles.unselectedText}>{item.name}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -77,7 +80,7 @@ export default function CustomNavagation({
             },
           ]}
         />
-      ) : (
+      ) ? (
         <Animated.View
           style={[
             styles.underline,
@@ -86,7 +89,7 @@ export default function CustomNavagation({
             },
           ]}
         />
-      )}
+      ) : null : null}
     </View>
   );
 }

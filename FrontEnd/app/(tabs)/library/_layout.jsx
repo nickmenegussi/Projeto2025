@@ -8,6 +8,7 @@ const RootLayout = () => {
       <Stack.Screen name="index" options={{ headerShown: false}} />
       <Stack.Screen name="reserves" options={{ headerShown: false}} />
       <Stack.Screen name="LoanCollection" options={{ headerShown: false}} />
+      <Stack.Screen name="aboutBook" options={{ headerShown: false}} />
 
 
     </Stack>
