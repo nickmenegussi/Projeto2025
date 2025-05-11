@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -8,14 +8,14 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Link, router } from "expo-router"
-import FormField from "../../components/FormField"
-import Button from "../../components/Button"
-import { ArrowLeftIcon } from "lucide-react-native"
-import { SafeAreaView } from 'react-native'
-import { AuthContext } from "../../context/auth"
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, router } from "expo-router";
+import FormField from "../../components/FormField";
+import Button from "../../components/Button";
+import { ArrowLeftIcon } from "lucide-react-native";
+import { SafeAreaView } from "react-native";
+import { AuthContext } from "../../context/auth";
 
 export default function OtpMessage() {
   return (
@@ -25,29 +25,35 @@ export default function OtpMessage() {
       locations={[0, 4]}
       style={styles.linearGradient}
     >
-      <SafeAreaView style={styles.scrollContainer} >
+      <SafeAreaView style={styles.scrollContainer}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.container}>
-            <Image  source={require("../../assets/images/Successmark.png")}/>
+            <Image source={require("../../assets/images/Successmark.png")} />
             <View style={styles.headerContainer}>
-              <Text style={[styles.text, styles.title]}>Autenticação Válida</Text>
-              <Text style={[styles.text, styles.subtitle]}>
-                Parabéns! A sua autenticação foi realizada com sucesso, agoora voce pode acessar a plataforma.
+              <Text style={[styles.text, styles.title]}>
+                Autenticação Válida
               </Text>
-              <Button  title="Entrar"
-                        textStyles={styles.TextButton}
-                        buttonStyle={styles.colorButton}
-                        othersStyles={styles.Button}
-                        handlePress={() => {
-                          router.push("/home")
-                        }}
-                            />
+              <Text style={[styles.text, styles.subtitle]}>
+                Parabéns! A sua autenticação foi realizada com sucesso, agoora
+                voce pode acessar a plataforma.
+              </Text>
+            </View>
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Entrar"
+                textStyles={styles.TextButton}
+                buttonStyle={styles.colorButton}
+                othersStyles={styles.Button}
+                handlePress={() => {
+                  router.push("/home");
+                }}
+              />
             </View>
           </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -60,10 +66,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: "100%", 
-    marginTop: 240
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
   headerContainer: {
     alignItems: "center",
@@ -82,6 +87,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     minWidth: 360,
     maxWidth: 300,
-    textAlign: 'center'
-  }
-})
+    textAlign: "center",
+  },
+  buttonWrapper: {
+    width: "94%",
+  },
+});

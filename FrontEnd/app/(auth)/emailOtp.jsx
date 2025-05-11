@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   SafeAreaView,
@@ -8,48 +8,47 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Link, router } from "expo-router"
-import FormField from "../../components/FormField"
-import Button from "../../components/Button"
-import { ArrowLeftIcon } from "lucide-react-native"
-import { AuthContext } from "../../context/auth"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, router } from "expo-router";
+import FormField from "../../components/FormField";
+import Button from "../../components/Button";
+import { ArrowLeftIcon } from "lucide-react-native";
+import { AuthContext } from "../../context/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EmailOtp() {
-  const [email, setEmail] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { OtpSendEmail } = useContext(AuthContext)
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { OtpSendEmail } = useContext(AuthContext);
 
-  
   async function OtpEntrar() {
-    setLoading(true)
+    setLoading(true);
     if (loading) {
       Alert.alert("Carregando", "Aguarde um momento...");
     }
     try {
-      await OtpSendEmail(email)
-  
-      router.push("/sign-otp-verification")
+      await OtpSendEmail(email);
 
-      Alert.alert("Sucesso!", "Email enviado com sucesso!")
-      setLoading(false)
+      router.push("/sign-otp-verification");
+
+      Alert.alert("Sucesso!", "Email enviado com sucesso!");
+      setLoading(false);
     } catch (error) {
       if (
         error.response &&
         error.response.data &&
         error.response.data.message
       ) {
-        console.log("Erro", error.response.data.message)
-        Alert.alert('Erro:',error.response.data.message)
+        console.log("Erro", error.response.data.message);
+        Alert.alert("Erro:", error.response.data.message);
       } else {
-        console.log("Erro", error)
-        Alert.alert("Erro", "Erro ao enviar email")
+        console.log("Erro", error);
+        Alert.alert("Erro", "Erro ao enviar email");
       }
     }
   }
-  
+
   return (
     <LinearGradient
       colors={["#003B73", "#60A3D9"]}
@@ -67,16 +66,18 @@ export default function EmailOtp() {
           </TouchableOpacity>
           <View style={styles.container}>
             <View style={styles.headerContainer}>
-              <Text style={[styles.text, styles.title]}>Digite seu Email</Text>
+              <Text style={styles.title}>Digite seu Email</Text>
               <Text style={[styles.text, styles.subtitle]}>
                 Digite seu email para receber o código de verificação
               </Text>
-              <FormField
-                titulo="Email"
-                placeholder="Digite seu email"
-                handleChangeText={(text) => setEmail(text)}
-                value={email}
-              />
+            </View>
+            <FormField
+              titulo="Email"
+              placeholder="Digite seu email"
+              handleChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+            <View style={styles.buttonContainer}>
               <Button
                 title="Enviar Código"
                 textStyles={styles.TextButton}
@@ -89,7 +90,7 @@ export default function EmailOtp() {
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -119,17 +120,21 @@ const styles = StyleSheet.create({
     marginTop: 130,
   },
   headerContainer: {
-    alignItems: "start",
-    justifyContent: "start",
+    width: "92%",
+    alignItems: "flex-start", // alinha os textos à esquerda
     marginTop: 20,
+    gap: 6, // espaçamento entre título e subtítulo
+  },
+  buttonContainer: {
+    width: "92%",
   },
   text: {
     color: "#FFFFFF",
-    textAlign: "start",
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
+    color: "#FFFFFF",
   },
   subtitle: {
     marginTop: 10,
@@ -141,4 +146,4 @@ const styles = StyleSheet.create({
   TextButton: {
     color: "black",
   },
-})
+});

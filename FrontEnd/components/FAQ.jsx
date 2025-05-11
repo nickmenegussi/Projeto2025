@@ -12,6 +12,11 @@ export default function FAQ() {
       question: "O que é o Centro Espírita?",
       answer:
         "É um local onde se realiza práticas e estudos espíritas, como palestras, cursos, e trabalhos voluntários.",
+    }, {
+      id: 2,
+      question: "O que é o Centro Espírita?rerer2332",
+      answer:
+        "É um local onde se realiza práticas e estudos espíritas, como palestras, cursos, e trabalhos voluntários.",
     }
   ];
 
@@ -57,14 +62,14 @@ export default function FAQ() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#60A3D9",
     borderRadius: 10,
   },
   buttonNavagation: {
     backgroundColor: "#003B73",
     flex: 1,
-    width: "100% auto",
+    width: "100%",
   },
   title: {
     fontSize: 24,
@@ -88,15 +93,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     backgroundColor: "#60A3D9",
-    borderRadius: 8,
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: 'center',
+    gap: 30
   },
   questionText: {
     fontSize: 18,
     fontWeight: "600",
     color: "#ffffff",
+    textAlign: 'center'
   },
   answerText: {
     fontSize: 16,

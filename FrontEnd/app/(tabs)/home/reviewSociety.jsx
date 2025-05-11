@@ -209,12 +209,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 15,
-    maxWidth: 350,
-    minWidth: 350,
+    width: '100%'
   },
   containerView: {
     flex: 1,
     padding: 20,
+    width: '100%',
     gap: 20,
   },
   ButtonIcon: {
@@ -314,12 +314,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     borderColor: "#fff",
-    width: "50%",
+    width: "45%",
   },
   itemDropDrown: {
     backgroundColor: "#fff",
     borderWidth: 0,
     borderRadius: 8,
-    width: "50%", // Mesma largura do picker
+    width: "45%", // Mesma largura do picker
   },
 })

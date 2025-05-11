@@ -18,6 +18,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+    alignItems: 'center',
+    
   },
   textButton: {
     color: 'white',
@@ -26,8 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
-    width: 360 ,
-    maxWidth: 370 ,
+    width: '100%',
     backgroundColor: "#60A3D9",
     borderRadius: 10,
     marginTop: 20
