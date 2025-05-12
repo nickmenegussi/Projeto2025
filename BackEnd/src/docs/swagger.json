@@ -10,74 +10,60 @@
             "url": "http://localhost:3001"
         }
     ],
-    "paths": {
-        "/admin/admin": {
-            "get": {
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Cadastrar um novo usuário.",
-                "operationId": "listarLivros",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "placa": {
-                                        "type": "string"
-                                    },
-                                    "cor": {
-                                        "type": "string"
-                                    },
-                                    "modelo": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "username",
-                                    "password",
-                                    "email",
-                                    "placa",
-                                    "cor",
-                                    "modelo"
-                                ]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Usuário cadastrado com sucesso"
-                    },
-                    "500": {
-                        "description": "Erro ao cadastrar usuário"
-                    }
-                }
-            },  "put": {
-                "tags": [
-                    "Admin"
-                ]
-            }, "post": {
-                "tags": [
-                    "Admin"
-                ]
-            }, "delete": {
-                "tags": [
-                    "Admin"
-                ]
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
-        },
+        }
+        
+    },
+    "paths": {
+        "/auth/login/create": {
+            "post": {
+              "tags": ["Login"],
+              "summary": "Cadastrar um novo administrador.",
+              "operationId": "listarLivros",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["email", "password"] 
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Usuário cadastrado com sucesso"
+                },
+                "500": {
+                  "description": "Erro ao cadastrar usuário"
+                }
+              }
+            },
+            "put": {
+              "tags": ["Login"]
+            },
+            "get": {
+              "tags": ["Login"]
+            },
+            "delete": {
+              "tags": ["Login"]
+            }
+          },
         "/user/user": {
             "get": {
                 "tags": [
@@ -86,42 +72,8 @@
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "listarLivros",
                 "requestBody": {
+                    
                     "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "placa": {
-                                        "type": "string"
-                                    },
-                                    "cor": {
-                                        "type": "string"
-                                    },
-                                    "modelo": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "username",
-                                    "password",
-                                    "email",
-                                    "placa",
-                                    "cor",
-                                    "modelo"
-                                ]
-                            }
-                        }
-                    },
                     "responses": {
                         "200": {
                             "description": "Usuário cadastrado com sucesso"
@@ -135,19 +87,289 @@
                 "tags": [
                     "User"
                 ]
+            }
+           
+        }, "/user/user/register": {
+            "post": {
+              "tags": ["User"],
+              "summary": "Registrar novo usuário",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "nameUser": {
+                          "type": "string"
+                        },
+                        "email": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                        "image_profile": {
+                          "type": "string",
+                          "format": "binary",
+                          "description": "Imagem do usuário"
+                        }
+                      },
+                      "required": ["email", "password"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Usuário cadastrado com sucesso"
+                },
+                "500": {
+                  "description": "Erro ao cadastrar usuário"
+                }
+              }
+            }
+          },"/admin/admin": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "security": [
+                    {
+                      "bearerAuth": []
+                    }
+                  ],
+                "summary": "Cadastrar um novo usuário.",
+                "operationId": "listarLivros",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso ao exibir os Admins."
+                    },
+                    "404": {
+                        "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
+                    },"401": {
+                        "description": "Token não fornecido. Acesso negado."
+                    },
+                    "500": {
+                        "description": "Erro ao se conectar com o servidor."
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Admin"
+                ]
             }, "post": {
                 "tags": [
-                    "User"
+                    "Admin"
                 ]
             }, "delete": {
                 "tags": [
-                    "User"
+                    "Admin"
                 ]
             }
-        }, "/exemplo3/exemplo3": {
+        } ,"/calendar/calendar": {
             "get": {
                 "tags": [
-                    "exemplo3"
+                    "Calendar"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Calendar"
+                ]
+            }, "post": {
+                "tags": [
+                    "Calendar"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Calendar"
+                ]
+            }
+        }, "/cart/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Trabalho Voluntário"
+                ]
+            }, "post": {
+                "tags": [
+                    "Trabalho Voluntário"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Trabalho Voluntário"
+                ]
+            }
+        },"/facilitadores/facilitadores": {
+            "get": {
+                "tags": [
+                    "Facilitadores"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Facilitadores"
+                ]
+            }, "post": {
+                "tags": [
+                    "Facilitadores"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Facilitadores"
+                ]
+            }
+        }, "/lectures/lectures": {
+            "get": {
+                "tags": [
+                    "Lectures"
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "listarLivros",
@@ -199,21 +421,21 @@
                 }
             },  "put": {
                 "tags": [
-                    "exemplo3"
+                    "Lectures"
                 ]
             }, "post": {
                 "tags": [
-                    "exemplo3"
+                    "Lectures"
                 ]
             }, "delete": {
                 "tags": [
-                    "exemplo3"
+                    "Lectures"
                 ]
             }
-        }, "/exemplo1/exemplo2": {
+        }, "/library/library": {
             "get": {
                 "tags": [
-                    "Trabalho Voluntário"
+                    "Library"
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "listarLivros",
@@ -265,21 +487,21 @@
                 }
             },  "put": {
                 "tags": [
-                    "Trabalho Voluntário"
+                    "Library"
                 ]
             }, "post": {
                 "tags": [
-                    "Trabalho Voluntário"
+                    "Library"
                 ]
             }, "delete": {
                 "tags": [
-                    "Trabalho Voluntário"
+                    "Library"
                 ]
             }
-        },"/exemplo1/exemplo1": {
+        }, "/likes/likes": {
             "get": {
                 "tags": [
-                    "exemplo1"
+                    "Likes"
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "listarLivros",
@@ -331,21 +553,21 @@
                 }
             },  "put": {
                 "tags": [
-                    "exemplo1"
+                    "Likes"
                 ]
             }, "post": {
                 "tags": [
-                    "exemplo1"
+                    "Likes"
                 ]
             }, "delete": {
                 "tags": [
-                    "exemplo1"
+                    "Likes"
                 ]
             }
-        }, "/exemplo/exemplo": {
+        }, "/Loan/Loan": {
             "get": {
                 "tags": [
-                    "exemplo"
+                    "Loan"
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "listarLivros",
@@ -397,15 +619,411 @@
                 }
             },  "put": {
                 "tags": [
-                    "exemplo"
+                    "Loan"
                 ]
             }, "post": {
                 "tags": [
-                    "exemplo"
+                    "Loan"
                 ]
             }, "delete": {
                 "tags": [
-                    "exemplo"
+                    "Loan"
+                ]
+            }
+        }, "/notifications/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Notifications"
+                ]
+            }, "post": {
+                "tags": [
+                    "Notifications"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Notifications"
+                ]
+            }
+        }, "/otp/otp": {
+            "get": {
+                "tags": [
+                    "Otp"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Otp"
+                ]
+            }, "post": {
+                "tags": [
+                    "Otp"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Otp"
+                ]
+            }
+        }, "/post/post": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Post"
+                ]
+            }, "post": {
+                "tags": [
+                    "Post"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Post"
+                ]
+            }
+        }, "/reserves/reserves": {
+            "get": {
+                "tags": [
+                    "Reserves"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Reserves"
+                ]
+            }, "post": {
+                "tags": [
+                    "Reserves"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Reserves"
+                ]
+            }
+        }, "/review/reviewSociety": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Review"
+                ]
+            }, "post": {
+                "tags": [
+                    "Review"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Review"
+                ]
+            }
+        }, "/topic/topic": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            },  "put": {
+                "tags": [
+                    "Topic"
+                ]
+            }, "post": {
+                "tags": [
+                    "Topic"
+                ]
+            }, "delete": {
+                "tags": [
+                    "Topic"
                 ]
             }
         }
