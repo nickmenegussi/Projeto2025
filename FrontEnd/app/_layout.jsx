@@ -1,16 +1,16 @@
-import React from 'react'
-import { Slot , Stack} from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Stack } from 'expo-router';
 import { AuthProvider } from '../context/auth';
-import  PrivateRouter  from '../components/PrivateRouter';
+import PrivateRouter from '../components/PrivateRouter';
 
 const RootLayout = () => {
   return (
-      <Stack screenOptions={{headerShown: false}}>
-          <Stack.Screen name="(auth)" options={{ headerShown: false}} />
-      </Stack>
-  )
+    <AuthProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack>
+    </AuthProvider>
+  );
+};
 
-}
-
-export default RootLayout
+export default RootLayout;
