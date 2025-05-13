@@ -39,6 +39,20 @@ const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) =
               selectedColor="#FFA500"
               isDisabled
             /> */}
+            <Rating
+              type="custom"
+              atingColor="#FFD700" // cor das estrelas preenchidas
+              ratingBackgroundColor="#d4d4d4" // cor do fundo das estrelas
+              tintColor="#003B73" // cor de fundo do componente inteiro
+              imageSize={24}
+              startingValue={dataReview.ratingReview}
+              readonly={true}
+              count={dataReview.ratingReview}
+              defaultRating={0}
+              size={30}
+              // onFinishRating={(rating) => {}}
+              showRating={false}
+            />
           </View>
           <Text style={styles.feedbackText}>{dataReview.descriptionReview}</Text>
           <Text style={styles.titleDate}>{formatDate(dataReview.create_at)}</Text>

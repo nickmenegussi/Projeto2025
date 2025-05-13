@@ -54,7 +54,7 @@ const LoanCollection = () => {
             <>
               <CardCustom data={books} aboutBookLoan={true}/>
               <View style={styles.extraCard}>
-                <CardCustom data={books} />
+                <CardCustom data={books} aboutBookLoan={true}/>
               </View>
             </>
           ) : (

@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Trending from "../../../components/Navagation";
 import { Bell, CircleUserRoundIcon, MenuIcon } from "lucide-react-native";
 import ButtonIcons from "../../../components/ButtonIcons";
