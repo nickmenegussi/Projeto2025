@@ -18,128 +18,163 @@
                 "bearerFormat": "JWT"
             }
         }
-        
     },
     "paths": {
         "/auth/login/create": {
             "post": {
-              "tags": ["Login"],
-              "summary": "Cadastrar um novo administrador.",
-              "operationId": "listarLivros",
-              "requestBody": {
-                "required": true,
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "email": {
-                          "type": "string"
-                        },
-                        "password": {
-                          "type": "string"
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "password"
+                                ]
+                            }
                         }
-                      },
-                      "required": ["email", "password"] 
                     }
-                  }
-                }
-              },
-              "responses": {
-                "200": {
-                  "description": "Usuário cadastrado com sucesso"
                 },
-                "500": {
-                  "description": "Erro ao cadastrar usuário"
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
                 }
-              }
             },
             "put": {
-              "tags": ["Login"]
+                "tags": [
+                    "Login"
+                ]
             },
             "get": {
-              "tags": ["Login"]
+                "tags": [
+                    "Login"
+                ]
             },
             "delete": {
-              "tags": ["Login"]
+                "tags": [
+                    "Login"
+                ]
             }
-          },
+        },
         "/user/user": {
             "get": {
                 "tags": [
                     "User"
                 ],
-                "summary": "Cadastrar um novo administrador.",
-                "operationId": "listarLivros",
-                "requestBody": {
-                    
-                    "required": true,
-                    "responses": {
-                        "200": {
-                            "description": "Usuário cadastrado com sucesso"
-                        },
-                        "500": {
-                            "description": "Erro ao cadastrar usuário"
-                        }
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
                     }
                 }
-            },  "put": {
+            }
+        },
+        "/user/{idUser}/patch": {
+            "patch": {
                 "tags": [
                     "User"
-                ]
-            }
-           
-        }, "/user/user/register": {
-            "post": {
-              "tags": ["User"],
-              "summary": "Registrar novo usuário",
-              "requestBody": {
-                "required": true,
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "nameUser": {
-                          "type": "string"
-                        },
-                        "email": {
-                            "type": "string"
-                          },
-                          "password": {
-                            "type": "string",
-                            "format": "password"
-                          },
-                        "image_profile": {
-                          "type": "string",
-                          "format": "binary",
-                          "description": "Imagem do usuário"
-                        }
-                      },
-                      "required": ["email", "password"]
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
                     }
-                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
                 }
-              },
-              "responses": {
-                "200": {
-                  "description": "Usuário cadastrado com sucesso"
-                },
-                "500": {
-                  "description": "Erro ao cadastrar usuário"
-                }
-              }
             }
-          },"/admin/admin": {
+        },
+        "/user/user/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Registrar novo usuário",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nameUser": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "image_profile": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Imagem do usuário"
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/admin/admin": {
             "get": {
                 "tags": [
                     "Admin"
                 ],
                 "security": [
                     {
-                      "bearerAuth": []
+                        "bearerAuth": []
                     }
-                  ],
+                ],
                 "summary": "Cadastrar um novo usuário.",
                 "operationId": "listarLivros",
                 "responses": {
@@ -148,27 +183,32 @@
                     },
                     "404": {
                         "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
-                    },"401": {
+                    },
+                    "401": {
                         "description": "Token não fornecido. Acesso negado."
                     },
                     "500": {
                         "description": "Erro ao se conectar com o servidor."
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Admin"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Admin"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Admin"
                 ]
             }
-        } ,"/calendar/calendar": {
+        },
+        "/calendar/calendar": {
             "get": {
                 "tags": [
                     "Calendar"
@@ -221,20 +261,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Calendar"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Calendar"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Calendar"
                 ]
             }
-        }, "/cart/cart": {
+        },
+        "/cart/cart": {
             "get": {
                 "tags": [
                     "Cart"
@@ -287,20 +331,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Trabalho Voluntário"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Trabalho Voluntário"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Trabalho Voluntário"
                 ]
             }
-        },"/facilitadores/facilitadores": {
+        },
+        "/facilitadores/facilitadores": {
             "get": {
                 "tags": [
                     "Facilitadores"
@@ -353,20 +401,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Facilitadores"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Facilitadores"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Facilitadores"
                 ]
             }
-        }, "/lectures/lectures": {
+        },
+        "/lectures/lectures": {
             "get": {
                 "tags": [
                     "Lectures"
@@ -419,20 +471,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Lectures"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Lectures"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Lectures"
                 ]
             }
-        }, "/library/library": {
+        },
+        "/library/library": {
             "get": {
                 "tags": [
                     "Library"
@@ -485,20 +541,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Library"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Library"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Library"
                 ]
             }
-        }, "/likes/likes": {
+        },
+        "/likes/likes": {
             "get": {
                 "tags": [
                     "Likes"
@@ -551,20 +611,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Likes"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Likes"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Likes"
                 ]
             }
-        }, "/Loan/Loan": {
+        },
+        "/Loan/Loan": {
             "get": {
                 "tags": [
                     "Loan"
@@ -617,20 +681,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Loan"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Loan"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Loan"
                 ]
             }
-        }, "/notifications/notifications": {
+        },
+        "/notifications/notifications": {
             "get": {
                 "tags": [
                     "Notifications"
@@ -683,20 +751,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Notifications"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Notifications"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Notifications"
                 ]
             }
-        }, "/otp/otp": {
+        },
+        "/otp/otp": {
             "get": {
                 "tags": [
                     "Otp"
@@ -749,20 +821,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Otp"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Otp"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Otp"
                 ]
             }
-        }, "/post/post": {
+        },
+        "/post/post": {
             "get": {
                 "tags": [
                     "Post"
@@ -815,20 +891,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Post"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Post"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Post"
                 ]
             }
-        }, "/reserves/reserves": {
+        },
+        "/reserves/reserves": {
             "get": {
                 "tags": [
                     "Reserves"
@@ -881,20 +961,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Reserves"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Reserves"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Reserves"
                 ]
             }
-        }, "/review/reviewSociety": {
+        },
+        "/review/reviewSociety": {
             "get": {
                 "tags": [
                     "Review"
@@ -947,20 +1031,24 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Review"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Review"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Review"
                 ]
             }
-        }, "/topic/topic": {
+        },
+        "/topic/topic": {
             "get": {
                 "tags": [
                     "Review"
@@ -1013,15 +1101,18 @@
                         }
                     }
                 }
-            },  "put": {
+            },
+            "put": {
                 "tags": [
                     "Topic"
                 ]
-            }, "post": {
+            },
+            "post": {
                 "tags": [
                     "Topic"
                 ]
-            }, "delete": {
+            },
+            "delete": {
                 "tags": [
                     "Topic"
                 ]
