@@ -96,7 +96,73 @@
                 }
             }
         },
-        "/user/{idUser}/patch": {
+        "/user/{idUser}/name": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/profile": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/password": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/picture": {
             "patch": {
                 "tags": [
                     "User"
@@ -122,6 +188,58 @@
             "post": {
                 "tags": [
                     "User"
+                ],
+                "summary": "Registrar novo usuário",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nameUser": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "image_profile": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Imagem do usuário"
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/${idUser}/delete": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
                 "summary": "Registrar novo usuário",
                 "requestBody": {
@@ -191,27 +309,73 @@
                         "description": "Erro ao se conectar com o servidor."
                     }
                 }
-            },
-            "put": {
+            }
+        },
+        "/admin/${idUser}/admin": {
+            "get": {
                 "tags": [
                     "Admin"
-                ]
-            },
-            "post": {
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo usuário.",
+                "operationId": "listarLivros",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso ao exibir os Admins."
+                    },
+                    "404": {
+                        "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
+                    },
+                    "401": {
+                        "description": "Token não fornecido. Acesso negado."
+                    },
+                    "500": {
+                        "description": "Erro ao se conectar com o servidor."
+                    }
+                }
+            }
+        },
+        "/admin/${idUser}/Permission": {
+            "patch": {
                 "tags": [
                     "Admin"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Admin"
-                ]
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo usuário.",
+                "operationId": "listarLivros",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso ao exibir os Admins."
+                    },
+                    "404": {
+                        "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
+                    },
+                    "401": {
+                        "description": "Token não fornecido. Acesso negado."
+                    },
+                    "500": {
+                        "description": "Erro ao se conectar com o servidor."
+                    }
+                }
             }
         },
         "/calendar/calendar": {
             "get": {
                 "tags": [
                     "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "calendar",
@@ -261,27 +425,497 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Calendar"
-                ]
-            },
+            }
+        },
+        "/calendar/register": {
             "post": {
                 "tags": [
                     "Calendar"
-                ]
-            },
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/title": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/link": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/description": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/start": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/end": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/attachment": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/delete": {
             "delete": {
                 "tags": [
                     "Calendar"
-                ]
+                ],  "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/cart/cart": {
             "get": {
                 "tags": [
                     "Cart"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
                 "summary": "Cadastrar um novo administrador.",
                 "operationId": "cart",
@@ -331,21 +965,186 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        }, "/cart/{id}/cart": {
+            "patch": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
-            },
+                    "Cart"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, 
+        "/cart/register": {
             "post": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
-            },
-            "delete": {
+                    "Cart"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        
+        "/cart/{id}/action": {
+            "patch": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
+                    "Cart"
+                ], 
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/facilitadores/facilitadores": {
@@ -401,21 +1200,281 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        }, 
+        "/facilitadores/{User_idUser}/grupo/esde": {
+            "get": {
                 "tags": [
                     "Facilitadores"
-                ]
-            },
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/{User_idUser}/grupo/ciede": {
+            "get": {
+                "tags": [
+                    "Facilitadores"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/{User_idUser}/grupo/mediunico": {
+            "get": {
+                "tags": [
+                    "Facilitadores"
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/{User_idUser}/grupo/create": {
             "post": {
                 "tags": [
                     "Facilitadores"
-                ]
-            },
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/{idFacilitador}/delete": {
             "delete": {
                 "tags": [
                     "Facilitadores"
-                ]
+                ],
+                "summary": "Cadastrar um novo administrador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/lectures/lectures": {
