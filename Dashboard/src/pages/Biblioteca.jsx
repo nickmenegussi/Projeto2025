@@ -4,24 +4,23 @@ import {
   RemoveFormatting,
   SquarePen,
   Trash,
-} from "lucide-react"
-import React, { useEffect, useState } from "react"
-import SearchInput from "../components/SearchInput"
-import Modal from "../components/Books/ModalBibliotecaAdd"
-import ModalDeleteItem from "../components/Books/ModalDeleteItem"
-import api from "../services/api"
-import { Navigate, useNavigate } from "react-router"
-import ModalUpdate from "../components/Books/ModalUpdateBiblioteca"
-
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import SearchInput from "../components/SearchInput";
+import Modal from "../components/Books/ModalBibliotecaAdd";
+import ModalDeleteItem from "../components/Books/ModalDeleteItem";
+import api from "../services/api";
+import { Navigate, useNavigate } from "react-router";
+import ModalUpdate from "../components/Books/ModalUpdateBiblioteca";
 
 export default function Biblioteca() {
-  const [book, setBook] = useState([])
-  const navigate = useNavigate()
-  const token = localStorage.getItem("@Auth:token")
+  const [book, setBook] = useState([]);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("@Auth:token");
 
   useEffect(() => {
-    ViewBooks()
-  }, []) 
+    ViewBooks();
+  }, []);
 
   async function ViewBooks() {
     try {
@@ -29,17 +28,20 @@ export default function Biblioteca() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      setBook(response.data.data)
+      });
+      setBook(response.data.data);
     } catch (error) {
       if (error.response) {
-        if (error.response.data.message === "Sessão expirada, por favor, faça login novamente.") {
-          alert(error.response.data.message)
-          localStorage.clear()
-          return navigate("/", { replace: true }) // Redireciona para a página de login
+        if (
+          error.response.data.message ===
+          "Sessão expirada, por favor, faça login novamente."
+        ) {
+          alert(error.response.data.message);
+          localStorage.clear();
+          return navigate("/", { replace: true }); // Redireciona para a página de login
         }
       } else {
-        console.error("Erro na requisição:", error)
+        console.error("Erro na requisição:", error);
       }
     }
   }
@@ -57,7 +59,6 @@ export default function Biblioteca() {
           />
           <SearchInput />
         </div>
-      
       </div>
       <div className="py-7 px-4 overflow-x-auto w-full">
         <table className="w-full rounded-lg overflow-hidden border-gray-800">
@@ -66,9 +67,8 @@ export default function Biblioteca() {
               <th className="px-4 py-3 text-left">ID</th>
               <th className="px-4 py-3 text-left">Nome do Livro</th>
               <th className="px-4 py-3 text-left">Autor</th>
-              <th className="px-4 py-3 text-left">Categoria do Livro</th>
-              <th className="px-4 py-3 text-left">Curiosidade do Livro</th>
-              <th className="px-4 py-3 text-left">Quantidade de Livros</th>
+              <th className="px-4 py-3 text-left">Categoria da Obra</th>
+              <th className="px-4 py-3 text-left">Categoria do livro</th>
               <th className="px-4 py-3 text-left">Quantidade de Livros</th>
               <th className="px-4 py-3 text-left">Disponibilidade</th>
               <th className="px-4 py-3 text-left">Ações</th>
@@ -82,12 +82,8 @@ export default function Biblioteca() {
                   <td className="px-4 py-3 text-left">{content.nameBook}</td>
                   <td className="px-4 py-3 text-left">{content.author}</td>
                   <td className="px-4 py-3 text-left">{content.tagsBook}</td>
-                  <td className="px-4 py-3 text-left">
-                    {content.overviewBook}
-                  </td>
-                  <td className="px-4 py-3 text-left">
-                    {content.curiosityBook}
-                  </td>
+                  <td className="px-4 py-3 text-left">{content.bookCategory}</td>
+
                   <td className="px-4 py-3 text-left">
                     {content.bookQuantity}
                   </td>
@@ -145,5 +141,5 @@ export default function Biblioteca() {
         </table>
       </div>
     </div>
-  )
+  );
 }

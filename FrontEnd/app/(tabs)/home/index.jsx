@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -34,6 +34,7 @@ import FAQ from "../../../components/FAQ";
 import DropDownPicker from "react-native-dropdown-picker";
 import Button from "../../../components/Button";
 import LoadingScreen from "../../../components/AcitivityIndicator";
+import { AuthContext } from "../../../context/auth";
 
 const Home = () => {
   const objetivos = [
@@ -440,7 +441,7 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
-                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
+                    <Button title={"Ver mais"} handlePress={() => router.push('/home/ReviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -487,6 +488,7 @@ const Home = () => {
           )}
           ListHeaderComponent={() => (
             <View contentContainerStyle={styles.Container}>
+
               <View style={styles.containerIcons}>
                 <ButtonIcons
                   color={"white"}

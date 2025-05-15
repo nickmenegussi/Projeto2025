@@ -8,7 +8,7 @@ import {
   Alert,
   Image,
 } from "react-native"
-import { AirbnbRating } from "react-native-ratings"
+import { AirbnbRating, Rating } from "react-native-ratings"
 import React, { use, useEffect, useState } from "react"
 import { ArrowLeftIcon } from "lucide-react-native"
 import CustomNavagation from "../../../components/CustomNavagation"
@@ -76,6 +76,24 @@ export default function ReviewSociety() {
             othersStyles={styles.buttonContainer}
             IconStyle={styles.ReviewButton}
           />
+          <Rating
+              type="custom"
+              atingColor="#FFD700" // cor das estrelas preenchidas
+              ratingBackgroundColor="#d4d4d4" // cor do fundo das estrelas
+              tintColor="#003B73" // cor de fundo do componente inteiro
+              imageSize={30}
+              readonly={false}
+              startingValue={0}
+              count={5}
+              defaultRating={0}
+              size={30}
+              // onFinishRating={(rating) => {}}
+              showRating={false}
+              style={{right: 100,
+              position: "relative",
+              marginTop: 15,}}
+              
+            />
           {/* <AirbnbRating
             count={5}
             defaultRating={0}

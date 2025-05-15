@@ -15,6 +15,7 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
     tagsBook: "",
     bookQuantity: "",
     status_Available: "",
+    bookCategory: ""
   })
   const token = localStorage.getItem('@Auth:token')
   async function CreateBook(event){
@@ -26,7 +27,7 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
       return navigate('/', { replace: true })
     }
 
-    const { namebook, authorBook , image, overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available } = book; // Pegue os valores diretamente do state
+    const { namebook, authorBook , image, overviewBook, curiosityBook, tagsBook, bookQuantity ,status_Available, bookCategory} = book; // Pegue os valores diretamente do state
 
     try {
       const formData = new FormData()
@@ -41,6 +42,7 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
       formData.append("tagsBook", tagsBook)
       formData.append("bookQuantity", parseInt(bookQuantity))
       formData.append("status_Available", status_Available)
+      formData.append("bookCategory", bookCategory)
 
       const response = await api.post('/library/library/register', formData, {
         
@@ -148,6 +150,23 @@ export default function Modal({titleModal, titleButton ,iconButton, otherStyle }
                       <option selected="">Selecionar categoria</option>
                       <option value={'Obras Básicas'}>Obras Básicas</option>
                       <option value={'Obras complementares'}>Obras complementares</option>
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label
+                      for="Bookcategory"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Categoria de compra
+                    </label>
+                    <select
+                      value={book.bookCategory} onChange={(e) => setBook({...book, bookCategory: e.target.value})}
+                      id="Bookcategory"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    >
+                      <option selected="">Selecionar categoria</option>
+                      <option value={'reserva'}>Reserva</option>
+                      <option value={'empréstimo'}>Empréstimo</option>
                     </select>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
