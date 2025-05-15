@@ -56,36 +56,36 @@ export default Trending;
 
 const styles = StyleSheet.create({
   FlatListContainer: {
-    paddingVertical: 10,
-  },
-  ContentFlatList: {
-    color: "white",
-  },
-  CardNavagation: {
-    display: "flex",
-    backgroundColor: "#60A3D9",
-    minWidth: "10%",
-    height: 40,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  TextContent: {
-    color: "white",
-    textAlign: "center",
-    paddingHorizontal: 10,
+    paddingVertical: 12,
   },
   contentNavagations: {
     flexDirection: "column",
-    flex: 1,
-    gap: 10,
+    alignItems: "flex-start",
+    marginRight: 12,
   },
   textTitle: {
-    fontSize: 17,
-    width: 120,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#E0E0E0",
+    marginBottom: 6,
+  },
+  CardNavagation: {
+    backgroundColor: "#60A3D9",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  TextContent: {
     color: "#fff",
-    marginVertical: 10,
+    fontSize: 15,
+    fontWeight: "500",
+    textAlign: "center",
   },
 });

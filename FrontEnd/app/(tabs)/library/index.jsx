@@ -66,7 +66,6 @@ const HomeLibrary = () => {
       <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
       <FlatList
         showsVerticalScrollIndicator={false}
-        
         data={[
           { type: "Acervo para Encomendas", data: data.booksLoans },
           { type: "Acervo para Reservas", data: data.booksReserves },
