@@ -18,7 +18,7 @@ import { AuthContext } from "../../context/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-  const { login, user } = useContext(AuthContext);
+  const { login, user, otpEmail, otpDigits } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navagation = useNavigation();
   const [loginUser, setLogin] = useState({
@@ -26,10 +26,8 @@ export default function App() {
     password: "",
   });
 
-  if(user){
-    router.push('/home')
-  }
 
+  
   async function Login() {
     setLoading(true);
     if (!loading) {
@@ -52,6 +50,7 @@ export default function App() {
         Alert.alert("Erro", "Email ou senha incorretos");
       } else {
         console.log("Erro", error);
+        setUser(null)
         Alert.alert("Erro", "Erro ao realizar login");
       }
     }
