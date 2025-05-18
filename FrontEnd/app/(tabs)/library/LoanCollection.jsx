@@ -34,10 +34,10 @@ const LoanCollection = () => {
             <CustomNavagation
               textStyle={styles.navText}
               itemStyle={styles.navItem}
+              otherStyles={true}
               trendingItems={[
                 { name: "Obras de Apoio" },
                 { name: "Obras Básicas" },
-                { name: "Ano 2023" },
               ]}
             />
           </View>
@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
   },
   navItem: {
     minWidth: 120,
-    height: 32,
     backgroundColor: "#60A3D9",
     borderRadius: 8,
     justifyContent: "center",

@@ -39,7 +39,7 @@ const Lectures = () => {
         <View>
           <View style={styles.ContentContainer}>
             <Text style={styles.TitleHeader}>Palestras da Casa</Text>
-            <CustomNavagation trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
+            <CustomNavagation otherStyles={true } trendingItems={[{name: 'Ano 2025'}, {name: 'Ano 2024'}, {name: 'Ano 2023'}]}/>
 
           </View>
           <View style={styles.line}></View>

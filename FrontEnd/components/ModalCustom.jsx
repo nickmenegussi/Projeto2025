@@ -1,7 +1,43 @@
-import React from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 import { X } from "lucide-react-native"; // Ícone mais moderno
 import Button from "./Button"; // Substituir os Buttons nativos
+
+const OrderItem = ({ item, onQuantityChange }) => (
+  <View style={styles.orderBookItem}>
+    <View style={styles.bookInfo}>
+      <Text style={styles.bookTitle}>{item.nameBook}</Text>
+      <Text style={styles.bookAuthor}>{item.authorBook}</Text>
+    </View>
+
+    <View style={styles.quantityControls}>
+      <TouchableOpacity
+        style={styles.quantityButton}
+        onPress={() => onQuantityChange(item.idLibrary, -1)}
+      >
+        <Text>-</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.quantityText}>{item.bookQuantity}</Text>
+
+      <TouchableOpacity
+        style={styles.quantityButton}
+        onPress={() => onQuantityChange(item.idLibrary, 1)}
+      >
+        <Text>+</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
 
 const CustomModal = ({
   visible,
@@ -11,11 +47,19 @@ const CustomModal = ({
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   formField,
+  item,
   descriptionReview,
   ratingReview,
   onChangeRating,
-  onChangeDescription
+  onChangeDescription,
 }) => {
+  const itemsArray = Array.isArray(item) ? item : [item];
+  const [cartItems, setCartItems] = useState([{
+    User_idUser: itemsArray.idLibrary,
+    Book_idLibrary: null,
+    quantity: itemsArray.bookQuantity,
+  }]);
+
   return (
     <Modal
       animationType="fade"
@@ -51,7 +95,30 @@ const CustomModal = ({
                 </View>
               </View>
             )}
-
+            {itemsArray && itemsArray.length > 0 ? (
+              <FlatList
+                data={itemsArray}
+                renderItem={({ item }) => {
+                  return (
+                    <OrderItem
+                      item={item}
+                      onQuantityChange={(id, quantity) => {
+                        if (quantity < 0) return null;
+                        // usar essa lógica para atualizar valores de um item especifico
+                        setCartItems((prev) =>
+                          prev.map((item) =>
+                            item.idLibrary === id ? { ...cartItems, quantity } : item
+                          )
+                        );
+                      }}
+                    />
+                  );
+                }}
+                keyExtractor={(item) => item.idLibrary}
+              />
+            ) : (
+              <ActivityIndicator size="large" color="black" />
+            )}
             {ratingReview && (
               <View style={styles.ratingContainer}>
                 <Text style={styles.label}>Avaliação</Text>
@@ -71,14 +138,14 @@ const CustomModal = ({
 
           {/* Rodapé */}
           <View style={styles.footer}>
-            <Button 
+            <Button
               title={cancelText}
               variant="outline"
               onPress={onClose}
               style={styles.cancelButton}
               textStyle={styles.cancelText}
             />
-            <Button 
+            <Button
               title={confirmText}
               onPress={onConfirm}
               style={styles.confirmButton}
@@ -94,34 +161,34 @@ const CustomModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
   container: {
-    width: '100%',
-    backgroundColor: '#FFFFFF',
+    width: "100%",
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 5,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: "#F3F4F6",
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: "600",
+    color: "#111827",
     flex: 1,
   },
   closeButton: {
@@ -136,51 +203,207 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: "#374151",
     marginBottom: 8,
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: "#E5E7EB",
     borderRadius: 12,
     padding: 12,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
   },
   input: {
     fontSize: 16,
-    color: '#111827',
+    color: "#111827",
     minHeight: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   ratingContainer: {
     marginTop: 16,
   },
   stars: {
     marginTop: 8,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderTopColor: "#F3F4F6",
     gap: 12,
   },
   cancelButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: "#D1D5DB",
   },
   cancelText: {
-    color: '#374151',
+    color: "#374151",
   },
   confirmButton: {
-    backgroundColor: '#003B73',
+    backgroundColor: "#003B73",
   },
   confirmText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
+  },
+  itemContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#111827",
+  },
+  itemDetails: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  itemQuantity: {
+    color: "#6B7280",
+  },
+  itemPrice: {
+    fontWeight: "600",
+  },
+  orderContainer: {
+    backgroundColor: "#F8FAFC",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+
+  // Título da seção
+  orderTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#1E293B",
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
+  },
+
+  // Item do livro
+  orderBookItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EDF2F7",
+  },
+
+  // Informações do livro
+  bookInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+
+  bookTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#1E293B",
+    marginBottom: 4,
+  },
+
+  bookAuthor: {
+    fontSize: 14,
+    color: "#64748B",
+  },
+
+  // Controles de quantidade
+  quantityControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EDF2F7",
+    borderRadius: 8,
+    padding: 4,
+  },
+
+  quantityButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+
+  quantityText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#1E293B",
+    marginHorizontal: 8,
+  },
+
+  // Resumo do pedido
+  orderSummary: {
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#E2E8F0",
+  },
+
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+
+  summaryLabel: {
+    fontSize: 14,
+    color: "#64748B",
+  },
+
+  summaryValue: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#1E293B",
+  },
+
+  totalRow: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#E2E8F0",
+  },
+
+  totalLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1E293B",
+  },
+
+  totalValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#003B73", // Cor da sua marca
+  },
+
+  // Campo de observações
+  notesContainer: {
+    marginTop: 16,
+  },
+
+  notesLabel: {
+    fontSize: 14,
+    color: "#64748B",
+    marginBottom: 8,
+  },
+
+  notesInput: {
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 8,
+    padding: 12,
+    minHeight: 80,
+    backgroundColor: "#FFFFFF",
+    textAlignVertical: "top",
   },
 });
 

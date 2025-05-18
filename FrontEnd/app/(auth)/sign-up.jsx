@@ -27,6 +27,9 @@ export default function App() {
   });
 
 
+  if(user){
+    router.replace('/home')
+  }
   
   async function Login() {
     setLoading(true);

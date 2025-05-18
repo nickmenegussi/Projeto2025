@@ -29,7 +29,7 @@ import CustomModal from "../../../components/ModalCustom";
 
 const BookLoan = () => {
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false)
+  const [isModalVisible, setModalVisible] = useState(false);
   const params = useLocalSearchParams();
   const booksUnique = params.data ? JSON.parse(params.data) : [];
   const book = booksUnique[0] || {
@@ -204,18 +204,17 @@ const BookLoan = () => {
               handlePress={() => {
                 Alert.alert(
                   "Empréstimo de livro",
-                      "Deseja confirmar o empréstimo?",
-                      [
-                        { text: "Não", style: "cancel" },
-                        {
-                          text: "Sim",
-                          onPress: () => {
-                            setModalVisible(true)
-                            
-                          },
-                        },
-                      ]
-                )
+                  "Deseja confirmar o empréstimo?",
+                  [
+                    { text: "Não", style: "cancel" },
+                    {
+                      text: "Sim",
+                      onPress: () => {
+                        setModalVisible(true);
+                      },
+                    },
+                  ]
+                );
               }}
               opacityNumber={0.5}
               title={"Solicitar empréstimo do Livro"}
@@ -238,13 +237,14 @@ const BookLoan = () => {
           </View>
         </View>
         {isModalVisible && (
-              <CustomModal
-                visible={isModalVisible}
-                onClose={() => setModalVisible(false)}
-                title="Atualizar Avaliação"
-                description="Atualize sua avaliação"
-                confirmText="Atualizar"
-              />
+          <CustomModal
+            item={book}
+            visible={isModalVisible}
+            onClose={() => setModalVisible(false)}
+            title="Sua Encomenda"
+            description="Atualize sua avaliação"
+            confirmText="Encomendar"
+          />
         )}
       </ScrollView>
     </SafeAreaView>
