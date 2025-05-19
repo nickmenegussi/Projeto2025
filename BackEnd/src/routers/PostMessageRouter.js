@@ -12,6 +12,6 @@ router.post('/post/register', authMiddleware, upload.single('image') ,createPost
 router.patch('/post/:idPost/content', authMiddleware, updateContentPost)
 router.patch('/post/:idPost/image', authMiddleware, upload.single('image') , updateImagePost)
 
-router.delete('/post/:idPost/remove', authMiddleware, deletePost)
+router.delete('/post/:idPost/delete', authMiddleware, deletePost)
 
 module.exports = router
