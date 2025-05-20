@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ArrowLeft,
@@ -19,10 +20,11 @@ import {
   BookOpen,
   ArrowLeftIcon,
   MapPin,
+  ShoppingCart,
 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import ButtonIcons from "../../../components/ButtonIcons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Trending from "../../../components/Navagation";
 import Button from "../../../components/Button";
 import CustomModal from "../../../components/ModalCustom";
@@ -43,6 +45,23 @@ const BookLoan = () => {
     status_Available: "",
     bookQuantity: 0,
   };
+  const [itemsCartQuantity, setItemsCartQuantity] = useState(0);
+  
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const cartItems = await AsyncStorage.getItem("@CartLoans");
+        if (cartItems) {
+          const parsedItems = JSON.parse(cartItems);
+          setItemsCartQuantity(parsedItems.length);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar os itens do carrinho:", error);
+      }
+    };
+
+    fetchCartItems();
+  }, [])
 
   const imageUrl = book.image
     ? { uri: `http://192.168.1.17:3001/uploads/${book.image}` }
@@ -89,6 +108,22 @@ const BookLoan = () => {
                     />
                   )}
                 />
+              </View>
+              <View style={styles.actionButton}>
+                <ButtonIcons
+                  color="#ffff"
+                  size={28}
+                  Icon={({ color, size }) => (
+                    <ShoppingCart color={color} size={size} />
+                  )}
+                />
+                {itemsCartQuantity > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>
+                      {itemsCartQuantity}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           </View>
@@ -240,10 +275,26 @@ const BookLoan = () => {
           <CustomModal
             item={book}
             visible={isModalVisible}
-            onClose={() => setModalVisible(false)}
+            onClose={() => {
+              console.log("Modal fechado");
+              setModalVisible(false);
+            }}
             title="Sua Encomenda"
             description="Atualize sua avaliação"
-            confirmText="Encomendar"
+            confirmText="Ir para o carrinho"
+            cartItemLength={itemsCartQuantity}
+            onConfirm={(items) => {
+              if (items.length > 0 && itemsCartQuantity <= items.length) {
+                Alert.alert(
+                  "Sucesso",
+                  "Iremos redirecionar você para o carrinho de encomendas para você conseguir finalizar a sua compra"
+                );
+                AsyncStorage.setItem("@CartLoans", JSON.stringify(items));
+                const encondedData = encodeURIComponent(JSON.stringify(items));
+                router.push(`/library/cartLoan?data=${encondedData}`);
+                setModalVisible(false);
+              }
+            }}
           />
         )}
       </ScrollView>
@@ -437,6 +488,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "600",
+  },
+  cartBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#FF4C4C",
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cartBadgeText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
   },
 });
 

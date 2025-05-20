@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:3001"
+            "url": "https://deploy-back-end-ceo.vercel.app/"
         }
     ],
     "components": {
@@ -96,7 +96,73 @@
                 }
             }
         },
-        "/user/{idUser}/patch": {
+        "/user/{idUser}/name": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/profile": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/password": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Visualizar todos os usuários.",
+                "operationId": "Visualizar usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/picture": {
             "patch": {
                 "tags": [
                     "User"
@@ -122,6 +188,58 @@
             "post": {
                 "tags": [
                     "User"
+                ],
+                "summary": "Registrar novo usuário",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nameUser": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "image_profile": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Imagem do usuário"
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário cadastrado com sucesso"
+                    },
+                    "500": {
+                        "description": "Erro ao cadastrar usuário"
+                    }
+                }
+            }
+        },
+        "/user/{idUser}/delete": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
                 "summary": "Registrar novo usuário",
                 "requestBody": {
@@ -191,21 +309,62 @@
                         "description": "Erro ao se conectar com o servidor."
                     }
                 }
-            },
-            "put": {
+            }
+        },
+        "/admin/{idUser}/admin": {
+            "get": {
                 "tags": [
                     "Admin"
-                ]
-            },
-            "post": {
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo usuário admin.",
+                "operationId": "listarLivros",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso ao exibir os Admins."
+                    },
+                    "404": {
+                        "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
+                    },
+                    "401": {
+                        "description": "Token não fornecido. Acesso negado."
+                    },
+                    "500": {
+                        "description": "Erro ao se conectar com o servidor."
+                    }
+                }
+            }
+        },
+        "/admin/${idUser}/Permission": {
+            "patch": {
                 "tags": [
                     "Admin"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Admin"
-                ]
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar um novo usuário.",
+                "operationId": "listarLivros",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso ao exibir os Admins."
+                    },
+                    "404": {
+                        "description": "Não foi possível encontrar um usuário com a permissão 'Admin'"
+                    },
+                    "401": {
+                        "description": "Token não fornecido. Acesso negado."
+                    },
+                    "500": {
+                        "description": "Erro ao se conectar com o servidor."
+                    }
+                }
             }
         },
         "/calendar/calendar": {
@@ -213,7 +372,12 @@
                 "tags": [
                     "Calendar"
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar todos os eventos de calendário.",
                 "operationId": "calendar",
                 "requestBody": {
                     "required": true,
@@ -261,21 +425,486 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Calendar"
-                ]
-            },
+            }
+        },
+        "/calendar/calendar/register": {
             "post": {
                 "tags": [
                     "Calendar"
-                ]
-            },
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Registrar um novo evento no calendárior.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/calendar/{idCalendarEvents}/title": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o título de um evento.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/calendar/{idCalendarEvents}/link": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o link do evento.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/description": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualiza a descrição do conteudo.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/start": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualiza a data/hora do inicio do evento.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/end": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualiza a data/hora de início.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/attachment": {
+            "patch": {
+                "tags": [
+                    "Calendar"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualiza o link de anexo.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/calendar/{idCalendarEvents}/delete": {
             "delete": {
                 "tags": [
                     "Calendar"
-                ]
+                ],  "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+
+                "summary": "Excluir um evento do calendário.",
+                "operationId": "calendar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/cart/cart": {
@@ -283,7 +912,12 @@
                 "tags": [
                     "Cart"
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar todos os itens no carrinho de compras do usuário..",
                 "operationId": "cart",
                 "requestBody": {
                     "required": true,
@@ -331,29 +965,198 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        }, "/cart/{id}/cart": {
+            "patch": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
-            },
+                    "Cart"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar quantidade de um item específico no carrinho.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, 
+        "/cart/register": {
             "post": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
-            },
-            "delete": {
+                    "Cart"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Adicionar um novo item ao carrinho de compras.",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        
+        "/cart/{id}/action": {
+            "patch": {
                 "tags": [
-                    "Trabalho Voluntário"
-                ]
+                    "Cart"
+                ], 
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Executar uma ação em um item do carrinho (remover/mover para a lista de desejos).",
+                "operationId": "cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/facilitadores/facilitadores": {
             "get": {
                 "tags": [
                     "Facilitadores"
+                ],"security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Lista um facilitador.",
                 "operationId": "Facilitadores",
                 "requestBody": {
                     "required": true,
@@ -401,29 +1204,313 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        }, 
+        "/facilitadores/facilitadores/{User_idUser}/grupo/esde": {
+            "get": {
                 "tags": [
                     "Facilitadores"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar um facilitador com base no id e do grupo Esde.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/facilitadores/{User_idUser}/grupo/ciede": {
+            "get": {
+                "tags": [
+                    "Facilitadores"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar um facilitador com base no id e do grupo Ciede",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/facilitadores/{User_idUser}/grupo/mediunico": {
+            "get": {
+                "tags": [
+                    "Facilitadores"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar um facilitador com base no id e do grupo Mediunico",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/facilitadores/create": {
             "post": {
                 "tags": [
                     "Facilitadores"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar um facilitador.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/facilitadores/facilitadores/{idFacilitador}/delete": {
             "delete": {
                 "tags": [
                     "Facilitadores"
-                ]
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Deletar um facilitador por id.",
+                "operationId": "Facilitadores",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/lectures/lectures": {
             "get": {
                 "tags": [
                     "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Listar todas as palestras cadastradas.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -471,29 +1558,18 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Lectures"
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Lectures"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Lectures"
-                ]
             }
         },
-        "/library/library": {
+        "/lectures/lectures/{idLecture}": {
             "get": {
                 "tags": [
-                    "Library"
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Buscar uma palestra específica pelo seu ID.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -541,29 +1617,496 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Library"
-                ]
-            },
+            }
+        },
+        "/lectures/lectures/create": {
             "post": {
                 "tags": [
-                    "Library"
-                ]
-            },
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Cadastrar uma nova palestra.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/nameLecture": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o nome/título de uma palestra existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/description": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar a descrição/conteúdo de uma palestra existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/dateLecture": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar a data de realização de uma palestra.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/timeLecture": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o horário de uma palestra.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/link_url": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o link de acesso (URL) de uma palestra.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/video_url": {
+            "patch": {
+                "tags": [
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o link do vídeo (URL) de uma palestra gravada.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/lectures/lectures/{idLecture}/delete": {
             "delete": {
                 "tags": [
-                    "Library"
-                ]
+                    "Lectures"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir uma palestra existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/likes/likes": {
             "get": {
                 "tags": [
                     "Likes"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Listar todos os likes.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -611,29 +2154,138 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        
+        },
+        "/likes/likes/{PostId}": {
+            "get": {
                 "tags": [
                     "Likes"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar todos os likes de um post específico.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        
+        },"/likes/likes/create": {
             "post": {
                 "tags": [
                     "Likes"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar um novo like.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        
+        }, 
+        "/likes/likes/{LikesId}/delete": {
             "delete": {
                 "tags": [
                     "Likes"
-                ]
-            }
-        },
-        "/Loan/Loan": {
-            "get": {
-                "tags": [
-                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Excluir um like.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -681,29 +2333,19 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Loan"
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Loan"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Loan"
-                ]
             }
+        
         },
-        "/notifications/notifications": {
+        "/library/library": {
             "get": {
                 "tags": [
-                    "Notifications"
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Listar todos os livros cadastrados na biblioteca.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -751,29 +2393,18 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Notifications"
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Notifications"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Notifications"
-                ]
             }
-        },
-        "/otp/otp": {
+        }, 
+        "/library/library/{idLibrary}": {
             "get": {
                 "tags": [
-                    "Otp"
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Buscar um livro específico pelo seu ID.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -821,29 +2452,18 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Otp"
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Otp"
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Otp"
-                ]
             }
         },
-        "/post/post": {
-            "get": {
+        "/library/library/register": {
+            "post": {
                 "tags": [
-                    "Post"
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Cadastrar um novo livro na biblioteca.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -891,29 +2511,1718 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        },
+        "/library/library/{LibraryId}/nameBook": {
+            "patch": {
                 "tags": [
-                    "Post"
-                ]
-            },
-            "post": {
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o nome/título de um livro existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/library/library/{LibraryId}/authorBook": {
+            "patch": {
                 "tags": [
-                    "Post"
-                ]
-            },
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o autor de um livro existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/library/library/{LibraryId}/tagsBook": {
+            "patch": {
+                "tags": [
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar as tags/categorias de um livro existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/library/library/{LibraryId}/overviewBook": {
+            "patch": {
+                "tags": [
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o resumo/descrição de um livro existente.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/library/library/{LibraryId}/bookQuantity": {
+            "patch": {
+                "tags": [
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar a quantidade disponível de um livro no estoque.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/library/library/{LibraryId}/curiosityBook": {
+            "patch": {
+                "tags": [
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar curiosidades ou informações adicionais sobre um livro.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/library/library/{LibraryId}/status_Available": {
+            "patch": {
+                "tags": [
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar o status de disponibilidade de um livro (disponível/indisponível).",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/library/library/{LibraryId}/delete": {
             "delete": {
                 "tags": [
-                    "Post"
-                ]
+                    "Library"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir biblioteca por ID.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/loan/loan": {
+            "get": {
+                "tags": [
+                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar Empréstimos.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/loan/loan/{Cart_idCart}": {
+            "get": {
+                "tags": [
+                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visualizar Empréstimo Específico.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/loan/loan/register": {
+            "post": {
+                "tags": [
+                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Registrar Novo Empréstimo.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/loan/loan/{Cart_idCart}/returnDate": {
+            "patch": {
+                "tags": [
+                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar Data de Devolução do Empréstimo.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/loan/loan/{LoansId}/{UserId}/delete": {
+            "delete": {
+                "tags": [
+                    "Loan"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir Empréstimo.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, "/notifications/notification/{idNotifications}/status": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visualizar Status da Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }
+        ,
+        "/notifications/notifications/{idNotifications}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visualizar Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }
+        ,"/notifications/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],"security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Listar Notificações.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/notifications/notifications/create": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar Nova Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/notifications/notifications/{idNotifications}/status": {
+            "patch": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar Status da Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/notifications/{idNotifications}/message": {
+            "patch": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar Mensagem da Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, "/notifications/notifications/{idNotifications}/delete": {
+            "delete": {
+                "tags": [
+                    "Notifications"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir Notificação.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/otp/otp/generate": {
+            "post": {
+                "tags": [
+                    "Otp" 
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Gerar OTP (One Time Password).",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, "/otp/otp/verification": {
+            "post": {
+                "tags": [
+                    "Otp"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Verificar OTP (One Time Password).",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, "/otp/otp/view": {
+            "get": {
+                "tags": [
+                    "Otp"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visualizar OTP (One Time Password).",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, "/post/post/": {
+            "get": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visuaizar postagens.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, 
+        "/post/post/{idPost}/user": {
+            "get": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Visualizar Postagem por usuário.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, 
+        "/post/post/register": {
+            "post": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar Nova Postagem.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/post/{idPost}/content": {
+            "patch": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar Conteúdo da Postagem.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/post/{idPost}/image": {
+            "patch": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar Imagem da Postagem.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/post/{idPost}/delete": {
+            "delete": {
+                "tags": [
+                    "Post"  
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir Postagem.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/reserves/reserves": {
             "get": {
                 "tags": [
                     "Reserves"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Listar Reservas.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -961,29 +4270,194 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        },  "/reserves/reserves/user/{userId}/cart/{cartId}": {
+            "get": {
                 "tags": [
                     "Reserves"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Buscar Reserva por Usuário e Carrinho.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/reserves/reserves/register": {
             "post": {
                 "tags": [
                     "Reserves"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar Nova Reserva.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        }, 
+        "/reserves/reserves/{ReservedId}/delete": {
             "delete": {
                 "tags": [
                     "Reserves"
-                ]
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir Reserva.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/review/reviewSociety": {
             "get": {
                 "tags": [
                     "Review"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
+                "summary": "Visualizar todas as avaliações da sociedade.",
                 "operationId": "listarLivros",
                 "requestBody": {
                     "required": true,
@@ -1031,30 +4505,196 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "tags": [
-                    "Review"
-                ]
-            },
+            }
+        },
+        "/review/reviewSociety/create": {
             "post": {
                 "tags": [
                     "Review"
-                ]
-            },
-            "delete": {
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar uma nova avaliação da sociedade.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewSociety/{idReviewSociety}/update": {
+            "put": {
                 "tags": [
                     "Review"
-                ]
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar uma avaliação da sociedade.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/review/reviewSociety/{idReviewSociety}/delete": {
+            "get": {
+                "tags": [
+                    "Review"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Excluir uma avaliação da sociedade.",
+                "operationId": "listarLivros",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         },
         "/topic/topic": {
             "get": {
                 "tags": [
-                    "Review"
+                    "Topic"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
-                "summary": "Cadastrar um novo administrador.",
-                "operationId": "listarLivros",
+                "summary": "Listar todos os tópicos cadastrados.",
+                "operationId": "topicAllView",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1101,21 +4741,355 @@
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        },"/topic/topic/{topicId}": {
+            "get": {
                 "tags": [
                     "Topic"
-                ]
-            },
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Recupera detalhes completos de um tópico específico.",
+                "operationId": "topicView",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },
+        "/topic/topic/create": {
             "post": {
                 "tags": [
                     "Topic"
-                ]
-            },
-            "delete": {
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Criar um novo tópico.",
+                "operationId": "topicCreate",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/topic/topic/{topicId}/title": {
+            "patch": {
                 "tags": [
                     "Topic"
-                ]
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Modifica o título de um tópico existente.",
+                "operationId": "topicTitle",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/topic/topic/{topicId}/description": {
+            "patch": {
+                "tags": [
+                    "Topic"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar descrição de um tópico.",
+                "operationId": "topicDescription",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/topic/topic/{topicId}/image": {
+            "patch": {
+                "tags": [
+                    "Topic"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Atualizar imagem de um tópico.",
+                "operationId": "topicImage",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
+            }
+        },"/topic/topic/{topicId}/delete": {
+            "get": {
+                "tags": [
+                    "Topic"
+                ], "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Remove definitivamente um tópico do sistema.",
+                "operationId": "topicDelete",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "placa": {
+                                        "type": "string"
+                                    },
+                                    "cor": {
+                                        "type": "string"
+                                    },
+                                    "modelo": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "email",
+                                    "placa",
+                                    "cor",
+                                    "modelo"
+                                ]
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Usuário cadastrado com sucesso"
+                        },
+                        "500": {
+                            "description": "Erro ao cadastrar usuário"
+                        }
+                    }
+                }
             }
         }
     }

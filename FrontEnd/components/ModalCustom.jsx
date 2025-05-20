@@ -8,13 +8,17 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import { X } from "lucide-react-native"; // Ícone mais moderno
-import Button from "./Button"; // Substituir os Buttons nativos
+import { X } from "lucide-react-native";
+import Button from "./Button";
 
-const OrderItem = ({ item, onQuantityChange }) => (
+// Componente OrderItem corrigido
+const OrderItem = ({ item, onDecrease, onIncrease, currentQuantity }) => (
   <View style={styles.orderBookItem}>
     <View style={styles.bookInfo}>
+      <Image source={item.image ? {uri: `http://192.168.1.17:3001/uploads/${item.image}`} : null} 
+      style={{height: 180, width: '60%'}}/>
       <Text style={styles.bookTitle}>{item.nameBook}</Text>
       <Text style={styles.bookAuthor}>{item.authorBook}</Text>
     </View>
@@ -22,16 +26,16 @@ const OrderItem = ({ item, onQuantityChange }) => (
     <View style={styles.quantityControls}>
       <TouchableOpacity
         style={styles.quantityButton}
-        onPress={() => onQuantityChange(item.idLibrary, -1)}
+        onPress={onDecrease}
       >
         <Text>-</Text>
       </TouchableOpacity>
 
-      <Text style={styles.quantityText}>{item.bookQuantity}</Text>
+      <Text style={styles.quantityText}>{currentQuantity}</Text>
 
       <TouchableOpacity
         style={styles.quantityButton}
-        onPress={() => onQuantityChange(item.idLibrary, 1)}
+        onPress={onIncrease}
       >
         <Text>+</Text>
       </TouchableOpacity>
@@ -48,17 +52,47 @@ const CustomModal = ({
   cancelText = "Cancelar",
   formField,
   item,
+  cartItemLength,
+  setCartItemLenth,
   descriptionReview,
   ratingReview,
   onChangeRating,
   onChangeDescription,
 }) => {
   const itemsArray = Array.isArray(item) ? item : [item];
-  const [cartItems, setCartItems] = useState([{
-    User_idUser: itemsArray.idLibrary,
-    Book_idLibrary: null,
-    quantity: itemsArray.bookQuantity,
-  }]);
+  
+  // mapeia os itens para de uma lista que já existe com base na verificação acima
+  const [cartItems, setCartItems] = useState(
+    itemsArray.map(book => ({
+      // pegar todos os dados antigos da lista que está sendo iterada
+      ...book,
+      quantity: 1, // Quantidade no carrinho
+    }))
+  );
+
+  // Função para aumentar a quantidade
+  const handleIncrease = (id) => {
+    setCartItems(prevItems => 
+      prevItems.map(item => {
+        if (item.idLibrary === id && item.quantity < item.bookQuantity) {
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      })
+    );
+  };
+
+  // Função para diminuir a quantidade
+  const handleDecrease = (id) => {
+    setCartItems(prevItems => 
+      prevItems.map(item => {
+        if (item.idLibrary === id && item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      })
+    );
+  };
 
   return (
     <Modal
@@ -69,7 +103,6 @@ const CustomModal = ({
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          {/* Cabeçalho */}
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -77,7 +110,6 @@ const CustomModal = ({
             </TouchableOpacity>
           </View>
 
-          {/* Corpo */}
           <View style={styles.body}>
             {formField && (
               <View style={styles.formGroup}>
@@ -95,30 +127,24 @@ const CustomModal = ({
                 </View>
               </View>
             )}
-            {itemsArray && itemsArray.length > 0 ? (
+            
+            {cartItems.length > 0 ? (
               <FlatList
-                data={itemsArray}
-                renderItem={({ item }) => {
-                  return (
-                    <OrderItem
-                      item={item}
-                      onQuantityChange={(id, quantity) => {
-                        if (quantity < 0) return null;
-                        // usar essa lógica para atualizar valores de um item especifico
-                        setCartItems((prev) =>
-                          prev.map((item) =>
-                            item.idLibrary === id ? { ...cartItems, quantity } : item
-                          )
-                        );
-                      }}
-                    />
-                  );
-                }}
-                keyExtractor={(item) => item.idLibrary}
+                data={cartItems}
+                renderItem={({ item }) => (
+                  <OrderItem
+                    item={item}
+                    currentQuantity={item.quantity}
+                    onIncrease={() => handleIncrease(item.idLibrary)}
+                    onDecrease={() => handleDecrease(item.idLibrary)}
+                  />
+                )}
+                keyExtractor={(item) => item.idLibrary.toString()}
               />
             ) : (
               <ActivityIndicator size="large" color="black" />
             )}
+            
             {ratingReview && (
               <View style={styles.ratingContainer}>
                 <Text style={styles.label}>Avaliação</Text>
@@ -136,18 +162,18 @@ const CustomModal = ({
             )}
           </View>
 
-          {/* Rodapé */}
           <View style={styles.footer}>
             <Button
               title={cancelText}
               variant="outline"
-              onPress={onClose}
+              handlePress={onClose}
               style={styles.cancelButton}
               textStyle={styles.cancelText}
             />
             <Button
               title={confirmText}
-              onPress={onConfirm}
+              handlePress={() => onConfirm(cartItems)
+              } // Passa os itens com as quantidades atualizadas
               style={styles.confirmButton}
               textStyle={styles.confirmText}
             />
@@ -157,7 +183,6 @@ const CustomModal = ({
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -296,10 +321,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EDF2F7",
   },
 
   // Informações do livro
