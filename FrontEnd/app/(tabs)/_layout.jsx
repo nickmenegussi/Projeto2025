@@ -11,7 +11,6 @@ const TabsLayout = () => {
         backgroundColor: '#ffff',
         borderTopWidth: 0,
         borderTopColor: '#ffff',
-        height: 80,
         alignItems: 'center',
         justifyContent: 'center',
       }, tabBarLabelStyle: {

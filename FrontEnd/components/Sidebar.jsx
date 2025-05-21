@@ -83,7 +83,7 @@ export default  React.memo(function SideBar({ isOpen, setIsOpen }) {
 const styles = StyleSheet.create({
   sidebar: {
     position: 'absolute',
-    top: 0,
+    top: 40,
     left: 0,
     height: '110%',
     width: 250,

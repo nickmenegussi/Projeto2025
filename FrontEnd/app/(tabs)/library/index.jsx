@@ -4,7 +4,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
-  SafeAreaView,
+  
 } from "react-native";
 import React, { use, useEffect, useRef, useState } from "react";
 import Trending from "../../../components/Navagation";
@@ -16,6 +16,7 @@ import api from "../../../services/api";
 import CardCustom from "../../../components/CardCustom";
 import QuoteCard from "../../../components/MotivationalCard";
 import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeLibrary = () => {
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
