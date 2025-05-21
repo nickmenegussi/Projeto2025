@@ -19,7 +19,7 @@ router.get('/notifications', authMiddleware, verifyPermission(['SuperAdmin', 'ad
 
 router.post('/notifications/create', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), createNotification)
 
-router.patch('/notifications/:idNotifications/status', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateNotificationStatusofRead)
+router.patch('/notification/:idNotifications/status', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), updateNotificationStatusofRead)
 router.patch('/notifications/:idNotifications/message', authMiddleware,verifyPermission(['SuperAdmin', 'admin']),  updateNotificationMessage)
 
 router.delete('/notifications/:idNotifications/delete', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), deleteNotification)

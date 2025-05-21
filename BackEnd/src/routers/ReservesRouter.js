@@ -8,6 +8,6 @@ router.get('/reserves/user/:userId/cart/:cartId', authMiddleware, viewReservesBy
 
 router.post('/reserves/register', authMiddleware, createReserves)
 
-router.delete('/reserves/:id/delete', authMiddleware, deleteReserve)
+router.delete('/reserves/:ReserveId/delete', authMiddleware, deleteReserve)
 
 module.exports = router
