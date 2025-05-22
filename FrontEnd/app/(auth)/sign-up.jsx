@@ -26,10 +26,13 @@ export default function App() {
     password: "",
   });
 
-
-  if(user){
+  
+  useEffect(() => {
+    if(user){
     router.replace('/home')
   }
+  }
+  ,[user]);
   
   async function Login() {
     setLoading(true);

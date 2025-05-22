@@ -163,8 +163,10 @@ export default React.memo(HomeLibrary);
 
 const styles = StyleSheet.create({
   safeAreaView: {
-    flexGrow: 1,
+    flex: 1,
     padding: 10,
+        paddingBottom: 100,
+
     paddingVertical: 20,
     backgroundColor: "#003B73",
   },

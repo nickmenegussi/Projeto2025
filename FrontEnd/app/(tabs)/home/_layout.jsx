@@ -20,7 +20,7 @@ const RootLayout = () => {
           name="targetPublicLectures"
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="ReviewSociety" options={{ headerShown: false }} />
+        <Stack.Screen name="reviewSociety" options={{ headerShown: false }} />
         <Stack.Screen name="volunteerWork" options={{ headerShown: false }} />
         <Stack.Screen name="faq" options={{ headerShown: false }} />
       </Stack>

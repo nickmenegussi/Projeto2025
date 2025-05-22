@@ -441,7 +441,7 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
-                    <Button title={"Ver mais"} handlePress={() => router.push('/home/ReviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
+                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -548,8 +548,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   safeAreaView: {
-    flexGrow: 1,
+    flex: 1,
     padding: 10,
+    paddingBottom: 100,
     paddingVertical: 20,
     backgroundColor: "#003B73",
   },

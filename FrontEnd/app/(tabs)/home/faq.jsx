@@ -15,7 +15,7 @@ import { router } from "expo-router";
 const FAQ = () => {
   return (
     <ScrollView style={styles.container}>
-      <View>
+      <View style={{paddingBottom: 150 }}>
         <ImageBackground
           imageStyle={styles.imageStyle}
           style={styles.background}
@@ -41,7 +41,7 @@ const FAQ = () => {
               trendingItems={[
                 { name: "Objetivo #1" },
                 { name: "Objetivo #2" },
-                { name: "Avaliar Casa", path: "/home/ReviewSociety" },
+                { name: "Avaliar Casa", path: "/home/reviewSociety" },
               ]}
               otherStyles={true}
               normalPress={true}
@@ -76,7 +76,8 @@ export default FAQ;
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
+    paddingBottom: 405,
     backgroundColor: "#003B73",
   },
   ButtonIcon: {
