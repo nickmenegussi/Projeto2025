@@ -16,6 +16,8 @@ import CustomNavagation from "../../../components/CustomNavagation";
 import Trending from "../../../components/Navagation";
 import ButtonIcons from "../../../components/ButtonIcons";
 
+
+
 const aboutBook = () => {
   const [rating, setRating] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -259,7 +261,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     marginTop: -30,
     padding: 25,
-    paddingBottom: 50,
+    paddingBottom: '50%',
   },
   sectionTitle: {
     fontSize: 22,
