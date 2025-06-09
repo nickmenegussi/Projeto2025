@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { use, useEffect, useRef, useState } from "react";
 import Trending from "../../../components/Navagation";
-import { Bell, CircleUserRoundIcon, MenuIcon } from "lucide-react-native";
+import { Bell, CircleUserRoundIcon, MenuIcon, ShoppingCart } from "lucide-react-native";
 import ButtonIcons from "../../../components/ButtonIcons";
 import SideBar from "../../../components/Sidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -113,6 +113,14 @@ const HomeLibrary = () => {
                   size={30}
                   Icon={({ color, size }) => (
                     <CircleUserRoundIcon color={color} size={size} />
+                  )}
+                />
+                <ButtonIcons
+                  handleChange={() => router.push("/library/CartLoan")}
+                  color="#ffff"
+                  size={28}
+                  Icon={({ color, size }) => (
+                    <ShoppingCart color={color} size={size} />
                   )}
                 />
               </View>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
@@ -8,23 +8,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link, router, useNavigation } from "expo-router";
-import FormField from "../../components/FormField";
-import Button from "../../components/Button";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { AuthContext } from "../../context/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+} from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { Link, router, useNavigation } from "expo-router"
+import FormField from "../../components/FormField"
+import Button from "../../components/Button"
+import Icon from "react-native-vector-icons/FontAwesome"
+import { AuthContext } from "../../context/auth"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function App() {
-  const { login, user, otpEmail, otpDigits } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const navagation = useNavigation();
+  const { login, user, otpEmail, otpDigits } = useContext(AuthContext)
+  const [loading, setLoading] = useState(false)
+  const navagation = useNavigation()
   const [loginUser, setLogin] = useState({
     email: "",
     password: "",
-  });
+  })
 
   
   useEffect(() => {
@@ -32,32 +32,32 @@ export default function App() {
     router.replace('/home')
   }
   }
-  ,[user]);
+  ,[user])
   
   async function Login() {
-    setLoading(true);
+    setLoading(true)
     if (!loading) {
-      Alert.alert("Carregando", "Aguarde um momento...");
+      Alert.alert("Carregando", "Aguarde um momento...")
     }
     try {
-      await login(loginUser.email, loginUser.password);
-      Alert.alert("Sucesso!", "Login realizado com sucesso!");
-      router.push("/emailOtp");
-      setLoading(false);
+      await login(loginUser.email, loginUser.password)
+      Alert.alert("Sucesso!", "Login realizado com sucesso!")
+      router.push("/emailOtp")
+      setLoading(false)
     } catch (error) {
-      setLoading(false);
+      setLoading(false)
       if (
         error.response &&
         error.response.data &&
         error.response.data.message
       ) {
-        console.log("Erro", error.response.data.message);
-        await AsyncStorage.clear();
-        Alert.alert("Erro", "Email ou senha incorretos");
+        console.log("Erro", error.response.data.message)
+        await AsyncStorage.clear()
+        Alert.alert("Erro", "Email ou senha incorretos")
       } else {
-        console.log("Erro", error);
+        console.log("Erro", error)
         setUser(null)
-        Alert.alert("Erro", "Erro ao realizar login");
+        Alert.alert("Erro", "Erro ao realizar login")
       }
     }
   }
@@ -124,7 +124,7 @@ export default function App() {
         </View>
       </ScrollView>
     </LinearGradient>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -195,4 +195,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // Mesmo padding do botão
     marginTop: 10,
   },
-});
+})
