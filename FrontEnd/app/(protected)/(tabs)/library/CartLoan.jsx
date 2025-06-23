@@ -80,11 +80,18 @@ export default function CartLoan() {
       </View>
 
       {/* Status Bar */}
-      <View style={styles.statusBar}>
-        <Button title={"Adicionar"} />
-        <Button title={"Adicionar"} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() => router.push(``)}
+          activeOpacity={0.7}
+          style={[styles.button, styles.buttonActive]}
+        >
+          <Text style={styles.linkText}>Aguardando confirmação</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push(``)} style={styles.button}>
+          <Text style={{ color: "#7D7D91" }}>Histórico de Reservas</Text>
+        </TouchableOpacity>
       </View>
-
       {/* Lista de Itens */}
       <FlatList
         data={cartItems}
@@ -168,9 +175,20 @@ export default function CartLoan() {
                 </TouchableOpacity>
               ))}
             </View>
-            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/library/MessageLoanConfirmed')}>
-              <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1, gap: 15, marginTop: 15, marginBottom: 70 }}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => router.push("/library/MessageLoanConfirmed")}
+              >
+                <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => router.back("/library/bookLoan")}
+              >
+                <Text style={styles.actionButtonText}>Adicionar mais itens</Text>
+              </TouchableOpacity>
+            </View>
           </>
         }
       />
@@ -200,13 +218,12 @@ const styles = StyleSheet.create({
   },
   statusBar: {
     flexDirection: "row",
-    justifyContent: "space-between",
     gap: 10,
-    padding: 12,
-    margin: 16,
+    padding: 5,
+    margin: 15,
     borderRadius: 8,
     borderWidth: 1,
-    color: 'white',
+    color: "white",
     borderColor: "rgba(255,255,255,0.2)",
   },
   statusItem: {
@@ -360,9 +377,7 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
-    padding: 16,
-    margin: 16,
-    marginBottom: 70,
+    padding: 15,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -384,5 +399,35 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: "#FFFFFF",
+  },
+  buttonStyle: {
+    borderRadius: 15,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    width: "92%",
+    padding: 4,
+    marginHorizontal: "auto",
+    marginVertical: 12,
+    borderWidth: 1,
+    backgroundColor: "#003B73",
+    borderColor: "white",
+    borderRadius: 30,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonActive: {
+    backgroundColor: "#60A3D9",
+  },
+  linkText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "500",
+    fontSize: 13,
   },
 });
