@@ -76,7 +76,6 @@ export default function CartLoan() {
           )}
         />
         <Text style={styles.headerTitle}>Carrinho de Empréstimos</Text>
-        <View style={{ width: 24 }} /> {/* Spacer para alinhamento */}
       </View>
 
       {/* Status Bar */}
@@ -88,7 +87,7 @@ export default function CartLoan() {
         >
           <Text style={styles.linkText}>Aguardando confirmação</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push(``)} style={styles.button}>
+        <TouchableOpacity onPress={() => router.push(`library/historicalLoans`)} style={styles.button}>
           <Text style={{ color: "#7D7D91" }}>Histórico de Reservas</Text>
         </TouchableOpacity>
       </View>
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 50,
     padding: 20,
     paddingTop: 50,
     backgroundColor: "#003B73",
@@ -405,7 +404,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    width: "92%",
+    width: "95%",
     padding: 4,
     marginHorizontal: "auto",
     marginVertical: 12,
