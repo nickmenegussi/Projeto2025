@@ -87,7 +87,10 @@ export default function CartLoan() {
         >
           <Text style={styles.linkText}>Aguardando confirmação</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push(`library/historicalLoans`)} style={styles.button}>
+        <TouchableOpacity
+          onPress={() => router.push(`library/historicalLoans`)}
+          style={styles.button}
+        >
           <Text style={{ color: "#7D7D91" }}>Histórico de Reservas</Text>
         </TouchableOpacity>
       </View>
@@ -113,6 +116,10 @@ export default function CartLoan() {
               <View style={styles.cardInfo}>
                 <Text style={styles.bookTitle}>{item.nameBook}</Text>
                 <Text style={styles.bookAuthor}>{item.authorBook}</Text>
+                <Text style={styles.libraryName}>
+                  Quantidade items: {item.quantity}
+                </Text>
+
                 <Text style={styles.libraryName}>
                   Biblioteca Gabriel Delanne
                 </Text>
@@ -185,7 +192,9 @@ export default function CartLoan() {
                 style={styles.actionButton}
                 onPress={() => router.back("/library/bookLoan")}
               >
-                <Text style={styles.actionButtonText}>Adicionar mais itens</Text>
+                <Text style={styles.actionButtonText}>
+                  Adicionar mais itens
+                </Text>
               </TouchableOpacity>
             </View>
           </>

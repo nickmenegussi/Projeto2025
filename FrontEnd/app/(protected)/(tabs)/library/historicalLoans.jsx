@@ -28,33 +28,37 @@ const HistoricalLoans = () => {
       contentContainerStyle={styles.ContainerFlatlist}
       data={data}
       renderItem={({ item }) => (
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Image
-              source={{
-                uri: item.image
-                  ? `http://192.168.1.17:3001/uploads/${item.image}`
-                  : null,
-              }}
-              style={styles.image}
-            />
-            <View style={styles.cardInfo}>
-              <Text style={styles.bookTitle}>{item.nomeLivro}</Text>
-              <Text style={styles.bookAuthor}>{item.nomeLivro}</Text>
-              <Text style={styles.libraryName}>Biblioteca Gabriel Delanne</Text>
-              {item.status === "Emprestado" ? (
-                <TouchableOpacity style={styles.ButtonStatus}>
-                  <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                    Livro Emprestado
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity style={styles.ButtonStatusUnConfirmed}>
-                  <Text style={{ color: "yellow", fontWeight: "bold" }}>
-                    Aguardando Confirmação
-                  </Text>
-                </TouchableOpacity>
-              )}
+        <View styles={styles.ContainerRenderItem}>
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Image
+                source={{
+                  uri: item.image
+                    ? `http://192.168.1.17:3001/uploads/${item.image}`
+                    : null,
+                }}
+                style={styles.image}
+              />
+              <View style={styles.cardInfo}>
+                <Text style={styles.bookTitle}>{item.nomeLivro}</Text>
+                <Text style={styles.bookAuthor}>{item.nomeLivro}</Text>
+                <Text style={styles.libraryName}>
+                  Biblioteca Gabriel Delanne
+                </Text>
+                {item.status === "Emprestado" ? (
+                  <TouchableOpacity style={styles.ButtonStatus}>
+                    <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                      Livro Emprestado
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity style={styles.ButtonStatusUnConfirmed}>
+                    <Text style={{ color: "yellow", fontWeight: "bold" }}>
+                      Aguardando Confirmação
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           </View>
         </View>
@@ -100,8 +104,8 @@ export default HistoricalLoans;
 const styles = StyleSheet.create({
   ContainerFlatlist: {
     flex: 1,
-    backgroundColor: "#003B73",
     padding: 10,
+    backgroundColor: "#003B73",
   },
   ContainerHeader: {
     flexDirection: "column",
@@ -198,7 +202,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 50,
+    gap: 40,
     padding: 20,
     paddingTop: 50,
     backgroundColor: "#003B73",
@@ -209,6 +213,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
-    
   },
 });
