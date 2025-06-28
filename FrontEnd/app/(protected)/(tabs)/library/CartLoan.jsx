@@ -13,10 +13,10 @@ import ButtonIcons from "../../../../components/ButtonIcons";
 import { ArrowLeftIcon, Plus, CheckCircle, Clock } from "lucide-react-native";
 import { router } from "expo-router";
 import Button from "../../../../components/Button";
+import useCart from "../../../../hooks/useCart";
 
 export default function CartLoan() {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {data, loading} = useCart()
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   const schedules = [
@@ -27,26 +27,7 @@ export default function CartLoan() {
     { id: 5, dia: "Sexta-feira", horario: "10:00 - 12:00", disponivel: true },
   ];
 
-  const loadCart = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("@CartLoans");
-      if (jsonValue) {
-        setCartItems(JSON.parse(jsonValue));
-      } else {
-        setCartItems([]);
-      }
-    } catch (e) {
-      console.error("Erro ao carregar carrinho:", e);
-      setCartItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadCart();
-  }, []);
-
+  console.log(data)
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -55,7 +36,7 @@ export default function CartLoan() {
     );
   }
 
-  if (cartItems.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <View style={styles.centered}>
         <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
@@ -96,7 +77,7 @@ export default function CartLoan() {
       </View>
       {/* Lista de Itens */}
       <FlatList
-        data={cartItems}
+        data={data}
         keyExtractor={(item, index) =>
           item.idLibrary?.toString() || index.toString()
         }

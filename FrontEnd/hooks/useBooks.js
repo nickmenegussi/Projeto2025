@@ -11,7 +11,14 @@ export default function useBooks() {
       setLoading(true)
       try {
         const data = await getBooks()
-        setBooks(data)
+        const allBooks = data;
+        const booksLoans = allBooks.filter(
+          (books) => books.bookCategory === "empréstimo"
+        );
+        const booksReserves = allBooks.filter(
+          (books) => books.bookCategory === "reserva"
+        )
+      setBooks({ booksLoans: booksLoans, booksReserves: booksReserves });
       } catch (error) {
         console.error("Erro ao carregar livros", error)
       } finally {

@@ -7,9 +7,9 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
-} from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { LinearGradient } from "expo-linear-gradient"
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   ArrowLeft,
   Bookmark,
@@ -21,19 +21,20 @@ import {
   ArrowLeftIcon,
   MapPin,
   ShoppingCart,
-} from "lucide-react-native"
-import { router, useLocalSearchParams } from "expo-router"
-import ButtonIcons from "../../../../components/ButtonIcons"
-import React, { useEffect, useState } from "react"
-import Trending from "../../../../components/Navagation"
-import Button from "../../../../components/Button"
-import CustomModal from "../../../../components/ModalCustom"
+} from "lucide-react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import ButtonIcons from "../../../../components/ButtonIcons";
+import React, { useEffect, useState } from "react";
+import Trending from "../../../../components/Navagation";
+import Button from "../../../../components/Button";
+import CustomModal from "../../../../components/ModalCustom";
+import { addToCart, getCart } from "../../../../services/cartService";
 
 const BookLoan = () => {
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [isModalVisible, setModalVisible] = useState(false)
-  const params = useLocalSearchParams()
-  const booksUnique = params.data ? JSON.parse(params.data) : []
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const params = useLocalSearchParams();
+  const booksUnique = params.data ? JSON.parse(params.data) : [];
   const book = booksUnique[0] || {
     nameBook: "Título não disponível",
     authorBook: "Autor desconhecido",
@@ -44,54 +45,58 @@ const BookLoan = () => {
     bookCategory: "",
     status_Available: "",
     bookQuantity: 0,
-  }
-  const [itemsCartQuantity, setItemsCartQuantity] = useState(0)
+  };
+  const [itemsCartQuantity, setItemsCartQuantity] = useState(0);
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const cartItems = await AsyncStorage.getItem("@CartLoans")
+        const cartItems = await AsyncStorage.getItem("@CartLoans");
         if (cartItems) {
-          const parsedItems = JSON.parse(cartItems)
-          setItemsCartQuantity(parsedItems.length)
+          const parsedItems = JSON.parse(cartItems);
+          setItemsCartQuantity(parsedItems.length);
         }
       } catch (error) {
-        console.error("Erro ao carregar os itens do carrinho:", error)
+        console.error("Erro ao carregar os itens do carrinho:", error);
       }
-    }
+    };
 
-    fetchCartItems()
-  }, [])
+    fetchCartItems();
+  }, []);
 
   async function handleAddToCart(newItems) {
     try {
-      const cartItem = JSON.parse(await AsyncStorage.getItem("@CartLoans") || '[]')
-      // primeiro eu vou iterar no array de novos itens e depois no array de itens do carrinho
-      const hasDuplicate = cartItem.some(itemCart => itemCart.idLibrary === newItems[0].idLibrary)
+      // Busca o carrinho do backend
+      const cartItems = await getCart();
+      const hasDuplicate = cartItems.some(
+        (itemCart) => itemCart.Book_idLibrary === newItems[0].idLibrary
+      );
 
       if (hasDuplicate) {
         Alert.alert(
           "Erro",
           "Esse livro já está no carrinho. Iremos redirecioná-lo para o carrinho"
-        ) 
-        router.push("/library/CartLoan")
+        );
+        router.push("/library/CartLoan");
       } else {
-        // adiciona o novo item ao carrinho
-        const updatedItems = [...cartItem, ... newItems]
-        await AsyncStorage.setItem("@CartLoans", JSON.stringify(updatedItems))
-        setItemsCartQuantity((prev) => prev + 1)
-        Alert.alert("Sucesso", "Livro adicionado ao carrinho")
-        router.push("/library/CartLoan")
+        // Adiciona o novo item ao carrinho no backend
+        await addToCart({
+          bookId: newItems[0].idLibrary,
+          action: "emprestar", // ou "reservar", conforme o caso
+        });
+        setItemsCartQuantity(cartItems.length + 1);
+        Alert.alert("Sucesso", "Livro adicionado ao carrinho");
+        router.push("/library/CartLoan");
       }
     } catch (error) {
-      console.error("Erro ao adicionar livro ao carrinho:", error)
-      Alert.alert("Erro", "Não foi possível adicionar o livro ao carrinho")
+      console.error("Erro ao adicionar livro ao carrinho:", error);
+      Alert.alert("Erro", "Não foi possível adicionar o livro ao carrinho");
     }
   }
 
   const imageUrl = book.image
     ? { uri: `http://192.168.1.17:3001/uploads/${book.image}` }
-    : null
+    : null;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -272,11 +277,11 @@ const BookLoan = () => {
                     {
                       text: "Sim",
                       onPress: () => {
-                        setModalVisible(true)
+                        setModalVisible(true);
                       },
                     },
                   ]
-                )
+                );
               }}
               opacityNumber={0.5}
               title={"Solicitar empréstimo do Livro"}
@@ -303,8 +308,8 @@ const BookLoan = () => {
             item={book}
             visible={isModalVisible}
             onClose={() => {
-              console.log("Modal fechado")
-              setModalVisible(false)
+              console.log("Modal fechado");
+              setModalVisible(false);
             }}
             title="Sua Encomenda"
             description="Atualize sua avaliação"
@@ -315,8 +320,8 @@ const BookLoan = () => {
         )}
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -522,6 +527,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "bold",
   },
-})
+});
 
-export default React.memo(BookLoan)
+export default React.memo(BookLoan);

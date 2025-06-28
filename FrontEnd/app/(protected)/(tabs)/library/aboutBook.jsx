@@ -15,8 +15,6 @@ import { Rating } from "react-native-ratings";
 import Trending from "../../../../components/Navagation";
 import ButtonIcons from "../../../../components/ButtonIcons";
 
-
-
 const aboutBook = () => {
   const [rating, setRating] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -45,7 +43,6 @@ const aboutBook = () => {
         showsVerticalScrollIndicator={false}
         style={styles.container}
       >
-        {/* Imagem de fundo com gradiente */}
         <ImageBackground
           source={imageUrl}
           style={styles.coverImage}
@@ -56,7 +53,6 @@ const aboutBook = () => {
             style={styles.gradient}
           />
           
-          {/* Cabeçalho */}
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.backButton}
