@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   ActivityIndicator,
   TouchableOpacity,
   Image,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SwipeListView } from "react-native-swipe-list-view";
 import ButtonIcons from "../../../../components/ButtonIcons";
-import { ArrowLeftIcon, Plus, CheckCircle, Clock } from "lucide-react-native";
-import { router } from "expo-router";
-import Button from "../../../../components/Button";
+import { ArrowLeftIcon, Trash2, Edit3 } from "lucide-react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import useCart from "../../../../hooks/useCart";
+import { useState } from "react";
 
 export default function CartLoan() {
-  const {data, loading} = useCart()
+  const { data, loading } = useCart();
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-
+  const params = useLocalSearchParams();
   const schedules = [
     { id: 1, dia: "Segunda-feira", horario: "10:00 - 12:00", disponivel: true },
     { id: 2, dia: "Terça-feira", horario: "14:00 - 16:00", disponivel: true },
@@ -27,7 +25,6 @@ export default function CartLoan() {
     { id: 5, dia: "Sexta-feira", horario: "10:00 - 12:00", disponivel: true },
   ];
 
-  console.log(data)
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -75,21 +72,26 @@ export default function CartLoan() {
           <Text style={{ color: "#7D7D91" }}>Histórico de Reservas</Text>
         </TouchableOpacity>
       </View>
-      {/* Lista de Itens */}
-      <FlatList
+
+      {/* Lista com Swipe */}
+      <SwipeListView
         data={data}
         keyExtractor={(item, index) =>
           item.idLibrary?.toString() || index.toString()
         }
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        rightOpenValue={-150}
+        previewRowKey={"0"}
+        previewOpenValue={-40} // semi-exposto
+        previewOpenDelay={3000}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.17:3001/uploads/${item.image}`
+                    ? `http://192.168.1.21:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -100,7 +102,6 @@ export default function CartLoan() {
                 <Text style={styles.libraryName}>
                   Quantidade items: {item.quantity}
                 </Text>
-
                 <Text style={styles.libraryName}>
                   Biblioteca Gabriel Delanne
                 </Text>
@@ -126,6 +127,31 @@ export default function CartLoan() {
                 </Text>
               </View>
             </View>
+          </View>
+        )}
+        renderHiddenItem={({ item }) => (
+          <View style={styles.rowBack}>
+            {/* Esquerda: Editar */}
+            <TouchableOpacity
+              style={styles.backLeftBtn}
+              onPress={() => console.log("Editar", item.idLibrary)}
+            >
+              <Edit3 color="#fff" size={20} />
+              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
+                Editar
+              </Text>
+            </TouchableOpacity>
+
+            {/* Direita: Remover */}
+            <TouchableOpacity
+              style={styles.backRightBtn}
+              onPress={() => console.log("Remover", item.idLibrary)}
+            >
+              <Trash2 color="#fff" size={20} />
+              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
+                Remover
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
         ListFooterComponent={
@@ -418,5 +444,31 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "500",
     fontSize: 13,
+  },
+  rowBack: {
+    alignItems: "center",
+    backgroundColor: "#DDD",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+
+  backLeftBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#007AFF", // azul para Editar
+    width: 75,
+    height: "100%",
+  },
+
+  backRightBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF3B30", // vermelho para Remover
+    width: 75,
+    height: "100%",
   },
 });

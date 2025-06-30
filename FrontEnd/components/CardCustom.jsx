@@ -34,7 +34,7 @@ export default function CardCustom({
         books.map((item) => (
           <View style={styles.card} key={item.idLibrary}>
             <ImageBackground
-              source={{ uri: `http://192.168.1.17:3001/uploads/${item.image}` }}
+              source={{ uri: `http://192.168.1.21:3001/uploads/${item.image}` }}
               style={styles.image}
               resizeMode="cover"
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}

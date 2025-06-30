@@ -9,11 +9,10 @@ import {
 } from "react-native";
 
 const dadosIniciais = [
-  { id: "1", nome: "Futebol" },
-  { id: "2", nome: "Basquete" },
-  { id: "3", nome: "Tênis" },
-  { id: "4", nome: "Natação" },
-  { id: "5", nome: "Ciclismo" },
+  { id: "1", nome: "Obras Complementares" },
+  { id: "2", nome: "Obras básicas" },
+  { id: "3", nome: "Romance" },
+  { id: "4", nome: "Saúde" },
 ];
 
 export default function Explorar() {
@@ -26,21 +25,36 @@ export default function Explorar() {
     const dataFiltered = dadosIniciais.filter((item) =>
       item.nome.toLowerCase().includes(text.toLowerCase())
     );
-    setDados(dataFiltered);
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => alert(`Selecionou: ${item.nome}`)}
-    >
-      <Text style={styles.nome}>{item.nome}</Text>
-    </TouchableOpacity>
-  );
+    setDados(dataFiltered)
+  }
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <View style={styles.containerHeader}>
+        <Text style={styles.TextContainer}>Explore</Text>
+        <TextInput
+          placeholder="Buscar..."
+          value={busca}
+          onChangeText={handleFiltreData}
+          style={styles.inputBusca}
+        />
+        <View>
+          <Text style={styles.titlerRenderItem}>Tópicos</Text>
+        </View>
+      </View>
+      <View style={styles.ContainerRenderItem}>
+        {dados.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() => alert(`Selecionou: ${item.nome}`)}
+          >
+            <Text style={styles.nome}>{item.nome}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* <FlatList
         data={dados}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
@@ -54,9 +68,12 @@ export default function Explorar() {
               onChangeText={handleFiltreData}
               style={styles.inputBusca}
             />
+            <View>
+              <Text style={styles.titlerRenderItem}>Tópicos</Text>
+            </View>
           </View>
         )}
-      />
+      /> */}
     </View>
   );
 }
@@ -69,7 +86,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#003B73",
   },
   containerHeader: {
-    flex: 1,
     gap: 24,
   },
   TextContainer: {
@@ -86,18 +102,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     borderRadius: 10,
     paddingHorizontal: 15,
-    marginBottom: 20,
     fontSize: 16,
+  },
+  ContainerRenderItem: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5
   },
   card: {
     backgroundColor: "#60A3D9",
-    padding: 15,
+    padding: 10,
     borderRadius: 12,
-    marginBottom: 12,
+    minWidth: 110, // ajuste para o tamanho desejado
+    alignItems: "center",
   },
   nome: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
+  },
+  titlerRenderItem: {
+    fontSize: 22,
+    color: "white",
+    marginBottom: 15,
   },
 });
