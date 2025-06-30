@@ -34,8 +34,9 @@ exports.login = (req, res) => {
       }
 
       const user = result[0];
+      console.log(user.password)
       const hashPawword = await bcrypt.compare(password, user.password);
-
+      console.log(password)
       if (!hashPawword) {
         return res.status(400).json({
           message: "Email ou senha estão incorretos.",

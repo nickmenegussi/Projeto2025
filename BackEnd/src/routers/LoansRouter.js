@@ -7,7 +7,7 @@ const verifyPermission = require('../middleware/roleMiddleware')
 router.get('/loan/:Cart_idCart', authMiddleware, verifyPermission(['Admin', 'SuperAdmin'])  ,viewLoansByUser)
 router.get('/loan', authMiddleware, viewAllLoans)
 
-router.post('/loan/register', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']) ,createLoan)
+router.post('/loan/register', authMiddleware, verifyPermission(['Admin', 'SuperAdmin, User']) ,createLoan)
 
 router.patch('/loan/:Cart_idCart/returnDate', authMiddleware, verifyPermission(['Admin', 'SuperAdmin'])  ,updateReturnDate)
 

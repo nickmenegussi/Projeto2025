@@ -1,7 +1,11 @@
 const connection = require("../config/db")
 
 exports.viewCartAll = (req, res) => {
-  connection.query("SELECT * FROM Cart", (err, result) => {
+  const idUser = req.data.id
+  connection.query(`SELECT c.*, b. *
+FROM Cart c
+JOIN Book b ON c.Book_idLibrary = b.idLibrary
+WHERE c.User_idUser = ?`, [idUser] ,(err, result) => {
     if (err) {
       return res.status(500).json({
         message: "Erro ao se conectar com o servidor.",
@@ -19,8 +23,8 @@ exports.viewCartAll = (req, res) => {
 }
 
 exports.viewCartByUser = (req, res) => {
-  const idUser = req.params.id
-  const idLibrary = req.params.id
+  const idUser = req.params.idUser
+  const idLibrary = req.params.idLibrary
 
   connection.query(
     `SELECT * FROM Cart c, User u, Book b
@@ -107,67 +111,85 @@ exports.updateAction = (req, res) => {
 }
 
 exports.createCart = (req, res) => {
-  const User_idUser = req.params.id
-  const Book_idLibrary = req.params.id
-  const { action } = req.body
+  const User_idUser = req.data.id
+  const { Book_idLibrary, action, quantity } = req.body
 
-  if (!User_idUser || !Book_idLibrary || !action) {
+  console.log(Book_idLibrary, action, quantity, User_idUser)
+  if (!User_idUser || !Book_idLibrary || !action || !quantity) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
     })
   }
 
+  // Verifica se o usuário existe
   connection.query(
-    `       SELECT idLibrary, idUser
-            FROM Cart c, User u, Book b
-            WHERE c.User_idUser = u.idUser
-            AND c.Book_idLibrary = b.idLibrary
-            AND u.idUser = ? and b.idLibrary = ?
-        
-                `,
-    [User_idUser, Book_idLibrary],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          message: "Erro ao se conectar com o servidor.",
+    "SELECT * FROM User WHERE idUser = ?",
+    [User_idUser],
+    (err, userResult) => {
+      if (err || userResult.length === 0) {
+        return res.status(404).json({
           success: false,
-          data: err,
+          message: "Usuário não encontrado.",
         })
       }
-      // aqui serve essa verificação para não haver duplicação de content
-      if (result.length > 0) {
-        return response.status(200).json({
-          success: true,
-          message: "Quantidade do produto atualizada no carrinho",
-        })
-      } else if (result.length === 0) {
-          return res.status(404).json({
-            success: false,
-            message: `Não conseguimos localizar o livro ou o usuário no sistema. Por favor, verifique os dados e tente novamente.`,
-          })
-        } else {
+
+      // Verifica se o livro existe
+      connection.query(
+        "SELECT * FROM Book WHERE idLibrary = ?",
+        [Book_idLibrary],
+        (err, bookResult) => {
+          if (err || bookResult.length === 0) {
+            return res.status(404).json({
+              success: false,
+              message: "Livro não encontrado.",
+            })
+          }
+
+          // Verifica se já existe no carrinho
           connection.query(
-            "INSERT INTO Cart(User_idUser, Book_idLibrary, action) VALUES(?, ?, ?) ",
-            [User_idUser, Book_idLibrary, action],
-            (err, result) => {
+            "SELECT * FROM Cart WHERE User_idUser = ? AND Book_idLibrary = ? AND quantity = ?",
+            [User_idUser, Book_idLibrary, quantity],
+            (err, cartResult) => {
               if (err) {
                 return res.status(500).json({
-                  message: "Erro ao criar carrinho.",
+                  message: "Erro ao se conectar com o servidor.",
                   success: false,
                   data: err,
                 })
-              } else {
-                return res.status(201).json({
+              }
+              if (cartResult.length > 0) {
+                return res.status(200).json({
                   success: true,
-                  message: "Carrinho cadastrado com sucesso",
-                  data: result,
+                  message: "Quantidade do produto atualizada no carrinho",
                 })
+              } else {
+                // Insere no carrinho
+                connection.query(
+                  "INSERT INTO Cart(User_idUser, Book_idLibrary, action, quantity) VALUES(?, ?, ?, ?)",
+                  [User_idUser, Book_idLibrary, action, quantity],
+                  (err, insertResult) => {
+                    if (err) {
+                      return res.status(500).json({
+                        message: "Erro ao criar carrinho.",
+                        success: false,
+                        data: err,
+                      })
+                    } else {
+                      return res.status(201).json({
+                        success: true,
+                        message: "Carrinho cadastrado com sucesso",
+                        data: insertResult,
+                      })
+                    }
+                  }
+                )
               }
             }
           )
         }
-    }    
+      )
+    }
   )
 }
 
