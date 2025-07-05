@@ -57,7 +57,7 @@ exports.viewAllUser = (req, res) => {
 }
 
 exports.register = async (req, res) => {
-    const image_profile = req.file ? req.file.filename : null
+    const image_profile = null
     const {nameUser, email, password} = req.body
 
     if(!nameUser || !email || !password){

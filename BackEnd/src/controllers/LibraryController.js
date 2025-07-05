@@ -78,7 +78,7 @@ exports.createBook = (req, res) => {
     }  
 
         connection.query('SELECT * FROM Book WHERE status_Available = ? AND image = ? AND bookCategory = ? AND namebook = ? AND authorBook = ? AND tagsBook = ? AND overviewBook = ? AND curiosityBook = ?',
-  [status_Available, image, namebook, authorBook, tagsBook, overviewBook, curiosityBook, bookCategory], (err, result) => {
+  [status_Available, image, bookCategory, namebook, authorBook, tagsBook, overviewBook, curiosityBook], (err, result) => {
             if(err){
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",

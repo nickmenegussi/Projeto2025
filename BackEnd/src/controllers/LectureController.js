@@ -84,20 +84,20 @@ exports.createLecture = (req, res) => {
         } 
             
          connection.query(`INSERT INTO Lecture (nameLecture,dateLecture,timeLecture, description ,link_url, video_url ) VALUES (?, ?, ?, ?, ?, ?)`, [nameLecture,dateLecture ,timeLecture, description ,link_url, video_url ], (err, result) => {
-            if (err) {
+                 if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",
                     success: false,
                     data: err,
-                })
-                } 
+                })} 
+                return res.status(201).json({
+                                message: "Palestra criada com sucesso.",
+                                success: true,
+                                data: result
+            }) 
             })
 
-            return res.status(201).json({
-                message: "Palestra criada com sucesso.",
-                success: true,
-                data: result
-            })
+            
     })
 }
 

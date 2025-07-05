@@ -29,17 +29,21 @@ VALUES
 -- Tabela Book
 
 CREATE TABLE Book (
-    idLibrary INT AUTO_INCREMENT PRIMARY KEY,
-    nameBook VARCHAR(255),
-    author VARCHAR(255),
+    idLibrary INT AUTO_INCREMENT PRIMARY KEY not null,
+    nameBook VARCHAR(255) not null,
+    authorBook VARCHAR(255) not null,
     image text not null,
-    overviewBook TEXT,
-    curiosityBook TEXT,
-    tagsBook ENUM('Obras Básicas', 'Obras Complementares',),
+    overviewBook TEXT not null,
+    curiosityBook TEXT not null,
+    tagsBook ENUM('Obras Básicas', 'Obras Complementares') not null,
+    bookCategory ENUM('reserva', 'emprestimo') not null,
+    bookQuantity int not null,
     date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
     status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
 );
 
+
+SELECT * FROM Book;
 -- Tabela User
 CREATE TABLE User (
     idUser INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,10 +78,12 @@ CREATE TABLE Cart (
     User_idUser INT NOT NULL,
     Book_idLibrary INT NOT NULL,
     action ENUM('reservar', 'emprestar') NOT NULL,
+    quantity int not null,
     added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
+
 
 -- Tabela Post
 CREATE TABLE Post (
@@ -148,9 +154,11 @@ CREATE TABLE CalendarEvents (
     start DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     end DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     attachment TEXT,
+    dateEvent DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     User_idUser INT NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
+
 
 -- Tabela Facilitadores
 CREATE TABLE Facilitadores (
@@ -183,5 +191,7 @@ CREATE TABLE OTP (
     expiresAt TIMESTAMP NOT NULL
 );
 
-SELECT * FROM User;
+SELECT * FROM Book;
+
+
 

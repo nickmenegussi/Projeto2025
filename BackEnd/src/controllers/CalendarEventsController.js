@@ -76,7 +76,7 @@ exports.createEvent = (req, res) => {
   const attachment = req.file ? req.file.filename : null;
   const { title, description, start, end, link, dateEvent } = req.body;
   const User_idUser = req.data.id;
-
+  console.log(dateEvent)
   if (
     !title ||
     !description ||
