@@ -12,7 +12,7 @@ const LecturesObjective = () => {
         <ImageBackground imageStyle={styles.imageStyle} style={styles.BackGround} source={require("../../../../assets/images/Jesus-Cristo.png")}>
           <View>
             <TouchableOpacity style={styles.ButtonIcon} onPress={() =>
-              router.back('/home/aboutLecture')
+              router.back()
             }>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
@@ -51,7 +51,8 @@ export default LecturesObjective
 
 const styles = StyleSheet.create({
   SafeAreaView: {
-    flex: 1,
+    flex: 1,    paddingBottom: 100,
+
     backgroundColor: '#003B73',
   }, ButtonIcon: {
     position: 'relative',

@@ -31,7 +31,6 @@ const AboutLecture = () => {
         >
           <View>
             <TouchableOpacity style={styles.ButtonIcon} onPress={() => {
-              console.log(params.lecture)
               const lecturesEncondedData = encodeURIComponent(JSON.stringify(lecture))
               router.push(`/home/lectures?data=${lecturesEncondedData}`)
             }}>
@@ -77,6 +76,7 @@ export default AboutLecture
 
 const styles = StyleSheet.create({
   safeContainer: {
+    paddingBottom: 100,
     flex: 1,
     backgroundColor: '#003B73',
   },

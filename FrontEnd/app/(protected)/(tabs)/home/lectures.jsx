@@ -118,6 +118,8 @@ const Lectures = () => {
       />
       <Carousel
         width={370}
+                 style={{marginBottom: 150,}}
+
         height={200}
         data={lectures}
         renderItem={({ item }) => (
@@ -169,7 +171,7 @@ export default Lectures
 const styles = StyleSheet.create({
   BackGroundSafeArea: {
     backgroundColor: "#003B73",
-    flex: 1,
+    paddingBottom: 50,
   },
   itemText: {
     fontSize: 18,
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     flex: 1,
     flexDirection: "colmun",
+    
   },
   titleContent: {
     color: "black",

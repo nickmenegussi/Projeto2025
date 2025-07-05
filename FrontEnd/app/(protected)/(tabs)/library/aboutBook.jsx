@@ -33,7 +33,7 @@ const aboutBook = () => {
   };
 
   const imageUrl = book.image 
-    ? { uri: `http://192.168.1.17:3001/uploads/${book.image}` }
+    ? { uri: `http://192.168.1.15:3001/uploads/${book.image}` }
     : null;
 
 

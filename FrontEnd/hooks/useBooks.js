@@ -13,7 +13,7 @@ export default function useBooks() {
         const data = await getBooks()
         const allBooks = data;
         const booksLoans = allBooks.filter(
-          (books) => books.bookCategory === "empréstimo"
+          (books) => books.bookCategory === "emprestimo"
         );
         const booksReserves = allBooks.filter(
           (books) => books.bookCategory === "reserva"

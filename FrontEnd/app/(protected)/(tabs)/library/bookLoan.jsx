@@ -83,7 +83,7 @@ const BookLoan = () => {
         await addToCart({
           bookId: newItems[0].idLibrary,
           action: "emprestar", 
-          quantity: itemsCartQuantity// ou "reservar", conforme o caso
+          quantity: 1// ou "reservar", conforme o caso
         })
         setItemsCartQuantity(cartItems.length + 1)
         Alert.alert("Sucesso", "Livro adicionado ao carrinho")
@@ -96,7 +96,7 @@ const BookLoan = () => {
   }
 
   const imageUrl = book.image
-    ? { uri: `http://192.168.1.17:3001/uploads/${book.image}` }
+    ? { uri: `http://192.168.1.15:3001/uploads/${book.image}` }
     : null
 
   return (
