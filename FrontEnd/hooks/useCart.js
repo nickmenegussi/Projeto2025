@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { getCart, getCartById } from "../services/cartService";
+import { useCallback, useEffect, useState } from "react";
+import { getCart, getCartById } from "../services/ServiceCart";
 
 export default function useCart({idUser, idLibrary} = {}) {
-  const [data, setData] = useState();
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
       try {
         let result 
       if(idUser && idLibrary){
@@ -20,9 +19,10 @@ export default function useCart({idUser, idLibrary} = {}) {
       } finally {
         setLoading(false);
       }
-    };
+    })
+  useEffect(() => {
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
-  return { data, loading };
+  return { data, loading, refresh: fetchCart };
 }

@@ -17,7 +17,7 @@ import Button from "./Button";
 const OrderItem = ({ item, onDecrease, onIncrease, currentQuantity }) => (
   <View style={styles.orderBookItem}>
     <View style={styles.bookInfo}>
-      <Image source={item.image ? {uri: `http://192.168.1.17:3001/uploads/${item.image}`} : null} 
+      <Image source={item.image ? {uri: `http://192.168.1.15:3001/uploads/${item.image}`} : null} 
       style={{height: 180, width: '60%'}}/>
       <Text style={styles.bookTitle}>{item.nameBook}</Text>
       <Text style={styles.bookAuthor}>{item.authorBook}</Text>

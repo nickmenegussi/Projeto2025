@@ -1,6 +1,6 @@
 import { View, Text } from "react-native"
 import React, { useEffect, useState } from "react"
-import { getBooks } from "../services/bookService"
+import { getBooks } from "../services/ServiceBook"
 
 export default function useBooks() {
   const [books, setBooks] = useState()

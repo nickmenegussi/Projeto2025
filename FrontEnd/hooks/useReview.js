@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
-import { getReview, RegisterReview, UpdateReview } from "../services/reviewService"
+import { getReview, RegisterReview, UpdateReview } from "../services/ServiceReview"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+
 
 export default function useReview() {
   const [reviewUser, setReviewUser] = useState({
@@ -33,7 +34,7 @@ export default function useReview() {
     } finally {
       setLoading(false)
     }
-  })
+  }, [sortOrder])
 
   const createReview = async () => {
     try {

@@ -5,18 +5,26 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { ArrowLeftIcon, Trash2, Edit3 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import useCart from "../../../../hooks/useCart";
-import { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  deleteBookInCart,
+  updateQuantity,
+} from "../../../../services/ServiceCart";
+import { createLoanConfirmation } from "../../../../services/ServiceLoan";
+import CustomModal from "../../../../components/ModalCustom";
 
-export default function CartLoan() {
-  const { data, loading } = useCart();
+const CartLoan = () => {
+  const { data, loading, refresh } = useCart();
+  const [visibleModal, setVisibleModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const params = useLocalSearchParams();
+  const [selectedItem, setSelectedItem] = useState(null);
   const schedules = [
     { id: 1, dia: "Segunda-feira", horario: "10:00 - 12:00", disponivel: true },
     { id: 2, dia: "Terça-feira", horario: "14:00 - 16:00", disponivel: true },
@@ -32,6 +40,34 @@ export default function CartLoan() {
       </View>
     );
   }
+
+  const handleUpdateQuantity = async (Book_idLibrary, quantity) => {
+    try {
+      await updateQuantity({ Book_idLibrary, quantity });
+      Alert.alert("Sucesso", "Quantidade atualizada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível atualizar a quantidade.");
+    }
+  };
+
+  const handleDeleteCart = async (idCart) => {
+    try {
+      await deleteBookInCart({ idCart });
+      Alert.alert("Sucesso", "Carrinho deletado com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível deletar o item do carrinho.");
+    }
+  };
+
+  const handleConfirmationLoan = async () => {
+      for (const item of data){
+        await createLoanConfirmation({ 
+        Cart_idCart: item.idCart,
+        Book_idLibrary: item.idLibrary,
+        quantity: item.quantity,})
+      }
+
+  };
 
   if (!data || data.length === 0) {
     return (
@@ -81,9 +117,8 @@ export default function CartLoan() {
         }
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        rightOpenValue={-150}
-        previewRowKey={"0"}
-        previewOpenValue={-40} // semi-exposto
+        leftOpenValue={75}
+        rightOpenValue={-75}
         previewOpenDelay={3000}
         renderItem={({ item }) => (
           <View style={styles.card}>
@@ -91,7 +126,7 @@ export default function CartLoan() {
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.21:3001/uploads/${item.image}`
+                    ? `http://192.168.1.15:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -131,10 +166,12 @@ export default function CartLoan() {
         )}
         renderHiddenItem={({ item }) => (
           <View style={styles.rowBack}>
-            {/* Esquerda: Editar */}
             <TouchableOpacity
               style={styles.backLeftBtn}
-              onPress={() => console.log("Editar", item.idLibrary)}
+              onPress={() => {
+                setVisibleModal(true);
+                setSelectedItem(item);
+              }}
             >
               <Edit3 color="#fff" size={20} />
               <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
@@ -145,7 +182,7 @@ export default function CartLoan() {
             {/* Direita: Remover */}
             <TouchableOpacity
               style={styles.backRightBtn}
-              onPress={() => console.log("Remover", item.idLibrary)}
+              onPress={() => handleDeleteCart(item.idCart)}
             >
               <Trash2 color="#fff" size={20} />
               <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
@@ -191,7 +228,9 @@ export default function CartLoan() {
             <View style={{ flex: 1, gap: 15, marginTop: 15, marginBottom: 70 }}>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => router.push("/library/MessageLoanConfirmed")}
+                onPress={() => {
+                  handleConfirmationLoan();
+                }}
               >
                 <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
               </TouchableOpacity>
@@ -207,9 +246,35 @@ export default function CartLoan() {
           </>
         }
       />
+      {selectedItem && (
+        <CustomModal
+          visible={visibleModal}
+          onClose={() => {
+            setVisibleModal(false);
+            setSelectedItem(null);
+          }}
+          title={"Atualizar quantidade de itens"}
+          item={selectedItem}
+          onConfirm={(items) => {
+            if (selectedItem.quantity == items[0].quantity) {
+              Alert.alert(
+                "Atenção!",
+                "a quantidade selecionada é a mesma que já está no produto inserido no carrinho."
+              );
+            } else {
+              handleUpdateQuantity(items[0].idLibrary, items[0].quantity);
+              setVisibleModal(false);
+              setSelectedItem(null);
+              refresh();
+            }
+          }}
+        />
+      )}
     </View>
-  );
+  )
 }
+
+export default React.memo(CartLoan) 
 
 const styles = StyleSheet.create({
   container: {

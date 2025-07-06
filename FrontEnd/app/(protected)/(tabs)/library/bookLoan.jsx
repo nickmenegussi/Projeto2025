@@ -28,7 +28,7 @@ import React, { useEffect, useState } from "react"
 import Trending from "../../../../components/Navagation"
 import Button from "../../../../components/Button"
 import CustomModal from "../../../../components/ModalCustom"
-import { addToCart, getCart } from "../../../../services/cartService"
+import { addToCart, getCart } from "../../../../services/ServiceCart"
 
 const BookLoan = () => {
   const [isFavorite, setIsFavorite] = useState(false)
