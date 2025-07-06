@@ -2,24 +2,28 @@ const connection = require("../config/db")
 
 exports.viewCartAll = (req, res) => {
   const idUser = req.data.id
-  connection.query(`SELECT c.*, b. *
+  connection.query(
+    `SELECT c.*, b. *
 FROM Cart c
 JOIN Book b ON c.Book_idLibrary = b.idLibrary
-WHERE c.User_idUser = ?`, [idUser] ,(err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Erro ao se conectar com o servidor.",
-        success: false,
-        data: err,
-      })
-    } else {
-      return res.status(200).json({
-        message: "Sucesso ao exibir os livros reservados",
-        success: true,
-        data: result,
-      })
+WHERE c.User_idUser = ?`,
+    [idUser],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Erro ao se conectar com o servidor.",
+          success: false,
+          data: err,
+        })
+      } else {
+        return res.status(200).json({
+          message: "Sucesso ao exibir os livros reservados",
+          success: true,
+          data: result,
+        })
+      }
     }
-  })
+  )
 }
 
 exports.viewCartByUser = (req, res) => {
@@ -101,8 +105,74 @@ exports.updateAction = (req, res) => {
 
           return res.status(201).json({
             success: true,
-            message: "A categoria do item do carrinho foi atualizada com sucesso.",
-            data: result
+            message:
+              "A categoria do item do carrinho foi atualizada com sucesso.",
+            data: result,
+          })
+        }
+      )
+    }
+  )
+}
+
+exports.updateQuantity = (req, res) => {
+  const User_idUser = req.data.id
+  const { Book_idLibrary, quantity } = req.body
+
+  if (!User_idUser || !Book_idLibrary || !quantity) {
+    return res.status(400).json({
+      success: false,
+      message: "Preencha todos os campos de cadastro",
+    })
+  }
+  connection.query(
+    ` SELECT * FROM User u
+    INNER JOIN Cart c on u.idUser =  c.User_idUser
+    INNER JOIN Book b on b.idLibrary = c.Book_idLibrary 
+    Where u.idUser = ?
+      and b.idLibrary = ? `,
+    [User_idUser, Book_idLibrary],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Erro ao se conectar com o servidor.",
+          data: err,
+        })
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Não foi possível encontrar o item no carrinho para atualizar a quantidade.",
+        })
+      }
+
+      connection.query(
+        "UPDATE CART SET quantity = ? where User_idUser = ? and Book_idLibrary = ?",
+        [quantity, User_idUser, Book_idLibrary],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              message: "Erro ao atualizar a quantidade do item no carrinho.",
+              data: err,
+            })
+          }
+
+          if (result.affectedRows === 0) {
+            return res.status(400).json({
+              success: false,
+              message:
+                "Nenhum item foi atualizado. Verifique os dados e tente novamente.",
+            })
+          }
+
+          return res.status(200).json({
+            success: true,
+            message: "Quantidade do item no carrinho atualizada com sucesso.",
+            data: result,
           })
         }
       )
@@ -113,8 +183,6 @@ exports.updateAction = (req, res) => {
 exports.createCart = (req, res) => {
   const User_idUser = req.data.id
   const { Book_idLibrary, action, quantity } = req.body
-
-  console.log(Book_idLibrary, action, quantity, User_idUser)
   if (!User_idUser || !Book_idLibrary || !action || !quantity) {
     return res.status(400).json({
       success: false,
@@ -127,10 +195,19 @@ exports.createCart = (req, res) => {
     "SELECT * FROM User WHERE idUser = ?",
     [User_idUser],
     (err, userResult) => {
-      if (err || userResult.length === 0) {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Erro ao se conectar com o servidor.",
+          data: err,
+        })
+      }
+
+      if (userResult.length === 0) {
         return res.status(404).json({
           success: false,
           message: "Usuário não encontrado.",
+          data: err,
         })
       }
 
@@ -194,7 +271,7 @@ exports.createCart = (req, res) => {
 }
 
 exports.deleteCart = (req, res) => {
-  const idCart = req.params.id
+  const idCart = req.params.idCart
 
   connection.query(
     "SELECT idCart FROM Cart where idCart = ?",
