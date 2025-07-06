@@ -3,6 +3,7 @@ USE CEO;
 
 -- Tabela VolunteerWork (Opcionalmente relacionada a User)
 CREATE TABLE VolunteerWork (
+    nameUser VARCHAR(255) NOT NULL,
     idVolunteerWork INT PRIMARY KEY AUTO_INCREMENT,
     nameVolunteerWork VARCHAR(255),
     address VARCHAR(255),
@@ -28,6 +29,8 @@ VALUES
 
 -- Tabela Book
 
+
+
 CREATE TABLE Book (
     idLibrary INT AUTO_INCREMENT PRIMARY KEY not null,
     nameBook VARCHAR(255) not null,
@@ -47,7 +50,6 @@ SELECT * FROM Book;
 -- Tabela User
 CREATE TABLE User (
     idUser INT AUTO_INCREMENT PRIMARY KEY,
-    nameUser VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_profile TEXT,
@@ -57,12 +59,18 @@ CREATE TABLE User (
 
 -- Tabela Loans
 CREATE TABLE Loans (
-    idLoans INT AUTO_INCREMENT PRIMARY KEY,
-    returnDate DATETIME,
-    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Cart_idCart INT NOT NULL,
-    FOREIGN KEY (Cart_idCart) REFERENCES Cart(idCart)
+  idLoans INT AUTO_INCREMENT PRIMARY KEY,
+  User_idUser INT NOT NULL,
+  Book_idLibrary INT NOT NULL,
+  quantity INT NOT NULL,
+  returnDate DATETIME,
+  date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (User_idUser) REFERENCES User(idUser),
+  FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
+SELECT * FROM Loans;
+
+SELECT * FROM Cart;
 
 -- Tabela Reserves
 CREATE TABLE Reserves (
@@ -83,6 +91,12 @@ CREATE TABLE Cart (
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
+
+SELECT * FROM User u
+INNER JOIN Cart c on u.idUser =  c.User_idUser
+INNER JOIN Book b on b.idLibrary = c.Book_idLibrary 
+Where u.idUser = 1
+	and b.idLibrary = 6;
 
 
 -- Tabela Post
@@ -191,7 +205,4 @@ CREATE TABLE OTP (
     expiresAt TIMESTAMP NOT NULL
 );
 
-SELECT * FROM Book;
-
-
-
+SELECT * FROM Cart;
