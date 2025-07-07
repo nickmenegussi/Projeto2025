@@ -65,6 +65,7 @@ const BookLoan = () => {
   }, [])
 
   async function handleAddToCart(newItems) {
+    
     try {
       // Busca o carrinho do backend
       const cartItems = await getCart()
@@ -79,15 +80,14 @@ const BookLoan = () => {
         )
         router.push("/library/CartLoan")
       } else {
+        Alert.alert("Sucesso", "Livro adicionado ao carrinho")
         // Adiciona o novo item ao carrinho no backend
         await addToCart({
           bookId: newItems[0].idLibrary,
           action: "emprestar", 
-          quantity: 1// ou "reservar", conforme o caso
+          quantity: newItems[0].bookQuantity
         })
         setItemsCartQuantity(cartItems.length + 1)
-        Alert.alert("Sucesso", "Livro adicionado ao carrinho")
-        router.push("/library/CartLoan")
       }
     } catch (error) {
       console.error("Erro ao adicionar livro ao carrinho:", error)

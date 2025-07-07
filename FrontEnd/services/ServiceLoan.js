@@ -14,6 +14,8 @@ export const createLoanConfirmation = async ({Cart_idCart, Book_idLibrary, User_
         },
       }
     )
+    Alert.alert('Sucesso', 'empréstimo confirmado com sucesso!')
+    router.push('/library/MessageLoanConfirmed')
     return response.data.data
   } catch (error) {
     if (error.response) {

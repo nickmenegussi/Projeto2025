@@ -20,7 +20,9 @@ export const addToCart = async ({ bookId, action, quantity }) => {
         },
       }
     )
-    return response.data.data;
+    router.push("/library/CartLoan")
+    return response.data.data
+    
   } catch (error) {
     if (error.response) {
       if (error.response.data.loginRequired === true) {
