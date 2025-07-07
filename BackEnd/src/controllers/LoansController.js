@@ -1,4 +1,4 @@
-const connection = require("../config/db");
+const connection = require("../config/db")
 
 exports.viewAllLoans = (req, res) => {
   connection.query("SELECT * FROM Loans", (err, result) => {
@@ -7,21 +7,21 @@ exports.viewAllLoans = (req, res) => {
         message: "Erro ao se conectar com o servidor.",
         success: false,
         data: err,
-      });
+      })
     } else {
       return res.status(200).json({
         message: "Sucesso ao exibir os trabalhos voluntários.",
         success: true,
         data: result,
-      });
+      })
     }
-  });
-};
+  })
+}
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de empréstimo e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewLoansByUser = (req, res) => {
-  const Cart_idCart = req.params.Cart_idCart;
-  const idUser = req.data.id;
+  const Cart_idCart = req.params.Cart_idCart
+  const idUser = req.data.id
 
   // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenado como um Empréstimo.
   connection.query(
@@ -41,13 +41,13 @@ exports.viewLoansByUser = (req, res) => {
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        });
+        })
       }
       if (result.length === 0) {
         return res.status(404).json({
           success: false,
           message: `Não conseguimos achar os empréstimos dete usuário. Por favor, verifique os dados e tente novamente.`,
-        });
+        })
       }
 
       // verificar se o usuário logado é o mesmo que criou o tópico
@@ -57,7 +57,7 @@ exports.viewLoansByUser = (req, res) => {
             message: "Você não tem permissão para alterar o tópico.",
             success: false,
             data: err,
-          });
+          })
         }
       }
 
@@ -65,16 +65,15 @@ exports.viewLoansByUser = (req, res) => {
         message: `Sucesso ao exibir os empréstimos do usuario ${idUser}`,
         success: true,
         data: result,
-      });
+      })
     }
-  );
-};
+  )
+}
 
 exports.createLoan = (req, res) => {
   const Cart_idCart = req.params.Cart_idCart
   const User_idUser = req.data.id
   const { Book_idLibrary, quantity } = req.body
-    console.log(Book_idLibrary, quantity, User_idUser, Cart_idCart)
 
   if (!User_idUser || !Book_idLibrary || !quantity) {
     return res.status(400).json({
@@ -85,9 +84,8 @@ exports.createLoan = (req, res) => {
 
   // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
   connection.query(
-    `
-            SELECT * FROM Cart where idCart = ?
-            
+    `SELECT * FROM Cart where idCart = ?
+
         `,
     [Cart_idCart],
     (err, result) => {
@@ -96,103 +94,142 @@ exports.createLoan = (req, res) => {
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        });
+        })
       }
       if (result.length === 0) {
         return res.status(404).json({
           success: false,
           message: `Não conseguimos localizar o carrinho do item. Por favor, verifique os dados e tente novamente.`,
-        });
+        })
       }
       if (result[0].action !== "emprestar") {
         return res.status(400).json({
           success: false,
           message:
             "Ação inválida. Apenas carrinhos com a ação 'empréstimo' podem gerar empréstimos.",
-        });
+        })
       }
 
       // verificar duplicidade de empréstimos
       if (result[0].action === "emprestar") {
         connection.query(
-          "SELECT * FROM Loans where Book_idLibrary = ? and User_idUser = ?",
-          [Book_idLibrary, User_idUser],
+          "SELECT * FROM Loans where Book_idLibrary = ? and User_idUser = ? and quantity = ?",
+          [Book_idLibrary, User_idUser, quantity],
           (err, result) => {
             if (err) {
               return res.status(500).json({
                 message: "Erro ao verificar Empréstimos realizados.",
                 success: false,
                 data: err,
-              });
+              })
             }
-
 
             if (result.length > 0) {
               return res.status(400).json({
                 message: "Esse pedido já foi finalizado.",
                 success: false,
-              });
+              })
             }
 
             connection.query(
-        `INSERT INTO Loans(User_idUser, Book_idLibrary, quantity, returnDate) 
+              "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
+              [Book_idLibrary],
+              (err, result) => {
+                if (err) {
+                  return res.status(500).json({
+                    success: false,
+                    message: "Erro ao se conectar com o servidor.",
+                    data: err,
+                  })
+                }
+                if (result.length === 0) {
+                  return res.status(404).json({
+                    success: false,
+                    message: "Livro não encontrado ou erro ao acessar estoque.",
+                    data: err,
+                  })
+                }
+                const available = result[0].bookQuantity
+
+                if (available < quantity) {
+                  return res.status(400).json({
+                    success: false,
+                    message: `Quantidade indisponível. Só há ${available} unidade(s) disponível(is).`,
+                  })
+                }
+
+                connection.query(
+                  `INSERT INTO Loans(User_idUser, Book_idLibrary, quantity, returnDate) 
          VALUES(?, ?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY))`,
-        [User_idUser, Book_idLibrary, quantity],
-        (errInsert, resultInsert) => {
-          if (errInsert) {
-            return res.status(500).json({
-              success: false,
-              message: "Erro ao criar empréstimo.",
-              data: errInsert,
-            });
-          }
+                  [User_idUser, Book_idLibrary, quantity],
+                  (errInsert, resultInsert) => {
+                    if (errInsert) {
+                      return res.status(500).json({
+                        success: false,
+                        message: "Erro ao criar empréstimo.",
+                        data: errInsert,
+                      })
+                    }
 
-          // Deletar carrinho
-          connection.query(
-            `DELETE FROM Cart WHERE idCart = ?`,
-            [Cart_idCart],
-            (errDelete) => {
-              if (errDelete) {
-                return res.status(500).json({
-                  success: false,
-                  message: "Erro ao remover o item do carrinho.",
-                  data: errDelete,
-                });
+                    connection.query(
+                      "UPDATE BOOK SET bookQuantity = bookQuantity - ? WHERE idLibrary = ? ",
+                      [quantity, Book_idLibrary],
+                      (errUpdate, result) => {
+                        if (errUpdate) {
+                          return res.status(500).json({
+                            success: false,
+                            message:
+                              "Erro ao atualizar a quantidade de livros.",
+                            data: errUpdate,
+                          })
+                        }
+
+                        // antes de deletar adicionar a lógica de atualizar o status do livro que esta na tabela book.
+                        connection.query(
+                      `DELETE FROM Cart WHERE idCart = ?`,
+                      [Cart_idCart],
+                      (errDelete) => {
+                        if (errDelete) {
+                          return res.status(500).json({
+                            success: false,
+                            message: "Erro ao remover o item do carrinho.",
+                            data: errUpdate,
+                          })
+                        }
+
+                        return res.status(201).json({
+                          success: true,
+                          message: "Empréstimo realizado com sucesso!",
+                          data: result,
+                        })
+                      }
+                    )
+                      }
+                      
+                    )
+
+                    
+                  }
+                )
               }
-
-              return res.status(201).json({
-                success: true,
-                message: "Empréstimo realizado com sucesso!",
-                data: resultInsert,
-              });
-            }
-          );
-        }
-      );
-    
+            )
           }
-        );
-      } else {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Ação inválida. Apenas carrinhos com a ação 'empréstimo' podem gerar empréstimos.",
-        });
-      }
+        )
+      } 
     }
-  );
-};
+  )
+}
 
 exports.updateReturnDate = (req, res) => {
-  const idLoans = req.params.LoansId;
-  const { returnDate } = req.body;
-  const idUser = req.data.id;
+  const idLoans = req.params.LoansId
+  const { returnDate } = req.body
+  const idUser = req.data.id
 
   if (!returnDate || !idLoans) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos.",
-    });
+    })
   }
 
   connection.query(
@@ -204,14 +241,14 @@ exports.updateReturnDate = (req, res) => {
           success: false,
           message: "Erro ao se conectar com o servidor.",
           data: err,
-        });
+        })
       }
 
       if (result.length === 0) {
         return res.status(404).json({
           success: false,
           message: `O empréstimo do id ${idLoans} não existe no nosso sistema.`,
-        });
+        })
       }
 
       // verificar se o usuário logado é o mesmo que criou o tópico
@@ -221,7 +258,7 @@ exports.updateReturnDate = (req, res) => {
             message: "Você não tem permissão para alterar o tópico.",
             success: false,
             data: err,
-          });
+          })
         }
       }
 
@@ -240,23 +277,23 @@ exports.updateReturnDate = (req, res) => {
               success: false,
               message: "Erro ao atualizar a data do empréstimo do livro.",
               data: err,
-            });
+            })
           }
 
           return res.status(201).json({
             success: true,
             message: "Retorno do livro atualizada com sucesso.",
             data: result,
-          });
+          })
         }
-      );
+      )
     }
-  );
-};
+  )
+}
 
 exports.deleteLoan = (req, res) => {
-  const idLoans = req.params.LoansId;
-  const idUser = req.data.id;
+  const idLoans = req.params.LoansId
+  const idUser = req.data.id
 
   connection.query(
     `
@@ -268,7 +305,7 @@ exports.deleteLoan = (req, res) => {
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        });
+        })
       }
 
       if (result.length === 0) {
@@ -276,7 +313,7 @@ exports.deleteLoan = (req, res) => {
           message: `O empréstimo do livro com o id ${idLoans}, não existe no nosso sistema. `,
           success: false,
           data: err,
-        });
+        })
       }
 
       // verificar se o usuário logado é o mesmo que criou o tópico
@@ -286,7 +323,7 @@ exports.deleteLoan = (req, res) => {
             message: "Você não tem permissão para alterar o tópico.",
             success: false,
             data: err,
-          });
+          })
         }
       }
       connection.query(
@@ -301,7 +338,7 @@ exports.deleteLoan = (req, res) => {
               message: "Erro ao se conectar com o servidor.",
               success: false,
               data: err,
-            });
+            })
           }
 
           if (result.affectedRows === 0) {
@@ -310,16 +347,16 @@ exports.deleteLoan = (req, res) => {
                 "Erro ao deletar empréstimo. Verifique os dados e tente novamente.",
               success: false,
               data: err,
-            });
+            })
           } else {
             return res.status(201).json({
               message: "Empréstimo deletado com sucesso",
               success: true,
               data: result,
-            });
+            })
           }
         }
-      );
+      )
     }
-  );
-};
+  )
+}

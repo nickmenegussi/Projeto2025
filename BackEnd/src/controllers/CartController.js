@@ -225,9 +225,12 @@ exports.createCart = (req, res) => {
 
           // Verifica se já existe no carrinho
           connection.query(
-            "SELECT * FROM Cart WHERE User_idUser = ? AND Book_idLibrary = ? AND quantity = ?",
-            [User_idUser, Book_idLibrary, quantity],
-            (err, cartResult) => {
+            `SELECT * FROM Cart c
+            INNER JOIN Loans l on c.User_idUser = l.User_idUser AND c.Book_idLibrary = l.Book_idLibrary
+            where c.User_idUser = ?
+            and c.Book_idLibrary = ?`,
+            [User_idUser, Book_idLibrary],
+            (err, result) => {
               if (err) {
                 return res.status(500).json({
                   message: "Erro ao se conectar com o servidor.",
@@ -235,13 +238,13 @@ exports.createCart = (req, res) => {
                   data: err,
                 })
               }
-              if (cartResult.length > 0) {
+              if (result.length > 0) {
                 return res.status(200).json({
                   success: true,
-                  message: "Quantidade do produto atualizada no carrinho",
+                  message: "Esse produto já foi finalizado como um empréstimo, por isso não pode ser adicionado de novo no carrinho.",
                 })
-              } else {
-                // Insere no carrinho
+              } 
+              // Insere no carrinho
                 connection.query(
                   "INSERT INTO Cart(User_idUser, Book_idLibrary, action, quantity) VALUES(?, ?, ?, ?)",
                   [User_idUser, Book_idLibrary, action, quantity],
@@ -261,7 +264,6 @@ exports.createCart = (req, res) => {
                     }
                   }
                 )
-              }
             }
           )
         }
