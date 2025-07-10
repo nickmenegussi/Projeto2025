@@ -5,7 +5,6 @@ import { router } from "expo-router";
 
 export const addToCart = async ({ bookId, action, quantity }) => {
   try {
-    console.log(quantity)
     const token = await AsyncStorage.getItem("@Auth:token");
     const response = await api.post(
       "/cart/cart/register",

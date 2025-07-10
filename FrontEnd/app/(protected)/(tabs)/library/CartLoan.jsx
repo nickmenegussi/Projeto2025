@@ -19,9 +19,11 @@ import {
 } from "../../../../services/ServiceCart";
 import { createLoanConfirmation } from "../../../../services/ServiceLoan";
 import CustomModal from "../../../../components/ModalCustom";
+import useLoan from "../../../../hooks/useLoan";
 
 const CartLoan = () => {
   const { data, loading, refresh } = useCart();
+  const { loan } = useLoan();
   const [visibleModal, setVisibleModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -60,26 +62,38 @@ const CartLoan = () => {
   };
 
   const handleConfirmationLoan = async () => {
-      for (const item of data){
-        await createLoanConfirmation({ 
+    for (const item of data) {
+      await createLoanConfirmation({
         Cart_idCart: item.idCart,
         Book_idLibrary: item.idLibrary,
-        quantity: item.quantity,})
-      }
-
+        quantity: item.quantity,
+      });
+    }
   };
 
-  if (!data || data.length === 0) {
+  if (!data || data.length === 0 && loan) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
+       <View style={styles.centered}>
+        <Text style={styles.emptyText}>
+          Você não tem nenhum item no carrinho.
+        </Text>
+        <Text style={styles.subText}>
+          No entanto, percebemos que você já realizou alguns empréstimos. Que
+          tal dar uma olhada neles?
+        </Text>
+
+        <TouchableOpacity
+          style={styles.buttonNoItemCart}
+          onPress={() => router.push("/library/historicalLoans")}
+        >
+          <Text style={styles.buttonTextNoItemCart}>Ver meus Empréstimos</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <ButtonIcons
           color="#fff"
@@ -92,8 +106,7 @@ const CartLoan = () => {
         <Text style={styles.headerTitle}>Carrinho de Empréstimos</Text>
       </View>
 
-      {/* Status Bar */}
-      <View style={styles.buttonContainer}>
+     <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => router.push(``)}
           activeOpacity={0.7}
@@ -105,11 +118,10 @@ const CartLoan = () => {
           onPress={() => router.push(`library/historicalLoans`)}
           style={styles.button}
         >
-          <Text style={{ color: "#7D7D91" }}>Histórico de Reservas</Text>
+          <Text style={{ color: "#7D7D91" }}>Histórico Empréstimos</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista com Swipe */}
       <SwipeListView
         data={data}
         keyExtractor={(item, index) =>
@@ -271,10 +283,10 @@ const CartLoan = () => {
         />
       )}
     </View>
-  )
-}
+  );
+};
 
-export default React.memo(CartLoan) 
+export default React.memo(CartLoan);
 
 const styles = StyleSheet.create({
   container: {
@@ -535,5 +547,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF3B30", // vermelho para Remover
     width: 75,
     height: "100%",
+  }, subText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  buttonNoItemCart: {
+    backgroundColor: "#4B8DF8",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  buttonTextNoItemCart: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

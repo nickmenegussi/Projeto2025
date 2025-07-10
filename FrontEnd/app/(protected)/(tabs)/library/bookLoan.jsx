@@ -85,7 +85,7 @@ const BookLoan = () => {
         await addToCart({
           bookId: newItems[0].idLibrary,
           action: "emprestar", 
-          quantity: newItems[0].bookQuantity
+          quantity: newItems[0].quantity
         })
         setItemsCartQuantity(cartItems.length + 1)
       }

@@ -5,56 +5,63 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import { router } from "expo-router";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { ArrowLeftIcon } from "lucide-react-native";
+import useLoan from "../../../../hooks/useLoan";
 
 const HistoricalLoans = () => {
-  const data = [
-    {
-      id: 1,
-      nomeLivro: "Teste",
-      image: "81hJ58BD95L.jpg.jpg",
-      nomeAutor: "Teste autor",
-      biblioteca: "Gabriel Delanne",
-      status: "Emprestado",
-    },
-  ];
+  const { loan, hasLoan ,loading } = useLoan()
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
+  }
 
   return (
     <FlatList
       contentContainerStyle={styles.ContainerFlatlist}
-      data={data}
+      data={loan}
       renderItem={({ item }) => (
-        <View styles={styles.ContainerRenderItem}>
+        <View style={styles.ContainerRenderItem}>
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.17:3001/uploads/${item.image}`
+                    ? `http://192.168.1.11:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
               />
               <View style={styles.cardInfo}>
-                <Text style={styles.bookTitle}>{item.nomeLivro}</Text>
-                <Text style={styles.bookAuthor}>{item.nomeLivro}</Text>
+                <Text style={styles.bookTitle}>
+                  Nome Livro: {item.nameBook}
+                </Text>
+                <Text style={styles.bookAuthor}>Autor: {item.authorBook}</Text>
+                <Text style={styles.bookAuthor}>
+                  Quantidade retirada: {item.quantity}
+                </Text>
+                <Text style={styles.bookAuthor}>
+                  Data do Empréstimo:
+                   {new Date(item.date_aquisition).toLocaleDateString()}
+                </Text>
+                <Text style={styles.bookAuthor}>
+                  Devolução prevista:
+                   {new Date(item.returnDate).toLocaleDateString()}
+                </Text>
                 <Text style={styles.libraryName}>
                   Biblioteca Gabriel Delanne
                 </Text>
-                {item.status === "Emprestado" ? (
+                {hasLoan === true && (
                   <TouchableOpacity style={styles.ButtonStatus}>
                     <Text style={{ color: "#fff", fontWeight: "bold" }}>
                       Livro Emprestado
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity style={styles.ButtonStatusUnConfirmed}>
-                    <Text style={{ color: "yellow", fontWeight: "bold" }}>
-                      Aguardando Confirmação
                     </Text>
                   </TouchableOpacity>
                 )}

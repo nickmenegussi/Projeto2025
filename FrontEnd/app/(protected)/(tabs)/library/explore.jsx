@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import useBooks from "../../../../hooks/useBooks"
+
 const dadosIniciais = [
   { id: "1", nome: "Obras Complementares" },
   { id: "2", nome: "Obras básicas" },
@@ -17,7 +19,12 @@ const dadosIniciais = [
 
 export default function Explorar() {
   const [busca, setBusca] = useState("");
-  const [dados, setDados] = useState(dadosIniciais);
+  const [dados, setDados] = useState(dadosIniciais)
+  const {books, loading} = useBooks()
+
+  const handleFiltredDataApi = () => {
+    
+  }
 
   const handleFiltreData = (text) => {
     setBusca(text);
@@ -29,8 +36,16 @@ export default function Explorar() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.containerHeader}>
+      
+
+      <FlatList
+        data={[]}
+        keyExtractor={(item) => item.id}
+        renderItem={[]}
+        contentContainerStyle={styles.container}
+        ListHeaderComponent={() => (
+          <>
+          <View style={styles.containerHeader}>
         <Text style={styles.TextContainer}>Explore</Text>
         <TextInput
           placeholder="Buscar..."
@@ -53,28 +68,9 @@ export default function Explorar() {
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* <FlatList
-        data={dados}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ListHeaderComponent={() => (
-          <View style={styles.containerHeader}>
-            <Text style={styles.TextContainer}>Explore</Text>
-            <TextInput
-              placeholder="Buscar..."
-              value={busca}
-              onChangeText={handleFiltreData}
-              style={styles.inputBusca}
-            />
-            <View>
-              <Text style={styles.titlerRenderItem}>Tópicos</Text>
-            </View>
-          </View>
+          </>
         )}
-      /> */}
-    </View>
+      /> 
   );
 }
 
