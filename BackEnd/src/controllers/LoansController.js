@@ -20,21 +20,19 @@ exports.viewAllLoans = (req, res) => {
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de empréstimo e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
 exports.viewLoansByUser = (req, res) => {
-  const Cart_idCart = req.params.Cart_idCart
   const idUser = req.data.id
 
   // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenado como um Empréstimo.
   connection.query(
-    `SELECT * FROM 
-        Loans l, Cart c, Book b, User u
-        WHERE l.Cart_idCart = c.idCart
-        AND b.idLibrary = c.Book_idLibrary
-        AND u.idUser = c.User_idUser
-        And u.idUser = ? and l.Cart_idCart = ?
+    `SELECT idLoans, quantity, User_idUser, Book_idLibrary,  nameBook, authorBook, image, tagsBook, bookCategory, date_aquisition, returnDate FROM 
+    Loans l, Book b, User u
+    where b.idLibrary = l.Book_idLibrary
+    AND u.idUser = l.User_idUser
+    And u.idUser = ?
 
         
         `,
-    [idUser, Cart_idCart],
+    [idUser],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -54,7 +52,7 @@ exports.viewLoansByUser = (req, res) => {
       if (result[0].User_idUser !== idUser) {
         {
           return res.status(403).json({
-            message: "Você não tem permissão para alterar o tópico.",
+            message: "Você não tem permissão para alterar o empréstimo.",
             success: false,
             data: err,
           })
@@ -65,6 +63,7 @@ exports.viewLoansByUser = (req, res) => {
         message: `Sucesso ao exibir os empréstimos do usuario ${idUser}`,
         success: true,
         data: result,
+        isBookHasALoan: true
       })
     }
   )
@@ -172,7 +171,7 @@ exports.createLoan = (req, res) => {
                     }
 
                     connection.query(
-                      "UPDATE BOOK SET bookQuantity = bookQuantity - ? WHERE idLibrary = ? ",
+                      "UPDATE Book SET bookQuantity = bookQuantity - ? WHERE idLibrary = ?",
                       [quantity, Book_idLibrary],
                       (errUpdate, result) => {
                         if (errUpdate) {
@@ -184,38 +183,76 @@ exports.createLoan = (req, res) => {
                           })
                         }
 
-                        // antes de deletar adicionar a lógica de atualizar o status do livro que esta na tabela book.
+                        // Verifica a nova quantidade para definir o status
                         connection.query(
-                      `DELETE FROM Cart WHERE idCart = ?`,
-                      [Cart_idCart],
-                      (errDelete) => {
-                        if (errDelete) {
-                          return res.status(500).json({
-                            success: false,
-                            message: "Erro ao remover o item do carrinho.",
-                            data: errUpdate,
-                          })
-                        }
+                          "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
+                          [Book_idLibrary],
+                          (errQty, resultQty) => {
+                            if (errQty) {
+                              return res.status(500).json({
+                                success: false,
+                                message:
+                                  "Erro ao verificar nova quantidade de livros.",
+                                data: errQty,
+                              })
+                            }
 
-                        return res.status(201).json({
-                          success: true,
-                          message: "Empréstimo realizado com sucesso!",
-                          data: result,
-                        })
+                            const newQty = resultQty[0].bookQuantity
+                            let newStatus = "disponível"
+                            if (newQty === 0) {
+                              newStatus = "emprestado"
+                            } else if (newQty < 0) {
+                              newStatus = "indisponível" // só se houve erro de lógica
+                            }
+
+                            // Atualiza o status_Available
+                            connection.query(
+                              "UPDATE Book SET status_Available = ? WHERE idLibrary = ?",
+                              [newStatus, Book_idLibrary],
+                              (errStatusUpdate) => {
+                                if (errStatusUpdate) {
+                                  return res.status(500).json({
+                                    success: false,
+                                    message:
+                                      "Erro ao atualizar o status do livro.",
+                                    data: errStatusUpdate,
+                                  })
+                                }
+
+                                // Deletar carrinho e finalizar
+                                connection.query(
+                                  `DELETE FROM Cart WHERE idCart = ?`,
+                                  [Cart_idCart],
+                                  (errDelete) => {
+                                    if (errDelete) {
+                                      return res.status(500).json({
+                                        success: false,
+                                        message:
+                                          "Erro ao remover o item do carrinho.",
+                                        data: errDelete,
+                                      })
+                                    }
+
+                                    return res.status(201).json({
+                                      success: true,
+                                      message:
+                                        "Empréstimo realizado com sucesso!",
+                                    })
+                                  }
+                                )
+                              }
+                            )
+                          }
+                        )
                       }
                     )
-                      }
-                      
-                    )
-
-                    
                   }
                 )
               }
             )
           }
         )
-      } 
+      }
     }
   )
 }
