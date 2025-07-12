@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react"
 import { getBooks } from "../services/ServiceBook"
 
 export default function useBooks() {
-  const [books, setBooks] = useState()
+  const [booksComplementares, setBooksComplementares] = useState(null)
+  const [booksBasicas, setBooksBasicas] = useState(null)
+  const [books, setBooks] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -18,7 +20,11 @@ export default function useBooks() {
         const booksReserves = allBooks.filter(
           (books) => books.bookCategory === "reserva"
         )
-      setBooks({ booksLoans: booksLoans, booksReserves: booksReserves });
+        const booksComplementaresFiltered = allBooks.filter((books) => books.tagsBook === "Obras Complementares")
+        const booksBasicasFiltered = allBooks.filter((books) => books.tagsBook === "Obras Básicas")
+        setBooks({ booksLoans: booksLoans, booksReserves: booksReserves })
+        setBooksComplementares(booksComplementaresFiltered)
+        setBooksBasicas(booksBasicasFiltered)
       } catch (error) {
         console.error("Erro ao carregar livros", error)
       } finally {
@@ -28,5 +34,5 @@ export default function useBooks() {
     fetchBooks()
   }, [])
 
-  return { books, loading }
+  return { books, booksComplementares, booksBasicas ,loading }
 }

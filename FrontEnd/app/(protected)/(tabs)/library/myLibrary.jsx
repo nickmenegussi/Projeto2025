@@ -30,12 +30,18 @@ const MyLibrary = () => {
                 )}
               />
               <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
-            </View>
+            </View>z
             <View style={styles.ContainerHeader}>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   onPress={() => router.push(`library/historicalLoans`)}
                   style={[styles.button, styles.buttonActive]}
+                >
+                  <Text style={styles.linkText}>Outra navegacao</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.push(`library/historicalLoans`)}
+                  style={styles.button}
                 >
                   <Text style={styles.linkText}>Livros Favoritos</Text>
                 </TouchableOpacity>
@@ -43,7 +49,10 @@ const MyLibrary = () => {
               </View>
             </View>
             <Text style={styles.TextContainer}>Minha Biblioteca</Text>
-            <Text style={styles.titlerRenderItem}>Tópicos</Text>
+            <Text style={styles.titlerRenderItem}>Livros Favoritados</Text>
+            {/* <FlatList 
+            renderItem={}
+            /> */}
           </View>
         </>
       )}
@@ -106,11 +115,8 @@ ContainerHeader: {
 
 buttonContainer: {
   flexDirection: "row",
-  flexWrap: "wrap",
   width: "auto",
   padding: 4,
-  marginHorizontal: "auto",
-  marginVertical: 12,
   borderWidth: 1,
   backgroundColor: "#003B73",
   borderColor: "white",
