@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import Trending from "../../../../components/Navagation";
 import {
@@ -26,15 +27,28 @@ const HomeLibrary = () => {
   const { books, loading } = useBooks();
 
   const data = [
-    { type: "Acervo para Encomendas", data: books?.booksLoans || [] },
-    { type: "Acervo para Reservas", data: books?.booksReserves || [] },
+    {
+      type: "Acervo para Encomendas",
+      data: books?.booksLoans?.slice(0, 6) || [],
+      path: '/library/LoanCollection'
+    },
+    {
+      type: "Acervo para Reservas",
+      data: books?.booksReserves?.slice(0, 6) || [],
+      path: '/library/reserves'
+    },
     { type: "Reflexões" },
   ];
 
   function renderSection({ item }) {
     return (
       <View style={styles.sectionContainer}>
-        <Text style={styles.headerTitle}>{item.type}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+          <Text style={styles.headerTitle}>{item.type}</Text>
+          <TouchableOpacity onPress={() => router.push(`${item.path}`)}>
+            <Text style={styles.verTodos}>Ver todos</Text>
+          </TouchableOpacity>
+        </View>
         {item.type === "Acervo para Encomendas" ? (
           <CardCustom data={item.data} loan={true} />
         ) : item.type === "Acervo para Reservas" ? (
@@ -156,7 +170,7 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: "#003B73",
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   sectionContainer: {
     paddingHorizontal: 10,
@@ -194,5 +208,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20,
     color: "#fff",
-  },
+  }, verTodos: {
+    color: "#60A3D9",
+    fontWeight: "bold",
+    textAlign: "right",
+    fontSize: 14,
+}
 });

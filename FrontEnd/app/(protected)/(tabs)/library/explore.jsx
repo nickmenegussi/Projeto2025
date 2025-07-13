@@ -12,6 +12,7 @@ import useBooks from "../../../../hooks/useBooks";
 import CardCustom from "../../../../components/CardCustom";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { ArrowRight } from "lucide-react-native";
+import { router } from "expo-router";
 
 const dadosIniciais = [
   { id: "1", nome: "Obras Complementares" },
@@ -25,7 +26,7 @@ export default function Explorar() {
   const { booksComplementares, booksBasicas } = useBooks();
 
   const data = [
-    { id: 1, type: "Obras Complementares", data: booksComplementares || [] },
+    { id: 1, type: "Obras Complementares", data: booksComplementares || [], path: '/library/ObrasComplementares' },
     { id: 2, type: "Obras Básicas", data: booksBasicas || [] },
   ];
 
@@ -36,7 +37,7 @@ export default function Explorar() {
 
   const dadosFiltrados = dadosIniciais.filter((item) =>
     item.nome.toLowerCase().includes(busca.toLowerCase().trim())
-  )
+  );
 
   return (
     <View style={styles.container}>
@@ -61,32 +62,40 @@ export default function Explorar() {
       </View>
 
       <FlatList
-  data={dataFiltrada}
-  keyExtractor={(item) => item.id}
-  renderItem={({ item }) => (
-    <View>
-      <View style={{flexDirection: 'row', alignItems: 'center' ,justifyContent: 'space-between'}}>
-        <Text style={styles.titlerRenderItem}>{item.type}</Text>
-        <ButtonIcons
-          color={"white"}
-          size={30}
-          Icon={({ color, size }) => (
-            <ArrowRight color={color} size={size} />
-          )}
-        />
-      </View>
-      <CardCustom data={item.data} loan={true} />
-    </View>
-  )}
-  contentContainerStyle={{ paddingBottom: 250 }}
- />
-
+        data={dataFiltrada}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={styles.titlerRenderItem}>{item.type}</Text>
+              <ButtonIcons
+                handleChange={() => router.push(`${item.path}`)}
+                color={"white"}
+                size={30}
+                Icon={({ color, size }) => (
+                  <ArrowRight color={color} size={size} />
+                )}
+              />
+            </View>
+            <CardCustom data={item.data} loan={true} />
+          </View>
+        )}
+        contentContainerStyle={{ paddingBottom: 250 }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
     paddingBottom: 150,
     paddingVertical: 70,
