@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import useBooks from "../../../../hooks/useBooks";
@@ -23,11 +24,29 @@ const dadosIniciais = [
 
 export default function Explorar() {
   const [busca, setBusca] = useState("");
-  const { booksComplementares, booksBasicas } = useBooks();
+  const { booksComplementares, booksBasicas, loading } = useBooks();
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
+  }
 
   const data = [
-    { id: 1, type: "Obras Complementares", data: booksComplementares || [], path: '/library/ObrasComplementares' },
-    { id: 2, type: "Obras Básicas", data: booksBasicas || [] },
+    {
+      id: 1,
+      type: "Obras Complementares",
+      data: booksComplementares || [],
+      path: "/library/ObrasComplementares",
+    },
+    {
+      id: 2,
+      type: "Obras Básicas",
+      data: booksBasicas || [],
+      path: "/library/ObrasBasicas",
+    },
   ];
 
   // Filtrar os dados com base na busca
@@ -35,6 +54,7 @@ export default function Explorar() {
     item.type.toLowerCase().includes(busca.toLowerCase().trim())
   );
 
+  // filtrar os dados com base nos generos que existem no sistema
   const dadosFiltrados = dadosIniciais.filter((item) =>
     item.nome.toLowerCase().includes(busca.toLowerCase().trim())
   );
@@ -63,7 +83,7 @@ export default function Explorar() {
 
       <FlatList
         data={dataFiltrada}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View>
@@ -84,10 +104,11 @@ export default function Explorar() {
                 )}
               />
             </View>
+            {/* atualizar para onde eu redireciono o usuario quando clica em cardCustom pois, tem livros que sao exibidos e nao sao loan ou reserve porem é obra complementar  */}
             <CardCustom data={item.data} loan={true} />
           </View>
         )}
-        contentContainerStyle={{ paddingBottom: 250 }}
+        contentContainerStyle={{ paddingBottom: 150 }}
       />
     </View>
   );
@@ -97,7 +118,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 150,
     paddingVertical: 70,
     backgroundColor: "#003B73",
   },
@@ -140,5 +160,10 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 15,
     marginTop: 15,
-  },
+  }, centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#003B73",
+  }
 });

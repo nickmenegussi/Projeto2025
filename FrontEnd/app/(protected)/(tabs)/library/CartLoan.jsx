@@ -71,9 +71,11 @@ const CartLoan = () => {
     }
   };
 
-  if (!data || data.length === 0 && loan) {
+  
+
+  if (!data || (data.length === 0 && loan)) {
     return (
-       <View style={styles.centered}>
+      <View style={styles.centered}>
         <Text style={styles.emptyText}>
           Você não tem nenhum item no carrinho.
         </Text>
@@ -106,7 +108,7 @@ const CartLoan = () => {
         <Text style={styles.headerTitle}>Carrinho de Empréstimos</Text>
       </View>
 
-     <View style={styles.buttonContainer}>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => router.push(``)}
           activeOpacity={0.7}
@@ -138,7 +140,7 @@ const CartLoan = () => {
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.15:3001/uploads/${item.image}`
+                    ? `http://192.168.1.10:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -547,7 +549,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF3B30", // vermelho para Remover
     width: 75,
     height: "100%",
-  }, subText: {
+  },
+  subText: {
     fontSize: 14,
     color: "#666",
     textAlign: "center",

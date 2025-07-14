@@ -18,8 +18,11 @@ const RootLayout = () => {
       <Stack.Screen name="historicalLoans" options={{ headerShown: false }} />
       <Stack.Screen name="explore" options={{ headerShown: false }} />
       <Stack.Screen name="myLibrary" options={{ headerShown: false }} />
-            <Stack.Screen name="ObrasComplementares" options={{ headerShown: false }} />
-
+      <Stack.Screen
+        name="ObrasComplementares"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="searchBook" options={{ headerShown: false }} />
     </Stack>
   );
 };

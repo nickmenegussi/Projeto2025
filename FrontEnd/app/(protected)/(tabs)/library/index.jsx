@@ -109,7 +109,7 @@ const HomeLibrary = () => {
                   path: "/library/reserves",
                 },
                 { name: "Acervo Empréstimos", path: "/library/loans" },
-                { name: "Buscar Livros", path: "/library/createBook" },
+                { name: "Buscar Livros", path: "/library/searchBook" },
                 { name: "Minha Biblioteca", path: "/library/myLibrary" },
                 {
                   name: "Histórico de movimentos",

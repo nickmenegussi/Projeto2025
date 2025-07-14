@@ -31,15 +31,52 @@ export default function ObrasComplementares() {
     );
   }
 
-  const chunkedBooks = chunkArray(booksComplementares, 8);
+  const chunkedBooksLoans = chunkArray(
+    booksComplementares.filter((book) => book.bookCategory === "emprestimo"),
+    8
+  );
+  const chunkedBooksReserve = chunkArray(
+    booksComplementares.filter((book) => book.bookCategory === "reserva"),
+    8
+  );
+
+  const data = [
+    {
+      id: 1,
+      type: "Obras Complementares para Empréstimo",
+      data: chunkedBooksLoans || [],
+    },
+    {
+      id: 2,
+      type: "Obras Complementares para Reserva",
+      data: chunkedBooksReserve || [],
+    },
+  ];
 
   return (
     <FlatList
-      data={chunkedBooks}
-      keyExtractor={(_, index) => index.toString()}
+      data={data}
+      keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <View style={{ marginBottom: 20 }}>
-          <CardCustom data={item} />
+        <View style={{ marginBottom: 20, gap: 20 }}>
+          <Text style={styles.sectionTitle}>{item.type}</Text>
+          {/* aqui eu tenho que iterar de novo na lista que eu recebo pq para exibir uma limitação de itens por colunas eu fica nesse formato:  [ livro1, livro2, livro3, livro4 ],   // chunk 1
+            [ livro5, livro6 ] um array de array */}
+          {item.data.map((books) =>
+            item.type === "Obras Complementares para Empréstimo" ? (
+              <CardCustom
+                key={books[0].idLibrary}
+                data={books}
+                aboutBookLoan={true}
+              />
+            ) : (
+              <CardCustom
+                key={books[0].idLibrary}
+                data={books}
+                aboutBookReserves={true}
+              />
+            )
+          )}
         </View>
       )}
       ListHeaderComponent={() => (
@@ -47,12 +84,11 @@ export default function ObrasComplementares() {
           <TouchableOpacity
             style={styles.ReturnButton}
             activeOpacity={0.6}
-            onPress={() => router.replace("/library/explore")}
+            onPress={() => router.push("/library/explore")}
           >
             <ArrowLeftIcon size={30} color={"white"} />
           </TouchableOpacity>
-                    <Text style={styles.header}>Obras Complementares</Text>
-
+          <Text style={styles.header}>Obras Complementares</Text>
         </View>
       )}
       contentContainerStyle={styles.contentContainer}
@@ -64,9 +100,9 @@ const styles = StyleSheet.create({
   contentContainer: {
     backgroundColor: "#003B73",
     padding: 20,
+    paddingBottom: 130,
     paddingVertical: 60,
-    flex: 1
-},
+  },
   ReturnButton: {
     backgroundColor: "#60A3D9",
     borderRadius: 10,
@@ -75,21 +111,27 @@ const styles = StyleSheet.create({
     height: 40,
     maxHeight: 40,
     alignItems: "center",
-    justifyContent: "center", 
- },
+    justifyContent: "center",
+  },
   header: {
     color: "white",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-  }, HeaderComponent: {
-    flexDirection: 'row',
-    gap: 20
-  }, 
+  },
+  HeaderComponent: {
+    flexDirection: "row",
+    gap: 20,
+  },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#003B73",
+  },
+  sectionTitle: {
+    color: "white",
+    fontSize: 17,
+    fontWeight: "600",
   },
 });

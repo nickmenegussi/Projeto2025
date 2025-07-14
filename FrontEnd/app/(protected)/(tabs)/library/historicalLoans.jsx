@@ -220,5 +220,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
-  },
+  }, centered:{
+        backgroundColor: "#003B73",
+
+  }
 });

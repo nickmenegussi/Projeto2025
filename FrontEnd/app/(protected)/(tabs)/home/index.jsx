@@ -194,7 +194,6 @@ const Home = () => {
     <>
       <SafeAreaView style={styles.safeAreaView}>
         <SideBar isOpen={IsSideBarOpen} setIsOpen={setIsSideBarOpen} />
-
         <FlatList
           data={[
             { type: "Palestras da Casa", content: lectures },
@@ -529,6 +528,7 @@ const Home = () => {
               />
             </View>
           )}
+          contentContainerStyle={{paddingBottom: 100,}}
         />
       </SafeAreaView>
     </>
@@ -549,7 +549,6 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     padding: 10,
-    paddingBottom: 100,
     paddingVertical: 20,
     backgroundColor: "#003B73",
   },

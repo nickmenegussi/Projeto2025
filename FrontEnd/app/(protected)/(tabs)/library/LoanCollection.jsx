@@ -17,6 +17,7 @@ import CardCustom from "../../../../components/CardCustom";
 const LoanCollection = () => {
   const params = useLocalSearchParams();
   const books = useMemo(() => params.data ? JSON.parse(params.data) : [], [params.data]);
+  const booksFiltered = books.filter(booksLoans => booksLoans.bookCategory === "emprestimo")
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -49,13 +50,8 @@ const LoanCollection = () => {
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
         >
-          {books.length > 0 ? (
-            <>
-              <CardCustom data={books} aboutBookLoan={true}/>
-              <View style={styles.extraCard}>
-                <CardCustom data={books} aboutBookLoan={true}/>
-              </View>
-            </>
+          {booksFiltered.length > 0 ? (
+            <CardCustom data={books} aboutBookLoan={true}/>
           ) : (
             <LoadingScreen />
           )}
