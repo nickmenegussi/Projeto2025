@@ -1,5 +1,25 @@
 const connection = require('../config/db')
 
+// menos verboso, mais elegante e seguro... evita callbacks
+// callbacks = É uma função passada como argumento para ser executada depois que uma operação terminar.
+exports.getCommentsByPostId = async (req, res) => {
+    const {postId} = req.params
+    try {
+        const [rows] = await connection.query(`
+        SELECT c.idComments, c.message, c.createdDate as create_at, u.idUser as user_id, u.nameUser, u.image
+        FROM Comments c
+        JOIN User u on c.User_idUser = u.user_id
+        WHERE c.Post_idPost = ?
+        ORDER BY c.created_at ASC
+            `, [postId])
+        res.status(200).json(rows)
+    } catch (error){
+        console.error('Erro ao buscar comentários:', error);
+        res.status(500).json({ message: 'Erro interno do servidor ao buscar comentários.' });
+    }
+}
+
+
 exports.viewCommentsByPostByUser = (req, res) => {
     const Post_idPost = req.params.idPost
     const User_idUser = req.data.id
@@ -56,6 +76,10 @@ exports.createComment = (req, res) => {
     const { Post_idPost, message } = req.body
     const User_idUser = req.data.id
 
+    if (!Post_idPost || !message) {
+    return res.status(400).json({ error: "Campos obrigatórios não preenchidos" });
+    }
+
     connection.query(`SELECT * FROM posts WHERE Post_idPost = ? AND User_idUser = ? AND message = ?`, (err, result) => {
         if (err) {
             return res.status(500).json({
@@ -66,7 +90,7 @@ exports.createComment = (req, res) => {
         } 
 
         if(result.length > 0){
-            return res.status(404).json({
+            return res.status(409).json({
                 message: "Esse post já possui um comentário.",
                 success: false,
                 data: result
@@ -87,7 +111,7 @@ exports.createComment = (req, res) => {
             return res.status(400).json({
                 message: "Erro ao criar comentário.",
                 success: false,
-                data: result
+                data: err
             })
         } 
 
@@ -129,7 +153,7 @@ exports.updateComment = (req, res) => {
             })
         }
 
-        connection.query(`UPDATE comments SET message = ? WHERE idComment = ? AND User_idUser = ?`, [message, idComments, User_idUser], (err, result) => {
+        connection.query(`UPDATE comments SET message = ? WHERE idComments = ? AND User_idUser = ?`, [message, idComments, User_idUser], (err, result) => {
             if (err) {
                 return res.status(500).json({
                     message: "Erro ao se conectar com o servidor.",

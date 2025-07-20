@@ -103,10 +103,12 @@ Where u.idUser = 1
 CREATE TABLE Post (
     idPost INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
+    title varchar(255) not null,
     image TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     User_idUser INT NOT NULL,
     Topic_idTopic INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Topic_idTopic) REFERENCES Topic(idTopic)
 );
@@ -114,23 +116,23 @@ CREATE TABLE Post (
 -- Tabela Comments
 CREATE TABLE Comments (
     idComments INT AUTO_INCREMENT PRIMARY KEY,
-    Post_idPost INT NOT NULL,
-    User_idUser INT NOT NULL,
+    Post_idPost INT NOT NULL UNIQUE,
+    User_idUser INT NOT NULL UNIQUE,
     message TEXT NOT NULL,
     createdDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE
 );
 
 
 -- Tabela Likes
 CREATE TABLE Likes (
     idLikes INT AUTO_INCREMENT PRIMARY KEY,
-    Post_idPost INT NOT NULL,
-    User_idUser INT NOT NULL,
+    Post_idPost INT NOT NULL unique,
+    User_idUser INT NOT NULL unique,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE
 );
 
 -- Tabela Lecture

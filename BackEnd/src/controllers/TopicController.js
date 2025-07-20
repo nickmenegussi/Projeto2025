@@ -187,7 +187,7 @@ exports.updateDescription = (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ? WHERE User_idUser = ?",
+    "SELECT * FROM Topic WHERE idTopic = ? and User_idUser = ?",
     [idTopic, User_idUser],
     (err, result) => {
       if (err) {
@@ -251,7 +251,7 @@ exports.updateTopicImage = (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM Topic WHERE idTopic = ? WHERE User_idUser = ?",
+    "SELECT * FROM Topic WHERE idTopic = ? and User_idUser = ?",
     [idTopic, User_idUser],
     (err, result) => {
       if (err) {
@@ -296,7 +296,7 @@ exports.updateTopicImage = (req, res) => {
               data: err,
             })
           }
-          return res.status(201).json({
+          return res.status(200).json({
             message: "Sucesso ao alterar a imagem do tópico.",
             success: true,
             data: resultUpdateImgProfile,
