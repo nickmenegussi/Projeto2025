@@ -19,7 +19,7 @@ export default function useCart({idUser, idLibrary} = {}) {
       } finally {
         setLoading(false);
       }
-    })
+    }, [])
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);

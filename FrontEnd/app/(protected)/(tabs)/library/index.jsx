@@ -35,7 +35,7 @@ const HomeLibrary = () => {
     {
       type: "Acervo para Reservas",
       data: books?.booksReserves?.slice(0, 6) || [],
-      path: '/library/reserves'
+      path: '/library/ReserveCollection'
     },
     { type: "Reflexões" },
   ];
@@ -106,9 +106,9 @@ const HomeLibrary = () => {
                 {
                   type: "Navegação",
                   name: "Acervo Encomendas",
-                  path: "/library/reserves",
+                  path: "/library/ReserveCollection",
                 },
-                { name: "Acervo Empréstimos", path: "/library/loans" },
+                { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
                 { name: "Buscar Livros", path: "/library/searchBook" },
                 { name: "Minha Biblioteca", path: "/library/myLibrary" },
                 {

@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
     const loadData = async () => {
       const dadosToken = await AsyncStorage.getItem("@Auth:token");
       const dadosUser = JSON.parse(
-      (await AsyncStorage.getItem("@Auth:user")) || "null"
+        (await AsyncStorage.getItem("@Auth:user")) || "null"
       );
       const dadosOtp = (await AsyncStorage.getItem("@Auth:otp")) || "";
       const dadosEmail = (await AsyncStorage.getItem("@Auth:email")) || "";
@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
       email,
     });
     if (response.data.error) {
-              setOtpEmail(null);
+      setOtpEmail(null);
 
       console.log("Erro", response.data.error);
       Alert.alert(`Erro ${error.response.data.message}`);
@@ -79,7 +79,7 @@ export function AuthProvider({ children }) {
 
   async function login(email, password) {
     const response = await api.post("/auth/login/create", { email, password });
-    
+
     // Verifique se a resposta está no formato correto
     if (response.data.error) {
       setUser(null);
@@ -98,13 +98,35 @@ export function AuthProvider({ children }) {
     }
   }
   // update User
+  async function register(nameUser, email, password) {
+    try {
+      const response = await api.post("/user/user/register", {
+        nameUser,
+        email,
+        password,
+      });
+
+      if (response.data.error) {
+        console.log("Erro", response.data.error);
+        Alert.alert("Erro", response.data.error.message);
+      } else {
+        Alert.alert("Sucesso!", "Cadastro realizado. Faça login.");
+        router.replace("/sign-up")
+      }
+    } catch (error) {
+      console.error("Erro ao registrar:", error);
+      Alert.alert("Erro", "Não foi possível concluir o cadastro.");
+    }
+  }
 
   function logout() {
     setUser(null);
+    setOtpDigits(null);
+    setOtpEmail(null);
     AsyncStorage.clear();
     delete api.defaults.headers.common["Authorization"];
 
-    router.replace("/"); // troquei o Redirect do expo router, pois, o expo-router funciona somente para estruturas de pastas definidas e quando não está nao funciona
+    router.replace("/sign-up");
   }
 
   return (
@@ -118,7 +140,7 @@ export function AuthProvider({ children }) {
         logout,
         loading,
         OtpSendEmail,
-        OtpVerification,
+        OtpVerification, register
       }}
     >
       {children}

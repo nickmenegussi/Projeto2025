@@ -4,18 +4,39 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { router } from "expo-router";
+import useFavorite from "../../../../hooks/useFavorite";
+import CardCustom from "../../../../components/CardCustom";
 
 const MyLibrary = () => {
+  const { favorite, loading } = useFavorite();
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#003B73" />
+      </View>
+    );
+  }
   return (
     <FlatList
-      data={[]}
-      keyExtractor={(item) => item.id}
-      renderItem={[]}
+      data={favorite}
+      keyExtractor={(item) => item.idLibrary}
+      renderItem={({ item }) => (
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+          activeOpacity={0.8}
+  
+        >
+          <CardCustom data={[item]} />
+        </TouchableOpacity>
+        </View>
+      )}
       contentContainerStyle={styles.container}
       ListHeaderComponent={() => (
         <>
@@ -30,22 +51,21 @@ const MyLibrary = () => {
                 )}
               />
               <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
-            </View>z
+            </View>
             <View style={styles.ContainerHeader}>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   onPress={() => router.push(`library/historicalLoans`)}
-                  style={[styles.button, styles.buttonActive]}
+                  style={styles.button}
                 >
                   <Text style={styles.linkText}>Outra navegacao</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => router.push(`library/historicalLoans`)}
-                  style={styles.button}
+                  style={[styles.button, styles.buttonActive]}
                 >
                   <Text style={styles.linkText}>Livros Favoritos</Text>
                 </TouchableOpacity>
-                
               </View>
             </View>
             <Text style={styles.TextContainer}>Minha Biblioteca</Text>
@@ -64,7 +84,6 @@ export default MyLibrary;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
     backgroundColor: "#003B73",
   },
@@ -91,54 +110,79 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   header: {
-  flexDirection: "row",
-  alignItems: "center",
-  gap: 40,
-  padding: 10,
-  paddingTop: 50,
-  backgroundColor: "#003B73",
-  borderBottomWidth: 1,
-  borderBottomColor: "rgba(255,255,255,0.1)",
-},
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 40,
+    padding: 10,
+    paddingTop: 50,
+    backgroundColor: "#003B73",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
+  },
 
-headerTitle: {
-  fontSize: 18,
-  fontWeight: "bold",
-  color: "white",
-},
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
 
-ContainerHeader: {
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-},
+  ContainerHeader: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-buttonContainer: {
-  flexDirection: "row",
-  width: "auto",
-  padding: 4,
-  borderWidth: 1,
-  backgroundColor: "#003B73",
-  borderColor: "white",
-  borderRadius: 30,
-},
+  buttonContainer: {
+    flexDirection: "row",
+    width: "auto",
+    padding: 4,
+    borderWidth: 1,
+    backgroundColor: "#003B73",
+    borderColor: "white",
+    borderRadius: 30,
+  },
 
-button: {
-  flex: 1,
-  paddingVertical: 8,
-  borderRadius: 30,
-  alignItems: "center",
-  justifyContent: "center",
-},
+  button: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-buttonActive: {
-  backgroundColor: "#60A3D9",
-},
+  buttonActive: {
+    backgroundColor: "#60A3D9",
+  },
 
-linkText: {
-  textAlign: "center",
-  color: "white",
-  fontWeight: "500",
-  fontSize: 13,
-},
+  linkText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "500",
+    fontSize: 13,
+  },
+  cardContainer: {
+    backgroundColor: "#1E2A47", // tom escuro para contraste com o fundo
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+
+  // Caso queira customizar dentro do CardCustom (se possível):
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
+
+  cardAuthor: {
+    fontSize: 14,
+    color: "#a0aec0", // cinza claro
+    marginTop: 4,
+  }, containerRenderItem: {
+  }
 });

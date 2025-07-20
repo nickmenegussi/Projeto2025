@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -55,7 +57,11 @@ export default function App() {
       end={{ x: 0, y: 1 }}
       locations={[0, 4]}
       style={styles.linearGradient}
-    >
+    ><KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} 
+      >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
@@ -109,7 +115,9 @@ export default function App() {
             <Button title="Entrar" handlePress={Login} />
           </View>
         </View>
+        
       </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   )
 }

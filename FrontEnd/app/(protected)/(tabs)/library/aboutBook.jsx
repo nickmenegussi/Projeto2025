@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageBackground,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -14,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Rating } from "react-native-ratings";
 import Trending from "../../../../components/Navagation";
 import ButtonIcons from "../../../../components/ButtonIcons";
+import { addFavorite } from "../../../../services/ServiceFavorite";
 
 const aboutBook = () => {
   const [rating, setRating] = useState(0);
@@ -35,6 +37,17 @@ const aboutBook = () => {
   const imageUrl = book.image 
     ? { uri: `http://192.168.1.10:3001/uploads/${book.image}` }
     : null;
+
+  const handleAddFavorite = async () => {
+    try {
+      await addFavorite(booksUnique[0].idLibrary)
+      Alert.alert('Sucesso', 'Livro favoritado com sucesso!')
+      router.push('/library/myLibrary')
+    } catch (error) {
+      console.log(error)
+      Alert.alert('Erro', `${error.message}`)
+    }
+  }
 
 
   return (
@@ -71,7 +84,9 @@ const aboutBook = () => {
               <ButtonIcons
               color="#ffff"
               size={30}
-              handleChange={() => setIsFavorite(!isFavorite)}
+              handleChange={() => {setIsFavorite(!isFavorite)
+                handleAddFavorite()
+              }}
               Icon={({ color, size }) => (
                 <Bookmark
                   color={color}

@@ -507,6 +507,7 @@ const Home = () => {
                   <ButtonIcons
                     color={"white"}
                     size={30}
+                    handleChange={() => router.push('/settings')}
                     Icon={({ color, size }) => (
                       <CircleUserRoundIcon color={color} size={size} />
                     )}

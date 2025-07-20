@@ -24,6 +24,7 @@ import useLoan from "../../../../hooks/useLoan";
 const CartLoan = () => {
   const { data, loading, refresh } = useCart();
   const { loan } = useLoan();
+  const [loadingConfirm, setLoadingConfirm] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -62,16 +63,23 @@ const CartLoan = () => {
   };
 
   const handleConfirmationLoan = async () => {
-    for (const item of data) {
-      await createLoanConfirmation({
-        Cart_idCart: item.idCart,
-        Book_idLibrary: item.idLibrary,
-        quantity: item.quantity,
-      });
+    setLoadingConfirm(true);
+    try {
+      // aqui eu tenho que iterar de novo nos items que tem em data por conta de que eu estou pegando os dados que estão vindo da api que mostra os carrinhos com os itens dentro
+      for (const item of data) {
+        await createLoanConfirmation({
+          Cart_idCart: item.idCart,
+          Book_idLibrary: item.idLibrary,
+          quantity: item.quantity,
+        });
+      }
+      Alert.alert("Sucesso", "Reserva confirmada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível confirmar a reserva.");
+    } finally {
+      setLoadingConfirm(false);
     }
   };
-
-  
 
   if (!data || (data.length === 0 && loan)) {
     return (
@@ -245,8 +253,13 @@ const CartLoan = () => {
                 onPress={() => {
                   handleConfirmationLoan();
                 }}
+                disabled={loadingConfirm}
               >
-                <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
+                {loadingConfirm ? (
+                  <ActivityIndicator size="small" color="003B73" />
+                ) : (
+                  <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.actionButton}

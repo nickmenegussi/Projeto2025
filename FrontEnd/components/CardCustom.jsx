@@ -21,6 +21,8 @@ export default function CardCustom({
   reserves = false,
   aboutBookLoan = false,
   aboutBookReserves = false,
+  obrasComplementares = false,
+  obrasBasicas = false,
 }) {
   const [books, setBooks] = useState(data || []);
 
@@ -40,7 +42,11 @@ export default function CardCustom({
       router.push(`/library/aboutBook?data=${encodedData}`);
     } else if (reserves) {
       const encodedData = encodeURIComponent(JSON.stringify(books));
-      router.push(`/library/reserves?data=${encodedData}`);
+      router.push(`/library/ReserveCollection?data=${encodedData}`);
+    } else if (obrasComplementares) {
+      router.push(`/library/ObrasComplementares`);
+    } else if (obrasBasicas) {
+      router.push(`/library/ObrasBasicas`);
     }
   };
 
@@ -52,9 +58,9 @@ export default function CardCustom({
     >
       {books.length > 0 ? (
         books.map((item) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             activeOpacity={0.9}
-            style={styles.card} 
+            style={styles.card}
             key={item.idLibrary}
             onPress={() => handleCardPress(item)}
           >
@@ -65,14 +71,14 @@ export default function CardCustom({
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
             >
               <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.7)']}
+                colors={["transparent", "rgba(0,0,0,0.7)"]}
                 style={styles.imageOverlay}
               />
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{item.bookCategory}</Text>
               </View>
             </ImageBackground>
-            
+
             <View style={styles.infoContainer}>
               <Text style={styles.title} numberOfLines={1}>
                 {item.nameBook}
@@ -89,9 +95,7 @@ export default function CardCustom({
               {/* Tags totalmente visíveis */}
               <View style={styles.tagsContainer}>
                 {item.tagsBook && (
-                  <Text style={styles.tagsText}>
-                    {item.tagsBook}
-                  </Text>
+                  <Text style={styles.tagsText}>{item.tagsBook}</Text>
                 )}
               </View>
 
@@ -131,28 +135,28 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 130, // Sua altura original
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   imageOverlay: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: '50%',
+    height: "50%",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#3b82f6',
+    fontWeight: "600",
+    color: "#3b82f6",
   },
   infoContainer: {
     padding: 10, // Seu padding original
@@ -186,7 +190,7 @@ const styles = StyleSheet.create({
     color: "#6b7280",
     fontStyle: "italic",
     flexShrink: 1, // Permite que o texto quebre em múltiplas linhas
-    flexWrap: 'wrap' // Permite quebra de linha
+    flexWrap: "wrap", // Permite quebra de linha
   },
   button: {
     backgroundColor: "#3b82f6",

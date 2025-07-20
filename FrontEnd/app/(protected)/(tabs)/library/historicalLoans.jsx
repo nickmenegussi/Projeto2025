@@ -34,7 +34,7 @@ const HistoricalLoans = () => {
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.11:3001/uploads/${item.image}`
+                    ? `http://192.168.1.10:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -110,8 +110,8 @@ export default HistoricalLoans;
 
 const styles = StyleSheet.create({
   ContainerFlatlist: {
-    flex: 1,
     padding: 10,
+    paddingBottom: 120,
     backgroundColor: "#003B73",
   },
   ContainerHeader: {

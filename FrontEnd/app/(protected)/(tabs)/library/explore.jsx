@@ -105,7 +105,7 @@ export default function Explorar() {
               />
             </View>
             {/* atualizar para onde eu redireciono o usuario quando clica em cardCustom pois, tem livros que sao exibidos e nao sao loan ou reserve porem é obra complementar  */}
-            <CardCustom data={item.data} loan={true} />
+            <CardCustom data={item.data} obrasComplementares={item.data[0].bookCategory.includes('emprestimo')} obrasBasicas={item.data[0].bookCategory.includes('reserva')}/>
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 150 }}
