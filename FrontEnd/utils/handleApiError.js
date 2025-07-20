@@ -10,7 +10,7 @@ export const handleApiError = (error) => {
       return null
     } else {
       console.log(
-        "Erro ao exibir os trabalhos voluntários",
+        "Erro ao exibir os dados",
         error.response.data
       );
       Alert.alert(
