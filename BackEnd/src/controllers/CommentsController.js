@@ -1,4 +1,5 @@
 const connection = require('../config/db')
+const  { getIO } = require('../socket/index')
 
 // menos verboso, mais elegante e seguro... evita callbacks
 // callbacks = É uma função passada como argumento para ser executada depois que uma operação terminar.
@@ -13,6 +14,8 @@ exports.getCommentsByPostId = async (req, res) => {
         ORDER BY c.created_at ASC
             `, [postId])
         res.status(200).json(rows)
+        const io = getIO()
+        io.emit('commentsViewedByPostId', rows) // Emitindo evento para o socket.io
     } catch (error){
         console.error('Erro ao buscar comentários:', error);
         res.status(500).json({ message: 'Erro interno do servidor ao buscar comentários.' });
@@ -43,6 +46,24 @@ exports.viewCommentsByPostByUser = (req, res) => {
                 data: result
             })
         }   
+
+        if(result.length === 0){
+            return res.status(404).json({
+                message: "Nenhum comentário encontrado.",
+                success: false,
+                data: result
+            })
+        }
+
+        // Emitindo um evento para o socket.io
+        const io = getIO()
+        io.emit('commentsViewedByPostByUser', result)
+
+        return res.status(200).json({
+            message: "Sucesso ao exibir os comentários do usuário.",
+            success: true,
+            data: result
+        })
     })
 }
 
@@ -68,6 +89,16 @@ exports.viewCommentsAllByPost = (req, res) => {
                 data: result
             })
         } 
+
+        // Emitindo um evento para o socket.io
+        const io = getIO()
+        io.emit('commentsViewedAllByPost', result)
+
+        return res.status(200).json({
+            message: "Sucesso ao exibir os comentários do post.",
+            success: true,
+            data: result
+        })
 
     })
 }
@@ -114,6 +145,10 @@ exports.createComment = (req, res) => {
                 data: err
             })
         } 
+
+        // Emitindo um evento para o socket.io
+        const io = getIO()
+        io.emit('commentCreated', { Post_idPost, User_idUser, message })
 
         return res.status(201).json({
             message: "Comentário criado com sucesso.",
@@ -224,6 +259,10 @@ exports.deleteComment = (req, res) => {
                     data: result
                 })
             } 
+
+            // Emitindo um evento para o socket.io
+            const io = getIO()
+            io.emit('commentDeleted', { idComments, User_idUser })
     
             return res.status(201).json({
                 message: "Comentário deletado com sucesso.",

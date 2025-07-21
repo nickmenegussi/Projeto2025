@@ -1,22 +1,22 @@
 const connection = require("../config/db");
+const { getIO } = require("../socket/index");
 
 exports.viewPost = (req, res) => {
   const query = `
     SELECT
       p.idPost AS id,
-      p.title,
       p.content,
-      p.image AS image_url,
+      p.image AS image,
       p.created_at,
       p.updated_at,
       u.idUser AS user_id,
-      u.username,
-      u.profile_picture_url,
+      u.nameUser,
+      u.image_profile,
       t.idTopic,
       t.title AS topic_title,
       t.description AS topic_description,
-      (SELECT COUNT(*) FROM likes l WHERE l.post_id = p.idPost) AS likes_count,
-      (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.idPost) AS comments_count
+      (SELECT COUNT(*) FROM Likes l WHERE l.Post_idPost = p.idPost) AS likes_count,
+      (SELECT COUNT(*) FROM Comments c WHERE c.Post_idPost = p.idPost) AS comments_count
     FROM Post p
     JOIN User u ON p.User_idUser = u.idUser
     JOIN Topic t ON p.Topic_idTopic = t.idTopic
@@ -92,7 +92,7 @@ exports.viewPostByUser = (req, res) => {
 exports.createPost = (req, res) => {
   const { content, Topic_idTopic } = req.body;
   const image = req.file ? req.file.filename : null;
-  const User_idUser = req.data.id
+  const User_idUser = req.data.id;
 
   if (!content || !image || !Topic_idTopic || !User_idUser) {
     return res.status(400).json({
@@ -124,7 +124,7 @@ exports.createPost = (req, res) => {
 
       // verificar se a postagem já está publicada
       connection.query(
-        "SELECT * FROM Post where content = ? AND User_idUser = ?",
+        "SELECT * FROM Post where content = ? AND User_idUser = ? ",
         [content, User_idUser],
         (errPost, resultPost) => {
           if (errPost) {
@@ -153,6 +153,16 @@ exports.createPost = (req, res) => {
                   data: errInsert,
                 });
               }
+
+              const io = getIO();
+              io.emit("postCreated", {
+                id: resultInsert.insertId,
+                content,
+                image,
+                User_idUser,
+                Topic_idTopic,
+              });
+
               return res.status(201).json({
                 success: true,
                 message: "Publicação criada com sucesso.",
@@ -190,7 +200,7 @@ exports.updateContentPost = (req, res) => {
         });
       }
       connection.query(
-        `UPDATE Post FROM SET content = ? where idPost = ? AND User_idUser = ?`,
+        `UPDATE Post SET content = ? where idPost = ? AND User_idUser = ?`,
         [content, idPost, User_idUser],
         (err, result) => {
           if (err) {
@@ -297,13 +307,19 @@ exports.deletePost = (req, res) => {
               success: false,
               data: err,
             });
-          } else {
-            return res.status(200).json({
-              message: "Exclusão da postagem realizada com sucesso",
-              success: true,
-              data: result,
-            });
           }
+
+          // Emitindo um evento para o socket.io
+          const io = getIO();
+          io.emit("postDeleted", {
+            id: idPost,
+          });
+
+          return res.status(200).json({
+            message: "Exclusão da postagem realizada com sucesso",
+            success: true,
+            data: result,
+          });
         }
       );
     }

@@ -11,15 +11,8 @@ function initializerSocket(server) {
     },
   });
 
-  // Evento de conexão de um novo cliente
   io.on("connection", (socket) => {
     console.log("🟢 Cliente conectado:", socket.id);
-
-    // Escuta um evento de novo comentário vindo do cliente
-    socket.on("newComment", (data) => {
-      // Emite o comentário para todos os outros clientes
-      socket.broadcast.emit("commentAdded", data);
-    });
 
     // Evento de desconexão
     socket.on("disconnect", () => {
@@ -31,9 +24,9 @@ function initializerSocket(server) {
 // Retorna a instância do socket.io
 function getIO() {
   if (!io) {
-    throw new Error('Socket.io não foi inicializado!');
+    throw new Error("Socket.io não foi inicializado!");
   }
   return io;
 }
 
-module.exports = {initializerSocket, getIO}
+module.exports = { initializerSocket, getIO };

@@ -116,8 +116,8 @@ CREATE TABLE Post (
 -- Tabela Comments
 CREATE TABLE Comments (
     idComments INT AUTO_INCREMENT PRIMARY KEY,
-    Post_idPost INT NOT NULL UNIQUE,
-    User_idUser INT NOT NULL UNIQUE,
+    Post_idPost INT NOT NULL,
+    User_idUser INT NOT NULL,
     message TEXT NOT NULL,
     createdDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
@@ -128,11 +128,13 @@ CREATE TABLE Comments (
 -- Tabela Likes
 CREATE TABLE Likes (
     idLikes INT AUTO_INCREMENT PRIMARY KEY,
-    Post_idPost INT NOT NULL unique,
-    User_idUser INT NOT NULL unique,
+    Post_idPost INT NOT NULL,
+    User_idUser INT NOT NULL ,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE,
+    UNIQUE (Post_idPost, User_idUser)
+
 );
 
 -- Tabela Lecture

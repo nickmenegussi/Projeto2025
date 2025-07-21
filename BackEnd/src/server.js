@@ -63,4 +63,4 @@ app.get('/teste', (req, res) => {
     res.send('Bem-vindo à API do Fórum!')
 })
 
-app.listen(port, () => console.log(`Rodando na porta ${port}\nDocumentação do Swagger disponível em http://localhost:${port}/api-docs`))
+server.listen(port, () => console.log(`Rodando na porta ${port}\nDocumentação do Swagger disponível em http://localhost:${port}/api-docs`))
