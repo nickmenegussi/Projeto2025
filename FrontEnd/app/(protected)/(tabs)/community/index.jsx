@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import {
@@ -20,11 +21,12 @@ import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
 import { router } from "expo-router";
 import usePostMessage from "../../../../hooks/usePostMessage";
+import { addLikeToPost } from "../../../../services/ServiceLike";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { postData, loading, error } = usePostMessage();
+  const { postData, setPostData, refresh, loading, error } = usePostMessage();
 
   const dataSidebar = [
     {
@@ -53,6 +55,31 @@ const Index = () => {
       route: "/community/createPost",
     },
   ];
+
+  const toggleLikePost = async (postId) => {
+    try {
+      const response = await addLikeToPost(postId);
+
+      if (response?.success === false && response?.liked === true) {
+        Alert.alert("Erro", "Você não pode curtir a mesma postagem já curtida");
+        return;
+      }
+
+      if (response?.success) {
+        // Atualiza o estado local diretamente
+        setPostData((prevPosts) =>
+          prevPosts.map((post) =>
+            post.idPost === postId
+              ? { ...post, likes_count: post.likes_count + 1 }
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao curtir post:", error);
+      Alert.alert("Erro ao curtir post", "Não foi possível curtir um post");
+    }
+  };
 
   const formatDate = (date) => {
     const dataRecebida = new Date(date);
@@ -99,22 +126,24 @@ const Index = () => {
           </View>
         )}
         data={postData}
-        keyExtractor={(item) => item.id?.toString()}
+        keyExtractor={(item) => item.idPost?.toString()}
         renderItem={({ item }) => (
           <View style={styles.postCard}>
             <View style={styles.headerRow}>
               {item.image_profile ? (
                 <Image
-                style={styles.profile}
-                source={{
-                  uri: `http://192.168.1.17:3001/uploads/${item.image_profile}`,
-                }}
-              />
-              ) : <Image
-              source={require("../../../../assets/images/default-profile.jpg")}
-              style={styles.profile}
-              resizeMode="contain"
-            />}
+                  style={styles.profile}
+                  source={{
+                    uri: `http://192.168.1.17:3001/uploads/${item.image_profile}`,
+                  }}
+                />
+              ) : (
+                <Image
+                  source={require("../../../../assets/images/default-profile.jpg")}
+                  style={styles.profile}
+                  resizeMode="contain"
+                />
+              )}
 
               <View style={styles.headerPostCard}>
                 <Text
@@ -142,6 +171,9 @@ const Index = () => {
                 <ButtonIcons
                   color={"white"}
                   size={26}
+                  handleChange={() => {
+                    toggleLikePost(item.idPost);
+                  }}
                   Icon={({ color, size }) => (
                     <Heart color={color} size={size} />
                   )}
@@ -171,6 +203,8 @@ const Index = () => {
             </View>
           </View>
         )}
+        refreshing={loading}
+        onRefresh={refresh}
         ListEmptyComponent={() =>
           loading ? (
             <ActivityIndicator size="large" color="#ffffff" />
@@ -183,7 +217,7 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default React.memo(Index);
 
 const styles = StyleSheet.create({
   conteinerFlatlist: {
@@ -214,7 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 12,
     backgroundColor: "#60A3D9",
-    borderRadius: 16,
+    borderRadius: 16, 
     gap: 5,
   },
   postContent: {

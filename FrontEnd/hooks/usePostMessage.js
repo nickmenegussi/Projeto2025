@@ -10,10 +10,10 @@ export default function usePostMessage() {
   useEffect(() => {
     const fetchInitialPosts = async () => {
       try {
-        const response = await fetchPosts();
+        const post = await fetchPosts();
 
-        if (response?.success && Array.isArray(response.data)) {
-          setPostData(response.data);
+        if (post) {
+          setPostData(post.data);
         } else {
           setPostData([]);
         }
@@ -33,6 +33,16 @@ export default function usePostMessage() {
       setPostData((prevPosts) => [newPost, ...prevPosts]); // adiciona no topo
     });
 
+    socket.on("likeAdded", ({ postId }) => {
+      setPostData((prevPosts) =>
+        prevPosts.map((post) =>
+          post.idPost === postId
+            ? { ...post, likes_count: post.likes_count + 1 }
+            : post
+        )
+      );
+    });
+
     // 🔴 EVENTO: quando um post for deletado no servidor
     socket.on("postDeleted", ({ id }) => {
       console.log("🗑️ Post deletado via socket:", id);
@@ -46,5 +56,5 @@ export default function usePostMessage() {
     };
   }, []);
 
-  return { postData, loading, error };
+  return { postData, setPostData, loading, error };
 }

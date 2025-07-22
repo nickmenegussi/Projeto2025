@@ -1,4 +1,5 @@
 const connection = require("../config/db");
+const { getIO } = require("../socket/index");
 
 exports.viewLikeMessages = (req, res) => {
   connection.query("SELECT * FROM Likes", (err, result) => {
@@ -26,11 +27,10 @@ exports.viewLikeMessagesByPost = (req, res) => {
     `SELECT * 
         FROM Likes l
         JOIN Post p on l.Post_idPost = p.idPost
-        JOIN User u on l.User_idUser = u.idUser
-        where u.idUser = ? AND l.Post_idPost = ? 
+        WHERE l.Post_idPost = ? 
         
         `,
-    [idUser, Post_idPost],
+    [Post_idPost],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -40,26 +40,18 @@ exports.viewLikeMessagesByPost = (req, res) => {
         });
       }
       if (result.length === 0) {
-        return response.status(400).json({
+        return res.status(400).json({
           success: false,
           message: `Não há likes ainda em nenhuma publicação`,
+          liked: false,
         });
       }
 
-      // verificar se o usuário logado é o mesmo que criou o tópico
-      if (result[0].User_idUser !== idUser) {
-        {
-          return res.status(403).json({
-            message: "Você não tem permissão para alterar o tópico.",
-            success: false,
-            data: err,
-          });
-        }
-      }
       return res.status(200).json({
         message: "Sucesso ao exibir as curtidas das postagens.",
         success: true,
         data: result,
+        liked: true,
       });
     }
   );
@@ -68,6 +60,13 @@ exports.viewLikeMessagesByPost = (req, res) => {
 exports.createLikes = (req, res) => {
   const Post_idPost = req.params.PostId;
   const User_idUser = req.data.id;
+
+  if (!Post_idPost) {
+    return res.status(400).json({
+      success: false,
+      message: "ID da publicação é obrigatório.",
+    });
+  }
 
   // verificar se a postagem já está curtida
   connection.query(
@@ -88,6 +87,7 @@ exports.createLikes = (req, res) => {
         return res.status(400).json({
           message: "Essa mensagem já foi curtida.",
           success: false,
+          liked: true,
         });
       }
 
@@ -102,11 +102,29 @@ exports.createLikes = (req, res) => {
               data: errInsert,
             });
           }
-          return res.status(201).json({
-            success: true,
-            message: "Mensagem curtida com sucesso.",
-            data: resultInsert,
-          });
+          connection.query(
+            "SELECT COUNT(*) AS totalLikes FROM Likes WHERE Post_idPost = ?",
+            [Post_idPost],
+            (errCount, resultCount) => {
+              if (errCount) {
+                console.error("Erro ao contar likes:", errCount);
+                return;
+              }
+              const totalLikes = resultCount[0].totalLikes;
+              console.log(totalLikes)
+              const io = getIO();
+              io.emit("likeAdded", {
+                postId: Post_idPost,
+                likes_count: totalLikes,
+              });
+
+              return res.status(201).json({
+                success: true,
+                message: "Mensagem curtida com sucesso.",
+                data: resultInsert,
+              });
+            }
+          );
         }
       );
     }

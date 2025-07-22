@@ -4,7 +4,7 @@ const { getIO } = require("../socket/index");
 exports.viewPost = (req, res) => {
   const query = `
     SELECT
-      p.idPost AS id,
+      p.idPost,
       p.content,
       p.image AS image,
       p.created_at,
