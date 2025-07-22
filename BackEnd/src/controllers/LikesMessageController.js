@@ -18,7 +18,7 @@ exports.viewLikeMessages = (req, res) => {
 };
 // Aqui eu faço diferente das demais, pois, futuramente eu posso querer exibir um histórico pedidos de reserva e para eu mostrar para o usuário eu tenho que fazer uma ligação de todas as tabelas responsáveis por isso.
 
-exports.viewLikeMessagesByUser = (req, res) => {
+exports.viewLikeMessagesByPost = (req, res) => {
   const Post_idPost = req.params.PostId;
   const idUser = req.data.id;
 
