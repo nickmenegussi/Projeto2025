@@ -1,25 +1,50 @@
-import { View, Text } from "react-native";
-import React, { useEffect } from "react";
-import axios from "axios";
-import { createPost } from "../services/ServicePost";
+import { useEffect, useState } from "react";
+import { fetchPosts } from "../services/ServicePost";
+import socket from "../services/socket";
 
 export default function usePostMessage() {
-  const [postData, setPostaData] = useState(null);
+  const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPostData = async () => {
+    const fetchInitialPosts = async () => {
       try {
-        // Simulate fetching post data
-        const response = await getPostData()
-        setPostaData(data);
-      } catch (error) {
-        console.error("Erro ao buscar post data:", error);
+        const response = await fetchPosts();
+
+        if (response?.success && Array.isArray(response.data)) {
+          setPostData(response.data);
+        } else {
+          setPostData([]);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar os posts:", err);
+        setError("Não foi possível carregar os posts.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPostData();
+    fetchInitialPosts();
+
+    // 🔴 EVENTO: quando um post for criado no servidor
+    socket.on("postCreated", (newPost) => {
+      console.log("📡 Novo post recebido via socket:", newPost);
+      setPostData((prevPosts) => [newPost, ...prevPosts]); // adiciona no topo
+    });
+
+    // 🔴 EVENTO: quando um post for deletado no servidor
+    socket.on("postDeleted", ({ id }) => {
+      console.log("🗑️ Post deletado via socket:", id);
+      setPostData((prevPosts) => prevPosts.filter((post) => post.id !== id));
+    });
+
+    // Cleanup: remove listeners ao desmontar
+    return () => {
+      socket.off("postCreated");
+      socket.off("postDeleted");
+    };
   }, []);
+
+  return { postData, loading, error };
 }

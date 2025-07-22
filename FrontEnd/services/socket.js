@@ -7,4 +7,5 @@ const socket = io(SOCKET_URL, {
   autoConnect: true,
 });
 
+
 export default socket;
