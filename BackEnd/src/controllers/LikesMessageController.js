@@ -107,21 +107,17 @@ exports.createLikes = (req, res) => {
             [Post_idPost],
             (errCount, resultCount) => {
               if (errCount) {
-                console.error("Erro ao contar likes:", errCount);
-                return;
+                return res.status(500).json({
+                  success: false,
+                  message: "Erro ao contar o número de likes que a postagem possui.",
+                  data: errCount,
+                });
               }
-              const totalLikes = resultCount[0].totalLikes;
-              console.log(totalLikes)
-              const io = getIO();
-              io.emit("likeAdded", {
-                postId: Post_idPost,
-                likes_count: totalLikes,
-              });
 
               return res.status(201).json({
                 success: true,
                 message: "Mensagem curtida com sucesso.",
-                data: resultInsert,
+                data: resultCount,
               });
             }
           );
