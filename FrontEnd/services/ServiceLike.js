@@ -27,7 +27,7 @@ export const addLikeToPost = async (Post_idPost) => {
       },
     });
     Alert.alert("Sucesso,", "você acabou de curtir um post")
-    return response.data.data;
+    return response.data;
   } catch (error) {
     handleApiError(error);
     return null;

@@ -7,13 +7,11 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
-  Bell,
   CircleUserRoundIcon,
   Download,
   Heart,
-  Heater,
   Menu,
   MessageSquare,
 } from "lucide-react-native";
@@ -25,59 +23,38 @@ import { addLikeToPost } from "../../../../services/ServiceLike";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const [isLiked, setIsLiked] = useState(false);
   const { postData, setPostData, refresh, loading, error } = usePostMessage();
-
   const dataSidebar = [
-    {
-      id: 1,
-      label: "Perfil",
-      route: "/settings",
-    },
-    {
-      id: 2,
-      label: "Conversas",
-      route: "/community",
-    },
-    {
-      id: 3,
-      label: "Novos Tópicos",
-      route: "/notifications",
-    },
-    {
-      id: 4,
-      label: "Sair da Conta",
-      route: "",
-    },
-    {
-      id: 5,
-      label: "Criar Postagem",
-      route: "/community/createPost",
-    },
+    { id: 1, label: "Perfil", route: "/settings" },
+    { id: 2, label: "Conversas", route: "/community" },
+    { id: 3, label: "Novos Tópicos", route: "/notifications" },
+    { id: 4, label: "Sair da Conta", route: "" },
+    { id: 5, label: "Criar Postagem", route: "/community/createPost" },
   ];
 
   const toggleLikePost = async (postId) => {
     try {
       const response = await addLikeToPost(postId);
 
-      if (response?.success === false && response?.liked === true) {
-        Alert.alert("Erro", "Você não pode curtir a mesma postagem já curtida");
-        return;
-      }
+      
+      // evitar que o response seja null ou undefined (impede que retorne algo)
+      if (!response) return;
 
-      if (response?.success) {
-        // Atualiza o estado local diretamente
+      if (response.success) {
+        // Curtir localmente (otimista)
         setPostData((prevPosts) =>
           prevPosts.map((post) =>
             post.idPost === postId
               ? { ...post, likes_count: post.likes_count + 1 }
               : post
           )
-        );
+        )
       }
+
     } catch (error) {
       console.error("Erro ao curtir post:", error);
-      Alert.alert("Erro ao curtir post", "Não foi possível curtir um post");
+      Alert.alert("Erro", "Erro ao curtir o post.");
     }
   };
 
@@ -95,116 +72,127 @@ const Index = () => {
     return `${dias} d`;
   };
 
+  // para tentar suavizar a performace da exibição
+  const renderItem = useCallback(
+    ({ item }) => (
+      <View style={styles.postCard}>
+        <View style={styles.headerRow}>
+          {item.image_profile ? (
+            <Image
+              style={styles.profile}
+              source={{
+                uri: `http://192.168.1.17:3001/uploads/${item.image_profile}`,
+              }}
+            />
+          ) : (
+            <Image
+              source={require("../../../../assets/images/default-profile.jpg")}
+              style={styles.profile}
+              resizeMode="contain"
+            />
+          )}
+
+          <View style={styles.headerPostCard}>
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 17 }}>
+              {item.nameUser}
+            </Text>
+            <Text style={{ color: "white" }}>
+              {formatDate(item.created_at)}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.postContent}>{item.content}</Text>
+        {item.image && (
+          <Image
+            source={{
+              uri: `http://192.168.1.17:3001/uploads/${item.image}`,
+            }}
+            style={styles.postImage}
+            resizeMode="cover"
+          />
+        )}
+        <View style={styles.footerCardPost}>
+          <View style={styles.footerItem}>
+            <ButtonIcons
+              color={"white"}
+              size={26}
+              fill={"white"}
+              handleChange={() => {
+                toggleLikePost(item.idPost);
+              }}
+              Icon={({ color, size }) => (
+                <Heart
+                  color={color}
+                  size={size}
+                />
+              )}
+            />
+            <Text style={{ color: "#fff" }}>{item.likes_count}</Text>
+          </View>
+          <View style={styles.footerItem}>
+            <ButtonIcons
+              color={"white"}
+              size={26}
+              Icon={({ color, size }) => (
+                <MessageSquare color={color} size={size} />
+              )}
+            />
+            <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+          </View>
+          <View style={styles.footerItem}>
+            <ButtonIcons
+              color={"white"}
+              size={26}
+              Icon={({ color, size }) => <Download color={color} size={size} />}
+            />
+            <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+          </View>
+        </View>
+      </View>
+    ),
+    [] // adiciona as dependências se forem externas
+  );
+
+  const headerItems = () => (
+    <View style={styles.headerComponent}>
+      <ButtonIcons
+        color={"white"}
+        size={30}
+        handleChange={() => setIsOpen(true)}
+        Icon={({ color, size }) => <Menu color={color} size={size} />}
+      />
+
+      <Image
+        source={require("../../../../assets/images/icon.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <ButtonIcons
+        color={"white"}
+        size={38}
+        handleChange={() => router.push("/settings")}
+        Icon={({ color, size }) => (
+          <CircleUserRoundIcon color={color} size={size} />
+        )}
+      />
+    </View>
+  );
+
   return (
     <>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} data={dataSidebar} />
 
       <FlatList
         contentContainerStyle={styles.conteinerFlatlist}
-        ListHeaderComponent={() => (
-          <View style={styles.headerComponent}>
-            <ButtonIcons
-              color={"white"}
-              size={30}
-              handleChange={() => setIsOpen(true)}
-              Icon={({ color, size }) => <Menu color={color} size={size} />}
-            />
-
-            <Image
-              source={require("../../../../assets/images/icon.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <ButtonIcons
-              color={"white"}
-              size={38}
-              handleChange={() => router.push("/settings")}
-              Icon={({ color, size }) => (
-                <CircleUserRoundIcon color={color} size={size} />
-              )}
-            />
-          </View>
-        )}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={7}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50}
         data={postData}
-        keyExtractor={(item) => item.idPost?.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.postCard}>
-            <View style={styles.headerRow}>
-              {item.image_profile ? (
-                <Image
-                  style={styles.profile}
-                  source={{
-                    uri: `http://192.168.1.17:3001/uploads/${item.image_profile}`,
-                  }}
-                />
-              ) : (
-                <Image
-                  source={require("../../../../assets/images/default-profile.jpg")}
-                  style={styles.profile}
-                  resizeMode="contain"
-                />
-              )}
-
-              <View style={styles.headerPostCard}>
-                <Text
-                  style={{ color: "white", fontWeight: "bold", fontSize: 17 }}
-                >
-                  {item.nameUser}
-                </Text>
-                <Text style={{ color: "white" }}>
-                  {formatDate(item.created_at)}
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.postContent}>{item.content}</Text>
-            {item.image && (
-              <Image
-                source={{
-                  uri: `http://192.168.1.17:3001/uploads/${item.image}`,
-                }}
-                style={styles.postImage}
-                resizeMode="cover"
-              />
-            )}
-            <View style={styles.footerCardPost}>
-              <View style={styles.footerItem}>
-                <ButtonIcons
-                  color={"white"}
-                  size={26}
-                  handleChange={() => {
-                    toggleLikePost(item.idPost);
-                  }}
-                  Icon={({ color, size }) => (
-                    <Heart color={color} size={size} />
-                  )}
-                />
-                <Text style={{ color: "#fff" }}>{item.likes_count}</Text>
-              </View>
-              <View style={styles.footerItem}>
-                <ButtonIcons
-                  color={"white"}
-                  size={26}
-                  Icon={({ color, size }) => (
-                    <MessageSquare color={color} size={size} />
-                  )}
-                />
-                <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
-              </View>
-              <View style={styles.footerItem}>
-                <ButtonIcons
-                  color={"white"}
-                  size={26}
-                  Icon={({ color, size }) => (
-                    <Download color={color} size={size} />
-                  )}
-                />
-                <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
-              </View>
-            </View>
-          </View>
-        )}
-        refreshing={loading}
-        onRefresh={refresh}
+        keyExtractor={(item) => item.idPost.toString()}
+        renderItem={renderItem}
+        ListHeaderComponent={headerItems}
         ListEmptyComponent={() =>
           loading ? (
             <ActivityIndicator size="large" color="#ffffff" />
@@ -248,7 +236,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 12,
     backgroundColor: "#60A3D9",
-    borderRadius: 16, 
+    borderRadius: 16,
     gap: 5,
   },
   postContent: {

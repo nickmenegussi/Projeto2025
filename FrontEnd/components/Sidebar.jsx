@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   View,
@@ -7,26 +7,44 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-} from 'react-native';
-import { X } from 'lucide-react-native';
-import ButtonIcons from './ButtonIcons';
-import { router } from 'expo-router';
-import { AuthContext } from '../context/auth';
+} from "react-native";
+import { X } from "lucide-react-native";
+import ButtonIcons from "./ButtonIcons";
+import { router } from "expo-router";
+import { AuthContext } from "../context/auth";
 
 export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
-  const {user} = useContext(AuthContext)
-  const [nameUser, setNameUser] = useState()
+  const { user } = useContext(AuthContext);
+  const [nameUser, setNameUser] = useState();
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
-
   useEffect(() => {
-    if(user) {
-      setNameUser(user.nameUser)
+    if (user) {
+      setNameUser(user.nameUser);
     } else {
-      console.log('No user data available');
+      console.log("No user data available");
     }
-  }, [user])
-  
+  }, [user]);
+
+  const Renderitems = useMemo(() => {
+    if (!data) return <Text style={{ color: "white" }}>No data available</Text>;
+
+    return data.map((item) => (
+      <TouchableOpacity
+        key={item.id}
+        style={styles.menuItem}
+        onPress={() => {
+          setIsOpen(false);
+          if (item.route) {
+            router.push(item.route);
+          }
+        }}
+      >
+        <Text style={styles.menuText}>{item.label}</Text>
+      </TouchableOpacity>
+    ));
+  }, [data]);
+
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: isOpen ? 0 : -300,
@@ -36,7 +54,9 @@ export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
   }, [isOpen]);
 
   return (
-    <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
+    <Animated.View
+      style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}
+    >
       <View style={styles.header}>
         <ButtonIcons
           color="white"
@@ -46,31 +66,17 @@ export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
         />
 
         <View style={styles.profileContainer}>
-          <Image source={require('../assets/images/Jesus-Cristo.png')} style={styles.profileImage} />
+          <Image
+            source={require("../assets/images/Jesus-Cristo.png")}
+            style={styles.profileImage}
+          />
           <Text style={styles.profileName}>{nameUser}</Text>
           <Text style={styles.profileSubtext}>Body text goes here</Text>
         </View>
       </View>
 
       <ScrollView style={styles.menuContainer}>
-        {data ? (
-          data.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.menuItem}
-              onPress={() => {
-                setIsOpen(false);
-                if (item.route) {
-                  router.push(item.route);
-                }
-              }}
-            >
-              <Text style={styles.menuText}>{item.label}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={{ color: 'white' }}>No data available</Text>
-        )}
+        {Renderitems}
       </ScrollView>
     </Animated.View>
   );
@@ -78,22 +84,22 @@ export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
 
 const styles = StyleSheet.create({
   sidebar: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    height: '110%',
+    height: "110%",
     width: 260,
-    backgroundColor: '#60A3D9', // Azul escuro
+    backgroundColor: "#60A3D9", // Azul escuro
     zIndex: 15,
   },
   header: {
-    backgroundColor: '#003B73',
+    backgroundColor: "#003B73",
     paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 10,
   },
   profileContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
   profileImage: {
@@ -102,15 +108,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: "white",
   },
   profileName: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 14,
   },
   profileSubtext: {
-    color: '#D1D5DB',
+    color: "#D1D5DB",
     fontSize: 12,
   },
   menuContainer: {
@@ -120,11 +126,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#ffffff40',
+    borderBottomColor: "#ffffff40",
   },
   menuText: {
-    color: 'white',
+    color: "white",
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
