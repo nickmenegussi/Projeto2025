@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 // Caminho absoluto para o diretório `uploads`
-const uploadPath = path.resolve(__dirname, "../../uploads");
+const uploadPath = path.resolve(__dirname, "../uploads");
 
 // Certifique-se de que a pasta existe
 if (!fs.existsSync(uploadPath)) {

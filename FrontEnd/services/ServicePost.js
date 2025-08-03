@@ -15,9 +15,9 @@ export const createPost = async (image, content, topicId) => {
     });
     formData.append("Topic_idTopic", topicId);
 
-    const response = await api.post(`/post/post/register`, formData, {
+    const response = await api.post(`/post/postMessages`, formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, 
         "Content-Type": "multipart/form-data",
       },
     });
@@ -32,7 +32,7 @@ export const createPost = async (image, content, topicId) => {
 export const fetchPosts = async () => {
   try {
     const token = await AsyncStorage.getItem("@Auth:token");
-    const response = await api.get("/post/post", {
+    const response = await api.get("/post/postMessages", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

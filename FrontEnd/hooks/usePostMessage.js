@@ -1,30 +1,27 @@
-import { useCallback, useEffect, useState } from "react";
-import { fetchPosts } from "../services/ServicePost";
-import socket from "../services/socket";
+import { useState, useEffect } from 'react';
+import { fetchPosts } from '../services/ServicePost';
 
-export default function usePostMessage() {
+export default function usePostMessage(searchTerm = '') {
   const [postData, setPostData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchInitialPosts = useCallback(async () => {
+  useEffect(() => {
+    async function loadPosts() {
+      setLoading(true);
+      setError(null);
       try {
-        const post = await fetchPosts();
-
-        if (post) {
-          setPostData(post.data);
-        } else {
-          setPostData([]);
-        }
+        const data = await fetchPosts(searchTerm);
+        setPostData(data || []);
       } catch (err) {
-        console.error("Erro ao buscar os posts:", err);
-        setError("Não foi possível carregar os posts.");
+        setError(err);
       } finally {
         setLoading(false);
       }
-    }, [])
+    }
 
-   
+    loadPosts();
+  }, [searchTerm]);
 
   return { postData, setPostData, loading, error };
 }

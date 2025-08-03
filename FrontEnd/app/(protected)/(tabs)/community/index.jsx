@@ -1,3 +1,5 @@
+ // Novo Index.jsx baseado na logica do HomeScreen.js
+
 import {
   View,
   Text,
@@ -6,8 +8,10 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   CircleUserRoundIcon,
   Download,
@@ -20,59 +24,78 @@ import Sidebar from "../../../../components/Sidebar";
 import { router } from "expo-router";
 import usePostMessage from "../../../../hooks/usePostMessage";
 import { addLikeToPost } from "../../../../services/ServiceLike";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../../../services/api";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const { postData, setPostData, refresh, loading, error } = usePostMessage();
-  const dataSidebar = [
+  const [searchTerm, setSearchTerm] = useState("");
+  const [userLikes, setUserLikes] = useState({});
+  const { postData, setPostData, refresh, loading } = usePostMessage(searchTerm);
+  
+ const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
     { id: 3, label: "Novos Tópicos", route: "/notifications" },
     { id: 4, label: "Sair da Conta", route: "" },
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
   ];
+  const currentUserId = useCallback(async () => {
+    const userDataString = await AsyncStorage.getItem("@Auth:user");
+    return userDataString ? JSON.parse(userDataString).id : null;
+  }, []);
+
+  const fetchUserLikes = useCallback(async () => {
+  try {
+    const userId = await currentUserId();
+    if (!userId) return;
+    const token = await AsyncStorage.getItem("@Auth:token");
+    const response = await api.get(`/users/${userId}/likes`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const likes = response.data;
+    const likeMap = {};
+    likes.forEach((like) => {
+      likeMap[like.post_id] = true;
+    });
+    setUserLikes(likeMap);
+  } catch (err) {
+    console.error("Erro ao carregar likes do usuario:", err);
+  }
+}, []);
+
+  useEffect(() => {
+    fetchUserLikes();
+  }, [postData]);
 
   const toggleLikePost = async (postId) => {
-    try {
-      const response = await addLikeToPost(postId);
+  try {
+    const token = await AsyncStorage.getItem("@Auth:token");
+    const response = await api.post(
+      `/post/posts/${postId}/like`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const liked = response.data.liked;
+    setUserLikes((prev) => ({ ...prev, [postId]: liked }));
+    setPostData((prevPosts) =>
+      prevPosts.map((post) =>
+        post.idPost === postId
+          ? {
+              ...post,
+              likes_count: liked
+                ? post.likes_count + 1
+                : Math.max(0, post.likes_count - 1),
+            }
+          : post
+      )
+    );
+  } catch (err) {
+    console.error("Erro ao curtir post:", err);
+    Alert.alert("Erro", "Falha ao processar o like.");
+  }
+};
 
-      
-      // evitar que o response seja null ou undefined (impede que retorne algo)
-      if (!response) return;
-
-      if (response.success) {
-        // Curtir localmente (otimista)
-        setPostData((prevPosts) =>
-          prevPosts.map((post) =>
-            post.idPost === postId
-              ? { ...post, likes_count: post.likes_count + 1 }
-              : post
-          )
-        )
-      }
-
-    } catch (error) {
-      console.error("Erro ao curtir post:", error);
-      Alert.alert("Erro", "Erro ao curtir o post.");
-    }
-  };
-
-  const formatDate = (date) => {
-    const dataRecebida = new Date(date);
-    const horaLocal = new Date();
-    const ms = horaLocal - dataRecebida;
-    const min = Math.floor(ms / 60000);
-    const hours = Math.floor(min / 60);
-    const dias = Math.floor(hours / 24);
-
-    if (min < 1) return "Agora mesmo";
-    if (min < 60) return `${min} min`;
-    if (hours < 24) return `${hours} h`;
-    return `${dias} d`;
-  };
-
-  // para tentar suavizar a performace da exibição
   const renderItem = useCallback(
     ({ item }) => (
       <View style={styles.postCard}>
@@ -91,91 +114,42 @@ const Index = () => {
               resizeMode="contain"
             />
           )}
-
           <View style={styles.headerPostCard}>
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 17 }}>
               {item.nameUser}
             </Text>
-            <Text style={{ color: "white" }}>
-              {formatDate(item.created_at)}
-            </Text>
+            <Text style={{ color: "white" }}>{item.created_at}</Text>
           </View>
         </View>
         <Text style={styles.postContent}>{item.content}</Text>
         {item.image && (
           <Image
-            source={{
-              uri: `http://192.168.1.17:3001/uploads/${item.image}`,
-            }}
+            source={{ uri: `http://192.168.1.17:3001/uploads/${item.image}` }}
             style={styles.postImage}
             resizeMode="cover"
           />
         )}
         <View style={styles.footerCardPost}>
-          <View style={styles.footerItem}>
-            <ButtonIcons
-              color={"white"}
-              size={26}
-              fill={"white"}
-              handleChange={() => {
-                toggleLikePost(item.idPost);
-              }}
-              Icon={({ color, size }) => (
-                <Heart
-                  color={color}
-                  size={size}
-                />
-              )}
+          <TouchableOpacity style={styles.footerItem} onPress={() => toggleLikePost(item.idPost)}>
+            <Heart
+              color={userLikes[item.idPost] ? "red" : "white"}
+              size={24}
+              fill={userLikes[item.idPost] ? "red" : "none"}
             />
             <Text style={{ color: "#fff" }}>{item.likes_count}</Text>
-          </View>
+          </TouchableOpacity>
           <View style={styles.footerItem}>
-            <ButtonIcons
-              color={"white"}
-              size={26}
-              Icon={({ color, size }) => (
-                <MessageSquare color={color} size={size} />
-              )}
-            />
+            <MessageSquare color="white" size={24} />
             <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
           </View>
           <View style={styles.footerItem}>
-            <ButtonIcons
-              color={"white"}
-              size={26}
-              Icon={({ color, size }) => <Download color={color} size={size} />}
-            />
+            <Download color="white" size={24} />
             <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
           </View>
         </View>
       </View>
     ),
-    [] // adiciona as dependências se forem externas
-  );
-
-  const headerItems = () => (
-    <View style={styles.headerComponent}>
-      <ButtonIcons
-        color={"white"}
-        size={30}
-        handleChange={() => setIsOpen(true)}
-        Icon={({ color, size }) => <Menu color={color} size={size} />}
-      />
-
-      <Image
-        source={require("../../../../assets/images/icon.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <ButtonIcons
-        color={"white"}
-        size={38}
-        handleChange={() => router.push("/settings")}
-        Icon={({ color, size }) => (
-          <CircleUserRoundIcon color={color} size={size} />
-        )}
-      />
-    </View>
+    [userLikes]
   );
 
   return (
@@ -184,15 +158,32 @@ const Index = () => {
 
       <FlatList
         contentContainerStyle={styles.conteinerFlatlist}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={7}
-        removeClippedSubviews={true}
-        updateCellsBatchingPeriod={50}
         data={postData}
         keyExtractor={(item) => item.idPost.toString()}
         renderItem={renderItem}
-        ListHeaderComponent={headerItems}
+        ListHeaderComponent={() => (
+          <View style={styles.headerComponent}>
+            <ButtonIcons
+              color="white"
+              size={30}
+              handleChange={() => setIsOpen(true)}
+              Icon={({ color, size }) => <Menu color={color} size={size} />}
+            />
+            <Image
+              source={require("../../../../assets/images/icon.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <ButtonIcons
+              color="white"
+              size={38}
+              handleChange={() => router.push("/settings")}
+              Icon={({ color, size }) => (
+                <CircleUserRoundIcon color={color} size={size} />
+              )}
+            />
+          </View>
+        )}
         ListEmptyComponent={() =>
           loading ? (
             <ActivityIndicator size="large" color="#ffffff" />
@@ -244,7 +235,6 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 8,
   },
-
   postImage: {
     width: "100%",
     height: 200,
@@ -267,13 +257,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerItem: {
-    flexDirection: "row", // <- ALINHA HORIZONTALMENTE
-    alignItems: "center", // <- ALINHA VERTICALMENTE OS ITENS
-    gap: 4, // <- opcional: adiciona espaçamento entre ícone e número
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   headerRow: {
     flexDirection: "row",
-    alignItems: "center", // alinha verticalmente
-    gap: 10, // se sua versão do RN suportar
+    alignItems: "center",
+    gap: 10,
   },
 });
