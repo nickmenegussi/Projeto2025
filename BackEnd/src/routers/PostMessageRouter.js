@@ -10,13 +10,14 @@ const {
   updateImagePost,
   deletePost,
 } = require("../controllers/PostMessageController");
-const authMiddleware = require('../middleware/authMidleware')
+const authMiddleware = require('../middleware/authMidleware');
+const upload = require("../multerConfig/multer");
 
 // Rota para listar todos os posts
 router.get("/postMessages", authMiddleware,getAllPosts);
 
 // Rota para criar post
-router.post("/postMessages", authMiddleware,createPost);
+router.post("/postMessages", upload.single('image') ,authMiddleware,createPost);
 
 // Rota para obter post por ID
 router.get("/postMessages/:postId",authMiddleware ,getPostById);

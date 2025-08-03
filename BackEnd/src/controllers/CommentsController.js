@@ -20,14 +20,15 @@ exports.getCommentsByPostId = async (req, res) => {
 };
 
 exports.createComment = (req, res) => {
-    const { Post_idPost, message } = req.body
+    const {postId} = req.params
+    const { message } = req.body
     const User_idUser = req.data.id
 
-    if (!Post_idPost || !message) {
+    if (!postId || !message) {
         return res.status(400).json({ error: "Campos obrigatórios não preenchidos" });
     }
 
-    connection.query(`SELECT * FROM posts WHERE Post_idPost = ? AND User_idUser = ? AND message = ?`, [Post_idPost, User_idUser, message], (err, result) => {
+    connection.query(`SELECT * FROM posts WHERE Post_idPost = ? AND User_idUser = ? AND message = ?`, [postId, User_idUser, message], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -46,7 +47,7 @@ exports.createComment = (req, res) => {
         
         connection.query(`INSERT INTO comments (Post_idPost, User_idUser, message) 
         VALUES (?, ?, ?)
-        `, [Post_idPost, User_idUser, message], (err, result) => {
+        `, [postId, User_idUser, message], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro interno do servidor ao criar comentário.",

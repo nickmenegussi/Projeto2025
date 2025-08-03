@@ -29,7 +29,8 @@ exports.getAllPosts = async (req, res) => {
 // Criar um novo post
 exports.createPost = async (req, res) => {
   const { content, Topic_idTopic } = req.body;
-  const User_idUser = req.data.id; // middleware de auth deve definir isso
+  const User_idUser = req.data.id;
+  const image = req.file ? req.file.filename : null;
 
   if (!content || !User_idUser) {
     return res.status(400).json({ message: 'Conteúdo e usuário são obrigatórios.' });
@@ -37,8 +38,8 @@ exports.createPost = async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      'INSERT INTO Post (content, User_idUser, Topic_idTopic) VALUES (?, ?, ?)',
-      [content, User_idUser, Topic_idTopic || null]
+      'INSERT INTO Post (content, image, User_idUser, Topic_idTopic) VALUES (?, ?, ?, ?)',
+      [content,image, User_idUser, Topic_idTopic || null]
     );
     res.status(201).json({ message: 'Post criado com sucesso!', postId: result.insertId });
   } catch (error) {
