@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { handleApiError } from "../utils/handleApiError";
+import handleApiError  from "../utils/handleApiError";
 import api from "./api";
 import { Alert } from "react-native";
 
@@ -18,7 +18,7 @@ export const createPost = async (image, content, topicId) => {
     const response = await api.post(`/post/postMessages`, formData, {
       headers: {
         Authorization: `Bearer ${token}`, 
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data'
       },
     });
     Alert.alert("Sucesso", "Post adicionado com sucesso!");
@@ -33,6 +33,21 @@ export const fetchPosts = async () => {
   try {
     const token = await AsyncStorage.getItem("@Auth:token");
     const response = await api.get("/post/postMessages", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const fef = async () => {
+  try {
+    const token = await AsyncStorage.getItem("@Auth:token");
+    const response = await api.get("/post/postMessages/${postid}", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

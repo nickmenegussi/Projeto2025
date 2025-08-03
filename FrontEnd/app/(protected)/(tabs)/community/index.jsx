@@ -1,5 +1,3 @@
- // Novo Index.jsx baseado na logica do HomeScreen.js
-
 import {
   View,
   Text,
@@ -21,7 +19,7 @@ import {
 } from "lucide-react-native";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import usePostMessage from "../../../../hooks/usePostMessage";
 import { addLikeToPost } from "../../../../services/ServiceLike";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,9 +29,10 @@ const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLikes, setUserLikes] = useState({});
-  const { postData, setPostData, refresh, loading } = usePostMessage(searchTerm);
-  
- const dataSidebar = [
+  const { postData, setPostData, refresh, loading } =
+    usePostMessage(searchTerm);
+
+  const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
     { id: 3, label: "Novos Tópicos", route: "/notifications" },
@@ -46,55 +45,59 @@ const Index = () => {
   }, []);
 
   const fetchUserLikes = useCallback(async () => {
-  try {
-    const userId = await currentUserId();
-    if (!userId) return;
-    const token = await AsyncStorage.getItem("@Auth:token");
-    const response = await api.get(`/users/${userId}/likes`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const likes = response.data;
-    const likeMap = {};
-    likes.forEach((like) => {
-      likeMap[like.post_id] = true;
-    });
-    setUserLikes(likeMap);
-  } catch (err) {
-    console.error("Erro ao carregar likes do usuario:", err);
-  }
-}, []);
+    try {
+      const userId = await currentUserId();
+      if (!userId) return;
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.get(`/users/${userId}/likes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const likes = response.data;
+      const likeMap = {};
+      likes.forEach((like) => {
+        likeMap[like.post_id] = true;
+      });
+      setUserLikes(likeMap);
+    } catch (err) {
+      console.error("Erro ao carregar likes do usuario:", err);
+    }
+  }, []);
 
-  useEffect(() => {
-    fetchUserLikes();
-  }, [postData]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserLikes();
+
+      refresh(); // atualiza os posts ao voltar para a tela
+    }, [])
+  );
 
   const toggleLikePost = async (postId) => {
-  try {
-    const token = await AsyncStorage.getItem("@Auth:token");
-    const response = await api.post(
-      `/post/posts/${postId}/like`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const liked = response.data.liked;
-    setUserLikes((prev) => ({ ...prev, [postId]: liked }));
-    setPostData((prevPosts) =>
-      prevPosts.map((post) =>
-        post.idPost === postId
-          ? {
-              ...post,
-              likes_count: liked
-                ? post.likes_count + 1
-                : Math.max(0, post.likes_count - 1),
-            }
-          : post
-      )
-    );
-  } catch (err) {
-    console.error("Erro ao curtir post:", err);
-    Alert.alert("Erro", "Falha ao processar o like.");
-  }
-};
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.post(
+        `/post/posts/${postId}/like`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const liked = response.data.liked;
+      setUserLikes((prev) => ({ ...prev, [postId]: liked }));
+      setPostData((prevPosts) =>
+        prevPosts.map((post) =>
+          post.idPost === postId
+            ? {
+                ...post,
+                likes_count: liked
+                  ? post.likes_count + 1
+                  : Math.max(0, post.likes_count - 1),
+              }
+            : post
+        )
+      );
+    } catch (err) {
+      console.error("Erro ao curtir post:", err);
+      Alert.alert("Erro", "Falha ao processar o like.");
+    }
+  };
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -104,7 +107,7 @@ const Index = () => {
             <Image
               style={styles.profile}
               source={{
-                uri: `http://192.168.1.17:3001/uploads/${item.image_profile}`,
+                uri: `http://192.168.1.22:3001/uploads/${item.image}`,
               }}
             />
           ) : (
@@ -124,23 +127,32 @@ const Index = () => {
         <Text style={styles.postContent}>{item.content}</Text>
         {item.image && (
           <Image
-            source={{ uri: `http://192.168.1.17:3001/uploads/${item.image}` }}
+            source={{ uri: `http://192.168.1.22:3001/uploads/${item.image}` }}
             style={styles.postImage}
             resizeMode="cover"
           />
         )}
         <View style={styles.footerCardPost}>
-          <TouchableOpacity style={styles.footerItem} onPress={() => toggleLikePost(item.idPost)}>
+          <TouchableOpacity
+            style={styles.footerItem}
+            onPress={() => toggleLikePost(item.idPost)}
+          >
             <Heart
               color={userLikes[item.idPost] ? "red" : "white"}
               size={24}
               fill={userLikes[item.idPost] ? "red" : "none"}
             />
+
             <Text style={{ color: "#fff" }}>{item.likes_count}</Text>
           </TouchableOpacity>
           <View style={styles.footerItem}>
-            <MessageSquare color="white" size={24} />
-            <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={() => router.push(`/community/post/${item.idPost}`)}
+            >
+              <MessageSquare color="white" size={24} />
+              <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.footerItem}>
             <Download color="white" size={24} />

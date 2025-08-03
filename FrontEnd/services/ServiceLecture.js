@@ -12,7 +12,7 @@ export const getLecture = async () => {
         Authorization: "Bearer " + token,
       },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     handleApiError(error);
     return null;

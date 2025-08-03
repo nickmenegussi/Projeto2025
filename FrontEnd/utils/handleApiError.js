@@ -1,26 +1,21 @@
 import { router } from "expo-router";
 import { Alert } from "react-native";
 
-export const handleApiError = (error) => {
-  if (error.response) {
-    if (error.response.data.loginRequired === true) {
-      console.log("Sessão expirada", error.response.data.message);
-      Alert.alert("Sessão expirada", error.response.data.message);
-      router.push("/sign-up");
-      return null
-    } else {
-      console.log(
-        "Erro ao exibir os dados",
-        error.response.data
-      );
-      Alert.alert(
-        "Erro ao exibir os dados",
-        error.response.data.message
-      );
+export default function handleApiError(error)  {
+  if(error?.response?.data){
+    const data = error.response.data 
+
+    if(data.loginRequired){
+      console.log("Sessão expirada:", data.message);
+      Alert.alert("Sessão expirada", data.message || "Faça login novamente.");
+      router.replace("/sign-up");
+      return;
     }
-    return null
-  } else {
-    console.log("Erro ao exibir os dados", error);
-    return null
+
+    console.log("Erro da API:", data.message || data);
+    Alert.alert("Erro", data.message || "Ocorreu um erro.");
+    return;
   }
+  console.log("Erro inesperado:", error);
+  Alert.alert("Erro", "Não foi possível conectar ao servidor.");
 };

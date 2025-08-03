@@ -12,7 +12,7 @@ export const getBooks = async () => {
       },
     });
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     if (error.response) {
       if (error.response.data.loginRequired === true) {

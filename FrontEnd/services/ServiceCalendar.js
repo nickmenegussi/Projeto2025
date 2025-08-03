@@ -11,7 +11,7 @@ export default getCalendarEvents = async () => {
         Authorization: "Bearer " + token,
       },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     if (error.response) {
       if (error.response.data.loginRequired === true) {

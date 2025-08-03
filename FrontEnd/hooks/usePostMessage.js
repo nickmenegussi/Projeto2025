@@ -6,8 +6,7 @@ export default function usePostMessage(searchTerm = '') {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function loadPosts() {
+  const loadPosts = async () => {
       setLoading(true);
       setError(null);
       try {
@@ -20,8 +19,11 @@ export default function usePostMessage(searchTerm = '') {
       }
     }
 
+  useEffect(() => {
+    
+
     loadPosts();
   }, [searchTerm]);
 
-  return { postData, setPostData, loading, error };
+  return { postData, setPostData, loading, error, refresh: loadPosts };
 }
