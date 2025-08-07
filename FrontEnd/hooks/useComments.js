@@ -1,15 +1,13 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { fetchPostAndComments } from "../services/ServiceComments";
+import { createComment, fetchPostAndComments, getCommentById } from "../services/ServiceComments";
 import api from "../services/api";
 import handleApiError from "../utils/handleApiError";
 
 export default function useComments(postId) {
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
-  const [newCommentContent, setNewCommentContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   useEffect(() => {
     if (postId) {
@@ -19,11 +17,11 @@ export default function useComments(postId) {
 
   const fetchPostComments = async () => {
     try {
-      const postResponse = await api.get(`/post/post/${postId}`);
+      const postResponse = await api.get(`/post/postMessages/${postId}`);
       setPost(postResponse.data.data);
 
-      const commentsResponse = await api.get(`/comments/comments/${postId}`)
-      setComments(commentsResponse.data.data)
+      const commentsResponse = await getCommentById(postId)
+      setComments(commentsResponse)
     } catch (error) {
       console.log('Erro ao buscar post e comentários:', error);
     } finally {
@@ -31,13 +29,13 @@ export default function useComments(postId) {
     }
   };
 
+  const addLocalComment = (comment) => {
+    setComments((prev) => [comment, ...prev]);
+  };
+
   return {
     post,
     comments,
-    newCommentContent,
-    setNewCommentContent,
-    loading,
-    isSubmittingComment,
-    setIsSubmittingComment,
+    loading, refetch: fetchPostComments, addLocalComment
   };
 }

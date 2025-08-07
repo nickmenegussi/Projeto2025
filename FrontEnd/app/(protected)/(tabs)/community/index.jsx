@@ -8,6 +8,7 @@ import {
   Alert,
   TextInput,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -16,6 +17,7 @@ import {
   Heart,
   Menu,
   MessageSquare,
+  Plus,
 } from "lucide-react-native";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
@@ -29,13 +31,31 @@ const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLikes, setUserLikes] = useState({});
-  const { postData, setPostData, refresh, loading } =
-    usePostMessage(searchTerm);
+  const { postData, setPostData, refresh, loading } = usePostMessage(searchTerm);
+  const [refreshing, setRefreshing] = useState(false);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
+  const formatDate = (date) => {
+    const dataRecebida = new Date(date);
+    const horaLocal = new Date();
+    const ms = horaLocal - dataRecebida;
+    const min = Math.floor(ms / 60000);
+    const hours = Math.floor(min / 60);
+    const dias = Math.floor(hours / 24);
+
+    if (min < 1) return "Agora mesmo";
+    if (min < 60) return `${min} min`;
+    if (hours < 24) return `${hours} h`;
+    return `${dias} d`;
+  };
   const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
-    { id: 3, label: "Novos Tópicos", route: "/notifications" },
+    { id: 3, label: "Novos Tópicos", route: "/community/topic" },
     { id: 4, label: "Sair da Conta", route: "" },
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
   ];
@@ -63,13 +83,9 @@ const Index = () => {
     }
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchUserLikes();
-
-      refresh(); // atualiza os posts ao voltar para a tela
-    }, [])
-  );
+  useCallback(() => {
+    fetchUserLikes();
+  }, []);
 
   const toggleLikePost = async (postId) => {
     try {
@@ -121,7 +137,9 @@ const Index = () => {
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 17 }}>
               {item.nameUser}
             </Text>
-            <Text style={{ color: "white" }}>{item.created_at}</Text>
+            <Text style={{ color: "white" }}>
+              {formatDate(item.created_at)}
+            </Text>
           </View>
         </View>
         <Text style={styles.postContent}>{item.content}</Text>
@@ -194,7 +212,10 @@ const Index = () => {
                 <CircleUserRoundIcon color={color} size={size} />
               )}
             />
+             
+      
           </View>
+          
         )}
         ListEmptyComponent={() =>
           loading ? (
@@ -203,7 +224,13 @@ const Index = () => {
             <Text style={styles.emptyText}>Nenhuma postagem encontrada</Text>
           )
         }
+    refreshing={refreshing}
+    onRefresh={handleRefresh}
+  
       />
+      <TouchableOpacity style={styles.addPost}>
+        <Plus color={"white"} size={24} />
+      </TouchableOpacity>
     </>
   );
 };
@@ -277,5 +304,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+  },
+  addPost: {
+    position: "absolute",
+    left: 335,
+    right: 0,
+    bottom: 140,
+    borderRadius: 28,
+    width: 50,
+    height: 50,
+    backgroundColor: "#1DA1F2",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });

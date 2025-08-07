@@ -1,11 +1,17 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image, TextInput } from 'react-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Topic = () => {
   return (
-    <View>
-      <Text>Topic</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Image source={{uri: "../../../../assets/images/icon.png"}} />
+        <TextInput 
+        placeholder='Search'
+        /> 
+      </View>
+    </SafeAreaView>
   )
 }
 

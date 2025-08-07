@@ -6,6 +6,10 @@ export default function useLecture() {
   const [lecture, setLecture] = useState([])
   const [loading, setLoading] = useState(false)
   
+  useEffect(() => {
+    fetchLectures();
+  }, [])
+
   const fetchLectures  = useCallback(async () => {
     setLoading(true)
     try {
@@ -19,9 +23,7 @@ export default function useLecture() {
       setLoading(false)
     }
   }, [])
-  useEffect(() => {
-    fetchLectures();
-  }, [])
+
   return {
     fetchLectures ,
     lecture,

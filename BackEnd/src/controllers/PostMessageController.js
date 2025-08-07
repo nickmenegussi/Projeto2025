@@ -72,7 +72,7 @@ exports.getPostById = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ message: 'Post não encontrado.' });
     }
-    res.status(200).json(rows[0]);
+    res.status(200).json({data: rows[0]});
   } catch (error) {
     console.error('Erro ao buscar post por ID:', error);
     res.status(500).json({ message: 'Erro interno do servidor ao buscar post.' });

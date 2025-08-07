@@ -1,3 +1,4 @@
+const pool = require('../config/promise')
 const connection = require('../config/db')
 
 // menos verboso, mais elegante e seguro... evita callbacks
@@ -6,11 +7,17 @@ exports.getCommentsByPostId = async (req, res) => {
   const { postId } = req.params;
   try {
     const [rows] = await pool.query(`
-      SELECT c.idComments, c.message, c.createdDate as create_at, u.idUser as user_id, u.nameUser, u.image
-        FROM Comments c
-        JOIN User u on c.User_idUser = u.user_id
-        WHERE c.Post_idPost = ?
-        ORDER BY c.created_at ASC
+      SELECT
+        c.idComments,
+        c.message AS content,
+        c.createdDate,
+        u.idUser AS user_id,
+        u.nameUser,
+        u.image_profile
+      FROM Comments c
+      JOIN User u ON c.User_idUser = u.idUser
+      WHERE c.Post_idPost = ?
+      ORDER BY c.createdDate ASC
     `, [postId]);
     res.status(200).json(rows);
   } catch (error) {
@@ -28,7 +35,7 @@ exports.createComment = (req, res) => {
         return res.status(400).json({ error: "Campos obrigatórios não preenchidos" });
     }
 
-    connection.query(`SELECT * FROM posts WHERE Post_idPost = ? AND User_idUser = ? AND message = ?`, [postId, User_idUser, message], (err, result) => {
+    connection.query(`SELECT * FROM comments WHERE Post_idPost = ? AND User_idUser = ? AND message = ?`, [postId, User_idUser, message], (err, result) => {
         if (err) {
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
@@ -59,7 +66,7 @@ exports.createComment = (req, res) => {
         return res.status(201).json({
             message: "Comentário criado com sucesso.",
             success: true,
-            data: result
+            data: {idComments: result.insertId, UserId: User_idUser, content: message}
         })
     })
     })

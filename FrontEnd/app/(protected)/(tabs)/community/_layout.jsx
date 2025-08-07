@@ -7,6 +7,7 @@ const RootLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false}} />
       <Stack.Screen name="createPost" options={{ headerShown: false}} />
+      <Stack.Screen name="post/[postId]" options={{ headerShown: false}} />
 
     </Stack>
   )

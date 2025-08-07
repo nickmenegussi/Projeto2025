@@ -12,7 +12,7 @@ export default function handleApiError(error)  {
       return;
     }
 
-    console.log("Erro da API:", data.message || data);
+    console.log("Erro da API:", data.data  || data);
     Alert.alert("Erro", data.message || "Ocorreu um erro.");
     return;
   }
