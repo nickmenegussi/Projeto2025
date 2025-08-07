@@ -31,7 +31,8 @@ const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLikes, setUserLikes] = useState({});
-  const { postData, setPostData, refresh, loading } = usePostMessage(searchTerm);
+  const { postData, setPostData, refresh, loading } =
+    usePostMessage(searchTerm);
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -212,10 +213,7 @@ const Index = () => {
                 <CircleUserRoundIcon color={color} size={size} />
               )}
             />
-             
-      
           </View>
-          
         )}
         ListEmptyComponent={() =>
           loading ? (
@@ -224,11 +222,10 @@ const Index = () => {
             <Text style={styles.emptyText}>Nenhuma postagem encontrada</Text>
           )
         }
-    refreshing={refreshing}
-    onRefresh={handleRefresh}
-  
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
-      <TouchableOpacity style={styles.addPost}>
+      <TouchableOpacity style={styles.addPost} onPress={() => router.push('/community/createPost')}>
         <Plus color={"white"} size={24} />
       </TouchableOpacity>
     </>

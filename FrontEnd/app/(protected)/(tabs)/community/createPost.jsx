@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { FileText, ImageIcon } from "lucide-react-native";
 import { createPost } from "../../../../services/ServicePost";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 
 const CreatePost = () => {
   const [content, setContent] = useState("");
@@ -70,7 +71,7 @@ const CreatePost = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back('')}>
           <Text style={styles.cancelText}>Cancelar</Text>
         </TouchableOpacity>
 

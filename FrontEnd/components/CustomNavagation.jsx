@@ -9,7 +9,7 @@ import {
 import React, { useRef, useState } from "react";
 import { router } from "expo-router";
 
-export default function CustomNavagation({
+export default function CustomNavigation({
   trendingItems,
   otherStyles = false,
   sendData = false,
@@ -18,18 +18,21 @@ export default function CustomNavagation({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef(null);
+  const [scrollX, setScrollX] = useState(0);
 
   const handlePress = (index, item) => {
-    if (otherStyles === true){
-      setSelectedIndex(index);
-      Animated.spring(translateX, {
-      toValue: index * 70, // 100 de largura + 10 de margem
-      useNativeDriver: true,
-    }).start();
-    }
     setSelectedIndex(index);
+
+    // Define largura e margem com base nos estilos
+    const itemWidth = otherStyles ? 70 : 100;
+    const marginRight = otherStyles ? 20 : 10;
+
+    // Corrige a posição do underline com base no scroll atual
+    const position = index * (itemWidth + marginRight) - scrollX;
+
     Animated.spring(translateX, {
-      toValue: index * 110, // 100 de largura + 10 de margem
+      toValue: position,
       useNativeDriver: true,
     }).start();
 
@@ -41,19 +44,25 @@ export default function CustomNavagation({
       });
     }
 
-    if(normalPress === true){
+    if (normalPress === true) {
       router.push({
-        pathname: item.path
-      })
+        pathname: item.path,
+      });
     }
   };
 
   return (
     <View style={[styles.wrapper, otherStyles && styles.wrapperSmall]}>
       <ScrollView
+        ref={scrollViewRef}
         style={styles.trendingContainer}
         horizontal
         showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={(e) => setScrollX(e.nativeEvent.contentOffset.x)}
+        contentContainerStyle={
+          otherStyles ? styles.scrollContentSmall : styles.scrollContent
+        }
       >
         {trendingItems.map((item, index) => (
           <TouchableOpacity
@@ -62,15 +71,25 @@ export default function CustomNavagation({
             style={[
               styles.trendingItems,
               props.itemStyle,
-              
-              otherStyles && styles.NavagationItem,
+              otherStyles && styles.NavigationItem,
               selectedIndex !== index && styles.trendimItemsUnselected,
-            ]}            
-          > 
-            <Text style={selectedIndex === index ? styles.navText && props.textStyle : styles.unselectedText}>{item.name}</Text>
+              selectedIndex === index && otherStyles && styles.selectedNavItem,
+            ]}
+          >
+            <Text
+              style={[
+                selectedIndex === index ? styles.navText : styles.unselectedText,
+                props.textStyle,
+                selectedIndex === index && otherStyles && styles.selectedNavText,
+              ]}
+            >
+              {item.name}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      {/* Underline animado */}
       {otherStyles ? (
         <Animated.View
           style={[
@@ -80,7 +99,7 @@ export default function CustomNavagation({
             },
           ]}
         />
-      ) ? (
+      ) : (
         <Animated.View
           style={[
             styles.underline,
@@ -89,21 +108,32 @@ export default function CustomNavagation({
             },
           ]}
         />
-      ) : null : null}
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: 60, // espaço pra underline
+    height: 60,
+    position: "relative",
+  },
+  wrapperSmall: {
+    marginTop: 10,
+    height: 40,
     position: "relative",
   },
   trendingContainer: {
     flexDirection: "row",
   },
+  scrollContent: {
+    paddingHorizontal: 10,
+  },
+  scrollContentSmall: {
+    paddingHorizontal: 15,
+  },
   trendingItems: {
-    width: 100 ,
+    width: 100,
     alignItems: "center",
     backgroundColor: "#60A3D9",
     borderRadius: 10,
@@ -114,34 +144,45 @@ const styles = StyleSheet.create({
   navText: {
     color: "white",
     textAlign: "center",
+    fontWeight: "bold",
+  },
+  unselectedText: {
+    color: "#60A3D9",
+    textAlign: "center",
   },
   underline: {
     position: "absolute",
     bottom: 0,
-    left: 0,
+    left: 10, // alinhado com o paddingHorizontal
     width: 100,
     height: 6,
     backgroundColor: "#60A3D9",
     borderRadius: 10,
-  }, NavagationItem: {
+  },
+  NavigationItem: {
+    width: 70,
     backgroundColor: "transparent",
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginRight: 10
-  }, flatUnderline: {
+    alignItems: "flex-start",
+    justifyContent: "center",
+    marginRight: 20,
+    height: 40,
+  },
+  selectedNavItem: {
+    // estilo extra se necessário
+  },
+  selectedNavText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  flatUnderline: {
     position: "absolute",
-    bottom: 45,
+    bottom: 0,
     width: 70,
     height: 3,
     backgroundColor: "white",
-    left: 0,
-  }, wrapperSmall: {
-    marginTop: 10,
-    height: 40,
-    position: 'relative'
-  }, unselectedText: {
-    color: 'gray'
-  }, trendimItemsUnselected: {
-    backgroundColor: 'transparent',
-  }
+    left: 15, // alinhado com o paddingHorizontal
+  },
+  trendimItemsUnselected: {
+    backgroundColor: "transparent",
+  },
 });
