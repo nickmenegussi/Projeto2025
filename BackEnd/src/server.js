@@ -3,7 +3,7 @@ const cors = require('cors')
 const http = require('http')
 const {initializerSocket, getIO} = require('./socket/index')
 const dotenv = require('dotenv')
-const port = 3001
+const port = 3000
 
 const userRouter = require('./routers/UserRouter')
 const adminRouter = require('./routers/AdminRouter')   
