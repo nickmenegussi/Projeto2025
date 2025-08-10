@@ -1,10 +1,17 @@
-import { View, Text, Image, TextInput, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  StyleSheet,
+  FlatList,
+  ImageBackground,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { Bell, Menu } from "lucide-react-native";
 import Sidebar from "../../../../components/Sidebar";
-import Trending from "../../../../components/Navagation";
 import CustomNavagation from "../../../../components/CustomNavagation";
 
 const Topic = () => {
@@ -17,12 +24,50 @@ const Topic = () => {
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
   ];
 
+  const renderData = [
+    {
+      id: 1,
+      timestamp: "2h atrás",
+      title: "Como melhorar meus estudos",
+      content: "Estou buscando dicas para estudar mais eficientemente...",
+      image: null,
+    },
+    {
+      id: 2,
+      timestamp: "Ontem",
+      title: "Trabalho voluntário no centro espírita",
+      content: "Participei do trabalho de domingo e foi incrível!",
+      image: "https://placekitten.com/100/100",
+    },
+    {
+      id: 5,
+      timestamp: "Ontem",
+      title: "Trabalho voluntário no centro espírita",
+      content: "Participei do trabalho de domingo e foi incrível!",
+      image: "https://placekitten.com/100/100",
+    },
+    {
+      id: 4,
+      timestamp: "Ontem",
+      title: "Trabalho voluntário no centro espírita",
+      content: "Participei do trabalho de domingo e foi incrível!",
+      image: "https://placekitten.com/100/100",
+    },
+    {
+      id: 3,
+      timestamp: "3 dias atrás",
+      title: "Sugestões de palestras",
+      content: "Gostaria de sugerir uma palestra sobre mediunidade",
+      image: null,
+    },
+  ];
+
   const dataNavigation = [
     {
-      name: "Evangelizacao",
+      name: "Voluntariado",
       type: "Estudo",
       path: "/community/topic",
-    }, 
+    },
     {
       name: "Trabalhos",
       type: "Voluntariado",
@@ -57,17 +102,55 @@ const Topic = () => {
           Icon={({ color, size }) => <Bell color={color} size={size} />}
         />
       </View>
+
       <View style={styles.ContainerNavigation}>
         <CustomNavagation
           trendingItems={dataNavigation}
-          sendData={false} // envia o objeto data via params
+          sendData={false}
           otherStyles={true}
         />
-      <FlatList 
-      data={[{id: 1, title: "Teste", content: "ADAJIDJIASDISAJDJASJDIASDJISAIJD", image: null,}]}
-
-      />
       </View>
+      <ImageBackground
+        source={require("../../../../assets/images/Jesus-Cristo.png")}
+        style={styles.featuredHeaderCard}
+        imageStyle={{ borderRadius: 8 }}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.headerPostCard}>
+            <Text style={styles.timestamp}>{renderData[0].timestamp}</Text>
+            <Text style={styles.postTitle}>{renderData[0].title}</Text>
+            <Text style={styles.postContent}>{renderData[0].content}</Text>
+          </View>
+        </View>
+      </ImageBackground>
+
+      <FlatList
+        keyExtractor={(item) => item.id.toString()}
+        data={renderData.slice(1)} // slice para não alterar o array original
+        renderItem={({ item }) => (
+          <View style={styles.postCard}>
+            <View style={styles.textContainer}>
+              <Text style={styles.timestamp}>{item.timestamp}</Text>
+              <Text style={styles.postTitle} numberOfLines={1} ellipsizeMode="tail">
+                {item.title}
+              </Text>
+              <Text style={styles.postContent} numberOfLines={2} ellipsizeMode="tail">
+                {item.content}
+              </Text>
+            </View>
+            <Image
+              source={
+                item.image
+                  ? { uri: item.image }
+                  : require("../../../../assets/images/default-profile.jpg")
+              }
+              style={styles.postImage}
+            />
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        contentContainerStyle={{ marginVertical: 10, paddingBottom: 100 }}
+      />
     </SafeAreaView>
   );
 };
@@ -87,13 +170,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 35,
   },
-  // imagePerfil: {
-  //   height: 50,
-  //   width: 50,
-  //   borderRadius: 25,
-  //   borderWidth: 2,
-  //   borderColor: "#FFF",
-  // },
   TextInput: {
     flex: 1,
     backgroundColor: "white",
@@ -105,5 +181,58 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "white",
     marginVertical: 15,
+  },
+
+  featuredHeaderCard: {
+    height: 250,
+    borderRadius: 8,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(255,255,255,0.8)", // camada branca semi-transparente
+    padding: 15,
+    justifyContent: "center",
+  },
+  headerPostCard: {
+    // aqui você pode ajustar margem ou alinhamento
+  },
+
+  postCard: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    alignItems: "center",
+    borderRadius: 8,
+    padding: 15,
+  },
+  textContainer: {
+    flex: 1,
+    marginRight: 20,
+  },
+  postContent: {
+    fontSize: 14,
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 5,
+  },
+  timestamp: {
+    fontSize: 12,
+    color: "#888",
+    marginBottom: 5,
+  },
+  separator: {
+    borderWidth: 1,
+    borderColor: "white",
+    marginVertical: 10,
+  },
+  postImage: {
+    height: 65,
+    width: 65,
+    borderRadius: 10,
+    backgroundColor: "black",
   },
 });

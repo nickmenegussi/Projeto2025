@@ -135,9 +135,16 @@ const Index = () => {
             />
           )}
           <View style={styles.headerPostCard}>
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 17 }}>
-              {item.nameUser}
-            </Text>
+            <View>
+              <Text
+                style={{ color: "white", fontWeight: "bold", fontSize: 17 }}
+              >
+                {item.nameUser}
+              </Text>
+              <Text style={{ color: "white", fontSize: 14 }}>
+                @{item.nameUser}
+              </Text>
+            </View>
             <Text style={{ color: "white" }}>
               {formatDate(item.created_at)}
             </Text>
@@ -175,7 +182,7 @@ const Index = () => {
           </View>
           <View style={styles.footerItem}>
             <Download color="white" size={24} />
-            <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+            <Text style={{ color: "#fff" }}>0</Text>
           </View>
         </View>
       </View>
@@ -225,7 +232,10 @@ const Index = () => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
-      <TouchableOpacity style={styles.addPost} onPress={() => router.push('/community/createPost')}>
+      <TouchableOpacity
+        style={styles.addPost}
+        onPress={() => router.push("/community/createPost")}
+      >
         <Plus color={"white"} size={24} />
       </TouchableOpacity>
     </>
@@ -236,9 +246,8 @@ export default React.memo(Index);
 
 const styles = StyleSheet.create({
   conteinerFlatlist: {
-    flexGrow: 1,
     padding: 15,
-    paddingBottom: 130,
+    paddingBottom: 150,
     backgroundColor: "#003B73",
   },
   headerComponent: {
@@ -261,15 +270,18 @@ const styles = StyleSheet.create({
   },
   postCard: {
     marginBottom: 10,
-    padding: 12,
-    backgroundColor: "#60A3D9",
-    borderRadius: 16,
+    padding: 15,
+    backgroundColor: "rgba(59, 20, 20, 0.05)",
+    borderWidth: 1,
+    borderColor: "white",
+    borderRadius: 15,
     gap: 5,
   },
   postContent: {
     fontSize: 16,
     color: "white",
-    marginBottom: 8,
+    marginBottom: 15,
+    marginVertical: 10,
   },
   postImage: {
     width: "100%",
