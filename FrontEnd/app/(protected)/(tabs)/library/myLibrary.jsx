@@ -23,60 +23,57 @@ const MyLibrary = () => {
       </View>
     );
   }
+
   return (
-    <FlatList
-      data={favorite}
-      keyExtractor={(item) => item.idLibrary}
-      renderItem={({ item }) => (
-        <View style={{flexDirection: 'row'}}>
+    <View style={styles.container}>  {/* Container principal */}
+      <View style={styles.header}>
+        <ButtonIcons
+          color="#fff"
+          handleChange={() => router.back()}
+          size={24}
+          accessibilityLabel="Voltar"
+          Icon={({ color, size }) => (
+            <ArrowLeftIcon color={color} size={size} />
+          )}
+        />
+        <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
+      </View>
+
+      <View style={styles.containerHeader}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
-          activeOpacity={0.8}
-  
-        >
-          <CardCustom data={[item]} />
-        </TouchableOpacity>
+            onPress={() => router.push(`library/historicalLoans`)}
+            style={styles.button}
+          >
+            <Text style={styles.linkText}>Outra navegação</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.push(`library/favorites`)}
+            style={[styles.button, styles.buttonActive]}
+          >
+            <Text style={styles.linkText}>Livros Favoritos</Text>
+          </TouchableOpacity>
         </View>
-      )}
-      contentContainerStyle={styles.container}
-      ListHeaderComponent={() => (
-        <>
-          <View style={styles.containerHeader}>
-            <View style={styles.header}>
-              <ButtonIcons
-                color="#fff"
-                handleChange={() => {}}
-                size={24}
-                Icon={({ color, size }) => (
-                  <ArrowLeftIcon color={color} size={size} />
-                )}
-              />
-              <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
-            </View>
-            <View style={styles.ContainerHeader}>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={() => router.push(`library/historicalLoans`)}
-                  style={styles.button}
-                >
-                  <Text style={styles.linkText}>Outra navegacao</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => router.push(`library/historicalLoans`)}
-                  style={[styles.button, styles.buttonActive]}
-                >
-                  <Text style={styles.linkText}>Livros Favoritos</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <Text style={styles.TextContainer}>Minha Biblioteca</Text>
-            <Text style={styles.titlerRenderItem}>Livros Favoritados</Text>
-            {/* <FlatList 
-            renderItem={}
-            /> */}
+      </View>
+
+      <Text style={styles.textContainer}>Minha Biblioteca</Text>
+      <Text style={styles.titleRenderItem}>Livros Favoritados</Text>
+
+      <FlatList
+        data={favorite}
+        keyExtractor={item => item.Book_idLibrary.toString()}
+        renderItem={({ item }) => (
+          <View>
+            <TouchableOpacity activeOpacity={0.8}>
+            <CardCustom data={[item]} />
+          </TouchableOpacity>
           </View>
-        </>
-      )}
-    />
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+      />
+    </View>
   );
 };
 
@@ -84,64 +81,44 @@ export default MyLibrary;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
     backgroundColor: "#003B73",
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
   },
-  containerHeader: {
-    gap: 15,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
-  TextContainer: {
-    color: "white",
-    fontSize: 18,
-    borderBottomWidth: 3,
-    borderBottomColor: "#60A3D9",
-    maxWidth: 150,
-    textAlign: "left",
-    paddingBottom: 4,
-  },
-  titlerRenderItem: {
-    fontSize: 22,
-    color: "white",
-    marginBottom: 15,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#003B73",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     gap: 40,
-    padding: 10,
-    paddingTop: 50,
-    backgroundColor: "#003B73",
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
-
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
   },
-
-  ContainerHeader: {
-    flexDirection: "column",
+  containerHeader: {
+    marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
   },
-
   buttonContainer: {
     flexDirection: "row",
-    width: "auto",
     padding: 4,
     borderWidth: 1,
     backgroundColor: "#003B73",
     borderColor: "white",
     borderRadius: 30,
   },
-
   button: {
     flex: 1,
     paddingVertical: 8,
@@ -149,40 +126,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
   buttonActive: {
     backgroundColor: "#60A3D9",
   },
-
   linkText: {
-    textAlign: "center",
     color: "white",
     fontWeight: "500",
     fontSize: 13,
+    textAlign: "center",
   },
-  cardContainer: {
-    backgroundColor: "#1E2A47", // tom escuro para contraste com o fundo
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 4,
-  },
-
-  // Caso queira customizar dentro do CardCustom (se possível):
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+  textContainer: {
     color: "white",
+    fontSize: 18,
+    borderBottomWidth: 3,
+    borderBottomColor: "#60A3D9",
+    maxWidth: 150,
+    textAlign: "left",
+    paddingBottom: 4,
+    marginTop: 30,
   },
-
-  cardAuthor: {
-    fontSize: 14,
-    color: "#a0aec0", // cinza claro
-    marginTop: 4,
-  }, containerRenderItem: {
-  }
+  titleRenderItem: {
+    fontSize: 22,
+    color: "white",
+    marginBottom: 15,
+  },
+  flatListContent: {
+    
+  },
 });

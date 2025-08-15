@@ -70,6 +70,20 @@ export default function useReview() {
     }
   }
 
+  const handleRegisterReview = async () => {
+  if (!reviewUser.descriptionReview || reviewUser.ratingReview === 0) {
+    alert("Por favor, preencha a avaliação e dê uma nota.");
+    return;
+  }
+
+  if (reviewUser.currentReviewId) {
+    await updateReview(reviewUser.currentReviewId);
+  } else {
+    await createReview();
+  }
+  fetchReview();
+};
+
   return {
     review,
     reviewUser,
@@ -77,7 +91,7 @@ export default function useReview() {
     modalVisible,
     setModalVisible,
     loading,
-    fetchReview,
+    fetchReview,handleRegisterReview,
     createReview,
     sortOrder,
     updateReview,

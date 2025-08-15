@@ -24,7 +24,6 @@ export default function Comments() {
   
 
   const handleSendComment = async () => {
-    // Implement your comment submission logic here
     try {
       const createdComment = await createComment(postId, newComment);
       addLocalComment(createdComment.data);
@@ -83,11 +82,11 @@ export default function Comments() {
             <View style={styles.commentContainer}>
               <View style={styles.commentAvatar} />
               <View style={styles.commentContent}>
-                <Text style={styles.commentAuthor}>{item.userName}</Text>
+                <Text style={styles.commentAuthor}>{item.nameUser}</Text>
                 <Text style={styles.commentText}>{item.content}</Text>
                 <View style={styles.commentActions}>
                   <TouchableOpacity style={styles.commentAction}>
-                    <Feather name="heart" size={16} color="#657786" />
+                    <Feather name="heart" size={16} color="white" />
                   </TouchableOpacity>
                   <Text style={styles.commentActionText}>12</Text>
                 </View>
@@ -134,7 +133,7 @@ export default function Comments() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#003B73",
   },
    header: {
     flexDirection: "row",
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#0F1419",
+    color: "white",
   },
   center: {
     flex: 1,
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: "#657786",
+    color: "white",
   },
   originalPost: {
     padding: 15,
@@ -182,18 +181,20 @@ const styles = StyleSheet.create({
   postAuthor: {
     fontWeight: "bold",
     fontSize: 15,
+    color: "white"
   },
   postUsername: {
-    color: "#657786",
+    color: "white",
     fontSize: 14,
   },
   postContent: {
     fontSize: 16,
+    color: "white",
     lineHeight: 22,
     marginBottom: 8,
   },
   postTime: {
-    color: "#657786",
+    color: "white",
     fontSize: 14,
   },
   commentsList: {
@@ -218,10 +219,12 @@ const styles = StyleSheet.create({
   commentAuthor: {
     fontWeight: "bold",
     marginBottom: 4,
+    color: "white"
   },
   commentText: {
     fontSize: 15,
     lineHeight: 20,
+    color: "white",
     marginBottom: 8,
   },
   commentActions: {
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   commentActionText: {
-    color: "#657786",
+    color: "white",
     fontSize: 13,
   },
   emptyComments: {
@@ -243,11 +246,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
-    color: "#0F1419",
+    color: "white",
   },
   emptySubtext: {
     fontSize: 14,
-    color: "#657786",
+    color: "white",
   },
   commentInputContainer: {
     flexDirection: "row",
@@ -255,7 +258,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderTopWidth: 1,
     borderTopColor: "#E1E8ED",
-    backgroundColor: "#fff",
+    backgroundColor: "#003B73",
     paddingBottom: 130,
   },
   inputAvatar: {

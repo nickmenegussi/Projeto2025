@@ -26,6 +26,7 @@ import usePostMessage from "../../../../hooks/usePostMessage";
 import { addLikeToPost } from "../../../../services/ServiceLike";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../services/api";
+import LoadingScreen from "../../../../components/AcitivityIndicator";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -224,7 +225,9 @@ const Index = () => {
         )}
         ListEmptyComponent={() =>
           loading ? (
-            <ActivityIndicator size="large" color="#ffffff" />
+            <View style={{flex: 1, justifyContent: 'center',  alignItems: 'center'}}>
+              <LoadingScreen image={false} />
+            </View>
           ) : (
             <Text style={styles.emptyText}>Nenhuma postagem encontrada</Text>
           )
@@ -247,6 +250,7 @@ export default React.memo(Index);
 const styles = StyleSheet.create({
   conteinerFlatlist: {
     padding: 15,
+    flexGrow: 1,
     paddingBottom: 150,
     backgroundColor: "#003B73",
   },
