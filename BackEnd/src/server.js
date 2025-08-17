@@ -22,6 +22,7 @@ const comments = require('./routers/CommentsRouter')
 const lecture = require('./routers/LectureRouter')
 const auth = require('./routers/AuthRouter')
 const review = require('./routers/ReviewRouter')
+const category = require('./routers/CategoryRouter')
 const favorite = require('./routers/FavoriteRouter')
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
@@ -59,9 +60,10 @@ app.use('/lectures', lecture)
 app.use('/review', review)
 app.use('/auth', auth)
 app.use('/favorite', favorite)
+app.use('/category', category)
 
 app.get('/teste', (req, res) => {
     res.send('Bem-vindo à API do Fórum!')
 })
 
-app.listen(port, () => console.log(`Rodando na porta ${port}\nDocumentação do Swagger disponível em http://localhost:${port}/api-docs`))
+server.listen(port, () => console.log(`Rodando na porta ${port}\nDocumentação do Swagger disponível em http://localhost:${port}/api-docs`))

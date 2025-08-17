@@ -159,9 +159,21 @@ CREATE TABLE Topic (
     description VARCHAR(255) NOT NULL,
     image TEXT,
     User_idUser INT NOT NULL,
+    Category_id INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Category_idCategory) REFERENCES Category(idCategory)
+
 );
+
+
+CREATE TABLE Category(
+    idCategory INT AUTO_INCREMENT PRIMARY KEY,
+    nameCategory varchar(100) NOT NULL,
+    User_idUser INT NOT NULL,
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+)
 
 -- Tabela CalendarEvents
 CREATE TABLE CalendarEvents (

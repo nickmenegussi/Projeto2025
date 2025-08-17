@@ -62,10 +62,12 @@ exports.viewAllTopic = (req, res) => {
 };
 
 exports.createTopic = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, Category_id } = req.body;
   const User_idUser = req.data.id;
+  const image = req.file ? req.file.filename : null;
 
-  if (!title || !description) {
+
+  if (!title || !description || !image || !Category_id) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
@@ -73,7 +75,7 @@ exports.createTopic = async (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM Topic WHERE title = ? AND description = ?",
+    "SELECT * FROM Topic WHERE title = ? AND description = ? ",
     [title, description],
     (err, result) => {
       if (err) {
@@ -91,8 +93,8 @@ exports.createTopic = async (req, res) => {
           success: false,
         });
       } connection.query(
-          "INSERT INTO Topic(title,description, User_idUser) VALUES(?, ?, ?)",
-          [title, description, User_idUser],
+          "INSERT INTO Topic(title,description,image, User_idUser, Category_id) VALUES(?, ?, ?,?, ?)",
+          [title, description,image, User_idUser, Category_id],
           (err, result) => {
             if (err) {
               return res.status(500).json({
@@ -101,14 +103,15 @@ exports.createTopic = async (req, res) => {
                 data: err,
               });
             }
-          
-            // Aqui emitimos um evento para todos os clientes conectados
-            const io = getIO();
-            io.emit('topicCreated', {
+
+            const io = getIO()
+            io.emit("newTopic", {
               id: result.insertId,
               title,
               description,
+              image,
               User_idUser,
+              Category_id
             })
 
             return res.status(200).json({
