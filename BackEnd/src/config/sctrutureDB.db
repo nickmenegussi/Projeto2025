@@ -162,7 +162,7 @@ CREATE TABLE Topic (
     Category_id INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
-    FOREIGN KEY (Category_idCategory) REFERENCES Category(idCategory)
+    FOREIGN KEY (Category_id) REFERENCES Category(idCategory)
 
 );
 

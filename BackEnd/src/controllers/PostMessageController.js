@@ -8,15 +8,20 @@ exports.getAllPosts = async (req, res) => {
           p.idPost,
           p.content,
           p.image,
+          p.Topic_idTopic,
           p.created_at,
           p.updated_at,
           u.idUser AS user_id,
           u.nameUser,
           u.image_profile,
+          c.nameCategory,
+          c.idCategory,
           (SELECT COUNT(*) FROM Likes l WHERE l.Post_idPost = p.idPost) AS likes_count,
           (SELECT COUNT(*) FROM Comments c WHERE c.Post_idPost = p.idPost) AS comments_count
       FROM Post p
       JOIN User u ON p.User_idUser = u.idUser
+      JOIN Topic t ON p.Topic_idTopic = t.idTopic
+      JOIN Category c ON t.Category_id = c.idCategory
       ORDER BY p.created_at DESC
     `);
     res.status(200).json(rows);

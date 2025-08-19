@@ -41,7 +41,7 @@ exports.viewOnlyTopicById = (req, res) => {
 };
 
 exports.viewAllTopic = (req, res) => {
-  connection.query("SELECT * FROM Topic", (err, result) => {
+  connection.query("SELECT * FROM Topic ORDER BY created_at DESC", (err, result) => {
     if (err) {
       return res.status(500).json({
         message: "Erro ao se conectar com o servidor.",
@@ -50,8 +50,6 @@ exports.viewAllTopic = (req, res) => {
       });
     } 
     
-    const io = getIO()
-    io.emit('allTopicsViewed', result)
     
     return res.status(200).json({
         message: "Sucesso ao exibir todos os tópicos das postagens.",

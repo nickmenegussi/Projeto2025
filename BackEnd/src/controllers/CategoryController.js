@@ -23,7 +23,8 @@ exports.getTopicbyCategory = async (req, res) => {
         SELECT *
         FROM Topic t
         JOIN Category c on c.idCategory = t.Category_id 
-        WHERE c.nameCategory = ?`, [nameCategory])
+        WHERE c.nameCategory = ?
+        ORDER BY created_at DESC`, [nameCategory])
 
         if(rows.length === 0){
             return res.status(404).json({ message: "Nenhum tópico encontrado para essa categoria." });

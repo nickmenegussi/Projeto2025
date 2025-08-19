@@ -4,13 +4,10 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  ActivityIndicator,
   Alert,
-  TextInput,
   TouchableOpacity,
-  RefreshControl,
 } from "react-native";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   CircleUserRoundIcon,
   Download,
@@ -21,9 +18,8 @@ import {
 } from "lucide-react-native";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import usePostMessage from "../../../../hooks/usePostMessage";
-import { addLikeToPost } from "../../../../services/ServiceLike";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../services/api";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
@@ -41,6 +37,7 @@ const Index = () => {
     await refresh();
     setRefreshing(false);
   };
+
   const formatDate = (date) => {
     const dataRecebida = new Date(date);
     const horaLocal = new Date();
@@ -54,13 +51,16 @@ const Index = () => {
     if (hours < 24) return `${hours} h`;
     return `${dias} d`;
   };
+
   const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
     { id: 3, label: "Novos Tópicos", route: "/community/topic" },
-    { id: 4, label: "Sair da Conta", route: "" },
+    { id: 4, label: "Criar Tópicos", route: "/community/createTopic" },
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
+    { id: 6, label: "Sair da Conta", route: "" },
   ];
+
   const currentUserId = useCallback(async () => {
     const userDataString = await AsyncStorage.getItem("@Auth:user");
     return userDataString ? JSON.parse(userDataString).id : null;
@@ -125,7 +125,7 @@ const Index = () => {
             <Image
               style={styles.profile}
               source={{
-                uri: `http://192.168.1.22:3001/uploads/${item.image}`,
+                uri: `http://192.168.1.19:3001/uploads/${item.image}`,
               }}
             />
           ) : (
@@ -137,28 +137,27 @@ const Index = () => {
           )}
           <View style={styles.headerPostCard}>
             <View>
-              <Text
-                style={{ color: "white", fontWeight: "bold", fontSize: 17 }}
-              >
-                {item.nameUser}
-              </Text>
-              <Text style={{ color: "white", fontSize: 14 }}>
-                @{item.nameUser}
-              </Text>
+              <Text style={styles.userName}>{item.nameUser}</Text>
+              <Text style={styles.userHandle}>@{item.nameUser}</Text>
+              {item.nameCategory && (
+                <View style={styles.topicBadge}>
+                  <Text style={styles.topicText}>Relacionado a {item.nameCategory}</Text>
+                </View>
+              )}
             </View>
-            <Text style={{ color: "white" }}>
-              {formatDate(item.created_at)}
-            </Text>
+            <Text style={styles.postTime}>{formatDate(item.created_at)}</Text>
           </View>
         </View>
+
         <Text style={styles.postContent}>{item.content}</Text>
         {item.image && (
           <Image
-            source={{ uri: `http://192.168.1.22:3001/uploads/${item.image}` }}
+            source={{ uri: `http://192.168.1.19:3001/uploads/${item.image}` }}
             style={styles.postImage}
             resizeMode="cover"
           />
         )}
+
         <View style={styles.footerCardPost}>
           <TouchableOpacity
             style={styles.footerItem}
@@ -169,18 +168,17 @@ const Index = () => {
               size={24}
               fill={userLikes[item.idPost] ? "red" : "none"}
             />
-
             <Text style={{ color: "#fff" }}>{item.likes_count}</Text>
           </TouchableOpacity>
-          <View style={styles.footerItem}>
-            <TouchableOpacity
-              style={styles.footerItem}
-              onPress={() => router.push(`/community/post/${item.idPost}`)}
-            >
-              <MessageSquare color="white" size={24} />
-              <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
-            </TouchableOpacity>
-          </View>
+
+          <TouchableOpacity
+            style={styles.footerItem}
+            onPress={() => router.push(`/community/post/${item.idPost}`)}
+          >
+            <MessageSquare color="white" size={24} />
+            <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
+          </TouchableOpacity>
+
           <View style={styles.footerItem}>
             <Download color="white" size={24} />
             <Text style={{ color: "#fff" }}>0</Text>
@@ -225,7 +223,13 @@ const Index = () => {
         )}
         ListEmptyComponent={() =>
           loading ? (
-            <View style={{flex: 1, justifyContent: 'center',  alignItems: 'center'}}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <LoadingScreen image={false} />
             </View>
           ) : (
@@ -235,6 +239,7 @@ const Index = () => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
+
       <TouchableOpacity
         style={styles.addPost}
         onPress={() => router.push("/community/createPost")}
@@ -281,6 +286,41 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     gap: 5,
   },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  headerPostCard: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  userName: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 17,
+  },
+  userHandle: {
+    color: "white",
+    fontSize: 14,
+  },
+  postTime: {
+    color: "white",
+  },
+  topicBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#1DA1F2",
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginTop: 4,
+  },
+  topicText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "600",
+  },
   postContent: {
     fontSize: 16,
     color: "white",
@@ -292,31 +332,21 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 8,
   },
-  headerPostCard: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   footerCardPost: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginTop: 10,
-  },
-  emptyText: {
-    color: "#fff",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
   },
   footerItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
   },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
+  emptyText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
   addPost: {
     position: "absolute",

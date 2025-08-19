@@ -6,142 +6,175 @@ import {
   StyleSheet,
   FlatList,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import { Bell, Menu } from "lucide-react-native";
 import Sidebar from "../../../../components/Sidebar";
-import CustomNavagation from "../../../../components/CustomNavagation";
+import socket from "../../../../services/socket";
+import api from "../../../../services/api";
+import useCategory from "../../../../hooks/useCategory";
 
 const Topic = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [topics, setTopics] = useState([]);
+  const { categories, selectedCategory, fetchCategory } = useCategory();
+
+  const formatDate = (date) => {
+    const dataRecebida = new Date(date);
+    const horaLocal = new Date();
+    const ms = horaLocal - dataRecebida;
+    const min = Math.floor(ms / 60000);
+    const hours = Math.floor(min / 60);
+    const dias = Math.floor(hours / 24);
+
+    if (min < 1) return "Agora mesmo";
+    if (min < 60) return `${min} min`;
+    if (hours < 24) return `${hours} h`;
+    return `${dias} d`;
+  };
+
   const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
     { id: 3, label: "Novos Tópicos", route: "/community/topic" },
-    { id: 4, label: "Sair da Conta", route: "" },
+    { id: 4, label: "Criar Tópicos", route: "/community/createTopic" },
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
+    { id: 6, label: "Sair da Conta", route: "" },
   ];
+  useEffect(() => {
+    const fetchTopics = async () => {
+      try {
+        let response = [];
+        if (selectedCategory) {
+          response = await fetchCategory(selectedCategory);
+        } else {
+          const res = await api.get("/topic/topic");
+          response = res.data.data || [];
+        }
+        setTopics(response);
+      } catch (error) {
+        console.log("Erro ao buscar tópicos:", error);
+      }
+    };
 
-  const renderData = [
-    {
-      id: 1,
-      timestamp: "2h atrás",
-      title: "Como melhorar meus estudos",
-      content: "Estou buscando dicas para estudar mais eficientemente...",
-      image: null,
-    },
-    {
-      id: 2,
-      timestamp: "Ontem",
-      title: "Trabalho voluntário no centro espírita",
-      content: "Participei do trabalho de domingo e foi incrível!",
-      image: "https://placekitten.com/100/100",
-    },
-    {
-      id: 5,
-      timestamp: "Ontem",
-      title: "Trabalho voluntário no centro espírita",
-      content: "Participei do trabalho de domingo e foi incrível!",
-      image: "https://placekitten.com/100/100",
-    },
-    {
-      id: 4,
-      timestamp: "Ontem",
-      title: "Trabalho voluntário no centro espírita",
-      content: "Participei do trabalho de domingo e foi incrível!",
-      image: "https://placekitten.com/100/100",
-    },
-    {
-      id: 3,
-      timestamp: "3 dias atrás",
-      title: "Sugestões de palestras",
-      content: "Gostaria de sugerir uma palestra sobre mediunidade",
-      image: null,
-    },
-  ];
+    fetchTopics();
 
-  const dataNavigation = [
-    {
-      name: "Voluntariado",
-      type: "Estudo",
-      path: "/community/topic",
-    },
-    {
-      name: "Trabalhos",
-      type: "Voluntariado",
-      path: "/",
-    },
-    {
-      name: "Palestras",
-      type: "Eventos",
-      path: "/",
-    },
-  ];
+    socket.on("newTopic", (topic) => {
+      setTopics((prev) => [topic, ...prev]);
+    });
+
+    return () => socket.off("newTopic");
+  }, [selectedCategory]);
+
+  const listTopics = topics.slice(1);
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} data={dataSidebar} />
 
-      <View style={styles.headerContent}>
-        <ButtonIcons
-          color="white"
-          size={30}
-          handleChange={() => setIsOpen(true)}
-          Icon={({ color, size }) => <Menu color={color} size={size} />}
-        />
-        <TextInput
-          placeholderTextColor="#999"
-          placeholder="Buscar..."
-          style={styles.TextInput}
-        />
-        <ButtonIcons
-          color="white"
-          size={30}
-          Icon={({ color, size }) => <Bell color={color} size={size} />}
-        />
-      </View>
-
-      <View style={styles.ContainerNavigation}>
-        <CustomNavagation
-          trendingItems={dataNavigation}
-          sendData={false}
-          otherStyles={true}
-        />
-      </View>
-      <ImageBackground
-        source={require("../../../../assets/images/Jesus-Cristo.png")}
-        style={styles.featuredHeaderCard}
-        imageStyle={{ borderRadius: 8 }}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.headerPostCard}>
-            <Text style={styles.timestamp}>{renderData[0].timestamp}</Text>
-            <Text style={styles.postTitle}>{renderData[0].title}</Text>
-            <Text style={styles.postContent}>{renderData[0].content}</Text>
-          </View>
+      {/* Header fixo */}
+      <View>
+        {/* Header top (menu + busca + bell) */}
+        <View style={styles.headerContent}>
+          <ButtonIcons
+            color="white"
+            size={30}
+            handleChange={() => setIsOpen(true)}
+            Icon={({ color, size }) => <Menu color={color} size={size} />}
+          />
+          <TextInput
+            placeholderTextColor="#999"
+            placeholder="Buscar..."
+            style={styles.TextInput}
+          />
+          <ButtonIcons
+            color="white"
+            size={30}
+            Icon={({ color, size }) => <Bell color={color} size={size} />}
+          />
         </View>
-      </ImageBackground>
+
+        {/* Categorias fixas */}
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.idCategory.toString()}
+          horizontal
+          contentContainerStyle={{
+            flexDirection: "row",
+            gap: 10,
+            marginVertical: 20,
+          }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.categoryTab,
+                selectedCategory?.idCategory === item.idCategory &&
+                  styles.categoryTabActive,
+              ]}
+              onPress={() => fetchCategory(item)}
+            >
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory?.idCategory === item.idCategory &&
+                    styles.categoryTextActive,
+                ]}
+              >
+                {item.nameCategory || "Sem nome"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+
+        {/* Destaque fixo */}
+        {topics[0] && (
+          <ImageBackground
+            source={require("../../../../assets/images/Jesus-Cristo.png")}
+            style={styles.featuredHeaderCard}
+            imageStyle={{ borderRadius: 8 }}
+          >
+            <View style={styles.overlay}>
+              <View style={styles.headerPostCard}>
+                <Text style={styles.timestamp}>{formatDate(topics[0].created_at)}</Text>
+                <Text style={styles.postTitle}>{topics[0].title}</Text>
+                <Text style={styles.postContent}>{topics[0].description}</Text>
+              </View>
+            </View>
+          </ImageBackground>
+        )}
+      </View>
 
       <FlatList
-        keyExtractor={(item) => item.id.toString()}
-        data={renderData.slice(1)} // slice para não alterar o array original
+        data={listTopics}
+        keyExtractor={(item, index) =>
+          item.idTopic ? item.idTopic.toString() : index.toString()
+        }
         renderItem={({ item }) => (
           <View style={styles.postCard}>
             <View style={styles.textContainer}>
-              <Text style={styles.timestamp}>{item.timestamp}</Text>
-              <Text style={styles.postTitle} numberOfLines={1} ellipsizeMode="tail">
+              <Text style={styles.timestamp}>{formatDate(item.created_at)}</Text>
+              <Text
+                style={styles.postTitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {item.title}
               </Text>
-              <Text style={styles.postContent} numberOfLines={2} ellipsizeMode="tail">
-                {item.content}
+              <Text
+                style={styles.postContent}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {item.description}
               </Text>
             </View>
             <Image
               source={
                 item.image
-                  ? { uri: item.image }
+                  ? {  uri: `http://192.168.1.19:3001/uploads/${item.image}` }
                   : require("../../../../assets/images/default-profile.jpg")
               }
               style={styles.postImage}
@@ -184,7 +217,7 @@ const styles = StyleSheet.create({
   },
 
   featuredHeaderCard: {
-    height: 250,
+    height: 230,
     borderRadius: 8,
     overflow: "hidden",
     justifyContent: "center",
@@ -193,6 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.8)", // camada branca semi-transparente
     padding: 15,
+
     justifyContent: "center",
   },
   headerPostCard: {
@@ -234,5 +268,30 @@ const styles = StyleSheet.create({
     width: 65,
     borderRadius: 10,
     backgroundColor: "black",
+  },
+  categoryTab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    backgroundColor: "#0055A5",
+    minWidth: 100, // garante largura mínima
+    alignItems: "center", // centraliza o texto
+    justifyContent: "center",
+  },
+
+  categoryTabActive: {
+    backgroundColor: "#FFD700",
+  },
+
+  categoryText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14, // reduzindo pra caber mais texto
+    textAlign: "center", // centraliza
+  },
+
+  categoryTextActive: {
+    color: "black",
+    fontWeight: "700",
   },
 });

@@ -83,7 +83,7 @@ export default function CustomNavigation({
                 selectedIndex === index && otherStyles && styles.selectedNavText,
               ]}
             >
-              {item.name}
+              {item.nameCategory || item.name}
             </Text>
           </TouchableOpacity>
         ))}

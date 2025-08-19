@@ -16,6 +16,7 @@ export default function handleApiError(error)  {
     Alert.alert("Erro", data.message || "Ocorreu um erro.");
     return;
   }
-  console.log("Erro inesperado:", error);
+  console.error("Erro inesperado:", error);
+  console.error("Erro inesperado:", error.response.data);
   Alert.alert("Erro", "Não foi possível conectar ao servidor.");
 };

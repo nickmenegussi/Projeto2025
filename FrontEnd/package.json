@@ -11,10 +11,11 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/cli": "latest",
-    "@react-native-picker/picker": "2.11.0",
+    "@react-native-picker/picker": "^2.11.0",
     "axios": "^1.10.0",
     "expo": "^53.0.9",
     "expo-constants": "^17.1.6",
+    "expo-image-picker": "~16.1.4",
     "expo-linear-gradient": "~14.1.5",
     "expo-linking": "^7.1.5",
     "expo-notifications": "~0.31.4",
@@ -45,8 +46,7 @@
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
     "react-native-youtube-iframe": "^2.3.0",
-    "socket.io-client": "^4.8.1",
-    "expo-image-picker": "~16.1.4"
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

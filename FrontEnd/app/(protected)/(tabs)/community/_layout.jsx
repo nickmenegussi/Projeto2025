@@ -9,7 +9,7 @@ const RootLayout = () => {
       <Stack.Screen name="createPost" options={{ headerShown: false}} />
       <Stack.Screen name="post/[postId]" options={{ headerShown: false}} />
       <Stack.Screen name="topic" options={{ headerShown: false}} />
-
+      <Stack.Screen name="createTopic" options={{ headerShown: false}} />
     </Stack>
   )
 }
