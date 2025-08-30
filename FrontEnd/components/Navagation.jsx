@@ -70,17 +70,13 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   CardNavagation: {
-    backgroundColor: "#60A3D9",
-    paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    backgroundColor: "#0055A5",
+    minWidth: 100, // garante largura mínima
+    alignItems: "center", // centraliza o texto
     justifyContent: "center",
-    alignItems: "center",
   },
   TextContent: {
     color: "#fff",

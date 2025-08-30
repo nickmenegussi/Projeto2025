@@ -19,6 +19,7 @@ import useCategory from "../../../../hooks/useCategory";
 
 const Topic = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [busca, setBusca] = useState("");
   const [topics, setTopics] = useState([]);
   const { categories, selectedCategory, fetchCategory } = useCategory();
 
@@ -44,6 +45,7 @@ const Topic = () => {
     { id: 5, label: "Criar Postagem", route: "/community/createPost" },
     { id: 6, label: "Sair da Conta", route: "" },
   ];
+
   useEffect(() => {
     const fetchTopics = async () => {
       try {
@@ -69,7 +71,9 @@ const Topic = () => {
     return () => socket.off("newTopic");
   }, [selectedCategory]);
 
-  const listTopics = topics.slice(1);
+  const filteredTopic = topics.filter((item) =>
+    item.title.toLowerCase().includes(busca.toLowerCase())
+  );
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
@@ -88,7 +92,9 @@ const Topic = () => {
           <TextInput
             placeholderTextColor="#999"
             placeholder="Buscar..."
+            value={busca}
             style={styles.TextInput}
+            onChangeText={(text) => setBusca(text)}
           />
           <ButtonIcons
             color="white"
@@ -130,7 +136,7 @@ const Topic = () => {
         />
 
         {/* Destaque fixo */}
-        {topics[0] && (
+        {filteredTopic[0] && (
           <ImageBackground
             source={require("../../../../assets/images/Jesus-Cristo.png")}
             style={styles.featuredHeaderCard}
@@ -138,9 +144,13 @@ const Topic = () => {
           >
             <View style={styles.overlay}>
               <View style={styles.headerPostCard}>
-                <Text style={styles.timestamp}>{formatDate(topics[0].created_at)}</Text>
-                <Text style={styles.postTitle}>{topics[0].title}</Text>
-                <Text style={styles.postContent}>{topics[0].description}</Text>
+                <Text style={styles.timestamp}>
+                  {formatDate(filteredTopic[0].created_at)}
+                </Text>
+                <Text style={styles.postTitle}>{filteredTopic[0].title}</Text>
+                <Text style={styles.postContent}>
+                  {filteredTopic[0].description}
+                </Text>
               </View>
             </View>
           </ImageBackground>
@@ -148,14 +158,16 @@ const Topic = () => {
       </View>
 
       <FlatList
-        data={listTopics}
+        data={filteredTopic.slice(1)}
         keyExtractor={(item, index) =>
           item.idTopic ? item.idTopic.toString() : index.toString()
         }
         renderItem={({ item }) => (
           <View style={styles.postCard}>
             <View style={styles.textContainer}>
-              <Text style={styles.timestamp}>{formatDate(item.created_at)}</Text>
+              <Text style={styles.timestamp}>
+                {formatDate(item.created_at)}
+              </Text>
               <Text
                 style={styles.postTitle}
                 numberOfLines={1}
@@ -174,7 +186,7 @@ const Topic = () => {
             <Image
               source={
                 item.image
-                  ? {  uri: `http://192.168.1.19:3001/uploads/${item.image}` }
+                  ? { uri: `http://192.168.1.19:3001/uploads/${item.image}` }
                   : require("../../../../assets/images/default-profile.jpg")
               }
               style={styles.postImage}
@@ -183,6 +195,15 @@ const Topic = () => {
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={{ marginVertical: 10, paddingBottom: 100 }}
+        ListEmptyComponent={
+          filteredTopic.length === 0 && (
+            <Text
+              style={{ color: "white", textAlign: "center", marginTop: 20 }}
+            >
+              Nenhum tópico encontrado
+            </Text>
+          )
+        }
       />
     </SafeAreaView>
   );
@@ -224,7 +245,9 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(255,255,255,0.8)", // camada branca semi-transparente
+    borderWidth: 1,
+    backgroundColor: "rgba(170, 151, 151, 0.76)",
+    borderColor: "white", // camada branca semi-transparente
     padding: 15,
 
     justifyContent: "center",
@@ -235,7 +258,8 @@ const styles = StyleSheet.create({
 
   postCard: {
     flexDirection: "row",
-    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "white",
     alignItems: "center",
     borderRadius: 8,
     padding: 15,
@@ -246,16 +270,17 @@ const styles = StyleSheet.create({
   },
   postContent: {
     fontSize: 14,
+    color: "white",
   },
   postTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "black",
+    color: "white",
     marginBottom: 5,
   },
   timestamp: {
     fontSize: 12,
-    color: "#888",
+    color: "white",
     marginBottom: 5,
   },
   separator: {
@@ -280,7 +305,7 @@ const styles = StyleSheet.create({
   },
 
   categoryTabActive: {
-    backgroundColor: "#FFD700",
+    backgroundColor: "#008cffff",
   },
 
   categoryText: {
@@ -291,7 +316,7 @@ const styles = StyleSheet.create({
   },
 
   categoryTextActive: {
-    color: "black",
+    color: "white",
     fontWeight: "700",
   },
 });
