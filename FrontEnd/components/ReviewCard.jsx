@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { AirbnbRating } from "react-native-ratings";
+import { Rating } from "react-native-ratings";
 
 const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) => {
   if (!dataReview) return null;
@@ -32,12 +32,26 @@ const ReviewCard = ({ dataReview, isCurrentUser, onEdit, onDelete, ...props }) =
         <View style={styles.feedbackContent}>
           <View style={styles.headerContainer}>
             <Text style={styles.titleFeedback}>{dataReview.nameUser}</Text>
-            <AirbnbRating
+            {/* <Rating
               defaultRating={dataReview.ratingReview}
               size={14}
               showRating={false}
               selectedColor="#FFA500"
               isDisabled
+            /> */}
+            <Rating
+              type="custom"
+              atingColor="#FFD700" // cor das estrelas preenchidas
+              ratingBackgroundColor="#d4d4d4" // cor do fundo das estrelas
+              tintColor="#003B73" // cor de fundo do componente inteiro
+              imageSize={24}
+              startingValue={dataReview.ratingReview}
+              readonly={true}
+              count={dataReview.ratingReview}
+              defaultRating={0}
+              size={30}
+              // onFinishRating={(rating) => {}}
+              showRating={false}
             />
           </View>
           <Text style={styles.feedbackText}>{dataReview.descriptionReview}</Text>

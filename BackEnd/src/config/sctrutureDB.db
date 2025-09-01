@@ -3,6 +3,7 @@ USE CEO;
 
 -- Tabela VolunteerWork (Opcionalmente relacionada a User)
 CREATE TABLE VolunteerWork (
+    nameUser VARCHAR(255) NOT NULL,
     idVolunteerWork INT PRIMARY KEY AUTO_INCREMENT,
     nameVolunteerWork VARCHAR(255),
     address VARCHAR(255),
@@ -20,7 +21,6 @@ CREATE TABLE ReviewSociety(
 	foreign key (userId) references User(idUser)
 );
 
-
 INSERT INTO ReviewSociety (descriptionReview, ratingReview, userId)
 VALUES 
 ('Ótimo projeto! Contribuiu bastante para a comunidade.', 5, 1),
@@ -28,21 +28,28 @@ VALUES
 ('Faltou organização nas atividades propostas.', 3, 1);
 
 -- Tabela Book
+
+
+
 CREATE TABLE Book (
-    idLibrary INT AUTO_INCREMENT PRIMARY KEY,
-    nameBook VARCHAR(255),
-    author VARCHAR(255),
-    overviewBook TEXT,
-    curiosityBook TEXT,
-    tagsBook ENUM('Obras Básicas', 'Obras Complementares',),
+    idLibrary INT AUTO_INCREMENT PRIMARY KEY not null,
+    nameBook VARCHAR(255) not null,
+    authorBook VARCHAR(255) not null,
+    image text not null,
+    overviewBook TEXT not null,
+    curiosityBook TEXT not null,
+    tagsBook ENUM('Obras Básicas', 'Obras Complementares') not null,
+    bookCategory ENUM('reserva', 'emprestimo') not null,
+    bookQuantity int not null,
     date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
     status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
 );
 
+
+SELECT * FROM Book;
 -- Tabela User
 CREATE TABLE User (
     idUser INT AUTO_INCREMENT PRIMARY KEY,
-    nameUser VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_profile TEXT,
@@ -52,12 +59,18 @@ CREATE TABLE User (
 
 -- Tabela Loans
 CREATE TABLE Loans (
-    idLoans INT AUTO_INCREMENT PRIMARY KEY,
-    returnDate DATETIME,
-    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Cart_idCart INT NOT NULL,
-    FOREIGN KEY (Cart_idCart) REFERENCES Cart(idCart)
+  idLoans INT AUTO_INCREMENT PRIMARY KEY,
+  User_idUser INT NOT NULL,
+  Book_idLibrary INT NOT NULL,
+  quantity INT NOT NULL,
+  returnDate DATETIME,
+  date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (User_idUser) REFERENCES User(idUser),
+  FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
+SELECT * FROM Loans;
+
+SELECT * FROM Cart;
 
 -- Tabela Reserves
 CREATE TABLE Reserves (
@@ -73,19 +86,29 @@ CREATE TABLE Cart (
     User_idUser INT NOT NULL,
     Book_idLibrary INT NOT NULL,
     action ENUM('reservar', 'emprestar') NOT NULL,
+    quantity int not null,
     added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
 
+SELECT * FROM User u
+INNER JOIN Cart c on u.idUser =  c.User_idUser
+INNER JOIN Book b on b.idLibrary = c.Book_idLibrary 
+Where u.idUser = 1
+	and b.idLibrary = 6;
+
+
 -- Tabela Post
 CREATE TABLE Post (
     idPost INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
+    title varchar(255) not null,
     image TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     User_idUser INT NOT NULL,
     Topic_idTopic INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Topic_idTopic) REFERENCES Topic(idTopic)
 );
@@ -97,8 +120,8 @@ CREATE TABLE Comments (
     User_idUser INT NOT NULL,
     message TEXT NOT NULL,
     createdDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE
 );
 
 
@@ -106,10 +129,12 @@ CREATE TABLE Comments (
 CREATE TABLE Likes (
     idLikes INT AUTO_INCREMENT PRIMARY KEY,
     Post_idPost INT NOT NULL,
-    User_idUser INT NOT NULL,
+    User_idUser INT NOT NULL ,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost),
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE,
+    UNIQUE (Post_idPost, User_idUser)
+
 );
 
 -- Tabela Lecture
@@ -134,9 +159,21 @@ CREATE TABLE Topic (
     description VARCHAR(255) NOT NULL,
     image TEXT,
     User_idUser INT NOT NULL,
+    Category_id INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    FOREIGN KEY (Category_id) REFERENCES Category(idCategory)
+
 );
+
+
+CREATE TABLE Category(
+    idCategory INT AUTO_INCREMENT PRIMARY KEY,
+    nameCategory varchar(100) NOT NULL,
+    User_idUser INT NOT NULL,
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+)
 
 -- Tabela CalendarEvents
 CREATE TABLE CalendarEvents (
@@ -147,9 +184,11 @@ CREATE TABLE CalendarEvents (
     start DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     end DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     attachment TEXT,
+    dateEvent DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     User_idUser INT NOT NULL,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
+
 
 -- Tabela Facilitadores
 CREATE TABLE Facilitadores (
@@ -182,9 +221,54 @@ CREATE TABLE OTP (
     expiresAt TIMESTAMP NOT NULL
 );
 
-SELECT * FROM User;
+SELECT * FROM Cart;
+CREATE TABLE GroupOfstudy(
+	IdGroupOfStudy BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    IdFacilitador INT NOT NULL,
+    NameStudy VARCHAR(255) NOT NULL,
+    Description Varchar(100) not null,
+    DayOfWeek VARCHAR(20),
+    StartTime DATETIME DEFAULT CURRENT_TIMESTAMP  NULL,
+    EndTime DATETIME DEFAULT CURRENT_TIMESTAMP  NULL,
+    TypeGroup ENUM('ESDE', 'MEDIUNICO', 'EVANGELIZACAO', 'CIEDE'),
+	Requirements VARCHAR(100),
+	CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT FK_FACILITADOR 
+        FOREIGN KEY (IdFacilitador) REFERENCES Facilitadores(idFacilitadores)
+);
 
-CREATE EVENT deleteExpiredOtp
-on schedule every 10 minute
-DO DELETE FROM OTP WHERE expiresAt < now();
-
+INSERT INTO GroupOfStudy
+  (IdFacilitador, NameStudy, Description, DayOfWeek, StartTime, EndTime, TypeGroup, Requirements)
+VALUES
+  (1,
+   'Grupo de Estudo CIEDE',
+   'Ciclo de Estudos Doutrinários com enfoque no Evangelho e prática da casa.',
+   'Terça-feira',
+   NULL,
+   NULL,
+   'EVANGELIZACAO',
+   
+   'Estar cursando ou já ter concluído o grupo CIEDE.'),
+  (1,
+   'Grupo de Estudo ESDE',
+   'Estudo Sistematizado da Doutrina Espírita com material de referência.',
+   'Quinta-feira',
+   NULL,
+   NULL,
+   'ESDE',
+   'Recomendado para iniciantes, sem pré-requisitos.'),
+  (1,
+   'Grupo de Estudo da Mediunidade',
+   'Estudo e educação da mediunidade com foco em ética e prática segura.',
+   'Segunda-feira',
+   NULL,
+   NULL,
+   'MEDIUNICO',
+   'Maior de 18 anos, assiduidade e ter concluído o ESDE.');
+INSERT INTO Facilitadores
+  (User_idUser, description, apelido, espiritaSinceTime, memberSinceWhen, category)
+VALUES
+  (1, 'Evangelizador e coordenador do grupo CIEDE', 'Maria Silva', 2005, '2010-03-15', 'CIEDE'),
+  (2, 'Estudioso da Doutrina Espírita, responsável pelo ESDE', 'Carlos Pereira', 2008, '2012-06-20', 'ESDE'),
+  (2, 'Médium experiente e orientador do grupo mediúnico', 'Ana Souza', 2000, '2005-09-01', 'MEDIUNIDADE');
+   

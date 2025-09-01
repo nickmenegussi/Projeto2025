@@ -37,12 +37,13 @@ export function AuthProvider({children}){
 
     // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
 
-    async function login(email, senha){
+    async function login(email, password){
+        console.log(email, password)
         const response = await api.post('/auth/login/create', {
             email,
-            senha
+            password
         })
-
+        console.log(response)
         if(response.data.error){
             alert(response.data.error)
         } else {

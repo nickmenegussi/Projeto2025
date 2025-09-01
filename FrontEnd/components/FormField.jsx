@@ -44,9 +44,7 @@ const style = StyleSheet.create({
   containerForms: {
     flexDirection: 'row',
     marginTop: 10,
-    width: '100%',
-    maxWidth: 360,
-    minWidth: 360,
+    width: '93%',
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',

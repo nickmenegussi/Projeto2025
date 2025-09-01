@@ -1,14 +1,49 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
-import { LibraryIcon, X } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
-import ButtonIcons from './ButtonIcons';
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Animated,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Image,
+} from "react-native";
+import { X } from "lucide-react-native";
+import ButtonIcons from "./ButtonIcons";
+import { router } from "expo-router";
+import { AuthContext } from "../context/auth";
 
-export default function SideBar({ isOpen, setIsOpen }) {
-  const navigation = useNavigation();
-
-  // Ref de animação
+export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
+  const { user } = useContext(AuthContext);
+  const [nameUser, setNameUser] = useState();
   const slideAnim = useRef(new Animated.Value(-300)).current;
+
+  useEffect(() => {
+    if (user) {
+      setNameUser(user.nameUser);
+    } else {
+      console.log("No user data available");
+    }
+  }, [user]);
+
+  const Renderitems = useMemo(() => {
+    if (!data) return <Text style={{ color: "white" }}>No data available</Text>;
+
+    return data.map((item) => (
+      <TouchableOpacity
+        key={item.id}
+        style={styles.menuItem}
+        onPress={() => {
+          setIsOpen(false);
+          if (item.route) {
+            router.push(item.route);
+          }
+        }}
+      >
+        <Text style={styles.menuText}>{item.label}</Text>
+      </TouchableOpacity>
+    ));
+  }, [data]);
 
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -19,131 +54,83 @@ export default function SideBar({ isOpen, setIsOpen }) {
   }, [isOpen]);
 
   return (
-    <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
-      <View style={styles.backgroundProfileContainer}>
+    <Animated.View
+      style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}
+    >
+      <View style={styles.header}>
         <ButtonIcons
           color="white"
-          size={30}
+          size={28}
           handleChange={() => setIsOpen(false)}
           Icon={({ color, size }) => <X color={color} size={size} />}
         />
+
         <View style={styles.profileContainer}>
-          <Image source={require('../assets/images/Jesus-Cristo.png')} style={styles.profileImage} />
-          <Text style={styles.profileName}>Your name</Text>
-          <Text style={styles.profileSubtext}>View profile</Text>
+          <Image
+            source={require("../assets/images/Jesus-Cristo.png")}
+            style={styles.profileImage}
+          />
+          <Text style={styles.profileName}>{nameUser}</Text>
+          <Text style={styles.profileSubtext}>Body text goes here</Text>
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={styles.iconText}>📊</Text>
-          <Text style={styles.menuText}>Dashboard</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Library')}>
-          <LibraryIcon size={30} color="white" />
-          <Text style={styles.menuText}>Biblioteca</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Lecture')}>
-          <Text style={styles.iconText}>🎤</Text>
-          <Text style={styles.menuText}>Palestras</Text>
-          <View style={styles.badge}><Text style={styles.badgeText}>3</Text></View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('VolunteerWork')}>
-          <Text style={styles.iconText}>🤝</Text>
-          <Text style={styles.menuText}>Trabalho Voluntário</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Forum')}>
-          <Text style={styles.iconText}>💬</Text>
-          <Text style={styles.menuText}>Fórum de Discussão</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CalendarEvents')}>
-          <Text style={styles.iconText}>📅</Text>
-          <Text style={styles.menuText}>Calendário de Eventos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Notifications')}>
-          <Text style={styles.iconText}>🔔</Text>
-          <Text style={styles.menuText}>Notificações</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.iconText}>🔑</Text>
-          <Text style={styles.menuText}>Login</Text>
-        </TouchableOpacity>
+      <ScrollView style={styles.menuContainer}>
+        {Renderitems}
       </ScrollView>
     </Animated.View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   sidebar: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    height: '110%',
-    width: 250,
-    backgroundColor: '#60A3D9',
+    height: "110%",
+    width: 260,
+    backgroundColor: "#60A3D9", // Azul escuro
     zIndex: 15,
   },
-  backgroundProfileContainer: {
-    backgroundColor: '#003B73',
-    padding: 10,
+  header: {
+    backgroundColor: "#003B73",
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 10,
   },
   profileContainer: {
-    paddingVertical: 30,
-    alignItems: 'center',
+    alignItems: "center",
+    marginTop: 10,
   },
   profileImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginBottom: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "white",
   },
   profileName: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   profileSubtext: {
-    color: 'white',
+    color: "#D1D5DB",
     fontSize: 12,
   },
-  scrollView: {
+  menuContainer: {
     flex: 1,
-    paddingLeft: 10,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 13,
-    borderRadius: 8,
-    marginVertical: 2,
-  },
-  iconText: {
-    fontSize: 20,
-    color: 'white',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#ffffff40",
   },
   menuText: {
-    color: 'white',
-    marginLeft: 10,
-    fontSize: 16,
-  },
-  badge: {
-    backgroundColor: '#60A5FA',
-    borderRadius: 999,
-    width: 18,
-    height: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  badgeText: {
-    color: 'white',
-    fontSize: 12,
+    color: "white",
+    fontSize: 15,
+    fontWeight: "500",
   },
 });

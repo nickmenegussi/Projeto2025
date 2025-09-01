@@ -4,14 +4,14 @@ const {viewAllLoans, viewLoansByUser, createLoan, updateReturnDate, deleteLoan} 
 const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/loan/:id', authMiddleware, verifyPermission(['Admin', 'SuperAdmin'])  ,viewLoansByUser)
+router.get('/loan/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin'])  ,viewLoansByUser)
 router.get('/loan', authMiddleware, viewAllLoans)
 
-router.post('/loan/register', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']) ,createLoan)
+router.post('/loan/:Cart_idCart/register', authMiddleware, verifyPermission(['admin', 'SuperAdmin', 'User']) ,createLoan)
 
-router.patch('/loan/:id/returnDate', authMiddleware, verifyPermission(['Admin', 'SuperAdmin'])  ,updateReturnDate)
+router.patch('/loan/:Cart_idCart/returnDate', authMiddleware, verifyPermission(['admin', 'SuperAdmin'])  ,updateReturnDate)
 
-router.delete('/loan/:LoansId/:UserId/delete', authMiddleware, verifyPermission(['Admin', 'SuperAdmin']) ,deleteLoan)
+router.delete('/loan/:LoansId/:UserId/delete', authMiddleware, verifyPermission(['admin', 'SuperAdmin']) ,deleteLoan)
 
 
 module.exports = router

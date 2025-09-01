@@ -57,7 +57,7 @@ exports.viewAllUser = (req, res) => {
 }
 
 exports.register = async (req, res) => {
-    const image_profile = req.file ? req.file.filename : null
+    const image_profile = null
     const {nameUser, email, password} = req.body
 
     if(!nameUser || !email || !password){
@@ -68,20 +68,37 @@ exports.register = async (req, res) => {
     }
 
     const hash_password = await bcrypt.hash(password, 15)
-    connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permission) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, image_profile, 'User'] ,(err,result) => {
+    connection.query('SELECT * FROM User where nameUser = ? AND email = ?', [nameUser, email], (err,result) => {
         if(err){
             return res.status(500).json({
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
                 data: err
             })
-        } else {
-            return res.status(200).json({
-                success: true,
-                message: "Usuário cadastrado com sucesso",
-                data: result,
+        }
+
+        if(result.length > 0){
+            return res.status(422).json({
+                message: 'Esse usário já existe, por favor, faça login.',
+                success: false
             })
         }
+        
+        connection.query('INSERT INTO User(nameUser,email, password ,image_profile, status_permission) VALUES(?, ?, ?, ?, ?)', [nameUser, email, hash_password, image_profile, 'User'] ,(err,result) => {
+            if(err){
+                return res.status(500).json({
+                    message: "Erro ao se conectar com o servidor.",
+                    success: false,
+                    data: err
+                })
+            } else {
+                return res.status(200).json({
+                    success: true,
+                    message: "Usuário cadastrado com sucesso",
+                    data: result,
+                })
+            }
+        })
     })
 }
 

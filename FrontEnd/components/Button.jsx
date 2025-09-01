@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 
 
-const Button = ({title, textStyles ,buttonStyle,handlePress, othersStyles, opacityNumber}) => {
+const Button = ({title, textStyles ,buttonStyle,handlePress, othersStyles, opacityNumber, ...props}) => {
   return (
     <View style={[styles.container, othersStyles]}>
       <TouchableOpacity style={[styles.button, buttonStyle]} activeOpacity={opacityNumber} onPress={handlePress}>
@@ -18,6 +18,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+    alignItems: 'center',
+    
   },
   textButton: {
     color: 'white',
@@ -26,8 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
-    width: 360 ,
-    maxWidth: 370 ,
+    width: '100%',
     backgroundColor: "#60A3D9",
     borderRadius: 10,
     marginTop: 20

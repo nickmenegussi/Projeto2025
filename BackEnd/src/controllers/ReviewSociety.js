@@ -44,7 +44,7 @@ exports.CreateReviewSociety = (req, res) => {
 }
 
 exports.ViewReviewSociety = (req, res) => {
-    const sortOrder = req.query.sortOrder === 'newSet' ? 'ASC' : 'DESC'
+    const sortOrder = req.query.sortOrder === 'newSet' ? 'DESC' : 'ASC'
 
     connection.query(`
         SELECT idReviewSociety, descriptionReview, ratingReview, userId, create_at, nameUser, image_profile FROM ReviewSociety as r
