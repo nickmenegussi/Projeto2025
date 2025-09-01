@@ -26,7 +26,9 @@ const category = require('./routers/CategoryRouter')
 const favorite = require('./routers/FavoriteRouter')
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
+const groupOfStudy = require('./routers/GroupOfStudyRouter')
 const swaggerDocs = require('./docs/swagger.json')
+const { group } = require('console')
 
 const app = express()
 const server = http.createServer(app)
@@ -61,6 +63,7 @@ app.use('/review', review)
 app.use('/auth', auth)
 app.use('/favorite', favorite)
 app.use('/category', category)
+app.use('/groupOfStudy', groupOfStudy)
 
 app.get('/teste', (req, res) => {
     res.send('Bem-vindo à API do Fórum!')

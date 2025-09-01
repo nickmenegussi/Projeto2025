@@ -222,3 +222,53 @@ CREATE TABLE OTP (
 );
 
 SELECT * FROM Cart;
+CREATE TABLE GroupOfstudy(
+	IdGroupOfStudy BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    IdFacilitador INT NOT NULL,
+    NameStudy VARCHAR(255) NOT NULL,
+    Description Varchar(100) not null,
+    DayOfWeek VARCHAR(20),
+    StartTime DATETIME DEFAULT CURRENT_TIMESTAMP  NULL,
+    EndTime DATETIME DEFAULT CURRENT_TIMESTAMP  NULL,
+    TypeGroup ENUM('ESDE', 'MEDIUNICO', 'EVANGELIZACAO', 'CIEDE'),
+	Requirements VARCHAR(100),
+	CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT FK_FACILITADOR 
+        FOREIGN KEY (IdFacilitador) REFERENCES Facilitadores(idFacilitadores)
+);
+
+INSERT INTO GroupOfStudy
+  (IdFacilitador, NameStudy, Description, DayOfWeek, StartTime, EndTime, TypeGroup, Requirements)
+VALUES
+  (1,
+   'Grupo de Estudo CIEDE',
+   'Ciclo de Estudos Doutrinários com enfoque no Evangelho e prática da casa.',
+   'Terça-feira',
+   NULL,
+   NULL,
+   'EVANGELIZACAO',
+   
+   'Estar cursando ou já ter concluído o grupo CIEDE.'),
+  (1,
+   'Grupo de Estudo ESDE',
+   'Estudo Sistematizado da Doutrina Espírita com material de referência.',
+   'Quinta-feira',
+   NULL,
+   NULL,
+   'ESDE',
+   'Recomendado para iniciantes, sem pré-requisitos.'),
+  (1,
+   'Grupo de Estudo da Mediunidade',
+   'Estudo e educação da mediunidade com foco em ética e prática segura.',
+   'Segunda-feira',
+   NULL,
+   NULL,
+   'MEDIUNICO',
+   'Maior de 18 anos, assiduidade e ter concluído o ESDE.');
+INSERT INTO Facilitadores
+  (User_idUser, description, apelido, espiritaSinceTime, memberSinceWhen, category)
+VALUES
+  (1, 'Evangelizador e coordenador do grupo CIEDE', 'Maria Silva', 2005, '2010-03-15', 'CIEDE'),
+  (2, 'Estudioso da Doutrina Espírita, responsável pelo ESDE', 'Carlos Pereira', 2008, '2012-06-20', 'ESDE'),
+  (2, 'Médium experiente e orientador do grupo mediúnico', 'Ana Souza', 2000, '2005-09-01', 'MEDIUNIDADE');
+   

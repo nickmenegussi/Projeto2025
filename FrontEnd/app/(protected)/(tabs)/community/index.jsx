@@ -173,7 +173,7 @@ const Index = () => {
 
           <TouchableOpacity
             style={styles.footerItem}
-            onPress={() => router.push(`/community/post/${item.idPost}`)}
+            onPress={() => router.push(`/community/post/${item.TypeGroup}`)}
           >
             <MessageSquare color="white" size={24} />
             <Text style={{ color: "#fff" }}>{item.comments_count}</Text>

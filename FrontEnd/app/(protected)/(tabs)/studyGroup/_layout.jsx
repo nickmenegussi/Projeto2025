@@ -6,7 +6,7 @@ const RootLayout = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false}} />
-      
+      <Stack.Screen name="group/[TypeGroup]" options={{ headerShown: false}} />
     </Stack>
   )
 }
