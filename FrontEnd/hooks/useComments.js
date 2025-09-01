@@ -2,7 +2,6 @@ import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { createComment, fetchPostAndComments, getCommentById } from "../services/ServiceComments";
 import api from "../services/api";
-import handleApiError from "../utils/handleApiError";
 
 export default function useComments(postId) {
   const [post, setPost] = useState(null);
