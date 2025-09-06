@@ -10,7 +10,7 @@ import {
   RefreshControl,
   ScrollView,
   Image,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import ButtonIcons from "../../../../components/ButtonIcons";
@@ -33,7 +33,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const HomeStudyGroup = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -138,9 +138,7 @@ const HomeStudyGroup = () => {
             size={30}
             Icon={({ color, size }) => <Bell color={color} size={size} />}
           />
-          <TouchableOpacity
-            onPress={() => router.push("/settings")}
-          >
+          <TouchableOpacity onPress={() => router.push("/settings")}>
             <Image
               source={{ uri: "https://i.pravatar.cc/150?img=11" }}
               style={styles.avatarImage}
@@ -173,7 +171,7 @@ const HomeStudyGroup = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.TextStudyGroup}>{section.type}</Text>
             {section.content && section.content.length > 0 && (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.seeAllButton}
                 onPress={() => goToGroupList(section.content)}
               >
@@ -258,6 +256,98 @@ const HomeStudyGroup = () => {
     [goToGroupList]
   );
 
+  const footerSection = () => {
+    return (
+      <View style={styles.facilitatorsSection}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Facilitadores</Text>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push('/studyGroup/facilitadores')}>
+            <Text style={styles.seeAllText}>Ver todos</Text>
+            <ChevronRight size={16} color="#4A90E2" />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.facilitatorsList}
+          contentContainerStyle={styles.facilitatorsContent}
+        >
+          {/* Facilitador 1 */}
+          <TouchableOpacity style={styles.facilitatorCard}                   onPress={() => router.push(`/studyGroup/facilitador/${facilitator.idFacilitadores}`)}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+                style={styles.facilitatorAvatar}
+              />
+              <View style={styles.onlineIndicator} />
+            </View>
+            <Text style={styles.facilitatorName} numberOfLines={1}>
+              Gabriel Silva
+            </Text>
+            <Text style={styles.facilitatorRole} numberOfLines={1}>
+              CIEDE
+            </Text>
+            <View style={styles.ratingContainer}>
+              <Star size={14} color="#FFD700" fill="#FFD700" />
+              <Text style={styles.ratingText}>4.8</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Facilitador 2 */}
+          <TouchableOpacity style={styles.facilitatorCard}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=12" }}
+                style={styles.facilitatorAvatar}
+              />
+              <View style={styles.onlineIndicator} />
+            </View>
+            <Text style={styles.facilitatorName} numberOfLines={1}>
+              Mariana Costa
+            </Text>
+            <Text style={styles.facilitatorRole} numberOfLines={1}>
+              ESDE
+            </Text>
+            <View style={styles.ratingContainer}>
+              <Star size={14} color="#FFD700" fill="#FFD700" />
+              <Text style={styles.ratingText}>4.9</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Facilitador 3 */}
+          <TouchableOpacity style={styles.facilitatorCard}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=13" }}
+                style={styles.facilitatorAvatar}
+              />
+              <View style={styles.onlineIndicator} />
+            </View>
+            <Text style={styles.facilitatorName} numberOfLines={1}>
+              Ricardo Almeida
+            </Text>
+            <Text style={styles.facilitatorRole} numberOfLines={1}>
+              Mediúnico
+            </Text>
+            <View style={styles.ratingContainer}>
+              <Star size={14} color="#FFD700" fill="#FFD700" />
+              <Text style={styles.ratingText}>4.7</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card para adicionar novo
+          <TouchableOpacity style={[styles.facilitatorCard, styles.addCard]}>
+            <View style={styles.addIcon}>
+              <Plus size={24} color="#4A90E2" />
+            </View>
+            <Text style={styles.addText}>Indicar facilitador</Text>
+          </TouchableOpacity> */}
+        </ScrollView>
+      </View>
+    );
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.safeAreaView}>
@@ -276,97 +366,7 @@ const HomeStudyGroup = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         ListHeaderComponent={headerSection}
-        ListFooterComponent={() => (
-          <View style={styles.facilitatorsSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Facilitadores</Text>
-              <TouchableOpacity style={styles.seeAllButton}>
-                <Text style={styles.seeAllText}>Ver todos</Text>
-                <ChevronRight size={16} color="#4A90E2" />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.facilitatorsList}
-              contentContainerStyle={styles.facilitatorsContent}
-            >
-              {/* Facilitador 1 */}
-              <TouchableOpacity style={styles.facilitatorCard}>
-                <View style={styles.avatarContainer}>
-                  <Image
-                    source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-                    style={styles.facilitatorAvatar}
-                  />
-                  <View style={styles.onlineIndicator} />
-                </View>
-                <Text style={styles.facilitatorName} numberOfLines={1}>
-                  Gabriel Silva
-                </Text>
-                <Text style={styles.facilitatorRole} numberOfLines={1}>
-                  CIEDE
-                </Text>
-                <View style={styles.ratingContainer}>
-                  <Star size={14} color="#FFD700" fill="#FFD700" />
-                  <Text style={styles.ratingText}>4.8</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Facilitador 2 */}
-              <TouchableOpacity style={styles.facilitatorCard}>
-                <View style={styles.avatarContainer}>
-                  <Image
-                    source={{ uri: "https://i.pravatar.cc/150?img=12" }}
-                    style={styles.facilitatorAvatar}
-                  />
-                  <View style={styles.onlineIndicator} />
-                </View>
-                <Text style={styles.facilitatorName} numberOfLines={1}>
-                  Mariana Costa
-                </Text>
-                <Text style={styles.facilitatorRole} numberOfLines={1}>
-                  ESDE
-                </Text>
-                <View style={styles.ratingContainer}>
-                  <Star size={14} color="#FFD700" fill="#FFD700" />
-                  <Text style={styles.ratingText}>4.9</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Facilitador 3 */}
-              <TouchableOpacity style={styles.facilitatorCard}>
-                <View style={styles.avatarContainer}>
-                  <Image
-                    source={{ uri: "https://i.pravatar.cc/150?img=13" }}
-                    style={styles.facilitatorAvatar}
-                  />
-                  <View style={styles.onlineIndicator} />
-                </View>
-                <Text style={styles.facilitatorName} numberOfLines={1}>
-                  Ricardo Almeida
-                </Text>
-                <Text style={styles.facilitatorRole} numberOfLines={1}>
-                  Mediúnico
-                </Text>
-                <View style={styles.ratingContainer}>
-                  <Star size={14} color="#FFD700" fill="#FFD700" />
-                  <Text style={styles.ratingText}>4.7</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Card para adicionar novo */}
-              <TouchableOpacity
-                style={[styles.facilitatorCard, styles.addCard]}
-              >
-                <View style={styles.addIcon}>
-                  <Plus size={24} color="#4A90E2" />
-                </View>
-                <Text style={styles.addText}>Indicar facilitador</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        )}
+        ListFooterComponent={footerSection}
         contentContainerStyle={styles.listContent}
         refreshControl={
           <RefreshControl
@@ -408,16 +408,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
   avatarImage: {
-    width: 42, 
-    height: 42, 
+    width: 42,
+    height: 42,
     borderRadius: 21,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)'
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   containerTextGroup: {
     marginBottom: 32,
@@ -426,9 +426,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   TextStudyGroup: {
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 16,
     padding: 16,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   item: {
     flex: 1,
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowColor: "rgba(0, 0, 0, 0.8)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.95)",
     marginLeft: 6,
     fontWeight: "500",
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "rgba(255, 255, 255, 0.9)",
     marginLeft: 6,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   seeAllText: {
     color: "#4A90E2",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     marginRight: 4,
   },
   facilitatorsList: {
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 12,
   },
   facilitatorAvatar: {
@@ -583,15 +583,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#E9E9E9",
   },
   onlineIndicator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     right: 0,
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#34C759',
+    backgroundColor: "#34C759",
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
   },
   facilitatorName: {
     fontSize: 16,
@@ -605,12 +605,12 @@ const styles = StyleSheet.create({
     color: "#4A90E2",
     textAlign: "center",
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: '#F7F9FC',
+    backgroundColor: "#F7F9FC",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginLeft: 4,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   addCard: {
     justifyContent: "center",
@@ -642,6 +642,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#4A90E2",
     textAlign: "center",
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

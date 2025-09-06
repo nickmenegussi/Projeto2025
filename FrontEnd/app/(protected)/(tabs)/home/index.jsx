@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+ import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -52,8 +53,67 @@ const Home = () => {
   ];
   const [lectures, setLectures] = useState([]);
   const [VolunteerWork, setVolunteerWork] = useState([]);
-  const [calendar, setCalendar] = useState([]);
+  const [calendar, setCalendar] = useState([
+    {
+      id: 1,
+      date: "2025-09-15",
+      time: "19:30",
+      name: "Palestra: Os Ensinamentos de Jesus",
+      description: "Palestra sobre os princípios cristãos na doutrina espírita",
+      status_permission: "user",
+    },
+    {
+      id: 2,
+      date: "2025-09-20",
+      time: "15:00",
+      name: "Campanha do Agasalho",
+      description: "Arrecadação de roupas para famílias carentes",
+      status_permission: "user",
+    },
+    {
+      id: 3,
+      date: "2025-09-25",
+      time: "20:00",
+      name: "Estudo Sistematizado da Doutrina Espírita",
+      description: "Grupo de estudo semanal",
+      status_permission: "admin",
+    },
+    {
+      id: 4,
+      date: "2025-09-05",
+      time: "09:00",
+      name: "Trabalho Voluntário - Creche",
+      description: "Visita e atividades com crianças",
+      status_permission: "user",
+    },
+    {
+      id: 5,
+      date: "2025-09-10",
+      time: "19:00",
+      name: "Reunião de Passes",
+      description: "Aplicação de passes magnéticos",
+      status_permission: "SuperAdmin",
+    },
+    {
+      id: 6,
+      date: "2025-09-15",
+      time: "14:00",
+      name: "Bazar Beneficente",
+      description: "Venda de produtos com renda revertida para obras sociais",
+      status_permission: "user",
+    },
+    {
+      id: 7,
+      date: "2025-09-15", // Mesma data do primeiro evento
+      time: "16:00",
+      name: "Reunião de Juventude",
+      description: "Encontro dos jovens espíritas",
+      status_permission: "user",
+    },
+  ]);
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDateEvents, setSelectedDateEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [review, setReview] = useState([]);
   const [open, setOpen] = useState(false);
@@ -62,111 +122,121 @@ const Home = () => {
     { label: "Mais recente", value: "newSet" },
     { label: "Mais antigo", value: "oldest" },
   ]);
-  const [isLoading, setIsLoading] = useState(false)
-  
-  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDateSelect = (day) => {
+    setSelectedDate(day.dateString);
+    const eventsForDate = calendar.filter(
+      (event) => event.date === day.dateString
+    );
+    setSelectedDateEvents(eventsForDate);
+    setModalVisible(true);
+  };
+
   useEffect(() => {
     const carregarDados = async () => {
       setIsLoading(true);
-  
+
       await ViewLectures();
       await ViewVolunteerWork();
       await ViewCalendar();
       await GetReview();
+
+      setIsLoading(false);
+    };
+
+    carregarDados();
+  }, []);
+
   
-      setIsLoading(false)
-    }
-  
-    carregarDados()
-  }, [])
 
   async function ViewLectures() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/lectures/lectures", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setLectures(response.data.data)
+      });
+      setLectures(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
   async function ViewVolunteerWork() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/volunteerWork/work", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setVolunteerWork(response.data.data)
+      });
+      setVolunteerWork(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
 
   async function ViewCalendar() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/calendar/calendar", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setCalendar(response.data.data)
+      });
+      // setCalendar(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
 
   async function GetReview() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const user = await AsyncStorage.getItem("@Auth:user")
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const user = await AsyncStorage.getItem("@Auth:user");
       const response = await api.get(
         `/review/reviewSociety?sortOrder=${value}`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:` Bearer ${token}`,
+            Authorization: ` Bearer ${token}`,
           },
         }
-      )
+      );
       setReview(response.data.data);
     } catch (error) {
       if (error.response) {
@@ -184,10 +254,10 @@ const Home = () => {
     }
   }
 
-  if (isLoading) {
-    return (
+   if (isLoading) {
+    return ( <View style={{flex:1, backgroundColor:'#003B73', alignItems:'center', justifyContent:'center'}}>
       <LoadingScreen image={false} />
-    );
+    </View>)
   }
 
   return (
@@ -320,46 +390,116 @@ const Home = () => {
                 )
               ) : item.type === "Calendário de Eventos" ? (
                 calendar.length > 0 ? (
-                  <>
+                  <View style={styles.calendarSection}>
+                    
+
                     <Calendar
                       accessibilityLanguage="PT-BR"
                       style={styles.calendar}
                       theme={{
-                        backgroundColor: "#60A3D9",
-                        calendarBackground: "#60A3D9",
-                        textSectionTitleColor: "#fff",
+                        backgroundColor: "#ffffff",
+                        calendarBackground: "#ffffff",
+                        textSectionTitleColor: "#003B73",
                         selectedDayBackgroundColor: "#0A73D9",
                         selectedDayTextColor: "#ffffff",
                         todayTextColor: "#0A73D9",
-                        dayTextColor: "#ffffff",
+                        dayTextColor: "#2d4150",
                         textDisabledColor: "#A0C1E8",
-                        arrowColor: "#ffffff",
-                        monthTextColor: "#ffffff",
+                        arrowColor: "#0A73D9",
+                        monthTextColor: "#003B73",
+                        indicatorColor: "#0A73D9",
+                        textDayFontWeight: "300",
+                        textMonthFontWeight: "bold",
+                        textDayHeaderFontWeight: "500",
+                        textDayFontSize: 14,
+                        textMonthFontSize: 16,
+                        textDayHeaderFontSize: 14,
                       }}
-                      onDayPress={(day) => setSelectedDate(day.dateString)}
+                      onDayPress={handleDateSelect}
+                      markedDates={{
+                        ...calendar.reduce((acc, event) => {
+                          acc[event.date] = {
+                            marked: true,
+                            dotColor: "#FF6B6B",
+                            activeOpacity: 0.7,
+                          };
+                          return acc;
+                        }, {}),
+                        [selectedDate]: {
+                          selected: true,
+                          selectedColor: "#0A73D9",
+                          selectedTextColor: "#ffffff",
+                        },
+                      }}
                     />
 
-                    {selectedDate ? (
-                      <View style={styles.eventsContainer}>
-                        <Text style={styles.eventTitle}>Eventos do dia:</Text>
-                        <View></View>
-                        {item.content[0].status_permission === "admin" ||
-                        item.content[0].status_permission === "SuperAdmin" ? (
-                          <View style={styles.eventContent}>
-                            <TouchableOpacity>
-                              <PencilIcon color="black" size={20} />
+                    <Text style={styles.selectDateHint}>
+                      Toque em uma data para ver os eventos
+                    </Text>
+
+                    {/* Modal para mostrar eventos */}
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={modalVisible}
+                      onRequestClose={() => setModalVisible(false)}
+                    >
+                      <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                          <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                              Eventos do dia {selectedDate}
+                            </Text>
+                            <TouchableOpacity
+                              style={styles.closeButton}
+                              onPress={() => setModalVisible(false)}
+                            >
+                              <Text style={styles.closeButtonText}>×</Text>
                             </TouchableOpacity>
                           </View>
-                        ) : null}
+
+                          <ScrollView style={styles.modalScrollView}>
+                            {selectedDateEvents.length > 0 ? (
+                              selectedDateEvents.map((event, index) => (
+                                <View key={index} style={styles.eventItem}>
+                                  <View style={styles.eventTimeContainer}>
+                                    <Text style={styles.eventTime}>
+                                      {event.time || "Horário não especificado"}
+                                    </Text>
+                                  </View>
+                                  <View style={styles.eventDetails}>
+                                    <Text style={styles.eventName}>
+                                      {event.name}
+                                    </Text>
+                                    <Text style={styles.eventDescription}>
+                                      {event.description || "Sem descrição"}
+                                    </Text>
+                                  </View>
+                                </View>
+                              ))
+                            ) : (
+                              <View style={styles.noEventsContainer}>
+                                <Text style={styles.noEventsText}>
+                                  Nenhum evento para esta data
+                                </Text>
+                              </View>
+                            )}
+                          </ScrollView>
+
+                          {(calendar[0]?.status_permission === "admin" ||
+                            calendar[0]?.status_permission ===
+                              "SuperAdmin") && (
+                            <TouchableOpacity style={styles.addEventButton}>
+                              <PencilIcon color="white" size={20} />
+                              <Text style={styles.addEventText}>
+                                Adicionar Evento
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
-                    ) : (
-                      <View style={styles.eventsContainer}>
-                        <Text style={styles.eventText}>
-                          Nenhum evento para o dia
-                        </Text>
-                      </View>
-                    )}
-                  </>
+                    </Modal>
+                  </View>
                 ) : (
                   <EmptyContent
                     title="Ops! Nada por aqui"
@@ -439,7 +579,14 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
-                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
+                    <Button
+                      title={"Ver mais"}
+                      handlePress={() => router.push("/home/reviewSociety")}
+                      buttonStyle={{
+                        backgroundColor: "#003B73",
+                        width: "100%",
+                      }}
+                    />
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -486,7 +633,6 @@ const Home = () => {
           )}
           ListHeaderComponent={() => (
             <View contentContainerStyle={styles.Container}>
-
               <View style={styles.containerIcons}>
                 <ButtonIcons
                   color={"white"}
@@ -504,14 +650,12 @@ const Home = () => {
                       <Bell color={color} size={size} />
                     )}
                   />
-                  <ButtonIcons
-                    color={"white"}
-                    size={30}
-                    handleChange={() => router.push('/settings')}
-                    Icon={({ color, size }) => (
-                      <CircleUserRoundIcon color={color} size={size} />
-                    )}
-                  />
+                  <TouchableOpacity onPress={() => router.push("/settings")}>
+            <Image
+              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+              style={styles.avatarImage}
+            />
+          </TouchableOpacity>
                 </View>
               </View>
               <Trending
@@ -529,14 +673,14 @@ const Home = () => {
               />
             </View>
           )}
-          contentContainerStyle={{paddingBottom: 100,}}
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
       </SafeAreaView>
     </>
   );
 };
 
-export default React.memo(Home)
+export default React.memo(Home);
 
 const styles = StyleSheet.create({
   linearGradient: {
@@ -546,33 +690,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#003B73",
     padding: 10,
     borderRadius: 10,
+  }, avatarImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   safeAreaView: {
     flex: 1,
-    padding: 10,
-    paddingVertical: 20,
+    padding: 16,
     backgroundColor: "#003B73",
-  },
-  eventContent: {
-    backgroundColor: "#fff",
-    width: "12%",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: 10,
-    top: 50,
-    left: "88%",
-    position: "relative",
   },
   Container: {
     flexGrow: 1,
     padding: 10,
-    paddingVertical: 20,
   },
   header: {
     fontSize: 17,
     fontWeight: "bold",
     color: "#fff",
-    marginVertical: 10,
     marginBottom: 25,
   },
   picker: {
@@ -586,7 +723,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderWidth: 0,
     borderRadius: 8,
-    width: "50%", // Mesma largura do picker
+    width: "50%",
   },
   containerIcons: {
     flexDirection: "row",
@@ -633,15 +770,11 @@ const styles = StyleSheet.create({
     left: 20,
     right: 10,
   },
-  calendar: {
-    height: 550,
-    borderRadius: 10,
-    marginBottom: 40,
-  },
   containerFaq: {
     marginBottom: 40,
   },
   ContainerReviews: {
+    position: "relative",
     backgroundColor: "#60A3D9",
     borderRadius: 10,
     padding: 20,
@@ -652,13 +785,6 @@ const styles = StyleSheet.create({
     gap: 70,
     alignItems: "center",
     width: "100%",
-  },
-  eventsContainer: {
-    justifyContent: "space-between",
-    position: "absolute",
-    bottom: 100,
-    left: 10,
-    right: 10,
   },
   BackgroundImage: {
     flex: 1,
@@ -719,5 +845,160 @@ const styles = StyleSheet.create({
     height: 300,
     width: "100%",
     marginVertical: 10,
+  },
+  editButton: {
+    backgroundColor: "#0A73D9",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // REMOVA estes estilos antigos (substituídos pelo modal):
+  // calendarWrapper: { ... },
+  // eventsContainer: { ... },
+  // eventContent: { ... },
+
+  // NOVOS ESTILOS PARA CALENDÁRIO E MODAL:
+  calendarSection: {
+    marginBottom: 30,
+  },
+  calendar: {
+    height: 380,
+    borderRadius: 15,
+    overflow: "hidden",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  selectDateHint: {
+    textAlign: "center",
+    color: "#fff",
+    fontStyle: "italic",
+    marginTop: 10,
+    fontSize: 14,
+  },
+
+  // Estilos do Modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    width: "90%",
+    maxHeight: "80%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    paddingBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#003B73",
+    flex: 1,
+  },
+  closeButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#003B73",
+  },
+  modalScrollView: {
+    maxHeight: 400,
+    marginBottom: 10,
+  },
+
+  // Estilos dos Eventos (dentro do modal)
+  eventItem: {
+    flexDirection: "row",
+    backgroundColor: "#F8F9FA",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: "#0A73D9",
+  },
+  eventTimeContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+    minWidth: 70,
+    backgroundColor: "#0A73D9",
+    borderRadius: 8,
+    padding: 5,
+  },
+  eventTime: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "white",
+    textAlign: "center",
+  },
+  eventDetails: {
+    flex: 1,
+  },
+  eventName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#003B73",
+    marginBottom: 4,
+  },
+  eventDescription: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
+  },
+  noEventsContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noEventsText: {
+    fontSize: 16,
+    color: "#888",
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+  addEventButton: {
+    flexDirection: "row",
+    backgroundColor: "#0A73D9",
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addEventText: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 8,
   },
 });

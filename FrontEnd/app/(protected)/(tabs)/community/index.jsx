@@ -141,7 +141,9 @@ const Index = () => {
               <Text style={styles.userHandle}>@{item.nameUser}</Text>
               {item.nameCategory && (
                 <View style={styles.topicBadge}>
-                  <Text style={styles.topicText}>Relacionado a {item.nameCategory}</Text>
+                  <Text style={styles.topicText}>
+                    Relacionado a {item.nameCategory}
+                  </Text>
                 </View>
               )}
             </View>
@@ -173,7 +175,7 @@ const Index = () => {
 
           <TouchableOpacity
             style={styles.footerItem}
-            onPress={() => router.push(`/community/post/${item.TypeGroup}`)}
+            onPress={() => router.push(`/community/post/${item.idPost}`)}
           >
             <MessageSquare color="white" size={24} />
             <Text style={{ color: "#fff" }}>{item.comments_count}</Text>
@@ -211,14 +213,19 @@ const Index = () => {
               style={styles.logo}
               resizeMode="contain"
             />
-            <ButtonIcons
-              color="white"
-              size={38}
-              handleChange={() => router.push("/settings")}
-              Icon={({ color, size }) => (
-                <CircleUserRoundIcon color={color} size={size} />
-              )}
-            />
+
+            <TouchableOpacity onPress={() => router.push("/settings")}>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 21,
+                  borderWidth: 2,
+                  borderColor: "rgba(255, 255, 255, 0.3)",
+                }}
+              />
+            </TouchableOpacity>
           </View>
         )}
         ListEmptyComponent={() =>
@@ -250,14 +257,15 @@ const Index = () => {
   );
 };
 
-export default React.memo(Index);
+export default React.memo(Index)
+
 
 const styles = StyleSheet.create({
   conteinerFlatlist: {
-    padding: 15,
+    padding: 10,
     flexGrow: 1,
-    paddingBottom: 150,
-    backgroundColor: "#003B73",
+    paddingBottom: 180,
+    backgroundColor: "#003B73", // Azul escuro que complementa o #4A90E2
   },
   headerComponent: {
     flexDirection: "row",
@@ -265,104 +273,130 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#003B73",
     paddingTop: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   profile: {
     width: 50,
     height: 50,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: "rgba(255,255,255,0.3)", // Borda mais suave
   },
   logo: {
     width: 80,
     height: 80,
   },
   postCard: {
-    marginBottom: 10,
+    marginBottom: 15,
     padding: 15,
-    backgroundColor: "rgba(59, 20, 20, 0.05)",
+    backgroundColor: "#4A90E2", // Azul principal mantido
     borderWidth: 1,
-    borderColor: "white",
-    borderRadius: 15,
-    gap: 5,
+    borderColor: "rgba(255,255,255,0.2)",
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
   },
   headerPostCard: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   userName: {
     color: "white",
-    fontWeight: "bold",
-    fontSize: 17,
+    fontWeight: "700",
+    fontSize: 16,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   userHandle: {
-    color: "white",
-    fontSize: 14,
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 13,
   },
   postTime: {
-    color: "white",
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 12,
+    marginTop: 2,
   },
   topicBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "#1DA1F2",
+    backgroundColor: "rgba(255,255,255,0.2)", // Fundo branco transparente
     paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingVertical: 4,
     borderRadius: 12,
-    marginTop: 4,
+    marginTop: 6,
   },
   topicText: {
     color: "white",
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "600",
   },
   postContent: {
-    fontSize: 16,
+    fontSize: 15,
     color: "white",
-    marginBottom: 15,
-    marginVertical: 10,
+    marginVertical: 12,
+    lineHeight: 22,
   },
   postImage: {
     width: "100%",
-    height: 200,
-    borderRadius: 8,
+    height: 220,
+    borderRadius: 12,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   footerCardPost: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 10,
+    marginTop: 15,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.2)",
   },
   footerItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.15)", // Fundo mais claro para contraste
   },
   emptyText: {
-    color: "#fff",
+    color: "rgba(255,255,255,0.7)",
     fontSize: 16,
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 40,
+    fontStyle: "italic",
   },
   addPost: {
     position: "absolute",
-    left: 335,
-    right: 0,
+    right: 20,
     bottom: 140,
     borderRadius: 28,
-    width: 50,
-    height: 50,
-    backgroundColor: "#1DA1F2",
+    width: 56,
+    height: 56,
+    backgroundColor: "#4A90E2", // Mesma cor do postCard
     justifyContent: "center",
     alignItems: "center",
-    elevation: 5,
+    elevation: 8,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.3)",
   },
 });

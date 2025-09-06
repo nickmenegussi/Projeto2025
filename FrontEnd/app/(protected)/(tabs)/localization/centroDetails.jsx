@@ -87,11 +87,10 @@ export default function CentroDetailsScreen() {
 
   return (
     <View style={styles.detailsContainer}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       
       <View style={styles.detailsHeader}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <ArrowLeft size={24} color="#333" />
+          <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.detailsTitle}>Detalhes do Centro</Text>
         <View style={{ width: 24 }} />
@@ -115,7 +114,7 @@ export default function CentroDetailsScreen() {
           <View style={styles.detailSection}>
             <Text style={styles.detailSectionTitle}>Endereço</Text>
             <View style={styles.addressRow}>
-              <MapPin size={18} color="#666" />
+              <MapPin size={18} color="white" />
               <Text style={styles.detailText}>{centroData.address}</Text>
             </View>
           </View>
@@ -124,7 +123,7 @@ export default function CentroDetailsScreen() {
             <View style={styles.detailSection}>
               <Text style={styles.detailSectionTitle}>Telefone</Text>
               <TouchableOpacity onPress={callNumber} style={styles.contactRow}>
-                <Phone size={18} color="#666" />
+                <Phone size={18} color="white" />
                 <Text style={[styles.detailText, styles.link]}>{centroData.phone}</Text>
               </TouchableOpacity>
             </View>
@@ -134,7 +133,7 @@ export default function CentroDetailsScreen() {
             <View style={styles.detailSection}>
               <Text style={styles.detailSectionTitle}>Site</Text>
               <TouchableOpacity onPress={openWebsite} style={styles.contactRow}>
-                <Globe size={18} color="#666" />
+                <Globe size={18} color="white" />
                 <Text style={[styles.detailText, styles.link]} numberOfLines={1}>
                   {centroData.website}
                 </Text>
@@ -146,7 +145,7 @@ export default function CentroDetailsScreen() {
             <View style={styles.detailSection}>
               <Text style={styles.detailSectionTitle}>Horário de Funcionamento</Text>
               <View style={styles.scheduleRow}>
-                <Clock size={18} color="#666" />
+                <Clock size={18} color="white" />
                 <Text style={styles.detailText}>{centroData.schedule}</Text>
               </View>
             </View>
@@ -178,7 +177,7 @@ export default function CentroDetailsScreen() {
               {centroData.reviews.map((review, index) => (
                 <View key={index} style={styles.reviewContainer}>
                   <View style={styles.reviewHeader}>
-                    <User size={16} color="#666" />
+                    <User size={16} color="white" />
                     <Text style={styles.reviewAuthor}>{review.author}</Text>
                     <View style={styles.reviewRating}>
                       {renderStars(review.rating)}
@@ -221,6 +220,8 @@ export default function CentroDetailsScreen() {
           </View>
         </View>
       </ScrollView>
+      <View style={{ height: 100 }} />
+      
     </View>
   );
 }
@@ -228,7 +229,7 @@ export default function CentroDetailsScreen() {
 const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#003B73',
   },
   detailsHeader: {
     flexDirection: 'row',
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: '#4A90E2',
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
   detailsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
   detailImage: {
     width: '100%',
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
   detailName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
     marginBottom: 12,
   },
   ratingContainer: {
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   ratingText: {
     marginLeft: 8,
     fontSize: 16,
-    color: '#666',
+    color: 'white',
   },
   detailSection: {
     marginBottom: 24,
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   detailSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginBottom: 12,
   },
   addressRow: {
@@ -294,7 +295,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 16,
-    color: '#666',
+    color: 'white',
     lineHeight: 24,
     marginLeft: 8,
     flex: 1,
@@ -320,7 +321,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   reviewContainer: {
-    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'white',
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
@@ -333,7 +336,7 @@ const styles = StyleSheet.create({
   reviewAuthor: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginLeft: 8,
     marginRight: 'auto',
   },
@@ -342,7 +345,7 @@ const styles = StyleSheet.create({
   },
   reviewText: {
     fontSize: 14,
-    color: '#666',
+    color: 'white',
     lineHeight: 20,
   },
   detailActions: {

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import Trending from "../../../../components/Navagation";
 import {
@@ -30,12 +31,12 @@ const HomeLibrary = () => {
     {
       type: "Acervo para Encomendas",
       data: books?.booksLoans?.slice(0, 6) || [],
-      path: '/library/LoanCollection'
+      path: "/library/LoanCollection",
     },
     {
       type: "Acervo para Reservas",
       data: books?.booksReserves?.slice(0, 6) || [],
-      path: '/library/ReserveCollection'
+      path: "/library/ReserveCollection",
     },
     { type: "Reflexões" },
   ];
@@ -43,7 +44,13 @@ const HomeLibrary = () => {
   function renderSection({ item }) {
     return (
       <View style={styles.sectionContainer}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <Text style={styles.headerTitle}>{item.type}</Text>
           <TouchableOpacity onPress={() => router.push(`${item.path}`)}>
             <Text style={styles.verTodos}>Ver todos</Text>
@@ -75,19 +82,26 @@ const HomeLibrary = () => {
             handleChange={() => setIsSideBarOpen(!IsSideBarOpen)}
             Icon={({ color, size }) => <MenuIcon color={color} size={size} />}
           />
+          <Text
+            style={{
+              color: "white",
+              fontSize: 24,
+              fontWeight: "bold",
+              textAlign: "center",
+              textShadowColor: "rgba(0, 0, 0, 0.3)",
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 2,
+            }}
+          >
+            Biblioteca
+          </Text>
           <View style={styles.IconsContent}>
             <ButtonIcons
               color={"white"}
               size={30}
               Icon={({ color, size }) => <Bell color={color} size={size} />}
             />
-            <ButtonIcons
-              color={"white"}
-              size={30}
-              Icon={({ color, size }) => (
-                <CircleUserRoundIcon color={color} size={size} />
-              )}
-            />
+           
             <ButtonIcons
               handleChange={() => router.push("/library/CartLoan")}
               color="#ffff"
@@ -96,6 +110,14 @@ const HomeLibrary = () => {
                 <ShoppingCart color={color} size={size} />
               )}
             />
+             <TouchableOpacity
+                        onPress={() => router.push("/settings")}
+                      >
+                        <Image
+                          source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+                          style={styles.avatarImage}
+                        />
+                      </TouchableOpacity>
           </View>
         </View>
         <View>
@@ -158,7 +180,7 @@ const HomeLibrary = () => {
         keyExtractor={(item) => item.type}
         renderItem={renderSection}
         ListHeaderComponent={renderHeader}
-        contentContainerStyle={{ paddingBottom: 40 }} // Espaço no final para scroll
+        contentContainerStyle={styles.listContent} // Espaço no final para scroll
       />
     </SafeAreaView>
   );
@@ -170,12 +192,13 @@ const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: "#003B73",
-    paddingBottom: 100,
   },
   sectionContainer: {
-    paddingHorizontal: 10,
     gap: 15,
     marginBottom: 15,
+  },  listContent: {
+    paddingHorizontal: 16, // Mesmo padding horizontal do Study Group
+    paddingBottom: 100,     // Mesmo padding bottom do Study Group
   },
   headerTitle: {
     fontSize: 17,
@@ -190,7 +213,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   ContainerHeader: {
-    padding: 10,
     paddingVertical: 10, // Menos espaço no header
     backgroundColor: "#003B73",
   },
@@ -202,16 +224,25 @@ const styles = StyleSheet.create({
   IconsContent: {
     flexDirection: "row",
     gap: 10,
+    alignItems: "center",
+
+  }, avatarImage: {
+    width: 42, 
+    height: 42, 
+    borderRadius: 21,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)'
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 20,
     color: "#fff",
-  }, verTodos: {
+  },
+  verTodos: {
     color: "#60A3D9",
     fontWeight: "bold",
     textAlign: "right",
     fontSize: 14,
-}
+  },
 });
