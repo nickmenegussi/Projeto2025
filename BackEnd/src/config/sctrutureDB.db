@@ -1,109 +1,61 @@
 CREATE DATABASE CEO;
 USE CEO;
 
--- Tabela VolunteerWork (Opcionalmente relacionada a User)
-CREATE TABLE VolunteerWork (
-    nameUser VARCHAR(255) NOT NULL,
-    idVolunteerWork INT PRIMARY KEY AUTO_INCREMENT,
-    nameVolunteerWork VARCHAR(255),
-    address VARCHAR(255),
-    dateVolunteerWork DATETIME, 
-    work_description VARCHAR(255),
-    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE ReviewSociety(
-	idReviewSociety INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    descriptionReview varchar(255) NOT NULL,
-    ratingReview int not null,
-    userId int not null,
-    create_at DATETIME default current_timestamp,
-	foreign key (userId) references User(idUser)
-);
-
-INSERT INTO ReviewSociety (descriptionReview, ratingReview, userId)
-VALUES 
-('Ótimo projeto! Contribuiu bastante para a comunidade.', 5, 1),
-('Gostei da iniciativa, mas pode melhorar em alguns pontos.', 4, 1),
-('Faltou organização nas atividades propostas.', 3, 1);
-
--- Tabela Book
-
-
-
-CREATE TABLE Book (
-    idLibrary INT AUTO_INCREMENT PRIMARY KEY not null,
-    nameBook VARCHAR(255) not null,
-    authorBook VARCHAR(255) not null,
-    image text not null,
-    overviewBook TEXT not null,
-    curiosityBook TEXT not null,
-    tagsBook ENUM('Obras Básicas', 'Obras Complementares') not null,
-    bookCategory ENUM('reserva', 'emprestimo') not null,
-    bookQuantity int not null,
-    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status_Available ENUM('disponível', 'reservado', 'emprestado', 'indisponível') NOT NULL
-);
-
-
-SELECT * FROM Book;
 -- Tabela User
 CREATE TABLE User (
     idUser INT AUTO_INCREMENT PRIMARY KEY,
+    nameUser VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_profile TEXT,
-    status_permission ENUM('SuperAdmin', 'Admin', 'User'),
+    status_permission ENUM('SuperAdmin','Admin','User') NOT NULL,
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela Loans
-CREATE TABLE Loans (
-  idLoans INT AUTO_INCREMENT PRIMARY KEY,
-  User_idUser INT NOT NULL,
-  Book_idLibrary INT NOT NULL,
-  quantity INT NOT NULL,
-  returnDate DATETIME,
-  date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (User_idUser) REFERENCES User(idUser),
-  FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
-);
-SELECT * FROM Loans;
-
-SELECT * FROM Cart;
-
--- Tabela Reserves
-CREATE TABLE Reserves (
-    idReserved INT AUTO_INCREMENT PRIMARY KEY,
-    reserveDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Cart_idCart INT NOT NULL,
-    FOREIGN KEY (Cart_idCart) REFERENCES Cart(idCart)
+-- Tabela Book
+CREATE TABLE Book (
+    idLibrary INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    nameBook VARCHAR(255) NOT NULL,
+    authorBook VARCHAR(255) NOT NULL,
+    image TEXT NOT NULL,
+    overviewBook TEXT NOT NULL,
+    curiosityBook TEXT NOT NULL,
+    tagsBook ENUM('Obras Básicas','Obras Complementares') NOT NULL,
+    bookCategory ENUM('reserva','emprestimo') NOT NULL,
+    bookQuantity INT NOT NULL,
+    date_aquisition DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status_Available ENUM('disponível','reservado','emprestado','indisponível') NOT NULL
 );
 
--- Tabela Cart (Carrinho)
+-- Tabela Cart
 CREATE TABLE Cart (
     idCart INT AUTO_INCREMENT PRIMARY KEY,
     User_idUser INT NOT NULL,
     Book_idLibrary INT NOT NULL,
-    action ENUM('reservar', 'emprestar') NOT NULL,
-    quantity int not null,
+    action ENUM('reservar','emprestar') NOT NULL,
+    quantity INT NOT NULL,
     added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
 
-SELECT * FROM User u
-INNER JOIN Cart c on u.idUser =  c.User_idUser
-INNER JOIN Book b on b.idLibrary = c.Book_idLibrary 
-Where u.idUser = 1
-	and b.idLibrary = 6;
-
+-- Tabela Topic
+CREATE TABLE Topic (
+    idTopic INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    image TEXT,
+    User_idUser INT NOT NULL,
+    Category_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
 
 -- Tabela Post
 CREATE TABLE Post (
     idPost INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
-    title varchar(255) not null,
+    title VARCHAR(255) NOT NULL,
     image TEXT,
     User_idUser INT NOT NULL,
     Topic_idTopic INT NOT NULL,
@@ -124,82 +76,47 @@ CREATE TABLE Comments (
     FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE
 );
 
-
--- Tabela Likes
-CREATE TABLE Likes (
-    idLikes INT AUTO_INCREMENT PRIMARY KEY,
-    Post_idPost INT NOT NULL,
-    User_idUser INT NOT NULL ,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE,
-    UNIQUE (Post_idPost, User_idUser)
-
+-- Tabela Favorite
+CREATE TABLE Favorite (
+    idFavorite INT AUTO_INCREMENT PRIMARY KEY,
+    User_idUser INT NOT NULL,
+    Book_idLibrary INT NOT NULL,
+    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabela Lecture
 CREATE TABLE Lecture (
     idLecture INT AUTO_INCREMENT PRIMARY KEY,
-    nameLecture VARCHAR(255),
-    dateLecture datetime,
-    timeLecture time,
-    description varchar(255),
-    link_url varchar(255),
-    video_url TEXT,
+    nameLecture VARCHAR(255) NOT NULL,
+    dateLecture DATETIME NOT NULL,
+    timeLecture TIME NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    link_url VARCHAR(255) NOT NULL,
+    video_url TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-
 );
 
-
-
--- Tabela Topic
-CREATE TABLE Topic (
-    idTopic INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    image TEXT,
+-- Tabela Likes
+CREATE TABLE Likes (
+    idLikes INT AUTO_INCREMENT PRIMARY KEY,
+    Post_idPost INT NOT NULL,
     User_idUser INT NOT NULL,
-    Category_id INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
-    FOREIGN KEY (Category_id) REFERENCES Category(idCategory)
-
+    FOREIGN KEY (Post_idPost) REFERENCES Post(idPost) ON DELETE CASCADE,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser) ON DELETE CASCADE,
+    UNIQUE (Post_idPost, User_idUser)
 );
 
-
-CREATE TABLE Category(
-    idCategory INT AUTO_INCREMENT PRIMARY KEY,
-    nameCategory varchar(100) NOT NULL,
+-- Tabela Loans
+CREATE TABLE Loans (
+    idLoans INT AUTO_INCREMENT PRIMARY KEY,
     User_idUser INT NOT NULL,
-    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
-)
-
--- Tabela CalendarEvents
-CREATE TABLE CalendarEvents (
-    idCalendarEvents INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
-    link VARCHAR(255),
-    description TEXT NOT NULL,
-    start DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    end DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    attachment TEXT,
-    dateEvent DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    User_idUser INT NOT NULL,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
-);
-
-
--- Tabela Facilitadores
-CREATE TABLE Facilitadores (
-    idFacilitadores INT AUTO_INCREMENT PRIMARY KEY,
-    User_idUser INT NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    apelido VARCHAR(255) NOT NULL,
-    espiritaSinceTime INT NOT NULL,
-    memberSinceWhen DATETIME,
-    category ENUM('ESDE', 'CIEDE', 'MEDIUNIDADE') NOT NULL,
-    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+    Book_idLibrary INT NOT NULL,
+    quantity INT NOT NULL,
+    returnDate DATETIME NOT NULL,
+    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser),
+    FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
 
 -- Tabela Notifications
@@ -212,16 +129,77 @@ CREATE TABLE Notifications (
     FOREIGN KEY (User_idUser) REFERENCES User(idUser)
 );
 
--- Tabela OTP (para verificação)
+-- Tabela OTP
 CREATE TABLE OTP (
     idOtp INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    otp varchar(255) not null,
+    otp VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expiresAt TIMESTAMP NOT NULL
 );
 
-SELECT * FROM Cart;
+-- Tabela VolunteerWork
+CREATE TABLE VolunteerWork (
+    idVolunteerWork INT AUTO_INCREMENT PRIMARY KEY,
+    nameVolunteerWork VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    dateVolunteerWork DATETIME NOT NULL,
+    work_description VARCHAR(255) NOT NULL,
+    date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela Facilitadores
+CREATE TABLE Facilitadores (
+    idFacilitadores INT AUTO_INCREMENT PRIMARY KEY,
+    User_idUser INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    apelido VARCHAR(255) NOT NULL,
+    espiritaSinceTime INT NOT NULL,
+    memberSinceWhen DATETIME,
+    category ENUM('ESDE','CIEDE','MEDIUNIDADE') NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela ReviewSociety
+CREATE TABLE ReviewSociety (
+    idReviewSociety INT AUTO_INCREMENT PRIMARY KEY,
+    descriptionReview VARCHAR(255) NOT NULL,
+    ratingReview INT NOT NULL,
+    userId INT NOT NULL,
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES User(idUser)
+);
+
+-- Tabela CalendarEvents
+CREATE TABLE CalendarEvents (
+    idCalendarEvents INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    link VARCHAR(255),
+    description TEXT NOT NULL,
+    start DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    end DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    attachment TEXT,
+    dateEvent DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    User_idUser INT NOT NULL,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
+-- Tabela Reserves
+CREATE TABLE Reserves (
+    idReserved INT AUTO_INCREMENT PRIMARY KEY,
+    reserveDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Cart_idCart INT NOT NULL,
+    FOREIGN KEY (Cart_idCart) REFERENCES Cart(idCart)
+);
+
+CREATE TABLE Category(
+    idCategory INT AUTO_INCREMENT PRIMARY KEY,
+    nameCategory varchar(100) NOT NULL,
+    User_idUser INT NOT NULL,
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_idUser) REFERENCES User(idUser)
+);
+
 CREATE TABLE GroupOfstudy(
 	IdGroupOfStudy BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     IdFacilitador INT NOT NULL,
@@ -233,42 +211,6 @@ CREATE TABLE GroupOfstudy(
     TypeGroup ENUM('ESDE', 'MEDIUNICO', 'EVANGELIZACAO', 'CIEDE'),
 	Requirements VARCHAR(100),
 	CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT FK_FACILITADOR 
+	CONSTRAINT FK_GROUPOFSTUDY_FACILITADORES 
         FOREIGN KEY (IdFacilitador) REFERENCES Facilitadores(idFacilitadores)
 );
-
-INSERT INTO GroupOfStudy
-  (IdFacilitador, NameStudy, Description, DayOfWeek, StartTime, EndTime, TypeGroup, Requirements)
-VALUES
-  (1,
-   'Grupo de Estudo CIEDE',
-   'Ciclo de Estudos Doutrinários com enfoque no Evangelho e prática da casa.',
-   'Terça-feira',
-   NULL,
-   NULL,
-   'EVANGELIZACAO',
-   
-   'Estar cursando ou já ter concluído o grupo CIEDE.'),
-  (1,
-   'Grupo de Estudo ESDE',
-   'Estudo Sistematizado da Doutrina Espírita com material de referência.',
-   'Quinta-feira',
-   NULL,
-   NULL,
-   'ESDE',
-   'Recomendado para iniciantes, sem pré-requisitos.'),
-  (1,
-   'Grupo de Estudo da Mediunidade',
-   'Estudo e educação da mediunidade com foco em ética e prática segura.',
-   'Segunda-feira',
-   NULL,
-   NULL,
-   'MEDIUNICO',
-   'Maior de 18 anos, assiduidade e ter concluído o ESDE.');
-INSERT INTO Facilitadores
-  (User_idUser, description, apelido, espiritaSinceTime, memberSinceWhen, category)
-VALUES
-  (1, 'Evangelizador e coordenador do grupo CIEDE', 'Maria Silva', 2005, '2010-03-15', 'CIEDE'),
-  (2, 'Estudioso da Doutrina Espírita, responsável pelo ESDE', 'Carlos Pereira', 2008, '2012-06-20', 'ESDE'),
-  (2, 'Médium experiente e orientador do grupo mediúnico', 'Ana Souza', 2000, '2005-09-01', 'MEDIUNIDADE');
-   

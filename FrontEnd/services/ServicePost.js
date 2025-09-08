@@ -37,7 +37,6 @@ export const fetchPosts = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return response.data;
   } catch (error) {
     handleApiError(error);

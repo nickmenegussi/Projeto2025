@@ -26,7 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FacilitadorDetails() {
   const params = useLocalSearchParams();
-  const facilitadorData = params.data ? JSON.parse(params.data) : {};
+  const facilitadorData = params.data ? JSON.parse(params.data) : null;
 
   // Dados fixos para João Santos
   const defaultData = {
@@ -235,7 +235,7 @@ export default function FacilitadorDetails() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sobre</Text>
           <Text style={styles.aboutText}>
-            {facilitator.name} é {facilitator.role.toLowerCase()} com{" "}
+            {facilitator.name} é {facilitator.role.toLowerCase()} com
             {facilitator.experience} de experiência na casa espírita. Sua
             dedicação aos estudos doutrinários e ao atendimento fraterno tem
             sido fundamental para o crescimento espiritual de todos os
@@ -243,6 +243,7 @@ export default function FacilitadorDetails() {
           </Text>
         </View>
       </ScrollView>
+      <View style={{height: 74}} />
     </SafeAreaView>
   );
 }

@@ -1,0 +1,141 @@
+INSERT INTO post (content, title, image, User_idUser, Topic_idTopic, created_at, updated_at) VALUES
+('Aprendendo sobre as leis morais.', 'teste', 'foto.jpg', 1, 2, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Evangelho no lar: capítulo 8 lido com fé.', 'teste','foto2.jpg', 1, 1, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Novo ciclo de palestras: toda terça-feira!','teste', 'foto3.jpg', 1, 1, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Teste', 'photo_1754248890522.jpg.jpg','teste', 1, 1, '2025-08-03 16:22:02', '2025-08-03 16:22:02'),
+('Testandk', 'photo_1754249348692.jpg.jpg', 'teste',1, 1, '2025-08-03 16:29:41', '2025-08-03 16:29:41'),
+('Testandk ', 'photo_1754251422656.jpg.jpg','teste', 1, 1, '2025-08-03 17:04:15', '2025-08-03 17:04:15'),
+('Teste', 'photo_1755032537784.jpg.jpg','teste', 1, 1, '2025-08-12 18:02:31', '2025-08-12 18:02:31');
+
+
+select * from reviewsociety;
+-- User
+INSERT INTO user (nameUser, email, password, image_profile, status_permission, date_at_create) VALUES
+('admin123', 'nicolasmramos09@gmail.com', '$2b$15$JvV2dZdv7LY0AEhQGn4VAONCZIGtBSz99iLhbdjI89LQmFBG0guSa', '', 'SuperAdmin', '2025-07-05 15:32:18'),
+('Calro', 'Este', '$2b$15$7yr2XVyw0gG741cm9.yC7eYmtuFJTEKPcnhfXuN.YuesHWuHZDyEC', '', 'User', '2025-07-16 16:18:54');
+
+-- Likes
+INSERT INTO likes (Post_idPost, User_idUser, created_at) VALUES
+(7, 1, '2025-08-05 10:10:59'),
+(11, 1, '2025-08-05 10:11:26'),
+(8, 1, '2025-08-05 10:11:28'),
+(9, 1, '2025-08-05 10:11:30'),
+(12, 1, '2025-08-12 18:07:41'),
+(13, 1, '2025-08-12 18:07:43');
+
+-- Loans
+INSERT INTO loans (User_idUser, Book_idLibrary, quantity, date_at_create, returnDate) VALUES
+(1, 5, 1, '2025-07-14 17:31:23', '2025-07-07 17:31:23'),
+(1, 6, 3, '2025-07-16 17:46:36', '2025-07-09 17:46:36'),
+(1, 7, 1, '2025-07-21 16:46:07', '2025-07-14 16:46:07'),
+(1, 2, 1, '2025-07-21 16:48:35', '2025-07-14 16:48:35'),
+(1, 7, 2, '2025-07-21 16:54:16', '2025-07-14 16:54:16'),
+(1, 9, 3, '2025-07-21 17:26:47', '2025-07-14 17:26:47'),
+(1, 6, 2, '2025-07-21 17:31:01', '2025-07-14 17:31:01'),
+(1, 9, 1, '2025-07-21 17:45:59', '2025-07-14 17:45:59'),
+(1, 8, 1, '2025-07-21 18:22:50', '2025-07-14 18:22:50'),
+(1, 2, 1, '2025-07-23 08:28:36', '2025-07-16 08:28:36'),
+(1, 8, 2, '2025-08-19 17:37:37', '2025-08-12 17:37:37');
+
+-- Post
+INSERT INTO post (content, title, image, User_idUser, Topic_idTopic, created_at, updated_at) VALUES
+('Aprendendo sobre as leis morais.', 'Leis Morais' ,'', 1, 2, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Evangelho no lar: capítulo 8 lido com fé.', 'Evangelho no Lar' ,'', 1, 1, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Novo ciclo de palestras: toda terça-feira!', 'Palestras' ,'ciclo1.jpg', 1, 1, '2025-08-02 10:05:23', '2025-08-02 10:05:23'),
+('Teste', 'Teste' ,'photo_1754248890522.jpg.jpg', 1, 1, '2025-08-03 16:22:02', '2025-08-03 16:22:02'),
+('Testandk', 'Teste' , 'photo_1754249348692.jpg.jpg', 1, 1, '2025-08-03 16:29:41', '2025-08-03 16:29:41'),
+('Testandk ', 'Teste' ,'photo_1754251422656.jpg.jpg', 1, 1, '2025-08-03 17:04:15', '2025-08-03 17:04:15'),
+('Teste','Teste' , 'photo_1755032537784.jpg.jpg', 1, 1, '2025-08-12 18:02:31', '2025-08-12 18:02:31');
+
+-- ReviewSociety
+INSERT INTO reviewSociety (descriptionReview, ratingReview, userId, create_at) VALUES
+('Ótimo projeto! Contribuiu bastante para a comunidade.', 5, 1, '2025-07-05 20:02:18'),
+('Gostei da iniciativa, mas pode melhorar em alguns pontos.', 4, 1, '2025-07-05 20:02:18'),
+('Faltou organização nas atividades propostas.', 3, 1, '2025-07-05 20:02:18'),
+('Teste', 5, 1, '2025-08-12 17:19:55'),
+('Teste', 3, 1, '2025-08-12 17:59:00');
+
+-- VolunteerWork
+INSERT INTO volunteerWork (nameVolunteerWork, address, dateVolunteerWork, work_description, date_at_create) VALUES
+('Recepcionista', 'teste', '2025-07-17 00:00:00', 'teste', '2025-07-05 19:44:25');
+
+-- Lecture
+INSERT INTO lecture (nameLecture, dateLecture, timeLecture, description, link_url, video_url, created_at) VALUES
+('A Força do Perdão: Libertando a Alma', '2025-07-15 00:00:00', '03:00:00', 'Nesta palestra, refletiremos sobre o poder transformador do perdão à luz da Doutrina Espírita', 
+'https://www.youtube.com/watch?v=HAQQUDbuudY&list=RDbePCRKGUwAY&index=2', 'https://www.youtube.com/watch?v=HAQQUDbuudY&list=RDbePCRKGUwAY&index=2', '2025-07-05 19:28:48');
+
+-- CalendarEvents
+INSERT INTO caleendarEvents (title, link_url, description, start_datetime, end_datetime, file_url, created_at, User_idUser) VALUES
+('Palestra: A Força do Pensamento', 'https://meet.google.com/pensamento-espiritual', 'Reflexões sobre como o pensamento molda nossa realidade e influencia a vida espiritual.', '2025-07-10 19:30:00', '2025-07-10 21:00:00', 
+'https://site.com/slides/forca_pensamento.pdf', '2025-07-01 12:00:00', 1);
+
+-- Book
+INSERT INTO book (nameBook, authorBook, image, overviewBook, curiosityBook, tagsBook, bookCategory, bookQuantity, date_aquisition, status_Available) VALUES
+('O livro dos Espiritos', 'Allan Kardec', 'download.jfif.jfif', 'Teste', 'Teste', 'Obras Básicas', 'reserva', 5, '2025-07-05 19:11:36', 'disponível'),
+('Ação e Reação', 'Chico Xavier', 'produtos-woocomerce-900-x-1200-px-860-x-1200-px-43.png.png', 'teste', 'teste', 'Obras Complementares', 'emprestimo', 0, '2025-07-05 19:12:52', 'emprestado'),
+('Memorias de um Suicida', 'Yvone Pereira', 'download (1).jfif.jfif', 'teste', 'teste', 'Obras Complementares', 'reserva', 2, '2025-07-05 19:14:03', 'disponível'),
+('Cinquenta Anos Depois', 'Chico Xavier / Emmanuel', 'download (2).jfif.jfif', 'Somente os séculos de trabalho e dor poderão anular o período de egoísmo, orgulho e ambição que nos conduziram à iniquidade! 
+Passados cinquenta anos de sua trajetória como o senador Publius Lentulus, o Espírito Emmanuel retorna à existência te...', 'teste', 'Obras Complementares', 'reserva', 1, '2025-07-05 19:15:30', 'disponível'),
+('Allan Kardec', 'Allan Kardec', 'download (3).jfif.jfif', 'teste', 'teste', 'Obras Básicas', 'emprestimo', 5, '2025-07-05 19:16:39', 'emprestado'),
+('A genese', 'Allan Kardec', 'download (4).jfif.jfif', 'teste', 'teste', 'Obras Básicas', 'emprestimo', 0, '2025-07-05 19:17:16', 'emprestado'),
+('O essencial', 'Divaldo Franco', '81ss4NsJlqL._AC_UL320_.jpg.jpg', 'principal tarefa de Jesus Cristo em nosso planeta foi romper o véu do obscurantismo, demonstrando o sentido feliz de cada existência. 
+Espírito perfeito, superou vários obstáculos, apresentando a vida física e a espiritual. Encerrando sua insigne s...', 'teste', 'Obras Complementares', 'emprestimo', 0, '2025-07-12 21:34:29', 'emprestado'),
+('Coletânea de preces espíritas', 'Allan Kardec', '61hq5RLTHxL._SY385_.jpg.jpg', 'Esta valiosa obra é constituída de 3 partes: Resumo da Doutrina Espírita, Pedi e Obtereis (dissertação sobre as qualidades, 
+eficácia e ação da prece) e Coletânea de Preces Espíritas. O objetivo da Coletânea não é apresentar um formulário ab...', 'teste', 'Obras Complementares', 'emprestimo', 1, '2025-07-12 21:35:14', 'disponível'),
+('Meditações diárias', 'Chico Xavier', '81Bavq5EW0L._SY425_.jpg.jpg', 'Emmanuel foi o dedicado Guia Espiritual de Chico Xavier e Supervisor de sua obra mediúnica, que deu origem a mais de 400 livros, desdobrando a 
+Codificação realizada por Allan Kardec. Do seu passado espiritual, sabemos que nos últimos vinte séculos, ...', 'teste', 'Obras Complementares', 'emprestimo', 0, '2025-07-12 21:36:11', 'emprestado'),
+('A vida na visão do espiritismo: Reflexões sobre o sentido da vida e o caminho para a evolução espiritual', 'Alexandre Caldini', '518VjjeAo6L._SY425_.jpg.jpg', 'Por que encarnamos? Quem é nossa família? Sofrer é bom 
+para nossa evolução? Podemos interferir no destino de outra pessoa? Por que algumas pessoas são mais felizes que outras? À luz da filosofia espírita, Alexandre Caldini responde a essas ...', 'teste', 'Obras Complementares',
+'emprestimo', 2, '2025-07-12 21:36:58', 'disponível'),
+('Paciência', 'Chico Xavier', '61OsFLV03jL._SY385_.jpg.jpg', 'Doença, desemprego, turbulência. Sarcasmo, crítica, ofensa. Convida-nos Emmanuel, nestas mensagens, a enxergar, nas menores farpas do cotidiano, 
+oportunidades de se exercitar a compreensão, o amor e a paciência, como a preparar-nos para desafios e t...', 'teste', 'Obras Complementares', 'emprestimo', 2, '2025-07-12 21:37:47', 'disponível'),
+('Os Animais Conforme o Espiritismo', 'Marcel Benedeti', '4155UZMp4KL._SY342_.jpg.jpg', 'Estudo de comentários de Kardec acerca do assunto animais. Apresenta trechos de Kardec com comentários do autor. 
+Aborda informações surpreendentes sobre a alma dos animais, a evolução do homem passando pelo reino animal, a inteligência, a sensibil...', 'teste', 'Obras Complementares', 'reserva', 3, '2025-07-12 21:38:34', 'disponível'),
+('Obreiros da Vida Eterna: Coleção A vida no mundo espiritual', 'Chico Xavier', '81E3bdP2QyL._SY425_.jpg.jpg', 'Obra clássica da literatura espírita, Obreiros da Vida Eterna apresenta uma emocionante jornada espiritual vivida 
+por André Luiz e seus companheiros da colônia Nosso Lar. Psicografado por Chico Xavier, sob a orientação do Espírito André Luiz, o l...', 'teste', 'Obras Complementares', 'reserva', 3, '2025-07-12 21:39:28', 'disponível'),
+('O Livro dos Médiuns', 'Chico Xavier', '71muoBF1+XL._SY425_.jpg.jpg', 'O livro dos médiuns é uma das cinco obras que constituem a Codificação da Doutrina Espírita. Reúne “o ensino especial dos Espíritos sobre a teoria de 
+todos os gêneros de manifestações, os meios de comunicação com o mundo invisível, o desen...', 'teste', 'Obras Complementares', 'reserva', 1, '2025-07-12 21:40:10', 'disponível'),
+('O Espiritismo na Arte', 'Léon Denis', '61U1nDmsZ0L._SY425_.jpg.jpg', 'Desvende os mistérios da beleza eterna e da criação artística sob a luz do Espiritismo, uma jornada fascinante que expandirá seus horizontes sobre a
+ Arte e a Vida! Esta obra revela como o Espiritismo abre novas perspectivas ilimitadas para a Arte, e...', 'teste', 'Obras Complementares', 'reserva', 3, '2025-07-12 21:40:46', 'disponível');
+
+INSERT INTO Topic (title, description, image, User_idUser, created_at)
+VALUES
+('Espiritismo e Ciência', 'Discussão sobre a relação entre o espiritismo e os avanços científicos.', 'https://example.com/images/topic-espiritismo.jpg', 1, '2025-08-02 10:05:10'),
+('Espiritismo e Ciência', 'Discussão sobre a relação entre o espiritismo e os avanços científicos.', 'https://example.com/images/topic-espiritismo.jpg', 1, '2025-08-02 10:05:21');
+
+INSERT INTO GroupOfStudy
+  (IdFacilitador, NameStudy, Description, DayOfWeek, StartTime, EndTime, TypeGroup, Requirements)
+VALUES
+  (1,
+   'Grupo de Estudo CIEDE',
+   'Ciclo de Estudos Doutrinários com enfoque no Evangelho e prática da casa.',
+   'Terça-feira',
+   NULL,
+   NULL,
+   'EVANGELIZACAO',
+   
+   'Estar cursando ou já ter concluído o grupo CIEDE.'),
+  (1,
+   'Grupo de Estudo ESDE',
+   'Estudo Sistematizado da Doutrina Espírita com material de referência.',
+   'Quinta-feira',
+   NULL,
+   NULL,
+   'ESDE',
+   'Recomendado para iniciantes, sem pré-requisitos.'),
+  (1,
+   'Grupo de Estudo da Mediunidade',
+   'Estudo e educação da mediunidade com foco em ética e prática segura.',
+   'Segunda-feira',
+   NULL,
+   NULL,
+   'MEDIUNICO',
+   'Maior de 18 anos, assiduidade e ter concluído o ESDE.');
+   
+INSERT INTO Facilitadores
+  (User_idUser, description, apelido, espiritaSinceTime, memberSinceWhen, category)
+VALUES
+  (1, 'Evangelizador e coordenador do grupo CIEDE', 'Maria Silva', 2005, '2010-03-15', 'CIEDE'),
+  (2, 'Estudioso da Doutrina Espírita, responsável pelo ESDE', 'Carlos Pereira', 2008, '2012-06-20', 'ESDE'),
+  (2, 'Médium experiente e orientador do grupo mediúnico', 'Ana Souza', 2000, '2005-09-01', 'MEDIUNIDADE');
+   

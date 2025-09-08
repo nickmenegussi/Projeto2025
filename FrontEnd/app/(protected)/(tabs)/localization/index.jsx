@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -33,10 +33,12 @@ import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
+import { AuthContext } from "../../../../context/auth";
+import Header from "../../../../components/Header";
+import Trending from "../../../../components/Navagation";
 
-const { width, height } = Dimensions.get("window");
-
-export default function HomeLocalization() {
+const HomeLocalization = () => {
+  const { user } = useContext(AuthContext);
   const [userLocation, setUserLocation] = useState(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [centros, setCentros] = useState([]);
@@ -252,49 +254,26 @@ export default function HomeLocalization() {
     });
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#4A90E2" />
-        <Text style={styles.loadingText}>Buscando centros próximos...</Text>
-      </View>
-    );
-  }
+  
 
   return (
     <View style={styles.container}>
       <Sidebar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
 
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <ButtonIcons
-            color={"white"}
-            size={30}
-            handleChange={() => setIsSideBarOpen(!isSideBarOpen)}
-            Icon={({ color, size }) => <MenuIcon color={color} size={size} />}
-          />
-
-          <Text style={styles.headerTitle}>Casa Espírita</Text>
-
-          <View style={styles.IconsContent}>
-            <ButtonIcons
-              color={"white"}
-              size={28}
-              Icon={({ color, size }) => <Bell color={color} size={size} />}
-            />
-            <TouchableOpacity onPress={getLocation}>
-              <CrosshairIcon size={28} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/settings")}>
-              <Image
-                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-                style={styles.avatarImage}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <View style={styles.Container}>
+  <Header title="Home" onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)} />
+  <Trending
+    navagations={[
+      {
+        name: "Palestras da Casa",
+        path: "/home/lectures",
+        data: [],
+      },
+      { name: "FAQ", path: "/home/faq" },
+    ]}
+  />
+</View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -485,14 +464,16 @@ export default function HomeLocalization() {
       <View style={{ height: 115 }} />
     </View>
   );
-}
+};
+
+export default React.memo(HomeLocalization);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#003B73",
     padding: 16,
-    paddingTop: 38,
+    paddingTop: 48,
   },
   centerContainer: {
     flex: 1,
@@ -520,7 +501,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
-    paddingTop: 10,
+    paddingTop: 11,
   },
   timeText: {
     fontSize: 15,

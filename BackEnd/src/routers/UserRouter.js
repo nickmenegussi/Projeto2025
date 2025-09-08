@@ -13,7 +13,7 @@ router.post('/user/register' ,register)
 router.patch('/user/name',authMiddleware , updateUserName)
 router.patch('/user/profile', authMiddleware ,updateUser)
 router.patch('/user/password', authMiddleware ,updateUserPassword )
-router.patch('/user/picture', authMiddleware , upload.single('imagem'), updateUserImageProfile)
+router.patch('/user/picture', authMiddleware , upload.single('image'), updateUserImageProfile)
 
 router.delete('/user/:idUser/delete', authMiddleware ,verifyPermission(['SuperAdmin','admin']) , deleteAccountUser)
 

@@ -114,6 +114,9 @@ exports.GenerateOtp = (req, res) => {
                       user: process.env.EMAILAPP,
                       pass: process.env.SENHAEMAILAPP,
                     },
+                    tls: {
+    rejectUnauthorized: false, // <<< ISSO IGNORA O ERRO DE CERTIFICADO
+  },
                   });
                   transporter.sendMail({
                     from: process.env.EMAILAPP,
