@@ -331,7 +331,7 @@ exports.updateUserImageProfile = (req, res) => {
                     return res.status(200).json({
                         message: "Sucesso ao alterar foto de perfil.",
                         success: true,
-                        data: resultUpdateImgProfile,
+                        data: {image_profile: image_profile},
                     })   
                 }
             })
