@@ -23,6 +23,8 @@ import usePostMessage from "../../../../hooks/usePostMessage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../services/api";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
+import Header from "../../../../components/Header";
+import Trending from "../../../../components/Navagation";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -202,30 +204,30 @@ const Index = () => {
         renderItem={renderItem}
         ListHeaderComponent={() => (
           <View style={styles.headerComponent}>
-            <ButtonIcons
-              color="white"
-              size={30}
-              handleChange={() => setIsOpen(true)}
-              Icon={({ color, size }) => <Menu color={color} size={size} />}
-            />
-            <Image
-              source={require("../../../../assets/images/icon.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-
-            <TouchableOpacity onPress={() => router.push("/settings")}>
-              <Image
-                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 21,
-                  borderWidth: 2,
-                  borderColor: "rgba(255, 255, 255, 0.3)",
-                }}
-              />
-            </TouchableOpacity>
+             <View style={styles.Container}>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsOpen(!isOpen)}
+          />
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
+        </View>
           </View>
         )}
         ListEmptyComponent={() =>

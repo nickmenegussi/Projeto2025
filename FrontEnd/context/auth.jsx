@@ -3,6 +3,7 @@ import api from "../services/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
+import handleApiError from "../utils/handleApiError";
 
 export const AuthContext = createContext();
 
@@ -111,11 +112,43 @@ export function AuthProvider({ children }) {
         Alert.alert("Erro", response.data.error.message);
       } else {
         Alert.alert("Sucesso!", "Cadastro realizado. Faça login.");
-        router.replace("/sign-up")
+        router.replace("/sign-up");
       }
     } catch (error) {
       console.error("Erro ao registrar:", error);
       Alert.alert("Erro", "Não foi possível concluir o cadastro.");
+    }
+  }
+  async function updatePerfilImage(imageUri) {
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const formData = new FormData();
+      const timestamp = Date.now(); // cria um número único baseado no horário
+      formData.append("image", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: `profile_${timestamp}.jpg`, // nome único
+      });
+
+      const response = await api.patch("/user/user/picture", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      
+      if (response.status === 200) {
+        const updatedUser = {
+          ...user,
+          image_profile: response.data.data.image_profile,
+        };
+        setUser(updatedUser);
+        await AsyncStorage.setItem("@Auth:user", JSON.stringify(updatedUser));
+        return updatedUser;
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar foto:", error);
+      handleApiError(error);
     }
   }
 
@@ -140,7 +173,9 @@ export function AuthProvider({ children }) {
         logout,
         loading,
         OtpSendEmail,
-        OtpVerification, register
+        OtpVerification,
+        register,
+        updatePerfilImage,
       }}
     >
       {children}

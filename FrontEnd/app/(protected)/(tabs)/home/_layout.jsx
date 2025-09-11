@@ -16,9 +16,16 @@ const RootLayout = () => {
           name="targetPublicLectures"
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="reviewSociety" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="reviewSociety" options={{ headerShown: false }} />
         <Stack.Screen name="volunteerWork" options={{ headerShown: false }} />
         <Stack.Screen name="faq" options={{ headerShown: false }} />
+         <Stack.Screen name="AboutUsSection" options={{ headerShown: false }} />
+        <Stack.Screen name="EventsCalendar" options={{ headerShown: false }} />
+        <Stack.Screen name="../components/FaqSection" options={{ headerShown: false }} />
+        <Stack.Screen name="LectureCaroseul" options={{ headerShown: false }} />
+        <Stack.Screen name="ReviewSection" options={{ headerShown: false }} />
+                <Stack.Screen name="VolunteerWorkCaroseul" options={{ headerShown: false }} /> */}
+
       </Stack>
   );
 };

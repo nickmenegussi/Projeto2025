@@ -7,43 +7,83 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  Platform
+  Platform,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ArrowLeftIcon,
   CameraIcon,
   LinkIcon,
+  LockIcon,
   Pen,
   PlusIcon,
+  Shield,
   UserIcon,
 } from "lucide-react-native";
 import { router } from "expo-router";
+import { AuthContext } from "../../../../context/auth";
+import * as ImagePicker from "expo-image-picker";
 
 const EditProfile = () => {
-  const [profileData, setProfileData] = useState({
-    username: "yMOS4.1",
-    description: "Descripto do perfil",
-    email: "yarchvlg@gradacion",
-    website: "www.example.com"
-  });
+  const { user, updatePerfilImage } = useContext(AuthContext);
+  const [selectedImage, setSelectedImage] = useState(null);
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permissão negada",
+            "Precisamos da permissão para acessar a galeria."
+          );
+        }
+      }
+    })();
+  }, []);
 
-  const handleChange = (field, value) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled) {
+        setSelectedImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.log("Erro ao abrir galeria:", error);
+      Alert.alert("Erro", "Não foi possível abrir a galeria.");
+    }
   };
 
-  const handleSave = () => {
-    // Lógica para salvar as alterações
-    Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+  const handleChange = async () => {
+    if(!selectedImage) return
+
+    try {
+      await updatePerfilImage(selectedImage);
+      setSelectedImage(null)
+      Alert.alert("Sucesso", "Foto de perfil atualizada com Sucesso!");
+      
+    } catch (error) {
+      console.error(error);
+      Alert.alert(
+        "Erro",
+        "Preencha todas as informações antes de editar o campo selecionado."
+      );
+    }
   };
+
 
   const handleChangePhoto = () => {
     // Lógica para alterar foto
     Alert.alert("Alterar Foto", "Escolha uma opção", [
-      { text: "Câmera", onPress: () => console.log("Abrir câmera") },
-      { text: "Galeria", onPress: () => console.log("Abrir galeria") },
-      { text: "Cancelar", style: "cancel" }
+      { text: "Galeria", onPress: () => pickImage() },
+      { text: "Cancelar", style: "cancel" },
     ]);
   };
 
@@ -57,22 +97,23 @@ const EditProfile = () => {
           <ArrowLeftIcon size={26} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() =>
+            handleChange()
+          }
+        >
           <Text style={styles.saveButtonText}>Salvar</Text>
         </TouchableOpacity>
       </View>
-
-      <ScrollView 
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.userSection}>
           <View style={styles.avatarContainer}>
             <Image
-              source={require("../../../../assets/images/default-profile.jpg")}
               style={styles.avatar}
+              source={selectedImage ? {uri: selectedImage} : user?.image_profile ? { uri: `http://192.168.1.11:3001/uploads/${user?.image_profile}?t=${Date.now()}`} : require("../../../../assets/images/default-profile.jpg")}
             />
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.editIcon}
               onPress={handleChangePhoto}
             >
@@ -83,7 +124,7 @@ const EditProfile = () => {
             <Text style={styles.changePhotoText}>Mudar Foto do perfil</Text>
           </TouchableOpacity>
         </View>
-        
+
         <View style={styles.formSection}>
           <View style={styles.inputContainer}>
             <UserIcon size={20} color="#60A3D9" style={styles.inputIcon} />
@@ -91,52 +132,49 @@ const EditProfile = () => {
               style={styles.input}
               placeholder="Nome de usuário"
               placeholderTextColor="#AAAAAA"
-              value={profileData.username}
-              onChangeText={(text) => handleChange('username', text)}
+              value={user.nameUser}
+              onChangeText={(text) => handleChange("username", text)}
             />
           </View>
 
-          <View style={styles.inputContainer}>
+          {/* <View style={styles.inputContainer}>
             <Pen size={20} color="#60A3D9" style={styles.inputIcon} />
             <TextInput
               style={[styles.input, styles.multilineInput]}
               placeholder="Descrição do perfil"
               placeholderTextColor="#AAAAAA"
-              value={profileData.description}
+              value={user.description}
               onChangeText={(text) => handleChange('description', text)}
               multiline
               numberOfLines={3}
             />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="E-mail"
-              placeholderTextColor="#AAAAAA"
-              value={profileData.email}
-              onChangeText={(text) => handleChange('email', text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
+          </View> */}
+          {/* <View style={styles.inputContainer}>
             <LinkIcon size={20} color="#60A3D9" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="Website"
               placeholderTextColor="#AAAAAA"
               value={profileData.website}
-              onChangeText={(text) => handleChange('website', text)}
+              onChangeText={(text) => handleChange("website", text)}
+              autoCapitalize="none"
+            />
+          </View> */}
+
+          <View style={[styles.inputContainer, styles.disableInputContainer]}>
+            <LockIcon size={20} color="#60A3D9" style={styles.inputIcon} />
+            <TextInput
+              style={[styles.input, styles.disableText]}
+              placeholder="E-mail"
+              placeholderTextColor="#AAAAAA"
+              value={user.status_permission}
+              onChangeText={(text) => handleChange("email", text)}
+              keyboardType="email-address"
+              selectTextOnFocus={false}
+              editable={false}
               autoCapitalize="none"
             />
           </View>
-
-          <TouchableOpacity style={styles.addNoteButton}>
-            <PlusIcon size={20} color="#FFFFFF" />
-            <Text style={styles.addNoteText}>Adicionar nota</Text>
-          </TouchableOpacity>
 
           <View style={styles.updatesSection}>
             <Text style={styles.sectionTitle}>Atualizações</Text>
@@ -146,6 +184,7 @@ const EditProfile = () => {
           </View>
         </View>
       </ScrollView>
+      <View style={{ height: 40 }} />
     </SafeAreaView>
   );
 };
@@ -218,7 +257,7 @@ const styles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   changePhotoText: {
-    color: "white", 
+    color: "white",
     fontSize: 14,
     marginTop: 8,
     textDecorationLine: "underline",
@@ -240,6 +279,11 @@ const styles = StyleSheet.create({
   inputIcon: {
     marginRight: 12,
   },
+  disableInputContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  disableText: { color: "rgba(255, 255, 255, 0.6)" },
   input: {
     flex: 1,
     color: "white",
@@ -247,7 +291,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   multilineInput: {
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     paddingTop: 15,
     minHeight: 100,
   },

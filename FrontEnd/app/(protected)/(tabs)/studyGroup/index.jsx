@@ -32,6 +32,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import Header from "../../../../components/Header";
 
 const { width } = Dimensions.get("window");
 
@@ -121,39 +122,30 @@ const HomeStudyGroup = () => {
   );
 
   const headerSection = () => (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <ButtonIcons
-          color={"white"}
-          size={30}
-          handleChange={() => setIsSideBarOpen(!isSideBarOpen)}
-          Icon={({ color, size }) => <MenuIcon color={color} size={size} />}
-        />
-
-        <Text style={styles.headerTitle}>Grupos de Estudo</Text>
-
-        <View style={styles.IconsContent}>
-          <ButtonIcons
-            color={"white"}
-            size={30}
-            Icon={({ color, size }) => <Bell color={color} size={size} />}
+    <View style={styles.Container}>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)}
           />
-          <TouchableOpacity onPress={() => router.push("/settings")}>
-            <Image
-              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-              style={styles.avatarImage}
-            />
-          </TouchableOpacity>
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
         </View>
-      </View>
-
-      <Trending
-        navagations={[
-          { name: "Palestras da Casa", path: "/home/GroupOfStudy", data: [] },
-          { name: "FAQ", path: "/home/faq" },
-        ]}
-      />
-    </View>
   );
 
   const goToGroupList = useCallback(
@@ -395,7 +387,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginBottom: 20,
-    paddingTop: 10,
+    paddingTop: 20,
   },
   headerContent: {
     flexDirection: "row",

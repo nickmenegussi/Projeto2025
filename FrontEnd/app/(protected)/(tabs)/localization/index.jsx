@@ -33,6 +33,8 @@ import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
+import Header from "../../../../components/Header";
+import Trending from "../../../../components/Navagation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -267,32 +269,29 @@ export default function HomeLocalization() {
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <ButtonIcons
-            color={"white"}
-            size={30}
-            handleChange={() => setIsSideBarOpen(!isSideBarOpen)}
-            Icon={({ color, size }) => <MenuIcon color={color} size={size} />}
+         <View style={styles.Container}>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)}
           />
-
-          <Text style={styles.headerTitle}>Casa Espírita</Text>
-
-          <View style={styles.IconsContent}>
-            <ButtonIcons
-              color={"white"}
-              size={28}
-              Icon={({ color, size }) => <Bell color={color} size={size} />}
-            />
-            <TouchableOpacity onPress={getLocation}>
-              <CrosshairIcon size={28} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/settings")}>
-              <Image
-                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-                style={styles.avatarImage}
-              />
-            </TouchableOpacity>
-          </View>
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
         </View>
       </View>
 

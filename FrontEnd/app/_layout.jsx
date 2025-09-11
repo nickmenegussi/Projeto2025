@@ -1,10 +1,12 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { AuthProvider } from '../context/auth';
+import { PaperProvider } from "react-native-paper";
 
 const RootLayout = () => {
   return (
     <AuthProvider>
+      <PaperProvider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -39,7 +41,9 @@ const RootLayout = () => {
           name="otpMessage"
           options={{ animation: "none" }}
         />
+
       </Stack>
+      </PaperProvider>
     </AuthProvider>
   );
 };

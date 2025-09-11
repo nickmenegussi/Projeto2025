@@ -35,6 +35,7 @@ import FAQ from "../../../../components/FAQ";
 import DropDownPicker from "react-native-dropdown-picker";
 import Button from "../../../../components/Button";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
+import Header from "../../../../components/Header";
 
 const Home = () => {
   const objetivos = [
@@ -632,46 +633,30 @@ const Home = () => {
             </View>
           )}
           ListHeaderComponent={() => (
-            <View contentContainerStyle={styles.Container}>
-              <View style={styles.containerIcons}>
-                <ButtonIcons
-                  color={"white"}
-                  size={30}
-                  handleChange={() => setIsSideBarOpen(!IsSideBarOpen)}
-                  Icon={({ color, size }) => (
-                    <MenuIcon color={color} size={size} />
-                  )}
-                />
-                <View style={styles.IconsContent}>
-                  <ButtonIcons
-                    color={"white"}
-                    size={30}
-                    Icon={({ color, size }) => (
-                      <Bell color={color} size={size} />
-                    )}
-                  />
-                  <TouchableOpacity onPress={() => router.push("/settings")}>
-            <Image
-              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-              style={styles.avatarImage}
-            />
-          </TouchableOpacity>
-                </View>
-              </View>
-              <Trending
-                navagations={
-                  [
-                    {
-                      name: "Palestras da Casa",
-                      path: "/home/lectures",
-                      data: lectures,
-                    },
-
-                    { name: "FAQ", path: "/home/faq" },
-                  ] ?? []
-                }
-              />
-            </View>
+             <View style={styles.Container}>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
+          />
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
+        </View>
           )}
           contentContainerStyle={{ paddingBottom: 100 }}
         />
@@ -683,28 +668,22 @@ const Home = () => {
 export default React.memo(Home);
 
 const styles = StyleSheet.create({
-  linearGradient: {
-    flex: 1,
-  },
-  cardContainer: {
-    backgroundColor: "#003B73",
-    padding: 10,
-    borderRadius: 10,
-  }, avatarImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+ linearGradient: {
+    flex: 1,backgroundColor: "#003B73",
   },
   safeAreaView: {
     flex: 1,
     padding: 16,
+    paddingVertical: 15,
     backgroundColor: "#003B73",
   },
+  container: {
+    flexGrow: 1,backgroundColor: "#003B73",
+  },
+  
+  // Cabeçalhos e títulos
   Container: {
-    flexGrow: 1,
-    padding: 10,
+    backgroundColor: "#003B73",
   },
   header: {
     fontSize: 17,
@@ -712,63 +691,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 25,
   },
-  picker: {
-    height: 55,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderColor: "#fff",
-    width: "50%",
-  },
-  itemDropDrown: {
-    backgroundColor: "#fff",
-    borderWidth: 0,
-    borderRadius: 8,
-    width: "50%",
-  },
-  containerIcons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  IconsContent: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  carouselItem: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 10,
-    marginRight: 10,
-    justifyContent: "center",
-    alignItems: "start",
-    height: 200,
-  },
-  SmallcarouselItem: {
-    borderRadius: 10,
-    marginRight: 10,
-    flex: 1,
-    flexDirection: "column",
-    height: 150,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-  },
-  titlePost: {
-    fontSize: 16,
+  headerTitle: {
     color: "white",
-    position: "relative",
-    top: 110,
-    left: 20,
-    right: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  titlePostBigger: {
-    fontSize: 16,
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
     color: "white",
-    position: "relative",
-    top: 160,
-    left: 20,
-    right: 10,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  
+  // Cartões e containers
+  cardContainer: {
+    backgroundColor: "#003B73",
+    padding: 10,
+    borderRadius: 10,
   },
   containerFaq: {
     marginBottom: 40,
@@ -779,12 +723,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
   },
-  reviewsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 70,
-    alignItems: "center",
-    width: "100%",
+  
+  // Avatar e imagens
+  avatarImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   BackgroundImage: {
     flex: 1,
@@ -795,20 +741,80 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "cover",
   },
-  container: {
-    flex: 1,
-    backgroundColor: "#60A3D9",
-    padding: 20,
+  
+  // Componentes de formulário
+  picker: {
+    height: 55,
+    backgroundColor: "#fff",
     borderRadius: 10,
-    marginBottom: 40,
+    borderWidth: 0,
+    width: "50%",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  itemDropDrown: {
+    backgroundColor: "#fff",
+    borderWidth: 0,
+    borderRadius: 8,
+    width: "50%",
+  },
+  
+  // Layout e disposição de elementos
+  containerIcons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  IconsContent: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  reviewsHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  },
+  
+  // Itens do carousel
+  carouselItem: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    height: 200,
+  },
+  SmallcarouselItem: {
+    borderRadius: 10,
+    marginRight: 10,
+    flexDirection: "column",
+    height: 150,
+  },
+  
+  // Overlay e títulos de posts
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  titlePost: {
+    fontSize: 16,
     color: "white",
-    marginBottom: 20,
-    textAlign: "center",
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 10,
   },
+  titlePostBigger: {
+    fontSize: 16,
+    color: "white",
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 10,
+  },
+  
+  // Cartões de conteúdo
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
@@ -841,11 +847,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
   },
+  
+  // Container de reviews
   reviewsContainer: {
     height: 300,
     width: "100%",
     marginVertical: 10,
   },
+  
+  // Botões
   editButton: {
     backgroundColor: "#0A73D9",
     width: 40,
@@ -854,13 +864,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // REMOVA estes estilos antigos (substituídos pelo modal):
-  // calendarWrapper: { ... },
-  // eventsContainer: { ... },
-  // eventContent: { ... },
-
-  // NOVOS ESTILOS PARA CALENDÁRIO E MODAL:
+  
+  // CALENDÁRIO
   calendarSection: {
     marginBottom: 30,
   },
@@ -881,8 +886,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 14,
   },
-
-  // Estilos do Modal
+  
+  // MODAL
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -928,7 +933,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeButtonText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#003B73",
   },
@@ -936,8 +941,8 @@ const styles = StyleSheet.create({
     maxHeight: 400,
     marginBottom: 10,
   },
-
-  // Estilos dos Eventos (dentro do modal)
+  
+  // EVENTOS (dentro do modal)
   eventItem: {
     flexDirection: "row",
     backgroundColor: "#F8F9FA",
@@ -976,6 +981,8 @@ const styles = StyleSheet.create({
     color: "#666",
     lineHeight: 20,
   },
+  
+  // Estados vazios e mensagens
   noEventsContainer: {
     padding: 20,
     alignItems: "center",
@@ -987,6 +994,8 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "center",
   },
+  
+  // Botão de adicionar evento
   addEventButton: {
     flexDirection: "row",
     backgroundColor: "#0A73D9",
@@ -1000,5 +1009,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     marginLeft: 8,
+    fontSize: 14,
   },
 });
