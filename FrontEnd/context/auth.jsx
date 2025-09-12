@@ -68,12 +68,12 @@ export function AuthProvider({ children }) {
       setOtpDigits(false);
 
       console.log("Erro", response.data.error);
-      Alert.alert(`Erro ${error.response.data.message}`);
+      return error.response.data.message
     } else {
-      Alert.alert("Sucesso!", response.data.message);
       await AsyncStorage.setItem("@Auth:email", "true");
       await AsyncStorage.setItem("@Auth:otp", "verificado!");
       setOtpDigits(true);
+      return response.data.message
     }
   }
   // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token

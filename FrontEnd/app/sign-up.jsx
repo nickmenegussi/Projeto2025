@@ -36,17 +36,21 @@ export default function App() {
     visible: false,
     message: "",
     type: "info", // "success" | "error" | "info"
+    onDismiss: null
   });
 
-  const showSnack = (message, type = "info") => {
-    setSnack({ visible: true, message, type });
+  const showSnack = (message, type = "info", onDismissCanceled) => {
+    setSnack({ visible: true, message, type,  onDismiss:  onDismissCanceled
+});
   };
 
   async function Login() {
     try {
       await login(loginUser.email, loginUser.password);
-      showSnack("Login realizado com sucesso!", "success")
-      router.push("/emailOtp");
+      showSnack("Login realizado com sucesso!", "success", () => {
+        router.push('/emailOtp')
+      })
+      
     } catch (error) {
       if (
         error.response &&
@@ -234,8 +238,13 @@ export default function App() {
       {isMobile ? renderMobile() : renderWeb()}
       <Snackbar
         visible={snack.visible}
-        onDismiss={() => setSnack((s) => ({ ...s, visible: false }))}
-        duration={3000}
+        onDismiss={() => {
+          if(snack.onDismiss !== null && typeof snack.onDismiss === "function" ){
+            snack.onDismiss()
+          }
+          setSnack((e) => ({...e, onDismiss: null, visible: false}))
+        }}
+        duration={2000}
         style={{
           position: "absolute",
           bottom: 30, // sempre visível no rodapé
@@ -258,7 +267,7 @@ export default function App() {
       >
         <View style={{flexDirection: "row", flex: 1, justifyContent: 'space-between', alignItems: "center"}}>
           <Text style={{ color: "white", fontSize: 17 }}>{snack.message}</Text>
-          <TouchableOpacity onPress={() => setSnack((prev) => ({...prev, visible: false}))}>
+          <TouchableOpacity onPress={() => setSnack((prev) => ({...prev, visible: false, onDismiss: snack.onDismiss()}))}>
             <X size={30} color={"white"} />
           </TouchableOpacity>
         </View>

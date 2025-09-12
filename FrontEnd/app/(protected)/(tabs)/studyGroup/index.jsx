@@ -36,7 +36,7 @@ import Header from "../../../../components/Header";
 
 const { width } = Dimensions.get("window");
 
-const HomeStudyGroup = () => {
+const Index = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -374,7 +374,7 @@ const HomeStudyGroup = () => {
   );
 };
 
-export default React.memo(HomeStudyGroup);
+export default React.memo(Index);
 
 const styles = StyleSheet.create({
   safeAreaView: {

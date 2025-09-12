@@ -6,6 +6,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "sdkVersion": "53.0.0",
     "platforms": ["ios", "android", "web"],
     "newArchEnabled": true,
     "ios": {
