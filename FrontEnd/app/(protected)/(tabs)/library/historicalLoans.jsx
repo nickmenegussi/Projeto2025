@@ -34,7 +34,7 @@ const HistoricalLoans = () => {
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.11:3001/uploads/${item.image}`
+                    ? `http://192.168.1.10:3001/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -81,7 +81,7 @@ const HistoricalLoans = () => {
                 <ArrowLeftIcon color={color} size={size} />
               )}
             />
-            <Text style={styles.headerTitle}>Histórico de Pedidos</Text>
+            <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
           </View>
           <View style={styles.ContainerHeader}>
             <View style={styles.buttonContainer}>

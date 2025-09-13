@@ -106,7 +106,6 @@ const EditProfile = () => {
           <Text style={styles.saveButtonText}>Salvar</Text>
         </TouchableOpacity>
       </View>
-
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.userSection}>
           <View style={styles.avatarContainer}>

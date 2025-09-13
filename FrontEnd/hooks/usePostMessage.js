@@ -5,6 +5,7 @@ export default function usePostMessage(searchTerm = "") {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const loadPosts = async () => {
     setLoading(true);
     setError(null);

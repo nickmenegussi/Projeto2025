@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import ButtonIcons from "../../../../components/ButtonIcons";
-import { ArrowLeftIcon, Trash2, Edit3, ShoppingCart } from "lucide-react-native";
+import { ArrowLeftIcon, Trash2, Edit3 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import useCart from "../../../../hooks/useCart";
 import React, { useContext, useEffect, useState } from "react";
@@ -83,30 +83,20 @@ const CartLoan = () => {
 
   if (!data || (data.length === 0 && loan)) {
     return (
-      <View style={styles.centeredEmpty}>
-        <View style={styles.emptyIconContainer}>
-          <ShoppingCart color="#FFFFFF" size={64} />
-        </View>
-        
-        <Text style={styles.emptyTitle}>Seu carrinho está vazio</Text>
-        
-        <Text style={styles.emptySubText}>
-          No entanto, percebemos que você já realizou alguns empréstimos. 
-          Que tal dar uma olhada neles?
+      <View style={styles.centered}>
+        <Text style={styles.emptyText}>
+          Você não tem nenhum item no carrinho.
+        </Text>
+        <Text style={styles.subText}>
+          No entanto, percebemos que você já realizou alguns empréstimos. Que
+          tal dar uma olhada neles?
         </Text>
 
         <TouchableOpacity
-          style={styles.emptyPrimaryButton}
+          style={styles.buttonNoItemCart}
           onPress={() => router.push("/library/historicalLoans")}
         >
-          <Text style={styles.emptyPrimaryButtonText}>Ver meus Empréstimos</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={styles.emptySecondaryButton}
-          onPress={() => router.push("/library")}
-        >
-          <Text style={styles.emptySecondaryButtonText}>Explorar Biblioteca</Text>
+          <Text style={styles.buttonTextNoItemCart}>Ver meus Empréstimos</Text>
         </TouchableOpacity>
       </View>
     );
@@ -513,71 +503,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#003B73",
   },
-  // NOVOS ESTILOS PARA A TELA DE CARRINHO VAZIO
-  centeredEmpty: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-    backgroundColor: "#003B73",
-  },
-  emptyIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  emptyTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+  emptyText: {
+    fontSize: 16,
     color: "#FFFFFF",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  emptySubText: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.8)",
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 32,
-    paddingHorizontal: 20,
-  },
-  emptyPrimaryButton: {
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  emptyPrimaryButtonText: {
-    color: "#003B73",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  emptySecondaryButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    width: "100%",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    backgroundColor: "transparent",
-  },
-  emptySecondaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
   },
   buttonStyle: {
     borderRadius: 15,
@@ -619,18 +547,36 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
+
   backLeftBtn: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#007AFF",
+    backgroundColor: "#007AFF", // azul para Editar
     width: 75,
     height: "100%",
   },
+
   backRightBtn: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FF3B30",
+    backgroundColor: "#FF3B30", // vermelho para Remover
     width: 75,
     height: "100%",
+  },
+  subText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  buttonNoItemCart: {
+    backgroundColor: "#4B8DF8",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  buttonTextNoItemCart: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

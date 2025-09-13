@@ -7,7 +7,7 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback } from "react";
 import {
   CircleUserRoundIcon,
   Download,
@@ -23,14 +23,10 @@ import usePostMessage from "../../../../hooks/usePostMessage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../services/api";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
-import { AuthContext } from "../../../../context/auth";
 import Header from "../../../../components/Header";
-import styles from "./styles/CommunityStyle";
 import Trending from "../../../../components/Navagation";
 
 const Index = () => {
-  const { user } = useContext(AuthContext);
-
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLikes, setUserLikes] = useState({});
@@ -57,6 +53,7 @@ const Index = () => {
     if (hours < 24) return `${hours} h`;
     return `${dias} d`;
   };
+
   const dataSidebar = [
     { id: 1, label: "Perfil", route: "/settings" },
     { id: 2, label: "Conversas", route: "/community" },
@@ -129,15 +126,9 @@ const Index = () => {
           {item.image_profile ? (
             <Image
               style={styles.profile}
-              source={
-                user?.image_profile
-                  ? {
-                      uri: `http://192.168.1.11:3001/uploads/${
-                        user?.image_profile
-                      }?t=${Date.now()}`,
-                    }
-                  : require("../../../../assets/images/default-profile.jpg")
-              }
+              source={{
+                uri: `http://192.168.1.19:3001/uploads/${item.image}`,
+              }}
             />
           ) : (
             <Image
@@ -207,24 +198,36 @@ const Index = () => {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} data={dataSidebar} />
 
       <FlatList
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.conteinerFlatlist}
         data={postData}
         keyExtractor={(item) => item.idPost.toString()}
         renderItem={renderItem}
         ListHeaderComponent={() => (
-          <View style={styles.Container}>
-            <Header title="Home" onMenuPress={() => setIsOpen(!isOpen)} />
-            <Trending
-              navagations={[
-                {
-                  name: "Palestras da Casa",
-                  path: "/home/lectures",
-                  data: [],
-                },
-                { name: "FAQ", path: "/home/faq" },
-              ]}fetchUserLike
-            />
+          <View style={styles.headerComponent}>
+             <View style={styles.Container}>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsOpen(!isOpen)}
+          />
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
+        </View>
           </View>
         )}
         ListEmptyComponent={() =>
@@ -256,4 +259,146 @@ const Index = () => {
   );
 };
 
-export default React.memo(Index);
+export default React.memo(Index)
+
+
+const styles = StyleSheet.create({
+  conteinerFlatlist: {
+    padding: 10,
+    flexGrow: 1,
+    paddingBottom: 180,
+    backgroundColor: "#003B73", // Azul escuro que complementa o #4A90E2
+  },
+  headerComponent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#003B73",
+    paddingTop: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
+  },
+  profile: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.3)", // Borda mais suave
+  },
+  logo: {
+    width: 80,
+    height: 80,
+  },
+  postCard: {
+    marginBottom: 15,
+    padding: 15,
+    backgroundColor: "#4A90E2", // Azul principal mantido
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  headerPostCard: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  userName: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  userHandle: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 13,
+  },
+  postTime: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 12,
+    marginTop: 2,
+  },
+  topicBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(255,255,255,0.2)", // Fundo branco transparente
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  topicText: {
+    color: "white",
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  postContent: {
+    fontSize: 15,
+    color: "white",
+    marginVertical: 12,
+    lineHeight: 22,
+  },
+  postImage: {
+    width: "100%",
+    height: 220,
+    borderRadius: 12,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+  footerCardPost: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.2)",
+  },
+  footerItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.15)", // Fundo mais claro para contraste
+  },
+  emptyText: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 40,
+    fontStyle: "italic",
+  },
+  addPost: {
+    position: "absolute",
+    right: 20,
+    bottom: 140,
+    borderRadius: 28,
+    width: 56,
+    height: 56,
+    backgroundColor: "#4A90E2", // Mesma cor do postCard
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+});

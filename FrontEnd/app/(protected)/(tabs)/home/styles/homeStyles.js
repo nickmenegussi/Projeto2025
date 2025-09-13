@@ -1,68 +1,146 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 export default StyleSheet.create({
-  // Estilos gerais e de layout
+  // ===== ESTILOS GERAIS E DE LAYOUT =====
   linearGradient: {
-    flex: 1,backgroundColor: "#003B73",
+    flex: 1,
+    backgroundColor: "#003B73",
   },
   safeAreaView: {
     flex: 1,
-    padding: 16,
-    paddingVertical: 48,
+    padding: Platform.OS === 'web' ? 24 : 16,
+    paddingVertical: Platform.OS === 'web' ? 20 : 48,
     backgroundColor: "#003B73",
   },
   container: {
-    flexGrow: 1,backgroundColor: "#003B73",
-  },
-  
-  // Cabeçalhos e títulos
-  Container: {
+    flexGrow: 1,
     backgroundColor: "#003B73",
   },
+  
+  // ===== LAYOUT ESPECÍFICO PARA WEB =====
+  webContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: "#003B73",
+  },
+  webContent: {
+    flex: 1,
+    padding: Platform.OS === 'web' ? 24 : 16,
+  },
+  webMainLayout: {
+    flex: 1,
+    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
+    marginTop: 20,
+    gap: Platform.OS === 'web' ? 24 : 0,
+  },
+  webLeftColumn: {
+    flex: 1,
+    marginRight: Platform.OS === 'web' ? 16 : 0,
+    maxWidth: Platform.OS === 'web' ? '60%' : '100%',
+  },
+  webRightColumn: {
+    flex: 1,
+    maxWidth: Platform.OS === 'web' ? '40%' : '100%',
+  },
+  webSection: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        cursor: 'pointer',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      },
+      default: {
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      }
+    })
+  },
+  webSectionTitle: {
+    fontSize: Platform.OS === 'web' ? 20 : 17,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  
+  // ===== CABEÇALHOS E TÍTULOS =====
+  Container: {
+    backgroundColor: "#003B73",
+    marginBottom: Platform.OS === 'web' ? 24 : 16,
+  },
   header: {
-    fontSize: 17,
+    fontSize: Platform.OS === 'web' ? 20 : 17,
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 25,
+    ...Platform.select({
+      web: {
+        paddingLeft: 8,
+        borderLeftWidth: 4,
+        borderLeftColor: '#0A73D9'
+      }
+    })
   },
   headerTitle: {
     color: "white",
-    fontSize: 24,
+    fontSize: Platform.OS === 'web' ? 28 : 24,
     fontWeight: "bold",
     textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    marginBottom: Platform.OS === 'web' ? 20 : 16,
   },
   title: {
-    fontSize: 20,
+    fontSize: Platform.OS === 'web' ? 22 : 20,
     fontWeight: "bold",
     color: "white",
     marginBottom: 20,
     textAlign: "center",
   },
   
-  // Cartões e containers
+  // ===== CARTÕES E CONTAINERS =====
   cardContainer: {
-    backgroundColor: "#003B73",
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: Platform.OS === 'web' ? 'rgba(255, 255, 255, 0.08)' : "#003B73",
+    padding: Platform.OS === 'web' ? 16 : 10,
+    borderRadius: 12,
+    marginBottom: Platform.OS === 'web' ? 20 : 16,
+    ...Platform.select({
+      web: {
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+      }
+    })
   },
   containerFaq: {
-    marginBottom: 40,
+    marginBottom: Platform.OS === 'web' ? 32 : 40,
   },
   ContainerReviews: {
     position: "relative",
     backgroundColor: "#60A3D9",
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: Platform.OS === 'web' ? 12 : 10,
+    padding: Platform.OS === 'web' ? 24 : 20,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 6px 16px rgba(0, 59, 115, 0.3)',
+      }
+    })
   },
   
-  // Avatar e imagens
+  // ===== AVATAR E IMAGENS =====
   avatarImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: Platform.OS === 'web' ? 50 : 42,
+    height: Platform.OS === 'web' ? 50 : 42,
+    borderRadius: Platform.OS === 'web' ? 25 : 21,
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.3)",
   },
@@ -76,26 +154,33 @@ export default StyleSheet.create({
     resizeMode: "cover",
   },
   
-  // Componentes de formulário
+  // ===== COMPONENTES DE FORMULÁRIO =====
   picker: {
-    height: 55,
+    height: Platform.OS === 'web' ? 48 : 55,
     backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 0,
-    width: "50%",
+    width: Platform.OS === 'web' ? '40%' : "50%",
+    ...Platform.select({
+      web: {
+        padding: 12,
+        fontSize: 16,
+      }
+    })
   },
   itemDropDrown: {
     backgroundColor: "#fff",
     borderWidth: 0,
     borderRadius: 8,
-    width: "50%",
+    width: Platform.OS === 'web' ? '40%' : "50%",
   },
   
-  // Layout e disposição de elementos
+  // ===== LAYOUT E DISPOSIÇÃO DE ELEMENTOS =====
   containerIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: Platform.OS === 'web' ? 20 : 16,
   },
   IconsContent: {
     flexDirection: "row",
@@ -107,9 +192,10 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+    marginBottom: Platform.OS === 'web' ? 20 : 16,
   },
   
-  // Itens do carousel
+  // ===== ITENS DO CAROUSEL =====
   carouselItem: {
     backgroundColor: "white",
     padding: 15,
@@ -117,45 +203,47 @@ export default StyleSheet.create({
     marginRight: 10,
     justifyContent: "center",
     alignItems: "flex-start",
-    height: 200,
+    height: Platform.OS === 'web' ? 220 : 200,
   },
   SmallcarouselItem: {
     borderRadius: 10,
     marginRight: 10,
     flexDirection: "column",
-    height: 150,
+    height: Platform.OS === 'web' ? 170 : 150,
   },
   
-  // Overlay e títulos de posts
+  // ===== OVERLAY E TÍTULOS DE POSTS =====
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   titlePost: {
-    fontSize: 16,
+    fontSize: Platform.OS === 'web' ? 18 : 16,
     color: "white",
     position: "absolute",
     bottom: 20,
     left: 20,
     right: 10,
+    fontWeight: Platform.OS === 'web' ? '600' : 'normal',
   },
   titlePostBigger: {
-    fontSize: 16,
+    fontSize: Platform.OS === 'web' ? 18 : 16,
     color: "white",
     position: "absolute",
     bottom: 20,
     left: 20,
     right: 10,
+    fontWeight: Platform.OS === 'web' ? '600' : 'normal',
   },
   
-  // Cartões de conteúdo
+  // ===== CARTÕES DE CONTEÚDO =====
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    marginBottom: 16,
+    padding: Platform.OS === 'web' ? 20 : 16,
+    marginBottom: Platform.OS === 'web' ? 20 : 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -163,48 +251,49 @@ export default StyleSheet.create({
     elevation: 4,
   },
   icon: {
-    width: 48,
-    height: 48,
-    marginRight: 16,
+    width: Platform.OS === 'web' ? 56 : 48,
+    height: Platform.OS === 'web' ? 56 : 48,
+    marginRight: Platform.OS === 'web' ? 20 : 16,
     resizeMode: "contain",
   },
   textContainer: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: Platform.OS === 'web' ? 18 : 16,
     fontWeight: "bold",
     color: "#003B73",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   cardDescription: {
-    fontSize: 14,
+    fontSize: Platform.OS === 'web' ? 15 : 14,
     color: "#555",
+    lineHeight: Platform.OS === 'web' ? 1.5 : 20,
   },
   
-  // Container de reviews
+  // ===== CONTAINER DE REVIEWS =====
   reviewsContainer: {
-    height: 300,
+    height: Platform.OS === 'web' ? 320 : 300,
     width: "100%",
     marginVertical: 10,
   },
   
-  // Botões
+  // ===== BOTÕES =====
   editButton: {
     backgroundColor: "#0A73D9",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: Platform.OS === 'web' ? 44 : 40,
+    height: Platform.OS === 'web' ? 44 : 40,
+    borderRadius: Platform.OS === 'web' ? 22 : 20,
     justifyContent: "center",
     alignItems: "center",
   },
   
-  // CALENDÁRIO
+  // ===== CALENDÁRIO =====
   calendarSection: {
-    marginBottom: 30,
+    marginBottom: Platform.OS === 'web' ? 32 : 30,
   },
   calendar: {
-    height: 380,
+    height: Platform.OS === 'web' ? 400 : 380,
     borderRadius: 15,
     overflow: "hidden",
     elevation: 3,
@@ -218,10 +307,10 @@ export default StyleSheet.create({
     color: "#fff",
     fontStyle: "italic",
     marginTop: 10,
-    fontSize: 14,
+    fontSize: Platform.OS === 'web' ? 15 : 14,
   },
   
-  // MODAL
+  // ===== MODAL =====
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -230,9 +319,10 @@ export default StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    width: "90%",
+    borderRadius: Platform.OS === 'web' ? 16 : 20,
+    padding: Platform.OS === 'web' ? 24 : 20,
+    width: Platform.OS === 'web' ? '50%' : "90%",
+    maxWidth: Platform.OS === 'web' ? 600 : '90%',
     maxHeight: "80%",
     shadowColor: "#000",
     shadowOffset: {
@@ -253,21 +343,21 @@ export default StyleSheet.create({
     paddingBottom: 10,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: Platform.OS === 'web' ? 22 : 20,
     fontWeight: "bold",
     color: "#003B73",
     flex: 1,
   },
   closeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: Platform.OS === 'web' ? 34 : 30,
+    height: Platform.OS === 'web' ? 34 : 30,
+    borderRadius: Platform.OS === 'web' ? 17 : 15,
     backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
   },
   closeButtonText: {
-    fontSize: 18,
+    fontSize: Platform.OS === 'web' ? 20 : 18,
     fontWeight: "bold",
     color: "#003B73",
   },
@@ -276,7 +366,7 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   
-  // EVENTOS (dentro do modal)
+  // ===== EVENTOS (DENTRO DO MODAL) =====
   eventItem: {
     flexDirection: "row",
     backgroundColor: "#F8F9FA",
@@ -290,13 +380,13 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
-    minWidth: 70,
+    minWidth: Platform.OS === 'web' ? 80 : 70,
     backgroundColor: "#0A73D9",
     borderRadius: 8,
     padding: 5,
   },
   eventTime: {
-    fontSize: 14,
+    fontSize: Platform.OS === 'web' ? 15 : 14,
     fontWeight: "600",
     color: "white",
     textAlign: "center",
@@ -305,36 +395,36 @@ export default StyleSheet.create({
     flex: 1,
   },
   eventName: {
-    fontSize: 16,
+    fontSize: Platform.OS === 'web' ? 17 : 16,
     fontWeight: "bold",
     color: "#003B73",
     marginBottom: 4,
   },
   eventDescription: {
-    fontSize: 14,
+    fontSize: Platform.OS === 'web' ? 15 : 14,
     color: "#666",
-    lineHeight: 20,
+    lineHeight: Platform.OS === 'web' ? 1.5 : 20,
   },
   
-  // Estados vazios e mensagens
+  // ===== ESTADOS VAZIOS E MENSAGENS =====
   noEventsContainer: {
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   noEventsText: {
-    fontSize: 16,
+    fontSize: Platform.OS === 'web' ? 17 : 16,
     color: "#888",
     fontStyle: "italic",
     textAlign: "center",
   },
   
-  // Botão de adicionar evento
+  // ===== BOTÃO DE ADICIONAR EVENTO =====
   addEventButton: {
     flexDirection: "row",
     backgroundColor: "#0A73D9",
     borderRadius: 10,
-    padding: 12,
+    padding: Platform.OS === 'web' ? 14 : 12,
     marginTop: 15,
     justifyContent: "center",
     alignItems: "center",
@@ -343,6 +433,6 @@ export default StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: Platform.OS === 'web' ? 15 : 14,
   },
 });

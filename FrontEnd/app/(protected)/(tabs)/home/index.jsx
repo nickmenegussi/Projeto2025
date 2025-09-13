@@ -4,9 +4,12 @@ import {
   FlatList,
   View,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
+  useWindowDimensions,
+  Platform
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { WebView } from 'react-native-webview';
 
 import styles from "./styles/homeStyles";
 import { AuthContext } from "../../../../context/auth";
@@ -26,6 +29,9 @@ import api from "../../../../services/api";
 
 const Home = () => {
   const { user } = useContext(AuthContext);
+  const { width } = useWindowDimensions();
+  const isWeb = Platform.OS === 'web';
+  const isLargeScreen = width > 768;
 
   const [lectures, setLectures] = useState([]);
   const [volunteerWork, setVolunteerWork] = useState([]);
@@ -76,37 +82,73 @@ const Home = () => {
     carregarDados();
   }, []);
 
-  // Estrutura de seções
-  const sections = [
-    { type: "Palestras da Casa", component: LectureCarousel, props: { lectures } },
-    { type: "Trabalho Voluntário", component: VolunteerWorkCarousel, props: { VolunteerWork: volunteerWork } },
-    { type: "Calendário de Eventos", component: CalendarSection, props: { calendar } },
-    { type: "FAQ", component: FAQSection, props: {} },
-    { type: "Quem Somos", component: AboutUsSection, props: { objetivos } },
-    { type: "Avaliações", component: ReviewsSection, props: { review, GetReview: carregarDados } },
-  ];
-
-  // Se ainda está carregando, mostra um indicador de carregamento centralizado
-  if (isLoading) {
+  // Layout para web com duas colunas
+  if (isWeb && isLargeScreen) {
     return (
-      <View style={{ 
-      flex: 1, 
-      backgroundColor: '#003B73', 
-      justifyContent: 'center', 
-      alignItems: 'center' 
-    }}>
-      <ActivityIndicator size="large" color="#FFFFFF" />
-    </View>
+      // colocar scrollview
+      <View style={styles.webContainer}>
+        <SideBar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
+        
+        <View style={styles.webContent}>
+          <Header title="Home" onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)} />
+          
+          <View style={styles.webMainLayout}>
+            {/* Coluna da esquerda */}
+            <View style={styles.webLeftColumn}>
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>Palestras da Casa</Text>
+                <LectureCarousel lectures={lectures} />
+              </View>
+              
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>Trabalho Voluntário</Text>
+                <VolunteerWorkCarousel VolunteerWork={volunteerWork} />
+              </View>
+              
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>Avaliações</Text>
+                <ReviewsSection review={review} GetReview={carregarDados} />
+              </View>
+            </View>
+            
+            {/* Coluna da direita */}
+            <View style={styles.webRightColumn}>
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>Calendário de Eventos</Text>
+                <CalendarSection calendar={calendar} />
+              </View>
+              
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>FAQ</Text>
+                <FAQSection />
+              </View>
+              
+              <View style={styles.webSection}>
+                <Text style={styles.webSectionTitle}>Quem Somos</Text>
+                <AboutUsSection objetivos={objetivos} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
     );
   }
 
+  // Layout padrão para mobile
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <SideBar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
 
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={sections}
+        data={[
+          { type: "Palestras da Casa", component: LectureCarousel, props: { lectures } },
+          { type: "Trabalho Voluntário", component: VolunteerWorkCarousel, props: { VolunteerWork: volunteerWork } },
+          { type: "Calendário de Eventos", component: CalendarSection, props: { calendar } },
+          { type: "FAQ", component: FAQSection, props: {} },
+          { type: "Quem Somos", component: AboutUsSection, props: { objetivos } },
+          { type: "Avaliações", component: ReviewsSection, props: { review, GetReview: carregarDados } },
+        ]}
         keyExtractor={(item) => item.type}
         renderItem={({ item }) => {
           const SectionComponent = item.component;

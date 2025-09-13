@@ -12,9 +12,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-
-import styles from "./styles/StudyGroupStyle";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import {
   Bell,
@@ -34,13 +32,11 @@ import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { AuthContext } from "../../../../context/auth";
 import Header from "../../../../components/Header";
 
 const { width } = Dimensions.get("window");
 
-const HomeStudyGroup = () => {
-  const { user } = useContext(AuthContext);
+const Index = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -125,19 +121,32 @@ const HomeStudyGroup = () => {
     </View>
   );
 
-  const headerSection = () => {
-  return (
+  const headerSection = () => (
     <View style={styles.Container}>
-      <Header title="Grupos de Estudo" onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)} />
-      <Trending
-        navagations={[
-          { name: "Palestras da Casa", path: "/home/lectures", data: [] },
-          { name: "FAQ", path: "/home/faq" },
-        ]}
-      />
-    </View>
+          <Header
+            title="Home"
+            onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)}
+          />
+          <Trending
+            navagations={[
+              {
+                type: "Navegação",
+                name: "Acervo Encomendas",
+                path: "/library/ReserveCollection",
+              },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              {
+                name: "Histórico de movimentos",
+                path: "/library/historicalRequests",
+              },
+              { name: "Explorar", path: "/library/explore" },
+            ]}
+            textTitlle={false}
+          />
+        </View>
   );
-};
 
   const goToGroupList = useCallback(
     (payload) => router.push(`/studyGroup/group/${payload[0].TypeGroup}`),
@@ -244,10 +253,7 @@ const HomeStudyGroup = () => {
       <View style={styles.facilitatorsSection}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Facilitadores</Text>
-          <TouchableOpacity
-            style={styles.seeAllButton}
-            onPress={() => router.push("/studyGroup/facilitadores")}
-          >
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push('/studyGroup/facilitadores')}>
             <Text style={styles.seeAllText}>Ver todos</Text>
             <ChevronRight size={16} color="#4A90E2" />
           </TouchableOpacity>
@@ -260,14 +266,7 @@ const HomeStudyGroup = () => {
           contentContainerStyle={styles.facilitatorsContent}
         >
           {/* Facilitador 1 */}
-          <TouchableOpacity
-            style={styles.facilitatorCard}
-            onPress={() =>
-              router.push(
-                `/studyGroup/facilitador/${facilitator.idFacilitadores}`
-              )
-            }
-          >
+          <TouchableOpacity style={styles.facilitatorCard}                   onPress={() => router.push(`/studyGroup/facilitador/${facilitator.idFacilitadores}`)}>
             <View style={styles.avatarContainer}>
               <Image
                 source={{ uri: "https://i.pravatar.cc/150?img=11" }}
@@ -375,4 +374,266 @@ const HomeStudyGroup = () => {
   );
 };
 
-export default React.memo(HomeStudyGroup);
+export default React.memo(Index);
+
+const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: "#003B73",
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+  },
+  headerContainer: {
+    marginBottom: 20,
+    paddingTop: 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  avatarImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  containerTextGroup: {
+    marginBottom: 32,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  TextStudyGroup: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#4A90E2",
+  },
+  IconsContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+  },
+  SmallcarouselItem: {
+    borderRadius: 16,
+    marginRight: 10,
+    flex: 1,
+    flexDirection: "column",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  BackgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: 200,
+  },
+  imageStyle: {
+    borderRadius: 16,
+  },
+  gradientOverlay: {
+    flex: 1,
+    borderRadius: 16,
+    justifyContent: "flex-end",
+  },
+  overlay: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 16,
+    justifyContent: "flex-end",
+  },
+  item: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  titlePost: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  SubtitlePost: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.95)",
+    marginLeft: 6,
+    fontWeight: "500",
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  detailsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  timeText: {
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.9)",
+    marginLeft: 6,
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 16,
+    marginVertical: 10,
+  },
+  emptyText: {
+    color: "#E0E0E0",
+    fontSize: 16,
+    marginTop: 12,
+    textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "white",
+    marginTop: 12,
+    fontSize: 16,
+  },
+  facilitatorsSection: {
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+  },
+  seeAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  seeAllText: {
+    color: "#4A90E2",
+    fontSize: 14,
+    fontWeight: "500",
+    marginRight: 4,
+  },
+  facilitatorsList: {
+    paddingVertical: 8,
+  },
+  facilitatorsContent: {
+    paddingRight: 16,
+  },
+  facilitatorCard: {
+    width: 150,
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 16,
+    marginRight: 16,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  avatarContainer: {
+    position: "relative",
+    marginBottom: 12,
+  },
+  facilitatorAvatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#E9E9E9",
+  },
+  onlineIndicator: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#34C759",
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  facilitatorName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  facilitatorRole: {
+    fontSize: 14,
+    color: "#4A90E2",
+    textAlign: "center",
+    marginBottom: 8,
+    fontWeight: "500",
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F7F9FC",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: "#666",
+    marginLeft: 4,
+    fontWeight: "600",
+  },
+  addCard: {
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#4A90E2",
+    borderStyle: "dashed",
+    backgroundColor: "rgba(74, 144, 226, 0.05)",
+  },
+  addIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: "#4A90E2",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  addText: {
+    fontSize: 14,
+    color: "#4A90E2",
+    textAlign: "center",
+    fontWeight: "500",
+  },
+});

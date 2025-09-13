@@ -1,20 +1,23 @@
 import React from "react";
-import { View, Text, ImageBackground, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { useRouter } from "expo-router";
+import EmptyContent from "../../../../../components/EmptyContent";
 import styles from "../styles/homeStyles";
-import { router } from "expo-router";
 
-const LectureCarousel = ({ lectures }) => {
-  if (!lectures || lectures.length === 0)
-    return <ActivityIndicator size="large" color="#0000ff" />;
+const VolunteerWorkCarousel = ({ volunteerWork }) => {
+  const router = useRouter();
+
+  if (!volunteerWork || volunteerWork.length === 0)
+    return <EmptyContent title="Ops! Nada por aqui" subtitle="Tente novamente mais tarde" />;
 
   return (
     <Carousel
       width={350}
-      height={170}
-      data={lectures}
+      height={220}
+      data={volunteerWork}
       renderItem={(item) => (
-        <View style={styles.SmallcarouselItem} key={item.item.idLecture}>
+        <View style={styles.SmallcarouselItem} key={item.item.idVolunteerWork}>
           <ImageBackground
             source={require("../../../../../assets/images/Jesus-Cristo.png")}
             style={styles.BackgroundImage}
@@ -25,13 +28,15 @@ const LectureCarousel = ({ lectures }) => {
               activeOpacity={0.5}
               onPress={() =>
                 router.push({
-                  pathname: "/home/lectures",
-                  params: { data: JSON.stringify(lectures) },
+                  pathname: "/home/volunteerWork",
+                  params: { data: JSON.stringify(item.item) },
                 })
               }
             >
               <View style={styles.item}>
-                <Text style={styles.titlePost}>{item.item.nameLecture}</Text>
+                <Text style={styles.titlePostBigger}>
+                  {item.item.nameVolunteerWork || ""}
+                </Text>
               </View>
             </TouchableOpacity>
           </ImageBackground>
@@ -47,4 +52,4 @@ const LectureCarousel = ({ lectures }) => {
   );
 };
 
-export default LectureCarousel;
+export default VolunteerWorkCarousel;
