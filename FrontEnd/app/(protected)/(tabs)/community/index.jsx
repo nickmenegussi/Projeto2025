@@ -6,8 +6,12 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
   CircleUserRoundIcon,
   Download,
@@ -25,6 +29,7 @@ import api from "../../../../services/api";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
 import Header from "../../../../components/Header";
 import Trending from "../../../../components/Navagation";
+import SidebarWeb from "../../../../components/SidebarWeb";
 
 const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +38,8 @@ const Index = () => {
   const { postData, setPostData, refresh, loading } =
     usePostMessage(searchTerm);
   const [refreshing, setRefreshing] = useState(false);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -87,7 +94,7 @@ const Index = () => {
     }
   }, []);
 
-  useCallback(() => {
+  useEffect(() => {
     fetchUserLikes();
   }, []);
 
@@ -121,7 +128,7 @@ const Index = () => {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <View style={styles.postCard}>
+      <View style={[styles.postCard, isMobile ? styles.mobilePostCard : styles.webPostCard]}>
         <View style={styles.headerRow}>
           {item.image_profile ? (
             <Image
@@ -190,84 +197,162 @@ const Index = () => {
         </View>
       </View>
     ),
-    [userLikes]
+    [userLikes, isMobile]
   );
 
-  return (
-    <>
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} data={dataSidebar} />
+  const renderFlatlistContainerMobile = () => {
+    return (
+      <>
+        <FlatList
+          contentContainerStyle={styles.conteinerFlatlist}
+          data={postData}
+          keyExtractor={(item) => item.idPost.toString()}
+          renderItem={renderItem}
+          ListHeaderComponent={() => {
+            return (
+              <View style={styles.headerComponent}>
+                <View style={styles.Container}>
+                  <Header title="Home" onMenuPress={() => setIsOpen(!isOpen)} />
+                  <Trending
+                    navagations={[
+                      {
+                        type: "Navegação",
+                        name: "Acervo Encomendas",
+                        path: "/library/ReserveCollection",
+                      },
+                      {
+                        name: "Acervo Empréstimos",
+                        path: "/library/LoanCollection",
+                      },
+                      { name: "Buscar Livros", path: "/library/searchBook" },
+                      { name: "Minha Biblioteca", path: "/library/myLibrary" },
+                      {
+                        name: "Histórico de movimentos",
+                        path: "/library/historicalRequests",
+                      },
+                      { name: "Explorar", path: "/library/explore" },
+                    ]}
+                    textTitlle={false}
+                  />
+                </View>
+              </View>
+            );
+          }}
+          ListEmptyComponent={() =>
+            loading ? (
+              <View style={styles.loadingContainer}>
+                <LoadingScreen image={false} />
+              </View>
+            ) : (
+              <Text style={styles.emptyText}>Nenhuma postagem encontrada</Text>
+            )
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#4A90E2"]}
+              tintColor={"#4A90E2"}
+            />
+          }
+        />
 
-      <FlatList
-        contentContainerStyle={styles.conteinerFlatlist}
-        data={postData}
-        keyExtractor={(item) => item.idPost.toString()}
-        renderItem={renderItem}
-        ListHeaderComponent={() => (
-          <View style={styles.headerComponent}>
-             <View style={styles.Container}>
-          <Header
-            title="Home"
-            onMenuPress={() => setIsOpen(!isOpen)}
-          />
-          <Trending
-            navagations={[
-              {
-                type: "Navegação",
-                name: "Acervo Encomendas",
-                path: "/library/ReserveCollection",
-              },
-              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
-              { name: "Buscar Livros", path: "/library/searchBook" },
-              { name: "Minha Biblioteca", path: "/library/myLibrary" },
-              {
-                name: "Histórico de movimentos",
-                path: "/library/historicalRequests",
-              },
-              { name: "Explorar", path: "/library/explore" },
-            ]}
-            textTitlle={false}
-          />
-        </View>
-          </View>
-        )}
-        ListEmptyComponent={() =>
-          loading ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <LoadingScreen image={false} />
+        <TouchableOpacity
+          style={styles.addPost}
+          onPress={() => router.push("/community/createPost")}
+        >
+          <Plus color={"white"} size={24} />
+        </TouchableOpacity>
+      </>
+    );
+  };
+
+  const renderViewContainerWeb = () => {
+    return (
+      <View style={styles.webContainer}>
+        <SidebarWeb />
+        
+        <View style={styles.webMainContent}>
+          <View style={styles.webContentContainer}>
+            <View style={styles.webHeader}>
+              <View>
+                <Text style={styles.webTitle}>Comunidade</Text>
+                <Text style={styles.webSubtitle}>
+                  Conecte-se com outros leitores e compartilhe suas experiências
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.webAddPost}
+                onPress={() => router.push("/community/createPost")}
+              >
+                <Plus color={"white"} size={20} />
+                <Text style={styles.webAddPostText}>Nova Postagem</Text>
+              </TouchableOpacity>
             </View>
-          ) : (
-            <Text style={styles.emptyText}>Nenhuma postagem encontrada</Text>
-          )
-        }
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-      />
 
-      <TouchableOpacity
-        style={styles.addPost}
-        onPress={() => router.push("/community/createPost")}
-      >
-        <Plus color={"white"} size={24} />
-      </TouchableOpacity>
-    </>
-  );
+            {/* <View style={styles.filterContainer}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <TouchableOpacity style={[styles.filterPill, styles.filterPillActive]}>
+                  <Text style={[styles.filterText, styles.filterTextActive]}>Todos</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.filterPill}>
+                  <Text style={styles.filterText}>Populares</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.filterPill}>
+                  <Text style={styles.filterText}>Recentes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.filterPill}>
+                  <Text style={styles.filterText}>Seguindo</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View> */}
+
+
+
+            {loading ? (
+              <View style={styles.loadingContainerWeb}>
+                <LoadingScreen image={false} />
+                <Text style={styles.loadingText}>Carregando postagens...</Text>
+              </View>
+            ) : postData.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>Nenhuma postagem encontrada</Text>
+                <Text style={styles.emptyStateSubtext}>
+                  Seja o primeiro a compartilhar algo na comunidade!
+                </Text>
+                <TouchableOpacity
+                  style={styles.emptyStateButton}
+                  onPress={() => router.push("/community/createPost")}
+                >
+                  <Text style={styles.emptyStateButtonText}>Criar Primeira Postagem</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.postsGrid}>
+                {postData.map((item) => (
+                  <ScrollView key={item.idPost.toString()} style={styles.gridItem}>
+                    {renderItem({ item })}
+                  </ScrollView>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  return isMobile ? renderFlatlistContainerMobile() : renderViewContainerWeb();
 };
 
-export default React.memo(Index)
-
+export default React.memo(Index);
 
 const styles = StyleSheet.create({
   conteinerFlatlist: {
     padding: 10,
     flexGrow: 1,
     paddingBottom: 180,
-    backgroundColor: "#003B73", // Azul escuro que complementa o #4A90E2
+    backgroundColor: "#003B73",
   },
   headerComponent: {
     flexDirection: "row",
@@ -284,16 +369,15 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.3)", // Borda mais suave
+    borderColor: "rgba(255,255,255,0.3)",
   },
   logo: {
     width: 80,
     height: 80,
   },
   postCard: {
-    marginBottom: 15,
     padding: 15,
-    backgroundColor: "#4A90E2", // Azul principal mantido
+    backgroundColor: "#4A90E2",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
     borderRadius: 16,
@@ -303,6 +387,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
+  },
+  mobilePostCard: {
+    marginBottom: 15,
+  },
+  webPostCard: {
+    marginBottom: 0,
+    height: '100%',
   },
   headerRow: {
     flexDirection: "row",
@@ -334,7 +425,7 @@ const styles = StyleSheet.create({
   },
   topicBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "rgba(255,255,255,0.2)", // Fundo branco transparente
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -374,7 +465,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.15)", // Fundo mais claro para contraste
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   emptyText: {
     color: "rgba(255,255,255,0.7)",
@@ -390,7 +481,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     width: 56,
     height: 56,
-    backgroundColor: "#4A90E2", // Mesma cor do postCard
+    backgroundColor: "#4A90E2",
     justifyContent: "center",
     alignItems: "center",
     elevation: 8,
@@ -400,5 +491,147 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.3)",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 40,
+  },
+  
+  // Web Styles
+  webContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#003B73',
+    minHeight: '100vh',
+  },
+  webMainContent: {
+    flex: 1,
+    marginLeft: 280,
+    backgroundColor: '#f5f7fa',
+  },
+  webContentContainer: {
+    flex: 1,
+    padding: 30,
+    maxWidth: 'auto',
+    marginHorizontal: 'auto',
+    width: '100%',
+  },
+  webHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 24,
+    marginTop: 50
+  },
+  webTitle: {
+    color: "#023047",
+    fontSize: 32,
+    fontWeight: "800",
+    marginBottom: 4,
+  },
+  webSubtitle: {
+    color: "#8ecae6",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  webAddPost: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4A90E2",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 8,
+    shadowColor: "#4A90E2",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  webAddPostText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  filterContainer: {
+    marginBottom: 24,
+    flexGrow: 0,
+  },
+  filterPill: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  filterPillActive: {
+    backgroundColor: '#4A90E2',
+    borderColor: '#4A90E2',
+  },
+  filterText: {
+    color: '#023047',
+    fontWeight: '500',
+  },
+  filterTextActive: {
+    color: 'white',
+  },
+  postsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+    justifyContent: 'flex-start',
+  },
+  gridItem: {
+    minWidth: 400,
+    flexGrow: 1,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 60,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    marginTop: 20,
+  },
+  emptyStateText: {
+    color: '#023047',
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyStateSubtext: {
+    color: '#6c757d',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  emptyStateButton: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  emptyStateButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  loadingContainerWeb: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 60,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    marginTop: 20,
+  },
+  loadingText: {
+    marginTop: 16,
+    color: '#6c757d',
+    fontSize: 16,
   },
 });

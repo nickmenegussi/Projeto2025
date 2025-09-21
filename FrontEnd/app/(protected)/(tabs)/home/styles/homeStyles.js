@@ -219,7 +219,7 @@ export default StyleSheet.create({
   },
   titlePost: {
     fontSize: Platform.OS === 'web' ? 18 : 16,
-    color: "white",
+    color: "black",
     position: "absolute",
     bottom: 20,
     left: 20,
