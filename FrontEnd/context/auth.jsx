@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import handleApiError from "../utils/handleApiError";
+import Toast from "react-native-toast-message";
 
 // export const useAuth = () => useContext(AuthContext)
 
@@ -53,12 +54,22 @@ export function AuthProvider({ children }) {
       setOtpEmail(null);
 
       console.log("Erro", response.data.error);
-      Alert.alert(`Erro ${error.response.data.message}`);
+      Toast.show({
+        type: "error",
+        text1:  `$${error.response.data.message}`,
+        position: "top",
+        
+      })
       return;
     }
 
     setOtpEmail(response.data.data);
-    Alert.alert("Sucesso!", response.data.message);
+    Toast.show({
+      type: "success",
+      text1:  `$${response.data.message}`,
+      position: "top",
+      
+    })
     await AsyncStorage.setItem("@Auth:email", email);
   }
   async function OtpVerification(otp) {
@@ -155,25 +166,25 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // async function updatePasswordForgotWithNoLogin(
-  //   newPassword,
-  // ) {
-  //   try {
-  //     if (newPassword.lenghth < 6) {
-  //       Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
-  //       return;
-  //     }
+  //  async function updatePasswordForgotWithNoLogin(
+  //    newPassword, otpCode
+  //  ) {
+  //    try {
+  //      if (newPassword.length < 6) {
+  //        Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+  //        return;
+  //      }
 
-  //     if(email){
-  //       const response = OtpSendEmail(email)
+       
 
-  //       if(response.success === true){
-          
-  //       }
-  //     }
-
-  //   } catch (error) {}
-  // }
+  //    } catch (error) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: `${error.response.data.message}`,
+  //       position: "top",
+  //     })
+  //    }
+  //  }
 
   async function updatePasswordForgotten(
     currentPassword,
@@ -239,6 +250,7 @@ export function AuthProvider({ children }) {
         register,
         updatePerfilImage,
         updatePasswordForgotten,
+        // updatePasswordForgotWithNoLogin 
       }}
     >
       {children}

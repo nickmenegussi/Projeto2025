@@ -10,7 +10,6 @@ import { SafeAreaView } from 'react-native'
 export default function forgottenPassword() {
 
   return (
-    
     <LinearGradient 
       colors={['#003B73', '#60A3D9']} 
       end={{ x: 0, y: 1 }} 

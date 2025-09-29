@@ -17,31 +17,25 @@ import { AuthContext } from "../context/auth";
 import Toast from "react-native-toast-message";
 
 export default function ChangePassword() {
-  const { updatePasswordForgotWithNoLogin } = useContext(AuthContext);
-  const [formData, setFormData] = useState({
-    newPassword: "",
-    otpCode: ""
-  });
+  const { OtpSendEmail } = useContext(AuthContext);
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // async function changePassword() {
-  //   setLoading(true);
-  //   try {
-  //     const response = await updatePasswordForgotWithNoLogin(
-  //       formData.newPassword,
-  //       formData.otpCode
-  //     )
-  //   } catch (error) {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: `${error.response.data.message}`,
-  //       position: "top",
-  //   })
-  //     console.log("Erro ao alterar senha:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function sendEmailOtp(email) {
+    setLoading(true);
+    try {
+      await OtpSendEmail(email)
+      router.push("/ChangePassword")
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: `${error.response.data.message}`,
+        position: "top",
+      })
+      console.log("Erro ao enviar email:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <LinearGradient
@@ -57,7 +51,7 @@ export default function ChangePassword() {
           >
             <ArrowLeftIcon color="white" size={30} />
           </TouchableOpacity>
-          <Text style={styles.title}>Alterar Senha</Text>
+          <Text style={styles.title}>Verificação para Alterar Senha</Text>
         </View>
 
         <ScrollView
@@ -66,64 +60,26 @@ export default function ChangePassword() {
         >
           <View style={styles.formContainer}>
             <Text style={styles.subtitle}>
-              Para sua segurança, digite sua senha atual e a nova senha
-              desejada.
+              Para sua segurança, digite seu email para receber o código para mudar de senha.
             </Text>
 
-            {/* <FormField
-              value={formData.oldPassword}
-              othersStyles={{ width: "auto" }}
-              title="Senha Atual"
-              placeholder="Digite sua senha atual"
-              type="Password"
-              secureTextEntry
-              handleChangeText={(text) =>
-                setFormData({ ...formData, oldPassword: text })
-              }
-            /> */}
-
             <FormField
+              value={email}
               othersStyles={{ width: "auto" }}
-              value={formData.newPassword}
-              title="Nova Senha"
-              type="Password"
-              placeholder="Digite a nova senha"
-              secureTextEntry
+              title="Email"
+              placeholder="Digite sua email"
               handleChangeText={(text) =>
-                setFormData({ ...formData, newPassword: text })
-              }
-            />
-
-            {/* <FormField
-              value={formData.confirmPassword}
-              othersStyles={{ width: "auto" }}
-              title="Confirmar Nova Senha"
-              type="Password"
-              placeholder="Confirme a nova senha"
-              secureTextEntry
-              handleChangeText={(text) =>
-                setFormData({ ...formData, confirmPassword: text })
-              }
-            /> */}
-
-            <FormField
-              value={formData.otpCode}
-              othersStyles={{ width: "auto" }}
-              title="Código Otp"
-              placeholder="Digite o código enviado pelo email"
-              secureTextEntry
-              handleChangeText={(text) =>
-                setFormData({ ...formData, otpCode: text })
+                setEmail(text)
               }
             />
 
             <View style={styles.buttonContainer}>
               <Button
-                title={loading ? "Alterando..." : "Alterar Senha"}
+                title={loading ? "Alterando..." : "Mandar email"}
                 textStyles={styles.textButton}
                 buttonStyle={styles.button}
                 othersStyles={styles.buttonWrapper}
-                handlePress={() => changePassword()}
+                handlePress={() => sendEmailOtp(email)}
                 disabled={loading}
               />
             </View>

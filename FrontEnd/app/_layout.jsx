@@ -29,6 +29,9 @@ const RootLayout = () => {
         />
         <Stack.Screen name="otpMessage" options={{ animation: "none" }} />
         <Stack.Screen name="ChangePassword" options={{ animation: "none" }} />
+        <Stack.Screen name="otpPassword" options={{ animation: "none" }} />
+        <Stack.Screen name="emailSendForgotPassword" options={{ animation: "none" }} />
+
       </Stack>
       <Toast />
     </AuthProvider>
