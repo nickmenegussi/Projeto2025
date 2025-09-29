@@ -19,7 +19,7 @@ import { router } from "expo-router";
 import { AuthContext } from "../context/auth";
 
 export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
-  const { user, signOut } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [nameUser, setNameUser] = useState("");
   const { width, height } = useWindowDimensions();
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -143,7 +143,7 @@ export default React.memo(function SideBar({ isOpen, setIsOpen, data }) {
   const handleLogout = () => {
     setIsOpen(false);
     setTimeout(() => {
-      signOut();
+      logout();
     }, 300);
   };
 

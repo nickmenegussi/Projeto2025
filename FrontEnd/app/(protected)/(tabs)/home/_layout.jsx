@@ -40,10 +40,10 @@ const Layout = () => {
         name="faq" 
         options={{ headerShown: false }} 
       />
-      <Stack.Screen 
+      {/* <Stack.Screen 
         name="createCalender" 
         options={{ headerShown: false }} 
-      />
+      /> */}
       <Stack.Screen 
         name="feebackCentro" 
         options={{ headerShown: false }} 

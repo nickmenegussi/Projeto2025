@@ -1,533 +1,636 @@
 import {
   View,
   Text,
-  ImageBackground,
-  ScrollView,
-  TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
   Alert,
-} from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { LinearGradient } from "expo-linear-gradient"
+} from "react-native";
+import { SwipeListView } from "react-native-swipe-list-view";
+import ButtonIcons from "../../../../components/ButtonIcons";
+import { ArrowLeftIcon, Trash2, Edit3, ShoppingCart } from "lucide-react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import useCart from "../../../../hooks/useCart";
+import React, { useContext, useEffect, useState } from "react";
 import {
-  ArrowLeft,
-  Bookmark,
-  Share2,
-  Calendar,
-  Users,
-  Star,
-  BookOpen,
-  ArrowLeftIcon,
-  MapPin,
-  ShoppingCart,
-} from "lucide-react-native"
-import { router, useLocalSearchParams } from "expo-router"
-import ButtonIcons from "../../../../components/ButtonIcons"
-import React, { useEffect, useState } from "react"
-import Trending from "../../../../components/Navagation"
-import Button from "../../../../components/Button"
-import CustomModal from "../../../../components/ModalCustom"
-import { addToCart, getCart } from "../../../../services/ServiceCart"
+  deleteBookInCart,
+  updateQuantity,
+} from "../../../../services/ServiceCart";
+import { createLoanConfirmation } from "../../../../services/ServiceLoan";
+import CustomModal from "../../../../components/ModalCustom";
+import useLoan from "../../../../hooks/useLoan";
 
-const BookLoan = () => {
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [isModalVisible, setModalVisible] = useState(false)
-  const params = useLocalSearchParams()
-  const booksUnique = params.data ? JSON.parse(params.data) : []
-  const book = booksUnique[0] || {
-    nameBook: "Título não disponível",
-    authorBook: "Autor desconhecido",
-    overviewBook: "Sinopse não disponível",
-    curiosityBook: "Nenhuma curiosidade disponível",
-    image: null,
-    tagsBook: "Sem tags",
-    bookCategory: "",
-    status_Available: "",
-    bookQuantity: 0,
+const CartLoan = () => {
+  const { data, loading, refresh } = useCart();
+  const { loan } = useLoan();
+  const [loadingConfirm, setLoadingConfirm] = useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const schedules = [
+    { id: 1, dia: "Segunda-feira", horario: "10:00 - 12:00", disponivel: true },
+    { id: 2, dia: "Terça-feira", horario: "14:00 - 16:00", disponivel: true },
+    { id: 3, dia: "Quarta-feira", horario: "10:00 - 12:00", disponivel: false },
+    { id: 4, dia: "Quinta-feira", horario: "14:00 - 16:00", disponivel: true },
+    { id: 5, dia: "Sexta-feira", horario: "10:00 - 12:00", disponivel: true },
+  ];
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
   }
-  const [itemsCartQuantity, setItemsCartQuantity] = useState(0)
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const cartItems = await AsyncStorage.getItem("@CartLoans")
-        if (cartItems) {
-          const parsedItems = JSON.parse(cartItems)
-          setItemsCartQuantity(parsedItems.length)
-        }
-      } catch (error) {
-        console.error("Erro ao carregar os itens do carrinho:", error)
-      }
-    }
-
-    fetchCartItems()
-  }, [])
-
-  async function handleAddToCart(newItems) {
-    
+  const handleUpdateQuantity = async (Book_idLibrary, quantity) => {
     try {
-      // Busca o carrinho do backend
-      const cartItems = await getCart()
-      const hasDuplicate = cartItems.some(
-        (itemCart) => itemCart.Book_idLibrary === newItems[0].idLibrary
-      )
-
-      if (hasDuplicate) {
-        Alert.alert(
-          "Erro",
-          "Esse livro já está no carrinho. Iremos redirecioná-lo para o carrinho"
-        )
-        router.push("/library/CartLoan")
-      } else {
-        Alert.alert("Sucesso", "Livro adicionado ao carrinho")
-        // Adiciona o novo item ao carrinho no backend
-        await addToCart({
-          bookId: newItems[0].idLibrary,
-          action: "emprestar", 
-          quantity: newItems[0].quantity
-        })
-        setItemsCartQuantity(cartItems.length + 1)
-      }
+      await updateQuantity({ Book_idLibrary, quantity });
+      Alert.alert("Sucesso", "Quantidade atualizada com sucesso!");
     } catch (error) {
-      console.error("Erro ao adicionar livro ao carrinho:", error)
-      Alert.alert("Erro", "Não foi possível adicionar o livro ao carrinho")
+      Alert.alert("Erro", "Não foi possível atualizar a quantidade.");
     }
-  }
+  };
 
-  const imageUrl = book.image
-    ? { uri: `http://192.168.1.10:3001/uploads/${book.image}` }
-    : null
+  const handleDeleteCart = async (idCart) => {
+    try {
+      await deleteBookInCart({ idCart });
+      Alert.alert("Sucesso", "Carrinho deletado com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível deletar o item do carrinho.");
+    }
+  };
+
+  const handleConfirmationLoan = async () => {
+    setLoadingConfirm(true);
+    try {
+      // aqui eu tenho que iterar de novo nos items que tem em data por conta de que eu estou pegando os dados que estão vindo da api que mostra os carrinhos com os itens dentro
+      for (const item of data) {
+        await createLoanConfirmation({
+          Cart_idCart: item.idCart,
+          Book_idLibrary: item.idLibrary,
+          quantity: item.quantity,
+        });
+      }
+      Alert.alert("Sucesso", "Reserva confirmada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível confirmar a reserva.");
+    } finally {
+      setLoadingConfirm(false);
+    }
+  };
+
+  if (!data || (data.length === 0 && loan)) {
+    return (
+      <View style={styles.centeredEmpty}>
+        <View style={styles.emptyIconContainer}>
+          <ShoppingCart color="#FFFFFF" size={64} />
+        </View>
+        
+        <Text style={styles.emptyTitle}>Seu carrinho está vazio</Text>
+        
+        <Text style={styles.emptySubText}>
+          No entanto, percebemos que você já realizou alguns empréstimos. 
+          Que tal dar uma olhada neles?
+        </Text>
+
+        <TouchableOpacity
+          style={styles.emptyPrimaryButton}
+          onPress={() => router.push("/library/historicalLoans")}
+        >
+          <Text style={styles.emptyPrimaryButtonText}>Ver meus Empréstimos</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.emptySecondaryButton}
+          onPress={() => router.push("/library")}
+        >
+          <Text style={styles.emptySecondaryButtonText}>Explorar Biblioteca</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-        {/* Imagem de fundo com gradiente */}
-        <ImageBackground
-          source={imageUrl}
-          style={styles.coverImage}
-          resizeMode="cover"
-        >
-          <LinearGradient
-            colors={["rgba(0,59,115,0.8)", "rgba(0,59,115,0.5)", "transparent"]}
-            style={styles.gradient}
-          />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <ButtonIcons
+          color="#fff"
+          handleChange={() => router.back()}
+          size={24}
+          Icon={({ color, size }) => (
+            <ArrowLeftIcon color={color} size={size} />
+          )}
+        />
+        <Text style={styles.headerTitle}>Carrinho de Empréstimos</Text>
+      </View>
 
-          {/* Cabeçalho */}
-          <View style={styles.header}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() => router.push(``)}
+          activeOpacity={0.7}
+          style={[styles.button, styles.buttonActive]}
+        >
+          <Text style={styles.linkText}>Aguardando confirmação</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push(`library/historicalLoans`)}
+          style={styles.button}
+        >
+          <Text style={{ color: "#7D7D91" }}>Histórico Empréstimos</Text>
+        </TouchableOpacity>
+      </View>
+
+      <SwipeListView
+        data={data}
+        keyExtractor={(item, index) =>
+          item.idLibrary?.toString() || index.toString()
+        }
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        leftOpenValue={75}
+        rightOpenValue={-75}
+        previewOpenDelay={3000}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Image
+                source={{
+                  uri: item.image
+                    ? `http://192.168.1.10:3001/uploads/${item.image}`
+                    : null,
+                }}
+                style={styles.image}
+              />
+              <View style={styles.cardInfo}>
+                <Text style={styles.bookTitle}>{item.nameBook}</Text>
+                <Text style={styles.bookAuthor}>{item.authorBook}</Text>
+                <Text style={styles.libraryName}>
+                  Quantidade items: {item.quantity}
+                </Text>
+                <Text style={styles.libraryName}>
+                  Biblioteca Gabriel Delanne
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.cardFooter}>
+              <View style={styles.footerSection}>
+                <Text style={styles.footerTitle}>Endereço para retirada</Text>
+                <Text style={styles.footerText}>
+                  Sociedade Gabriel Delanne, Rua Coração de Maria, 341, Centro -
+                  Esteio, RS
+                </Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.footerSection}>
+                <Text style={styles.footerTitle}>Forma de pagamento</Text>
+                <Text style={styles.footerText}>
+                  Na livraria da sociedade. Aceitamos Pix, cartão de crédito e
+                  débito.
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+        renderHiddenItem={({ item }) => (
+          <View style={styles.rowBack}>
             <TouchableOpacity
-              style={styles.backButton}
-              activeOpacity={0.7}
-              onPress={() => router.back()}
+              style={styles.backLeftBtn}
+              onPress={() => {
+                setVisibleModal(true);
+                setSelectedItem(item);
+              }}
             >
-              <ArrowLeftIcon size={28} color="#FFFFFF" />
+              <Edit3 color="#fff" size={20} />
+              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
+                Editar
+              </Text>
             </TouchableOpacity>
 
-            <View style={styles.headerActions}>
-              <TouchableOpacity style={styles.actionButton}>
-                <Share2 size={24} color="#FFFFFF" />
-              </TouchableOpacity>
-              <View style={styles.actionButton}>
-                <ButtonIcons
-                  color="#ffff"
-                  size={30}
-                  handleChange={() => setIsFavorite(!isFavorite)}
-                  Icon={({ color, size }) => (
-                    <Bookmark
-                      color={color}
-                      fill={isFavorite ? "#ffff" : "transparent"}
-                      size={size}
-                    />
-                  )}
-                />
-              </View>
-              <View style={styles.actionButton}>
-                <ButtonIcons
-                  handleChange={() => router.push("/library/CartLoan")}
-                  color="#ffff"
-                  size={28}
-                  Icon={({ color, size }) => (
-                    <ShoppingCart color={color} size={size} />
-                  )}
-                />
-                {itemsCartQuantity > 0 && (
-                  <View style={styles.cartBadge}>
-                    <Text style={styles.cartBadgeText}>
-                      {itemsCartQuantity}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
-
-          {/* Informações do livro */}
-          <View style={styles.bookInfo}>
-            <Text style={styles.bookTitle}>{book.nameBook}</Text>
-            <Text style={styles.bookAuthor}>{book.authorBook}</Text>
-
-            <View style={styles.ratingContainer}>
-              <Star size={16} fill="#FFD700" color="#FFD700" />
-              <Text style={styles.ratingText}>Nota: 4.5</Text>
-            </View>
-
-            <View style={styles.tagsContainer}>
-              {book.bookCategory === "empréstimo" && (
-                <View style={styles.tag}>
-                  <Text style={styles.tagText}>Encomenda</Text>
-                </View>
-              )}
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>{book.tagsBook}</Text>
-              </View>
-              {book.status_Available === "disponível" &&
-              book.bookQuantity > 0 ? (
-                <View style={{ flexDirection: "row", gap: 15 }}>
-                  <View style={[styles.tag, styles.availableTag]}>
-                    <Text style={styles.tagText}>Disponível</Text>
-                  </View>
-                  <Text style={[styles.tag, styles.availableTag]}>
-                    Em estoque
-                  </Text>
-                </View>
-              ) : (
-                <View style={{ flexDirection: "row", gap: 15 }}>
-                  <View style={[styles.tag, styles.unavailableTag]}>
-                    <Text style={styles.tagText}>Disponível</Text>
-                  </View>
-                  <Text style={[styles.tag, styles.unavailableTag]}>
-                    Fora de estoque
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
-        </ImageBackground>
-
-        {/* Conteúdo principal */}
-        <View style={styles.content}>
-          <View style={styles.loanRulesSection}>
-            <Text style={styles.sectionTitle}>Regras de Empréstimo</Text>
-
-            {/* Cartão de Regras */}
-            <View style={styles.rulesCard}>
-              {/* 1. Elegibilidade */}
-              <View style={styles.ruleItem}>
-                <Users size={20} color="#60A3D9" style={styles.ruleIcon} />
-                <View style={styles.ruleTextContainer}>
-                  <Text style={styles.ruleTitle}>
-                    Quem pode pegar emprestado
-                  </Text>
-                  <Text style={styles.ruleDescription}>
-                    • Membros cadastrados da sociedade
-                    {"\n"}• Com contribuição em dia
-                    {"\n"}• Sem pendências anteriores
-                  </Text>
-                </View>
-              </View>
-
-              {/* Divisor visual */}
-              <View style={styles.divider} />
-
-              {/* 2. Período de Empréstimo */}
-              <View style={styles.ruleItem}>
-                <Calendar size={20} color="#60A3D9" style={styles.ruleIcon} />
-                <View style={styles.ruleTextContainer}>
-                  <Text style={styles.ruleTitle}>Período de Empréstimo</Text>
-                  <Text style={styles.ruleDescription}>
-                    • Prazo padrão: 30 dias • Renovável por mais 15 dias (se não
-                    houver reservas) • Máximo de 2 renovações por livro
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.divider} />
-              {/* 3. Devolução */}
-              <View style={styles.ruleItem}>
-                <Bookmark size={20} color="#60A3D9" style={styles.ruleIcon} />
-                <View style={styles.ruleTextContainer}>
-                  <Text style={styles.ruleTitle}>Processo de Devolução</Text>
-                  <Text style={styles.ruleDescription}>
-                    • Devolver na biblioteca central
-                    {"\n"}• Horário: 9h às 18h (segunda a sexta)
-                    {"\n"}• Multa por atraso: R$ 2,00/dia
-                    {"\n"}• Livros danificados deverão ser repostos
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Dica importante */}
-            <View style={styles.tipContainer}>
-              <Text style={styles.tipIcon}>💡</Text>
-              <Text style={styles.tipText}>
-                O não cumprimento das regras pode resultar em suspensão
-                temporária do empréstimo.
+            {/* Direita: Remover */}
+            <TouchableOpacity
+              style={styles.backRightBtn}
+              onPress={() => handleDeleteCart(item.idCart)}
+            >
+              <Trash2 color="#fff" size={20} />
+              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
+                Remover
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
-
-          <View>
-            <Button
-              handlePress={() => {
-                Alert.alert(
-                  "Empréstimo de livro",
-                  "Deseja confirmar o empréstimo?",
-                  [
-                    { text: "Não", style: "cancel" },
-                    {
-                      text: "Sim",
-                      onPress: () => {
-                        setModalVisible(true)
-                      },
-                    },
-                  ]
-                )
-              }}
-              opacityNumber={0.5}
-              title={"Solicitar empréstimo do Livro"}
-              textStyles={styles.textButton}
-              buttonStyle={styles.buttonLoan}
-            />
-
-            <Text style={styles.sectionTitle}>Navegação</Text>
-            <Trending
-              navagations={[
-                { name: "Sobre o livro" },
-                {
-                  name: "Empréstimo de livro",
-                  path: "/library/bookLoan",
-                  data: booksUnique,
-                },
-                { name: "Feedbacks", path: "/library/reviewBook" },
-              ]}
-            />
-          </View>
-        </View>
-        {isModalVisible && (
-          <CustomModal
-            item={book}
-            visible={isModalVisible}
-            onClose={() => {
-              console.log("Modal fechado")
-              setModalVisible(false)
-            }}
-            title="Sua Encomenda"
-            description="Atualize sua avaliação"
-            confirmText="Ir para o carrinho"
-            cartItemLength={itemsCartQuantity}
-            onConfirm={(items) => handleAddToCart(items)}
-          />
         )}
-      </ScrollView>
-    </SafeAreaView>
-  )
-}
+        ListFooterComponent={
+          <>
+            <View style={styles.scheduleContainer}>
+              <Text style={styles.sectionTitle}>Horários Disponíveis</Text>
+
+              {schedules.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.scheduleItem,
+                    selectedSchedule === item.id && styles.scheduleItemSelected,
+                    !item.disponivel && styles.scheduleItemDisabled,
+                  ]}
+                  onPress={() =>
+                    item.disponivel && setSelectedSchedule(item.id)
+                  }
+                  disabled={!item.disponivel}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.radioCircle}>
+                    {selectedSchedule === item.id && (
+                      <View style={styles.radioDot} />
+                    )}
+                  </View>
+                  <View style={styles.scheduleInfo}>
+                    <Text style={styles.dayText}>{item.dia}</Text>
+                    <Text style={styles.timeText}>{item.horario}</Text>
+                  </View>
+                  {!item.disponivel && (
+                    <Text style={styles.unavailableText}>Indisponível</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={{ flex: 1, gap: 15, marginTop: 15, marginBottom: 70 }}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => {
+                  handleConfirmationLoan();
+                }}
+                disabled={loadingConfirm}
+              >
+                {loadingConfirm ? (
+                  <ActivityIndicator size="small" color="003B73" />
+                ) : (
+                  <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => router.back("/library/bookLoan")}
+              >
+                <Text style={styles.actionButtonText}>
+                  Adicionar mais itens
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        }
+      />
+      {selectedItem && (
+        <CustomModal
+          visible={visibleModal}
+          onClose={() => {
+            setVisibleModal(false);
+            setSelectedItem(null);
+          }}
+          title={"Atualizar quantidade de itens"}
+          item={selectedItem}
+          onConfirm={(items) => {
+            if (selectedItem.quantity == items[0].quantity) {
+              Alert.alert(
+                "Atenção!",
+                "a quantidade selecionada é a mesma que já está no produto inserido no carrinho."
+              );
+            } else {
+              handleUpdateQuantity(items[0].idLibrary, items[0].quantity);
+              setVisibleModal(false);
+              setSelectedItem(null);
+              refresh();
+            }
+          }}
+        />
+      )}
+    </View>
+  );
+};
+
+export default React.memo(CartLoan);
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#003B73",
-    paddingBottom: 100,
-  },
   container: {
     flex: 1,
-  },
-  coverImage: {
-    width: "100%",
-    height: 500,
-    justifyContent: "space-between",
-  },
-  gradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: "100%",
+    backgroundColor: "#003B73",
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    justifyContent: "center",
     alignItems: "center",
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 15,
-  },
-  actionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bookInfo: {
+    gap: 50,
     padding: 20,
-    paddingBottom: 30,
-  },
-  bookTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 5,
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  bookAuthor: {
-    fontSize: 18,
-    color: "#FFFFFF",
-    marginBottom: 15,
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    gap: 10,
-  },
-  ratingText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginBottom: 20,
-  },
-  tag: {
-    alignContent: "center",
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: "#60A3D9",
-  },
-  availableTag: {
-    backgroundColor: "#50C878", // Verde pastel suave
-    borderColor: "rgba(31, 110, 31, 0.5)",
-    color: "white",
-  },
-  unavailableTag: {
-    backgroundColor: "#FF6B6B",
-    borderColor: "rgba(139, 0, 0, 0.5)",
-    color: "white",
-  },
-  tagText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  content: {
+    paddingTop: 50,
     backgroundColor: "#003B73",
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -30,
-    padding: 25,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
-  sectionTitle: {
-    fontSize: 22,
+  headerTitle: {
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
+    color: "white",
   },
-  loanRulesSection: {
-    marginBottom: 30,
-  },
-  rulesCard: {
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 12,
-    padding: 16,
+  statusBar: {
+    flexDirection: "row",
+    gap: 10,
+    padding: 5,
+    margin: 15,
+    borderRadius: 8,
     borderWidth: 1,
-    marginTop: 15,
+    color: "white",
     borderColor: "rgba(255,255,255,0.2)",
   },
-  ruleItem: {
+  statusItem: {
     flexDirection: "row",
-    marginVertical: 12,
+    alignItems: "center",
+    gap: 8,
   },
-  ruleIcon: {
-    marginRight: 15,
-    marginTop: 3,
+  statusText: {
+    fontSize: 14,
+    color: "#FFFFFF",
+    fontWeight: "500",
   },
-  ruleTextContainer: {
+  listContent: {
+    padding: 16,
+    paddingBottom: 100,
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
+  image: {
+    width: 80,
+    height: 120,
+    borderRadius: 8,
+    backgroundColor: "#EEE",
+  },
+  cardInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  bookTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 4,
+  },
+  bookAuthor: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+  libraryName: {
+    fontSize: 13,
+    color: "#007AFF",
+    fontWeight: "500",
+  },
+  cardFooter: {
+    flexDirection: "row",
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#EEE",
+  },
+  footerSection: {
     flex: 1,
   },
-  ruleTitle: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-    fontSize: 16,
-    marginBottom: 8,
+  footerTitle: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#666",
+    marginBottom: 4,
   },
-  ruleDescription: {
-    color: "rgba(255,255,255,0.8)",
-    fontSize: 14,
-    lineHeight: 22,
+  footerText: {
+    fontSize: 12,
+    color: "#888",
+    lineHeight: 16,
   },
   divider: {
-    height: 1,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    marginVertical: 8,
+    width: 1,
+    backgroundColor: "#DDD",
+    marginHorizontal: 12,
   },
-  tipContainer: {
+  scheduleContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#003B73",
+    marginBottom: 12,
+  },
+  scheduleItem: {
     flexDirection: "row",
-    backgroundColor: "rgba(255,215,0,0.15)",
+    alignItems: "center",
     padding: 12,
     borderRadius: 8,
-    marginTop: 15,
-    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    marginBottom: 8,
   },
-  tipIcon: {
-    fontSize: 20,
-    marginRight: 10,
+  scheduleItemSelected: {
+    backgroundColor: "#E3F2FD",
+    borderWidth: 1,
+    borderColor: "#003B73",
   },
-  tipText: {
-    color: "#FFD700",
-    flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
+  scheduleItemDisabled: {
+    opacity: 0.6,
   },
-  buttonLoan: {
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 20,
-    marginTop: 0,
-  },
-  textButton: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  cartBadge: {
-    position: "absolute",
-    top: -4,
-    right: -4,
-    backgroundColor: "#FF4C4C",
+  radioCircle: {
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    width: 18,
-    height: 18,
-    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#003B73",
     alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
   },
-  cartBadgeText: {
-    color: "white",
-    fontSize: 10,
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#003B73",
+  },
+  scheduleInfo: {
+    flex: 1,
+  },
+  dayText: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#333",
+  },
+  timeText: {
+    fontSize: 13,
+    color: "#666",
+  },
+  unavailableText: {
+    fontSize: 12,
+    color: "#F44336",
+    fontWeight: "500",
+  },
+  actionButton: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  actionButtonText: {
+    color: "#003B73",
+    fontSize: 16,
     fontWeight: "bold",
   },
-})
-
-export default React.memo(BookLoan)
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#003B73",
+  },
+  // NOVOS ESTILOS PARA A TELA DE CARRINHO VAZIO
+  centeredEmpty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: "#003B73",
+  },
+  emptyIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  emptySubText: {
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 32,
+    paddingHorizontal: 20,
+  },
+  emptyPrimaryButton: {
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  emptyPrimaryButtonText: {
+    color: "#003B73",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  emptySecondaryButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    width: "100%",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "transparent",
+  },
+  emptySecondaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  buttonStyle: {
+    borderRadius: 15,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    width: "95%",
+    padding: 4,
+    marginHorizontal: "auto",
+    marginVertical: 12,
+    borderWidth: 1,
+    backgroundColor: "#003B73",
+    borderColor: "white",
+    borderRadius: 30,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonActive: {
+    backgroundColor: "#60A3D9",
+  },
+  linkText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "500",
+    fontSize: 13,
+  },
+  rowBack: {
+    alignItems: "center",
+    backgroundColor: "#DDD",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  backLeftBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#007AFF",
+    width: 75,
+    height: "100%",
+  },
+  backRightBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF3B30",
+    width: 75,
+    height: "100%",
+  },
+});

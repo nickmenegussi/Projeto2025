@@ -45,6 +45,7 @@ export default function EmailOtp() {
       } else {
         console.log("Erro", error);
         Alert.alert("Erro", "Erro ao enviar email");
+        return 
       }
     }
   }

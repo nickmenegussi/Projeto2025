@@ -1,9 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import handleApiError from "../utils/handleApiError";
+
+// export const useAuth = () => useContext(AuthContext)
 
 export const AuthContext = createContext();
 
@@ -52,11 +54,12 @@ export function AuthProvider({ children }) {
 
       console.log("Erro", response.data.error);
       Alert.alert(`Erro ${error.response.data.message}`);
-    } else {
-      setOtpEmail(response.data.data);
-      Alert.alert("Sucesso!", response.data.message);
-      await AsyncStorage.setItem("@Auth:email", email);
+      return;
     }
+
+    setOtpEmail(response.data.data);
+    Alert.alert("Sucesso!", response.data.message);
+    await AsyncStorage.setItem("@Auth:email", email);
   }
   async function OtpVerification(otp) {
     const email = await AsyncStorage.getItem("@Auth:email");
@@ -68,12 +71,12 @@ export function AuthProvider({ children }) {
       setOtpDigits(false);
 
       console.log("Erro", response.data.error);
-      return error.response.data.message
+      return error.response.data.message;
     } else {
       await AsyncStorage.setItem("@Auth:email", "true");
       await AsyncStorage.setItem("@Auth:otp", "verificado!");
       setOtpDigits(true);
-      return response.data.message
+      return response.data.message;
     }
   }
   // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
@@ -136,7 +139,7 @@ export function AuthProvider({ children }) {
           "Content-Type": "multipart/form-data",
         },
       });
-      
+
       if (response.status === 200) {
         const updatedUser = {
           ...user,
@@ -152,13 +155,72 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // async function updatePasswordForgotWithNoLogin(
+  //   newPassword,
+  // ) {
+  //   try {
+  //     if (newPassword.lenghth < 6) {
+  //       Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+  //       return;
+  //     }
+
+  //     if(email){
+  //       const response = OtpSendEmail(email)
+
+  //       if(response.success === true){
+          
+  //       }
+  //     }
+
+  //   } catch (error) {}
+  // }
+
+  async function updatePasswordForgotten(
+    currentPassword,
+    newPassword,
+    confirmedPassword
+  ) {
+    if (newPassword.length < 6) {
+      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const response = await api.patch(
+        "/user/user/password",
+        { currentPassword, newPassword, confirmedPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        Alert.alert(
+          "Sucesso!",
+          "Senha atualizada com sucesso. Iremos redirecionar você para a página de login para iniciar a no aplicativo com os dados atualizados!."
+        );
+        setUser(null);
+        setOtpDigits(null);
+        setOtpEmail(null);
+        AsyncStorage.clear();
+        delete api.defaults.headers.common["Authorization"];
+        router.replace("/sign-up");
+      }
+    } catch (error) {
+      console.error("Erro no servidor ao atualizar senha:", error);
+      handleApiError(error);
+    }
+  }
+
   function logout() {
     setUser(null);
     setOtpDigits(null);
     setOtpEmail(null);
     AsyncStorage.clear();
     delete api.defaults.headers.common["Authorization"];
-
     router.replace("/sign-up");
   }
 
@@ -176,6 +238,7 @@ export function AuthProvider({ children }) {
         OtpVerification,
         register,
         updatePerfilImage,
+        updatePasswordForgotten,
       }}
     >
       {children}

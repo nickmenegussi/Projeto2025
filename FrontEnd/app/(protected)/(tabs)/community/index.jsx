@@ -211,7 +211,7 @@ const Index = () => {
           ListHeaderComponent={() => {
             return (
               <View style={styles.headerComponent}>
-                <View style={styles.Container}>
+                <View style={{flex: 1,}}>
                   <Header title="Home" onMenuPress={() => setIsOpen(!isOpen)} />
                   <Trending
                     navagations={[
@@ -349,7 +349,7 @@ export default React.memo(Index);
 
 const styles = StyleSheet.create({
   conteinerFlatlist: {
-    padding: 10,
+    padding: 16,
     flexGrow: 1,
     paddingBottom: 180,
     backgroundColor: "#003B73",
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#003B73",
-    paddingTop: 20,
+    paddingTop: 32,
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",

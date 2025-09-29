@@ -35,10 +35,10 @@ const FormField = ({ title, value, placeholder, handleChangeText, othersStyles, 
           placeholder={placeholder} 
           placeholderTextColor={isWeb ? "#888" : undefined}
           keyboardType={props.keyboardType || "default"} 
-          secureTextEntry={title === 'Password' && !showPassword}
+          secureTextEntry={props.type === "Password"  && !showPassword}
         />
         
-        {title === 'Password' && (
+        {props.type === 'Password'  && (
           <TouchableOpacity 
             onPress={() => setShowPassword(!showPassword)} 
             style={styles.hideAndShow} 

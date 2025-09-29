@@ -22,6 +22,7 @@ import { AuthContext } from "../context/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from "react-native-paper";
 import { X } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 export default function App() {
   const { width } = useWindowDimensions();
@@ -32,25 +33,16 @@ export default function App() {
     password: "",
   });
 
-  const [snack, setSnack] = useState({
-    visible: false,
-    message: "",
-    type: "info", // "success" | "error" | "info"
-    onDismiss: null
-  });
-
-  const showSnack = (message, type = "info", onDismissCanceled) => {
-    setSnack({ visible: true, message, type,  onDismiss:  onDismissCanceled
-});
-  };
-
   async function Login() {
     try {
       await login(loginUser.email, loginUser.password);
-      showSnack("Login realizado com sucesso!", "success", () => {
-        router.push('/emailOtp')
-      })
-      
+      Toast.show({
+        type: "success",
+        text1: "Login realizado!",
+        position: "top",
+        
+      });
+      router.replace("/emailOtp")
     } catch (error) {
       if (
         error.response &&
@@ -60,7 +52,11 @@ export default function App() {
         console.log("Erro", error.response.data.message);
         setUser(null);
         await AsyncStorage.clear();
-        showSnack("Email ou senha incorretos!", "error");
+        Toast.show({
+          type: "error",
+          text1: error.response.data.message,
+          position: "bottom",
+        });
       } else {
         console.log("Erro", error);
         setUser(null);
@@ -87,6 +83,7 @@ export default function App() {
 
           <FormField
             title="Senha"
+            type="Password"
             value={loginUser.password}
             placeholder="Digite sua senha"
             secureTextEntry
@@ -204,7 +201,8 @@ export default function App() {
               />
 
               <FormField
-                title="Password"
+                title="Senha"
+                type="Password"
                 value={loginUser.password}
                 placeholder="Digite uma senha"
                 handleChangeText={(text) =>
@@ -214,7 +212,7 @@ export default function App() {
 
               <View style={styles.forgottenPasswordContainer}>
                 <TouchableOpacity
-                  onPress={() => router.push("/forgottenPassword")}
+                  onPress={() => router.push("/ChangePassword")}
                   activeOpacity={0.5}
                 >
                   <Text style={styles.forgottenPassword}>
@@ -234,45 +232,7 @@ export default function App() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {isMobile ? renderMobile() : renderWeb()}
-      <Snackbar
-        visible={snack.visible}
-        onDismiss={() => {
-          if(snack.onDismiss !== null && typeof snack.onDismiss === "function" ){
-            snack.onDismiss()
-          }
-          setSnack((e) => ({...e, onDismiss: null, visible: false}))
-        }}
-        duration={2000}
-        style={{
-          position: "absolute",
-          bottom: 30, // sempre visível no rodapé
-          alignSelf: "center",
-          minWidth: "80%",
-          borderRadius: 12,
-          paddingHorizontal: 16,
-          elevation: 4, // sombra Android
-          shadowColor: "#000", // sombra iOS
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.15,
-          shadowRadius: 4,
-          backgroundColor:
-            snack.type === "success"
-              ? "#16a34a" // verde
-              : snack.type === "error"
-              ? "#dc2626" // vermelho
-              : "#334155", // cinza (info)
-        }}
-      >
-        <View style={{flexDirection: "row", flex: 1, justifyContent: 'space-between', alignItems: "center"}}>
-          <Text style={{ color: "white", fontSize: 17 }}>{snack.message}</Text>
-          <TouchableOpacity onPress={() => setSnack((prev) => ({...prev, visible: false, onDismiss: snack.onDismiss() }))}>
-            <X size={30} color={"white"} />
-          </TouchableOpacity>
-        </View>
-      </Snackbar>
-    </View>
+    <View style={{ flex: 1 }}>{isMobile ? renderMobile() : renderWeb()}</View>
   );
 }
 

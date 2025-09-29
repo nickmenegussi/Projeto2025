@@ -15,7 +15,7 @@ export default function useLecture() {
     try {
       const data = await getLecture()
       if (data) {
-        setLecture(data)
+        setLecture(data.splice(0, 5))
       }
     } catch (error) {
       console.error("Falha ao carrega os dados das avaliaçõoes", error)

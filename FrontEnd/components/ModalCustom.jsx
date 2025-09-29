@@ -47,6 +47,7 @@ const CustomModal = ({
   visible,
   onClose,
   title,
+  customContent,
   onConfirm,
   confirmText = "Confirmar",
   cancelText = "Cancelar",
@@ -111,54 +112,30 @@ const CustomModal = ({
           </View>
 
           <View style={styles.body}>
-            {formField && (
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Comentário</Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Digite seu comentário aqui..."
-                    placeholderTextColor="#9CA3AF"
-                    multiline
-                    numberOfLines={4}
-                    value={descriptionReview}
-                    onChangeText={onChangeDescription}
-                  />
-                </View>
-              </View>
-            )}
-            
-            {cartItems.length > 0 ? (
-              <FlatList
-                data={cartItems}
-                renderItem={({ item }) => (
-                  <OrderItem
-                    item={item}
-                    currentQuantity={item.quantity}
-                    onIncrease={() => handleIncrease(item.idLibrary)}
-                    onDecrease={() => handleDecrease(item.idLibrary)}
-                  />
-                )}
-                keyExtractor={(item) => item.idLibrary.toString()}
-              />
+            {/* Renderiza conteúdo customizado se fornecido */}
+            {customContent ? (
+              customContent
             ) : (
-              <ActivityIndicator size="large" color="black" />
-            )}
-            
-            {ratingReview && (
-              <View style={styles.ratingContainer}>
-                <Text style={styles.label}>Avaliação</Text>
-                <View style={styles.stars}>
-                  <Rating
-                    type="star"
-                    ratingCount={5}
-                    imageSize={28}
-                    showRating={false}
-                    onFinishRating={onChangeRating}
-                    tintColor="#F9FAFB"
-                  />
-                </View>
-              </View>
+              <>
+                {/* Conteúdo padrão do modal */}
+                {formField && (
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Comentário</Text>
+                    <View style={styles.inputContainer}>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Digite seu comentário aqui..."
+                        placeholderTextColor="#9CA3AF"
+                        multiline
+                        numberOfLines={4}
+                        value={descriptionReview}
+                        onChangeText={onChangeDescription}
+                      />
+                    </View>
+                  </View>
+                )}
+                {/* ... resto do conteúdo padrão */}
+              </>
             )}
           </View>
 
@@ -172,8 +149,7 @@ const CustomModal = ({
             />
             <Button
               title={confirmText}
-              handlePress={() => onConfirm(cartItems)
-              } // Passa os itens com as quantidades atualizadas
+              handlePress={onConfirm}
               style={styles.confirmButton}
               textStyle={styles.confirmText}
             />

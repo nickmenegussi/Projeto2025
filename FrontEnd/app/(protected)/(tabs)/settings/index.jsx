@@ -206,7 +206,7 @@ const HomeSettings = () => {
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.userInfo}>
-            <Image style={styles.avatar} source={user?.image_profile ?  { uri: `http://192.168.1.11:3001/uploads/${user?.image_profile}?t=${Date.now()}`} : require("../../../../assets/images/default-profile.jpg")} />
+            <Image style={styles.avatar} source={user?.image_profile ?  { uri: `http://192.168.1.15:3001/uploads/${user?.image_profile}?t=${Date.now()}`} : require("../../../../assets/images/default-profile.jpg")} />
           <View style={styles.userDetails}>
             <Text style={styles.userName}>{user?.nameUser || 'Usuário'}</Text>
             <Text style={styles.userEmail}>{user?.email || 'usuario@email.com'}</Text>

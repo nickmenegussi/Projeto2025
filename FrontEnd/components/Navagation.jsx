@@ -1,13 +1,15 @@
 import {
   View,
   Text,
-  FlatList,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Alert,
+  Dimensions,
 } from "react-native";
 import React from "react";
 import { router } from "expo-router";
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Trending = ({
   navagations,
@@ -16,15 +18,15 @@ const Trending = ({
   textTitlle = false,
 }) => {
   return (
-    <FlatList
-      showsHorizontalScrollIndicator={false}
-      style={styles.FlatListContainer}
-      data={navagations}
-      nestedScrollEnabled={true}
-      keyExtractor={(item) => item.name}
-      renderItem={({ item }) => (
-        <>
-          <View style={styles.contentNavagations}>
+    <View style={styles.container}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {navagations.map((item) => (
+          <View key={item.name} style={styles.contentNavagations}>
             {textTitlle !== false ? (
               <Text style={styles.textTitle}>{item.type}</Text>
             ) : null}
@@ -44,19 +46,28 @@ const Trending = ({
               <Text style={styles.TextContent}>{item.name}</Text>
             </TouchableOpacity>
           </View>
-        </>
-      )}
-      horizontal
-      contentContainerStyle={styles.FlatListContainer}
-    />
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
 export default Trending;
 
 const styles = StyleSheet.create({
-  FlatListContainer: {
+  container: {
+    width: screenWidth, // Ocupa 100% da largura
+    marginLeft: -16, // Compensa o padding horizontal do container pai
+  },
+  scrollView: {
+    width: screenWidth,
+  },
+  contentContainer: {
     paddingVertical: 12,
+    paddingHorizontal: 16, // Adiciona padding lateral
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: screenWidth, // Garante que o conteúdo ocupe pelo menos a largura da tela
   },
   contentNavagations: {
     flexDirection: "column",
@@ -74,8 +85,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     backgroundColor: "#0055A5",
-    minWidth: 100, // garante largura mínima
-    alignItems: "center", // centraliza o texto
+    minWidth: 100,
+    alignItems: "center",
     justifyContent: "center",
   },
   TextContent: {

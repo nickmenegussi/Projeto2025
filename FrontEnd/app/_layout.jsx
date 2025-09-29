@@ -1,17 +1,16 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import { AuthProvider } from '../context/auth';
-import { PaperProvider } from "react-native-paper";
+import React from "react";
+import { Stack } from "expo-router";
+import { AuthProvider } from "../context/auth";
+import Toast from "react-native-toast-message";
 
 const RootLayout = () => {
   return (
     <AuthProvider>
-      <PaperProvider>
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'fade',
-          contentStyle: { backgroundColor: '#fff' },
+          animation: "fade",
+          contentStyle: { backgroundColor: "#fff" },
         }}
       >
         <Stack.Screen
@@ -21,29 +20,17 @@ const RootLayout = () => {
             animation: "none",
           }}
         />
-        <Stack.Screen
-          name="sign-up"
-          options={{ animation: "none" }}
-        />
-        <Stack.Screen
-          name="sign-in"
-          options={{ animation: "none" }}
-        />
-        <Stack.Screen
-          name="emailOtp"
-          options={{ animation: "none" }}
-        />
+        <Stack.Screen name="sign-up" options={{ animation: "none" }} />
+        <Stack.Screen name="sign-in" options={{ animation: "none" }} />
+        <Stack.Screen name="emailOtp" options={{ animation: "none" }} />
         <Stack.Screen
           name="sign-otp-verification"
           options={{ animation: "none" }}
         />
-        <Stack.Screen
-          name="otpMessage"
-          options={{ animation: "none" }}
-        />
-
+        <Stack.Screen name="otpMessage" options={{ animation: "none" }} />
+        <Stack.Screen name="ChangePassword" options={{ animation: "none" }} />
       </Stack>
-      </PaperProvider>
+      <Toast />
     </AuthProvider>
   );
 };

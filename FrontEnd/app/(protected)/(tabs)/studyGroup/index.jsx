@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginBottom: 20,
-    paddingTop: 20,
+    paddingTop: 40,
   },
   headerContent: {
     flexDirection: "row",
@@ -452,6 +452,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: 200,
+  }, Container: {
+    paddingVertical: 10.5,
   },
   imageStyle: {
     borderRadius: 16,

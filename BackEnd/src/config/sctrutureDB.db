@@ -93,6 +93,7 @@ CREATE TABLE Lecture (
     description VARCHAR(255) NOT NULL,
     link_url VARCHAR(255) NOT NULL,
     video_url TEXT NOT NULL,
+    yearOfPublication int NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

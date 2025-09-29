@@ -31,8 +31,7 @@ const AboutLecture = () => {
         >
           <View>
             <TouchableOpacity style={styles.ButtonIcon} onPress={() => {
-              const lecturesEncondedData = encodeURIComponent(JSON.stringify(lecture))
-              router.push(`/home/lectures?data=${lecturesEncondedData}`)
+              router.back()
             }}>
               <ArrowLeftIcon color='black' size={40} />
             </TouchableOpacity>
