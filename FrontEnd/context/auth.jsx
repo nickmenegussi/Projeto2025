@@ -56,24 +56,22 @@ export function AuthProvider({ children }) {
       console.log("Erro", response.data.error);
       Toast.show({
         type: "error",
-        text1:  `$${error.response.data.message}`,
+        text1: `${error.response.data.message}`,
         position: "top",
-        
-      })
+      });
       return;
     }
 
     setOtpEmail(response.data.data);
     Toast.show({
       type: "success",
-      text1:  `$${response.data.message}`,
+      text1: `$${response.data.message}`,
       position: "top",
-      
-    })
+    });
     await AsyncStorage.setItem("@Auth:email", email);
   }
-  async function OtpVerification(otp) {
-    const email = await AsyncStorage.getItem("@Auth:email");
+  async function OtpVerification(otp, email) {
+        // const email = await AsyncStorage.getItem("@Auth:email");
     const response = await api.post("/auth/otp/verification", {
       email,
       otp,
@@ -87,7 +85,7 @@ export function AuthProvider({ children }) {
       await AsyncStorage.setItem("@Auth:email", "true");
       await AsyncStorage.setItem("@Auth:otp", "verificado!");
       setOtpDigits(true);
-      return response.data.message;
+      return response.data;
     }
   }
   // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
@@ -99,18 +97,23 @@ export function AuthProvider({ children }) {
     if (response.data.error) {
       setUser(null);
       console.log("Erro", response.data.error);
-      Alert.alert("Erro", response.data.error.message);
-    } else {
-      setUser(response.data.data.user);
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${response.data.data.token}`;
-      await AsyncStorage.setItem("@Auth:token", response.data.data.token);
-      await AsyncStorage.setItem(
-        "@Auth:user",
-        JSON.stringify(response.data.data.user)
-      );
+      Toast.show({
+        type: "error",
+        text1: `${response.data.error.message}`,
+        position: "top",
+      });
     }
+
+    setUser(response.data.data.user);
+    api.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${response.data.data.token}`;
+    await AsyncStorage.setItem("@Auth:token", response.data.data.token);
+    await AsyncStorage.setItem(
+      "@Auth:user",
+      JSON.stringify(response.data.data.user)
+    );
+    return response.data.data.message;
   }
   // update User
   async function register(nameUser, email, password) {
@@ -123,14 +126,21 @@ export function AuthProvider({ children }) {
 
       if (response.data.error) {
         console.log("Erro", response.data.error);
-        Alert.alert("Erro", response.data.error.message);
+        Toast.show({
+          type: "error",
+          text1: `${response.data.error.message}`,
+          position: "top",
+        });
       } else {
-        Alert.alert("Sucesso!", "Cadastro realizado. Faça login.");
+        Toast.show({
+          type: "success",
+          text1: `Cadastro realizado. Faça login.`,
+          position: "top",
+        });
         router.replace("/sign-up");
       }
     } catch (error) {
-      console.error("Erro ao registrar:", error);
-      Alert.alert("Erro", "Não foi possível concluir o cadastro.");
+      handleApiError(error)
     }
   }
   async function updatePerfilImage(imageUri) {
@@ -166,25 +176,50 @@ export function AuthProvider({ children }) {
     }
   }
 
-  //  async function updatePasswordForgotWithNoLogin(
-  //    newPassword, otpCode
-  //  ) {
-  //    try {
-  //      if (newPassword.length < 6) {
-  //        Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
-  //        return;
-  //      }
+  async function updatePasswordForgotWithNoLogin(newPassword, otp, email) {
+    if (!newPassword || !otp || !email) {
+      Toast.show({
+        type: "error",
+        text1: `Preencha todos os campos`,
+        position: "top",
+      });
+      return;
+    }
 
-       
+    if (newPassword.length < 6) {
+      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
 
-  //    } catch (error) {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: `${error.response.data.message}`,
-  //       position: "top",
-  //     })
-  //    }
-  //  }
+    try {
+      const response = await OtpVerification(otp, email)
+      if(!response.success === true){
+        console.error("erro ao verificar otp! tente novamente!")
+      }
+ 
+      const responseChangePassword = await api.patch("/user/user/forgot-password", {
+        email,
+        newPassword,
+        otp,
+      });
+
+      if (responseChangePassword.status === 200) {
+        Toast.show({
+          type: "success",
+          text1: "senha alterada.",
+          position: "top",
+        });
+        await AsyncStorage.removeItem("@Auth:emailForgotenPassword");
+        router.push("/sign-up");
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: `${error.response.data.message}`,
+        position: "top",
+      });
+    }
+  }
 
   async function updatePasswordForgotten(
     currentPassword,
@@ -250,7 +285,7 @@ export function AuthProvider({ children }) {
         register,
         updatePerfilImage,
         updatePasswordForgotten,
-        // updatePasswordForgotWithNoLogin 
+        updatePasswordForgotWithNoLogin,
       }}
     >
       {children}

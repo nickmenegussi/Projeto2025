@@ -14,6 +14,7 @@ import { Link, router } from "expo-router";
 import FormField from "../components/FormField";
 import Button from "../components/Button";
 import { AuthContext } from "../context/auth";
+import handleApiError from "../utils/handleApiError";
 
 export default function SignIn() {
   const {register} = useContext(AuthContext)
@@ -27,20 +28,7 @@ export default function SignIn() {
     try {
       await register(form.nameUser, form.email, form.password)
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        console.log("Erro", error.response.data.message)
-        setUser(null)
-        await AsyncStorage.clear()
-        Alert.alert("Erro", "Email ou senha incorretos")
-      } else {
-        console.log("Erro", error)
-        setUser(null)
-        Alert.alert("Erro", "Erro ao realizar login")
-      }
+      handleApiError(error)
     }
   }
 

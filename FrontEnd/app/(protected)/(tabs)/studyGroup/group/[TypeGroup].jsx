@@ -83,14 +83,14 @@ export default function GroupOfStudy() {
           >
             <ArrowLeft color="white" size={24} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Grupos de {TypeGroup || "Tipo do Grupo"}</Text>
-          <View style={{ width: 24 }} /> {/* Espaço para balancear o layout */}
+          <Text style={styles.headerTitle}>Grupos de {TypeGroup}</Text>
+          <View style={{ width: 24 }} /> 
         </View>
 
         <View style={styles.center}>
           <BookOpen size={48} color="#A0A0A0" />
           <Text style={styles.emptyText}>
-            Sem grupos para {TypeGroup} no momento.
+            Sem grupos para  no momento.
           </Text>
           <Text style={styles.emptySubtext}>
             Volte em breve para novas turmas.
@@ -111,12 +111,12 @@ export default function GroupOfStudy() {
           <ArrowLeft color="white" size={24} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Grupos de {TypeGroup}</Text>
-        <View style={{ width: 24 }} /> {/* Espaço para balancear o layout */}
+        <View style={{ width: 24 }} /> 
       </View>
 
       <ScrollView style={styles.scrollView}>
         {group.map((item) => (
-          <View key={item.idStudyGroup} style={styles.groupCard}>
+          <View key={item.IdGroupOfStudy} style={styles.groupCard}>
             <ImageBackground
               source={
                 item.ImageUrl

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Para acesso normal 
   const api = axios.create({
-      baseURL: 'http://172.20.91.27:3001'
+      baseURL: 'http://192.168.1.2:3001',
   })
 
 

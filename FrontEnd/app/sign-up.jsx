@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from "react-native-paper";
 import { X } from "lucide-react-native";
 import Toast from "react-native-toast-message";
+import handleApiError from "../utils/handleApiError";
 
 export default function App() {
   const { width } = useWindowDimensions();
@@ -44,24 +45,7 @@ export default function App() {
       });
       router.replace("/emailOtp")
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        console.log("Erro", error.response.data.message);
-        setUser(null);
-        await AsyncStorage.clear();
-        Toast.show({
-          type: "error",
-          text1: error.response.data.message,
-          position: "bottom",
-        });
-      } else {
-        console.log("Erro", error);
-        setUser(null);
-        Alert.alert("Erro", "Erro ao realizar login");
-      }
+      handleApiError(error)
     }
   }
 
@@ -212,7 +196,7 @@ export default function App() {
 
               <View style={styles.forgottenPasswordContainer}>
                 <TouchableOpacity
-                  onPress={() => router.push("/ChangePassword")}
+                  onPress={() => router.push("/emailSendForgotPassword")}
                   activeOpacity={0.5}
                 >
                   <Text style={styles.forgottenPassword}>

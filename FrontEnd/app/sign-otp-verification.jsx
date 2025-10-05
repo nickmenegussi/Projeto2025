@@ -15,14 +15,15 @@ import Button from "../components/Button";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { SafeAreaView } from "react-native";
 import { AuthContext } from "../context/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OtpSignIn() {
   const { OtpVerification, otpDigits } = useContext(AuthContext);
   const [otp, setOtp] = useState("");
-
   async function OtpVerify() {
     try {
-      await OtpVerification(otp);
+      const email = await AsyncStorage.getItem("@Auth:email")
+      await OtpVerification(otp, email);
       router.push("/otpMessage");
     } catch (error) {
       if (

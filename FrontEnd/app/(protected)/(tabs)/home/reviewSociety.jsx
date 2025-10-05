@@ -34,6 +34,8 @@ export default function ReviewSociety() {
     setReviewUser,
     handleRegisterReview,
     modalVisible,
+    handleDeleteReview,
+    setUserId,
     setModalVisible,
   } = useReview();
 
@@ -104,7 +106,10 @@ export default function ReviewSociety() {
           visible={open}
           item={review}
           onClose={() => setOpen(false)}
-          onConfirm={() => setOpen(false)}
+          onConfirm={() => {
+            handleRegisterReview();
+            setOpen(false);
+          }}
           title="Adicionar Avaliação"
           confirmText="Publicar Avaliação"
           cancelText="Cancelar"
@@ -119,14 +124,12 @@ export default function ReviewSociety() {
 
               <FormField
                 title="Avaliação"
-                placeholder="Compartilhe sua experiência conosco..."
+                titleStyle={{ color: "black" }}
+                placeholder="Compartilhe sua experiência..."
                 value={reviewUser.descriptionReview}
                 handleChangeText={(text) =>
                   setReviewUser((e) => ({ ...e, descriptionReview: text }))
                 }
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
                 othersStyles={styles.formField}
               />
 
@@ -230,18 +233,17 @@ export default function ReviewSociety() {
                         {
                           text: "Cancelar",
                           style: "cancel",
-                          onPress: () => console.log("Cancelado"),
                         },
                         {
                           text: "Atualizar",
                           onPress: () => {
+                            setOpen(true);
                             setReviewUser((prev) => ({
                               ...prev,
                               descriptionReview: item.descriptionReview,
                               ratingReview: item.ratingReview,
                               currentReviewId: item.idReviewSociety,
                             }));
-                            setModalVisible(true);
                           },
                         },
                       ]
@@ -260,11 +262,8 @@ export default function ReviewSociety() {
                           text: "Excluir",
                           style: "destructive",
                           onPress: () => {
-                            // Implementar exclusão
-                            console.log(
-                              "Excluir avaliação:",
-                              item.idReviewSociety
-                            );
+                            handleDeleteReview(item.idReviewSociety);
+                            setUserId(null);
                           },
                         },
                       ]
@@ -349,24 +348,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   reviewFormCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    margin: 20,
-    marginTop: 10,
-    borderRadius: 20,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    padding: 5,
+    flexDirection: "column",
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
   },
   headerIcon: {
     width: 36,
@@ -383,11 +370,15 @@ const styles = StyleSheet.create({
     color: "#003B73",
   },
   formField: {
-    marginTop: 0,
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E0E0E0",
+    width: "auto",
   },
   ratingSection: {
     flexDirection: "row",

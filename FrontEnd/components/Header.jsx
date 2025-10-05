@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import ButtonIcons from "../components/ButtonIcons";
 import { AuthContext } from "../context/auth";
 
-const Header = ({ title, onMenuPress }) => {
+const Header = ({ title, onMenuPress, content }) => {
   const { user } = useContext(AuthContext);
 
   return (
@@ -33,6 +33,7 @@ const Header = ({ title, onMenuPress }) => {
 
       {/* Notificação + Avatar */}
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        {content && (content)}
         <ButtonIcons
           color="white"
           size={30}

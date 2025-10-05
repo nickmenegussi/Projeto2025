@@ -12,32 +12,35 @@ import {
 } from "react-native";
 import { X } from "lucide-react-native";
 import Button from "./Button";
+import { Rating } from "react-native-ratings"; // Importando o componente Rating
 
 // Componente OrderItem corrigido
 const OrderItem = ({ item, onDecrease, onIncrease, currentQuantity }) => (
   <View style={styles.orderBookItem}>
     <View style={styles.bookInfo}>
-      <Image source={item.image ? {uri: `http://192.168.1.15:3001/uploads/${item.image}`} : null} 
-      style={{height: 180, width: '60%'}}/>
-      <Text style={styles.bookTitle}>{item.nameBook}</Text>
-      <Text style={styles.bookAuthor}>{item.authorBook}</Text>
+      <Image
+        source={
+          item.image
+            ? { uri: `http://192.168.1.9:3001/uploads/${item.image}` }
+            : require("../assets/images/Jesus-Cristo.png") // Adicione uma imagem placeholder
+        }
+        style={styles.bookImage}
+      />
+      <View style={styles.bookTextInfo}>
+        <Text style={styles.bookTitle}>{item.nameBook}</Text>
+        <Text style={styles.bookAuthor}>{item.authorBook}</Text>
+      </View>
     </View>
 
     <View style={styles.quantityControls}>
-      <TouchableOpacity
-        style={styles.quantityButton}
-        onPress={onDecrease}
-      >
-        <Text>-</Text>
+      <TouchableOpacity style={styles.quantityButton} onPress={onDecrease}>
+        <Text style={styles.quantityButtonText}>-</Text>
       </TouchableOpacity>
 
       <Text style={styles.quantityText}>{currentQuantity}</Text>
 
-      <TouchableOpacity
-        style={styles.quantityButton}
-        onPress={onIncrease}
-      >
-        <Text>+</Text>
+      <TouchableOpacity style={styles.quantityButton} onPress={onIncrease}>
+        <Text style={styles.quantityButtonText}>+</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -47,34 +50,33 @@ const CustomModal = ({
   visible,
   onClose,
   title,
-  customContent,
   onConfirm,
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   formField,
   item,
+  customContent,
   cartItemLength,
-  setCartItemLenth,
+  setCartItemLength, // Corrigido o nome do prop
   descriptionReview,
   ratingReview,
   onChangeRating,
   onChangeDescription,
 }) => {
-  const itemsArray = Array.isArray(item) ? item : [item];
-  
-  // mapeia os itens para de uma lista que já existe com base na verificação acima
+  const itemsArray = Array.isArray(item) ? item : item ? [item] : [];
+
+  // Estado para os itens do carrinho
   const [cartItems, setCartItems] = useState(
-    itemsArray.map(book => ({
-      // pegar todos os dados antigos da lista que está sendo iterada
+    itemsArray.map((book) => ({
       ...book,
-      quantity: 1, // Quantidade no carrinho
+      quantity: 1,
     }))
   );
 
   // Função para aumentar a quantidade
   const handleIncrease = (id) => {
-    setCartItems(prevItems => 
-      prevItems.map(item => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) => {
         if (item.idLibrary === id && item.quantity < item.bookQuantity) {
           return { ...item, quantity: item.quantity + 1 };
         }
@@ -85,14 +87,78 @@ const CustomModal = ({
 
   // Função para diminuir a quantidade
   const handleDecrease = (id) => {
-    setCartItems(prevItems => 
-      prevItems.map(item => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) => {
         if (item.idLibrary === id && item.quantity > 1) {
           return { ...item, quantity: item.quantity - 1 };
         }
         return item;
       })
     );
+  };
+
+  // Função para renderizar o conteúdo do modal
+  const renderContent = () => {
+    if (customContent) {
+      return customContent;
+    }
+
+    if (formField) {
+      return (
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Comentário</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite seu comentário aqui..."
+              placeholderTextColor="#9CA3AF"
+              multiline
+              numberOfLines={4}
+              value={descriptionReview}
+              onChangeText={onChangeDescription}
+            />
+          </View>
+        </View>
+      );
+    }
+
+    if (ratingReview !== undefined) {
+      return (
+        <View style={styles.ratingContainer}>
+          <Text style={styles.label}>Avaliação</Text>
+          <View style={styles.stars}>
+            <Rating
+              type="star"
+              ratingCount={5}
+              imageSize={28}
+              showRating={false}
+              onFinishRating={onChangeRating}
+              startingValue={ratingReview || 0}
+              tintColor="#F9FAFB"
+            />
+          </View>
+        </View>
+      );
+    }
+
+    if (cartItems.length > 0) {
+      return (
+        <FlatList
+          data={cartItems}
+          renderItem={({ item }) => (
+            <OrderItem
+              item={item}
+              currentQuantity={item.quantity}
+              onIncrease={() => handleIncrease(item.idLibrary)}
+              onDecrease={() => handleDecrease(item.idLibrary)}
+            />
+          )}
+          keyExtractor={(item) => item.idLibrary?.toString() || Math.random().toString()}
+        />
+      );
+    }
+
+    return <ActivityIndicator size="large" color="black" />;
   };
 
   return (
@@ -112,31 +178,7 @@ const CustomModal = ({
           </View>
 
           <View style={styles.body}>
-            {/* Renderiza conteúdo customizado se fornecido */}
-            {customContent ? (
-              customContent
-            ) : (
-              <>
-                {/* Conteúdo padrão do modal */}
-                {formField && (
-                  <View style={styles.formGroup}>
-                    <Text style={styles.label}>Comentário</Text>
-                    <View style={styles.inputContainer}>
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Digite seu comentário aqui..."
-                        placeholderTextColor="#9CA3AF"
-                        multiline
-                        numberOfLines={4}
-                        value={descriptionReview}
-                        onChangeText={onChangeDescription}
-                      />
-                    </View>
-                  </View>
-                )}
-                {/* ... resto do conteúdo padrão */}
-              </>
-            )}
+            {renderContent()}
           </View>
 
           <View style={styles.footer}>
@@ -149,7 +191,7 @@ const CustomModal = ({
             />
             <Button
               title={confirmText}
-              handlePress={onConfirm}
+              handlePress={() => onConfirm(cartItems)}
               style={styles.confirmButton}
               textStyle={styles.confirmText}
             />
@@ -159,6 +201,7 @@ const CustomModal = ({
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -169,6 +212,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "100%",
+    maxHeight: "80%",
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     overflow: "hidden",
@@ -198,6 +242,7 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 20,
+    maxHeight: "70%",
   },
   formGroup: {
     marginBottom: 20,
@@ -250,74 +295,40 @@ const styles = StyleSheet.create({
   confirmText: {
     color: "#FFFFFF",
   },
-  itemContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  itemName: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#111827",
-  },
-  itemDetails: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  itemQuantity: {
-    color: "#6B7280",
-  },
-  itemPrice: {
-    fontWeight: "600",
-  },
-  orderContainer: {
-    backgroundColor: "#F8FAFC",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-  },
-
-  // Título da seção
-  orderTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1E293B",
-    marginBottom: 12,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
-  },
-
-  // Item do livro
+  
+  // Estilos para OrderItem
   orderBookItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
   },
-
-  // Informações do livro
   bookInfo: {
     flex: 1,
-    marginRight: 12,
+    flexDirection: "column",
+    alignItems: "center",
   },
-
+  bookImage: {
+    height: 150,
+    width: 100,
+    marginRight: 12,
+    borderRadius: 4,
+  },
+  bookTextInfo: {
+    flex: 1,
+  },
   bookTitle: {
     fontSize: 16,
     fontWeight: "500",
     color: "#1E293B",
     marginBottom: 4,
   },
-
   bookAuthor: {
     fontSize: 14,
     color: "#64748B",
   },
-
-  // Controles de quantidade
   quantityControls: {
     flexDirection: "row",
     alignItems: "center",
@@ -325,82 +336,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 4,
   },
-
   quantityButton: {
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-
+  quantityButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   quantityText: {
     fontSize: 16,
     fontWeight: "500",
     color: "#1E293B",
     marginHorizontal: 8,
-  },
-
-  // Resumo do pedido
-  orderSummary: {
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-  },
-
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-
-  summaryLabel: {
-    fontSize: 14,
-    color: "#64748B",
-  },
-
-  summaryValue: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1E293B",
-  },
-
-  totalRow: {
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-  },
-
-  totalLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1E293B",
-  },
-
-  totalValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#003B73", // Cor da sua marca
-  },
-
-  // Campo de observações
-  notesContainer: {
-    marginTop: 16,
-  },
-
-  notesLabel: {
-    fontSize: 14,
-    color: "#64748B",
-    marginBottom: 8,
-  },
-
-  notesInput: {
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 8,
-    padding: 12,
-    minHeight: 80,
-    backgroundColor: "#FFFFFF",
-    textAlignVertical: "top",
   },
 });
 

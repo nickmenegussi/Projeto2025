@@ -79,8 +79,27 @@ const HomeLibrary = () => {
         
          <View style={styles.Container}>
           <Header
-            title="Home"
+            title="Biblioteca"
             onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
+            content={
+               <View style={styles.actionButton}>
+                <ButtonIcons
+                  handleChange={() => router.push("/library/CartLoan")}
+                  color="#ffff"
+                  size={28}
+                  Icon={({ color, size }) => (
+                    <ShoppingCart color={color} size={size} />
+                  )}
+                />
+                {/* {itemsCartQuantity > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>
+                      {itemsCartQuantity}
+                    </Text>
+                  </View>
+                )} */}
+              </View>
+            }
           />
           <Trending
             navagations={[
@@ -158,6 +177,7 @@ const HomeLibrary = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
+        style={{flex: 1,}}
         keyExtractor={(item) => item.type}
         renderItem={renderSection}
         ListHeaderComponent={renderHeader}

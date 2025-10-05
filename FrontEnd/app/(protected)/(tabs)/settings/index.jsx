@@ -15,7 +15,7 @@ import {
   HeartIcon,
   StarIcon,
   FileTextIcon,
-  LanguagesIcon
+  LanguagesIcon,
 } from "lucide-react-native";
 
 // import styles from "./styles/SettingsStyle"
@@ -112,6 +112,8 @@ const HomeSettings = () => {
           id: 8,
           title: "Notificações",
           icon: BellIcon,
+          path: "/settings/notification",
+
           type: "toggle",
           value: notificationsEnabled,
           onValueChange: setNotificationsEnabled,
@@ -177,7 +179,7 @@ const HomeSettings = () => {
           title: "Sair da conta",
           icon: LogOutIcon,
           action: logout,
-          description: `Conectado como ${user?.name || 'Usuário'}`,
+          description: `Conectado como ${user?.name || "Usuário"}`,
           isDestructive: true,
         },
       ],
@@ -206,10 +208,23 @@ const HomeSettings = () => {
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.userInfo}>
-            <Image style={styles.avatar} source={user?.image_profile ?  { uri: `http://192.168.1.15:3001/uploads/${user?.image_profile}?t=${Date.now()}`} : require("../../../../assets/images/default-profile.jpg")} />
+          <Image
+            style={styles.avatar}
+            source={
+              user?.image_profile
+                ? {
+                    uri: `http://192.168.1.15:3001/uploads/${
+                      user?.image_profile
+                    }?t=${Date.now()}`,
+                  }
+                : require("../../../../assets/images/default-profile.jpg")
+            }
+          />
           <View style={styles.userDetails}>
-            <Text style={styles.userName}>{user?.nameUser || 'Usuário'}</Text>
-            <Text style={styles.userEmail}>{user?.email || 'usuario@email.com'}</Text>
+            <Text style={styles.userName}>{user?.nameUser || "Usuário"}</Text>
+            <Text style={styles.userEmail}>
+              {user?.email || "usuario@email.com"}
+            </Text>
             <Text style={styles.memberSince}>Membro desde Jan 2023</Text>
           </View>
         </View>
@@ -242,22 +257,24 @@ const HomeSettings = () => {
                     key={item.id}
                     style={[
                       styles.itemContainer,
-                      item.isDestructive && styles.destructiveItem
+                      item.isDestructive && styles.destructiveItem,
                     ]}
                     onPress={() => handleItemPress(item)}
                     activeOpacity={0.8}
                   >
                     <View style={styles.itemContent}>
-                      <Icon 
-                        size={22} 
-                        color={item.isDestructive ? "#FF453A" : "#fff"} 
-                        style={{ marginRight: 12 }} 
+                      <Icon
+                        size={22}
+                        color={item.isDestructive ? "#FF453A" : "#fff"}
+                        style={{ marginRight: 12 }}
                       />
                       <View style={styles.itemTextContainer}>
-                        <Text style={[
-                          styles.itemText,
-                          item.isDestructive && styles.destructiveText
-                        ]}>
+                        <Text
+                          style={[
+                            styles.itemText,
+                            item.isDestructive && styles.destructiveText,
+                          ]}
+                        >
                           {item.title}
                         </Text>
                         {item.description && (
@@ -267,7 +284,7 @@ const HomeSettings = () => {
                         )}
                       </View>
                     </View>
-                    
+
                     {item.type === "toggle" ? (
                       <Switch
                         value={item.value}
@@ -287,14 +304,15 @@ const HomeSettings = () => {
 
         <View style={styles.footer}>
           <Text style={styles.versionText}>Versão 1.0.0</Text>
-          <Text style={styles.copyrightText}>© {new Date().getFullYear()} CEO - Centro Espírita Online</Text>
+          <Text style={styles.copyrightText}>
+            © {new Date().getFullYear()} CEO - Centro Espírita Online
+          </Text>
         </View>
       </ScrollView>
-      <View style={{height: 130}} />
+      <View style={{ height: 130 }} />
     </SafeAreaView>
   );
 };
-
 
 export default React.memo(HomeSettings);
 
@@ -311,7 +329,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff22",
-    position: 'relative',
+    position: "relative",
   },
   returnButton: {
     position: "absolute",
@@ -333,9 +351,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -344,56 +362,56 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
   avatarText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   userDetails: {
     flex: 1,
   },
   userName: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: "rgba(255, 255, 255, 0.7)",
     marginBottom: 4,
   },
   memberSince: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.5)',
+    color: "rgba(255, 255, 255, 0.5)",
   },
   statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statNumber: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: "rgba(255, 255, 255, 0.7)",
   },
   statDivider: {
     width: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
   },
   section: {
     marginBottom: 24,
@@ -408,22 +426,22 @@ const styles = StyleSheet.create({
   sectionBox: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   destructiveItem: {
-    backgroundColor: 'rgba(255, 69, 58, 0.1)',
+    backgroundColor: "rgba(255, 69, 58, 0.1)",
   },
   itemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   itemTextContainer: {
@@ -436,10 +454,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   destructiveText: {
-    color: '#FF453A',
+    color: "#FF453A",
   },
   itemDescription: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: "rgba(255, 255, 255, 0.6)",
     fontSize: 13,
   },
   chevron: {
@@ -447,26 +465,25 @@ const styles = StyleSheet.create({
     height: 8,
     borderTopWidth: 2,
     borderRightWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    transform: [{ rotate: '45deg' }],
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    transform: [{ rotate: "45deg" }],
   },
   footer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 16,
     marginBottom: 32,
   },
   versionText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontFamily: "bold",
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: "rgba(255, 255, 255, 0.9)",
     fontSize: 12,
     marginBottom: 4,
   },
   copyrightText: {
-    textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.9)",
     fontSize: 11,
     fontFamily: "bold",
-
   },
 });

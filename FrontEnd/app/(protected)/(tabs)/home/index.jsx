@@ -834,8 +834,8 @@ const styles = StyleSheet.create({
   ContainerReviews: {
     position: "relative",
     backgroundColor: "#60A3D9",
-    borderRadius: Platform.OS === "web" ? 12 : 10,
-    padding: Platform.OS === "web" ? 24 : 20,
+    borderRadius: 10,
+    padding:  20,
     ...Platform.select({
       web: {
         boxShadow: "0 6px 16px rgba(0, 59, 115, 0.3)",
@@ -896,9 +896,9 @@ const styles = StyleSheet.create({
   },
   reviewsHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    gap: 50,
+    flex: 1,
     marginBottom: Platform.OS === "web" ? 20 : 16,
   },
 
@@ -981,9 +981,8 @@ const styles = StyleSheet.create({
 
   // ===== CONTAINER DE REVIEWS =====
   reviewsContainer: {
-    height: Platform.OS === "web" ? 320 : 300,
-    width: "100%",
-    marginVertical: 10,
+    height:  300,
+    flex: 1,
   },
 
   // ===== BOTÕES =====

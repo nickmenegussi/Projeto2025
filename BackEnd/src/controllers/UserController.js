@@ -75,8 +75,7 @@ exports.register = async (req, res) => {
       message: "Preencha todos os campos de cadastro",
     });
   }
-
-  const hash_password = await bcrypt.hash(password, 15);
+  const hash_password = await bcrypt.hash(password, 10);
   connection.query(
     "SELECT * FROM User where nameUser = ? AND email = ?",
     [nameUser, email],
@@ -97,22 +96,43 @@ exports.register = async (req, res) => {
       }
 
       connection.query(
-        "INSERT INTO User(nameUser,email, password ,image_profile, status_permission) VALUES(?, ?, ?, ?, ?)",
-        [nameUser, email, hash_password, image_profile, "User"],
-        (err, result) => {
-          if (err) {
+        "SELECT idUser FROM User where email = ?",
+        [email],
+        (reqIsEmailAlreadyCreated, resEmailAlreadyCreated) => {
+          if (reqIsEmailAlreadyCreated) {
             return res.status(500).json({
               message: "Erro ao se conectar com o servidor.",
               success: false,
               data: err,
             });
-          } else {
-            return res.status(200).json({
-              success: true,
-              message: "Usuário cadastrado com sucesso",
-              data: result,
-            });
           }
+
+          if(resEmailAlreadyCreated.length > 0){
+            return res.status(409).json({
+              message: "Esse email já foi cadastrado, tente fazer login.", 
+              success: false
+            })
+          }
+
+          connection.query(
+            "INSERT INTO User(nameUser,email, password ,image_profile, status_permission) VALUES(?, ?, ?, ?, ?)",
+            [nameUser, email, hash_password, image_profile, "User"],
+            (err, result) => {
+              if (err) {
+                return res.status(500).json({
+                  message: "Erro ao se conectar com o servidor.",
+                  success: false,
+                  data: err,
+                });
+              } else {
+                return res.status(200).json({
+                  success: true,
+                  message: "Usuário cadastrado com sucesso",
+                  data: result,
+                });
+              }
+            }
+          );
         }
       );
     }
@@ -474,12 +494,12 @@ exports.deleteAccountUser = (req, res) => {
 
 exports.updateUserForgotPassword = async (req, res) => {
   try {
-    const { email, newPassword, resetToken } = req.body;
+    const { email, newPassword } = req.body;
 
-    if (!email || !newPassword || !resetToken) {
+    if (!email || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: "Email, nova senha e token de redefinição são obrigatórios",
+        message: "Email e nova senha de redefinição são obrigatórios",
       });
     }
 
@@ -490,7 +510,7 @@ exports.updateUserForgotPassword = async (req, res) => {
     if (user.length === 0) {
       return res.status(404).json({ message: "Nenhum usuário encontrado." });
     }
-    const hashedPassword = await bcrypt.hash(newPassword, 18);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     const [updateForgotPassword] = await pool.query(
       "UPDATE USER SET password = ? WHERE idUser = ?",
       [hashedPassword, user[0].idUser]
@@ -500,20 +520,18 @@ exports.updateUserForgotPassword = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Não foi possível atualizar a senha.",
-      })
+      });
     }
 
     return res.status(200).json({
-        message: "Sucesso ao atualizar senha!",
-        success: true
-    })
+      message: "Sucesso ao atualizar senha!",
+      success: true,
+    });
   } catch (error) {
     console.error("Erro ao buscar usuário: ", error);
-    return res
-      .status(500)
-      .json({
-        message: "Erro interno do servidor ao buscar usuário",
-        success: false,
-      });
+    return res.status(500).json({
+      message: "Erro interno do servidor ao buscar usuário",
+      success: false,
+    });
   }
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -15,33 +15,69 @@ import { ArrowLeftIcon } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context/auth";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ChangePassword() {
-  const { updatePasswordForgotWithNoLogin } = useContext(AuthContext);
+  const { updatePasswordForgotWithNoLogin, OtpSendEmail } =
+    useContext(AuthContext);
   const [formData, setFormData] = useState({
     newPassword: "",
-    otpCode: ""
+    otp: "",
   });
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("")
 
-  // async function changePassword() {
-  //   setLoading(true);
-  //   try {
-  //     const response = await updatePasswordForgotWithNoLogin(
-  //       formData.newPassword,
-  //       formData.otpCode
-  //     )
-  //   } catch (error) {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: `${error.response.data.message}`,
-  //       position: "top",
-  //   })
-  //     console.log("Erro ao alterar senha:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await AsyncStorage.getItem("@Auth:emailForgotenPassword")
+        if (data !== null) {
+          setEmail(data);
+        }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      } 
+    };
+
+    loadData();
+  }, []);
+
+  async function sendCodeToEmailAgain() {
+    if (!email.trim() || !email) {
+      Toast.show({
+        type: "error",
+        text1: "Email não encontrado.",
+        position: "top",
+      });
+      return
+    }
+    try {
+      await OtpSendEmail(email);
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: `Erro ao enviar código pelo o email ${email}`,
+        position: "top",
+      });
+      console.log("Erro ao enviar código:", error);
+    }
+  }
+
+  async function changeForgotPassword() {
+    try {
+      setLoading(true);
+      await updatePasswordForgotWithNoLogin(formData.newPassword, formData.otp, email);
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: `${error.response.data.message}`,
+        position: "top",
+      });
+      console.log("Erro ao alterar senha:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <LinearGradient
@@ -107,15 +143,29 @@ export default function ChangePassword() {
             /> */}
 
             <FormField
-              value={formData.otpCode}
+              value={formData.otp}
               othersStyles={{ width: "auto" }}
               title="Código Otp"
               placeholder="Digite o código enviado pelo email"
               secureTextEntry
               handleChangeText={(text) =>
-                setFormData({ ...formData, otpCode: text })
+                setFormData({ ...formData, otp: text })
               }
             />
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                marginTop: 5,
+                gap: 5,
+              }}
+            >
+              <Text style={styles.rememberText}>A senha expirou?</Text>
+              <TouchableOpacity onPress={() => sendCodeToEmailAgain()}>
+                <Text style={styles.loginLink}>Enviar novamente</Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.buttonContainer}>
               <Button
@@ -123,7 +173,7 @@ export default function ChangePassword() {
                 textStyles={styles.textButton}
                 buttonStyle={styles.button}
                 othersStyles={styles.buttonWrapper}
-                handlePress={() => changePassword()}
+                handlePress={() => changeForgotPassword()}
                 disabled={loading}
               />
             </View>
@@ -187,7 +237,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    marginTop: 20,
   },
   buttonWrapper: {
     width: "100%",

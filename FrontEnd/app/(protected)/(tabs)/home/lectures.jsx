@@ -6,56 +6,67 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
-} from "react-native"
-import React, { useRef, useState, useMemo } from "react"
-import {
-  router,
-  useLocalSearchParams,
-} from "expo-router"
-import { ArrowLeftIcon } from "lucide-react-native"
-import Carousel from "react-native-reanimated-carousel"
-import Button from "../../../../components/Button"
-import CustomNavagation from "../../../../components/CustomNavagation"
-import EmptyContent from "../../../../components/EmptyContent"
+  ActivityIndicator,
+} from "react-native";
+import React, { useRef, useState, useMemo } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { ArrowLeftIcon } from "lucide-react-native";
+import Carousel from "react-native-reanimated-carousel";
+import Button from "../../../../components/Button";
+import CustomNavagation from "../../../../components/CustomNavagation";
+import EmptyContent from "../../../../components/EmptyContent";
+import LoadingScreen from "../../../../components/AcitivityIndicator";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const Lectures = () => {
-  const params = useLocalSearchParams()
-  const lectures = params.data ? JSON.parse(params.data) : []
-  const [selectedYearIndex, setSelectedYearIndex] = useState(0)
-  const [currentIndices, setCurrentIndices] = useState({}) // Índices por ano
+  const params = useLocalSearchParams();
+  const lectures = params.data ? JSON.parse(params.data) : [];
+  const [selectedYearIndex, setSelectedYearIndex] = useState(0);
+  const [currentIndices, setCurrentIndices] = useState({}); // Índices por ano
+  const [loading, setLoading] = useState(true); // Estado de loading
 
-  // FUNÇÃO CORRIGIDA - AGORA RETORNA O RESULTADO
+  // Função para mostrar apenas os itens que até x numero de itens
   const chuckArray = (array, size) => {
-    const result = []
-    for(let i = 0; i < array.length; i += size){
-      result.push(array.slice(i, i + size))
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
     }
-    return result
-  }
+    return result;
+  };
 
   // set é utilizado bastante para fazer com que os itens nao se repetem no array
-  const existingYears = [...new Set(lectures.map(lecture => lecture.yearOfPublication))].sort((a, b) => b - a)
+  const existingYears = [
+    ...new Set(lectures.map((lecture) => lecture.yearOfPublication)),
+  ].sort((a, b) => b - a); // aqui eu ordeno para fazer com que ele fique em ordem DE
 
-  const data = useMemo(() => existingYears.map(years => ({
-    id: years,
-    name: `Ano ${years}`,
-    data: chuckArray(lectures.filter(lecture => lecture.yearOfPublication === years), 10) || [] 
-  })), [lectures, existingYears])
+  const data = useMemo(
+    () =>
+      existingYears.map((years) => ({
+        id: years,
+        name: `Ano ${years}`,
+        data:
+          chuckArray(
+            lectures.filter((lecture) => lecture.yearOfPublication === years),
+            10
+          ) || [],
+      })),
+    [lectures, existingYears]
+  );
 
   // Handler para mudança de índice específico por ano
   const handleSnapToItem = (index, yearId) => {
-    setCurrentIndices(prev => ({
+    setCurrentIndices((prev) => ({
       ...prev,
-      [yearId]: index
-    }))
-  }
+      [yearId]: index,
+    }));
+  };
 
   // Handler para quando um ano é selecionado na navegação
   const handleYearSelection = (index) => {
-    setSelectedYearIndex(index)
-  }
+    setSelectedYearIndex(index);
+  };
+
 
   return (
     <View style={styles.container}>
@@ -68,7 +79,7 @@ const Lectures = () => {
         >
           <ArrowLeftIcon size={28} color={"white"} />
         </TouchableOpacity>
-        
+
         <View style={styles.headerContent}>
           <Text style={styles.titleHeader}>Palestras da Casa</Text>
         </View>
@@ -76,8 +87,8 @@ const Lectures = () => {
 
       {/* Navegação por anos */}
       <View style={styles.navigationContainer}>
-        <CustomNavagation 
-          otherStyles={true} 
+        <CustomNavagation
+          otherStyles={true}
           trendingItems={data}
           onItemPress={handleYearSelection} // Passa a função de callback
         />
@@ -87,133 +98,170 @@ const Lectures = () => {
 
       {/* Conteúdo Principal - Mostra apenas o ano selecionado */}
       {data.length > 0 ? (
-        <ScrollView>
-          {data.map((yearItem, index) => (
-            // Mostra apenas o ano selecionado
-            index === selectedYearIndex && (
-              <View key={yearItem.id} style={styles.yearSection}>
-                {/* Título do Ano */}
-                {/* <Text style={styles.yearTitle}>{yearItem.name}</Text> */}
-                
-                {yearItem.data && yearItem.data.length > 0 ? (
-                  yearItem.data.map((chunk, chunkIndex) => (
-                    <View key={chunkIndex} style={styles.carouselWrapper}>
-                      <Carousel
-                        width={400}
-                        height={250}
-                        data={chunk}  
-                        onSnapToItem={(itemIndex) => handleSnapToItem(itemIndex, yearItem.id)}
-                        renderItem={({ item: lecture }) => (
-                          <View style={styles.lectureCard}>
-                            <ImageBackground
-                              source={require("../../../../assets/images/Jesus-Cristo.png")}
-                              style={styles.backgroundImage}
-                              imageStyle={styles.imageStyle}
-                            >
-                              <View style={styles.overlay}>
-                                <View style={styles.cardContent}>
-                                  <View style={styles.textContainer}>
-                                    <Text style={styles.lectureTitle}>{lecture.nameLecture}</Text>
-                                    
-                                    <View style={styles.lectureInfo}>
-                                      <View style={styles.dateTimeBadge}>
-                                        <Text style={styles.dateTimeText}>
-                                          {new Date(lecture.dateLecture).toLocaleDateString('pt-BR')}
-                                        </Text>
-                                        <Text style={styles.timeText}>• {lecture.timeLecture}</Text>
-                                      </View>
-                                      
-                                      <Text style={styles.lectureDescription} numberOfLines={2}>
-                                        {lecture.description}
+        <ScrollView
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={50}
+          windowSize={7}
+        >
+          {data.map(
+            (yearItem, index) =>
+              // Mostra apenas o ano selecionado
+              index === selectedYearIndex && (
+                <View key={yearItem.id} style={styles.yearSection}>
+                  {/* Título do Ano */}
+                  {/* <Text style={styles.yearTitle}>{yearItem.name}</Text> */}
+
+                  {yearItem.data && yearItem.data.length > 0 ? (
+                    yearItem.data.map((chunk, chunkIndex) => (
+                      <View key={chunkIndex} style={styles.carouselWrapper}>
+                        <Carousel
+                          width={400}
+                          height={250}
+                          data={chunk}
+                          onSnapToItem={(itemIndex) =>
+                            handleSnapToItem(itemIndex, yearItem.id)
+                          }
+                          renderItem={({ item: lecture }) => (
+                            <View style={styles.lectureCard}>
+                              <ImageBackground
+                                source={require("../../../../assets/images/Jesus-Cristo.png")}
+                                style={styles.backgroundImage}
+                                imageStyle={styles.imageStyle}
+                              >
+                                <View style={styles.overlay}>
+                                  <View style={styles.cardContent}>
+                                    <View style={styles.textContainer}>
+                                      <Text style={styles.lectureTitle}>
+                                        {lecture.nameLecture}
                                       </Text>
+
+                                      <View style={styles.lectureInfo}>
+                                        <View style={styles.dateTimeBadge}>
+                                          <Text style={styles.dateTimeText}>
+                                            {new Date(
+                                              lecture.dateLecture
+                                            ).toLocaleDateString("pt-BR")}
+                                          </Text>
+                                          <Text style={styles.timeText}>
+                                            • {lecture.timeLecture}
+                                          </Text>
+                                        </View>
+
+                                        <Text
+                                          style={styles.lectureDescription}
+                                          numberOfLines={2}
+                                        >
+                                          {lecture.description}
+                                        </Text>
+                                      </View>
                                     </View>
+
+                                    <Button
+                                      title={"Acessar Palestra"}
+                                      buttonStyle={styles.accessButton}
+                                      textStyle={styles.buttonText}
+                                      handlePress={() => {
+                                        const encodedData = encodeURIComponent(
+                                          JSON.stringify(lecture)
+                                        );
+                                        const lecturesEncodedData =
+                                          encodeURIComponent(
+                                            JSON.stringify(lectures)
+                                          );
+                                        router.push(
+                                          `/home/aboutLecture?data=${encodedData}&lecture=${lecturesEncodedData}`
+                                        );
+                                      }}
+                                    />
                                   </View>
-                                  
-                                  <Button
-                                    title={"Acessar Palestra"}
-                                    buttonStyle={styles.accessButton}
-                                    textStyle={styles.buttonText}
-                                    handlePress={() => {
-                                      const encodedData = encodeURIComponent(JSON.stringify(lecture))
-                                      const lecturesEncodedData = encodeURIComponent(JSON.stringify(lectures))
-                                      router.push(`/home/aboutLecture?data=${encodedData}&lecture=${lecturesEncodedData}`)
-                                    }}
-                                  />
                                 </View>
-                              </View>
-                            </ImageBackground>
-                            
-                            <View style={styles.glowEffect} />
-                          </View>
-                        )}
-                        scrollAnimationDuration={800}
-                        autoPlay
-                        loop
-                        autoPlayInterval={4000}
-                        mode="parallax"
-                        modeConfig={{
-                          parallaxScrollingScale: 0.9,
-                          parallaxScrollingOffset: 60,
-                        }}
-                      />
-                      
-                      {/* Paginação para cada chunk - corrigida para usar o índice específico do ano */}
-                      <View style={styles.pagination}>
-                        {chunk.map((_, index) => (
-                          <View
-                            key={index}
-                            style={[
-                              styles.paginationDot,
-                              index === currentIndices[yearItem.id] && styles.paginationDotActive
-                            ]}
-                          />
-                        ))}
+                              </ImageBackground>
+
+                              <View style={styles.glowEffect} />
+                            </View>
+                          )}
+                          scrollAnimationDuration={800}
+                          autoPlay
+                          loop
+                          autoPlayInterval={4000}
+                          mode="parallax"
+                          modeConfig={{
+                            parallaxScrollingScale: 0.9,
+                            parallaxScrollingOffset: 60,
+                          }}
+                        />
+
+                        {/* Paginação para cada chunk - corrigida para usar o índice específico do ano */}
+                        <View style={styles.pagination}>
+                          {chunk.map((_, index) => (
+                            <View
+                              key={index}
+                              style={[
+                                styles.paginationDot,
+                                index === currentIndices[yearItem.id] &&
+                                  styles.paginationDotActive,
+                              ]}
+                            />
+                          ))}
+                        </View>
                       </View>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <EmptyContent
+                        title="Ops! Nada por aqui"
+                        subtitle={`Nenhuma palestra encontrada para ${yearItem.name}`}
+                      />
                     </View>
-                  ))
-                ) : (
-                  <View style={styles.emptyContainer}>
-                    <EmptyContent 
-                      title="Ops! Nada por aqui"
-                      subtitle={`Nenhuma palestra encontrada para ${yearItem.name}`} 
-                    />
-                  </View>
-                )}
-              </View>
-            )
-          ))}
-          <View style={{marginTop: 200}} />
+                  )}
+                </View>
+              )
+          )}
+          <View style={{ marginTop: 200 }} />
         </ScrollView>
       ) : (
         <View style={styles.emptyContainer}>
-          <EmptyContent 
+          <EmptyContent
             title="Nenhum dado disponível"
-            subtitle="Não foram encontradas palestras" 
+            subtitle="Não foram encontradas palestras"
           />
         </View>
       )}
     </View>
-  )
-}
+  );
+};
 
-export default React.memo(Lectures)
+export default React.memo(Lectures);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#003B73",
   },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#003B73",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    marginTop: 16,
+    fontWeight: "500",
+  },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingTop: 60,
     paddingHorizontal: 25,
     paddingBottom: 15,
-    position: 'relative',
+    position: "relative",
   },
   returnButton: {
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     top: 60,
     backgroundColor: "#60A3D9",
@@ -257,7 +305,7 @@ const styles = StyleSheet.create({
   carouselWrapper: {
     flex: 1,
     alignItems: "center",
-    marginBottom: 4
+    marginBottom: 4,
   },
   lectureCard: {
     borderRadius: 24,
@@ -382,8 +430,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingBottom: 100,
   },
   glowEffect: {
@@ -394,5 +442,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.03)",
     borderRadius: 40,
     zIndex: -1,
-  }
-})
+  },
+});

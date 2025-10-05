@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { router } from "expo-router";
 import CustomNavagation from "../../../../components/CustomNavagation";
+import Trending from "../../../../components/Navagation";
 
 const TargetPublicLectures = () => {
   return (
@@ -68,16 +69,17 @@ const TargetPublicLectures = () => {
             </Text>
           </View>
           <View style={styles.line}></View>
-          <View style={{ marginTop: 20 }}>
-            <CustomNavagation
-              sendData={true}
-              trendingItems={[
-                { name: "Palestrante", path: "/home/speaker" },
-                { name: "Propósito", path: "/home/lecturesObjective" },
-                { name: "Público alvo", path: "/home/targetPublicLectures" },
-              ]}
-            />
-          </View>
+          <View style={styles.navigationContainer}>
+              <Text style={styles.navigationTitle}>Navegação de Páginas</Text>
+              <Trending
+                navagations={[
+                  { name: "Palestrante", path: "/home/speaker" },
+                  { name: "Propósito", path: "/home/lecturesObjective" },
+                  { name: "Público alvo", path: "/home/targetPublicLectures" },
+                ]}
+                textTitlle={false}
+              />
+            </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -135,5 +137,15 @@ const styles = StyleSheet.create({
     borderWidth: 0.6,
     position: "absolute",
     top: 1,
+  }, navigationContainer: {
+    paddingHorizontal: 0,
+    paddingTop: 20,
+    paddingBottom: 0,
+    backgroundColor: "#003B73",
+  }, navigationTitle: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 12,
   },
 });

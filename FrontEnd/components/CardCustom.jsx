@@ -13,7 +13,8 @@ import { Star } from "lucide-react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 
-const CARD_WIDTH = 175; // Mantendo sua largura original
+const {width} = Dimensions.get("window")
+const CARD_WIDTH = (width - 48) / 2; // Mantendo sua largura original
 
 export default function CardCustom({
   data,
@@ -117,8 +118,7 @@ export default function CardCustom({
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    paddingHorizontal: 0, // Seu padding original
-    paddingVertical: 0, // Seu padding original
+    flexGrow: 1,
   },
   card: {
     backgroundColor: "#fff",

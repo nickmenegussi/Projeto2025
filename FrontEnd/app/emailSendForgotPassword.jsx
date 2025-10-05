@@ -15,14 +15,17 @@ import { ArrowLeftIcon } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context/auth";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ChangePassword() {
   const { OtpSendEmail } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
   async function sendEmailOtp(email) {
     setLoading(true);
     try {
+      await AsyncStorage.setItem("@Auth:emailForgotenPassword", email)
       await OtpSendEmail(email)
       router.push("/ChangePassword")
     } catch (error) {
@@ -90,6 +93,12 @@ export default function ChangePassword() {
                 <Text style={styles.loginLink}>Fazer Login</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.loginRedirect}>
+              <Text style={styles.rememberText}>Já possui o código?</Text>
+              <TouchableOpacity onPress={() => router.push("/ChangePassword")}>
+                <Text style={styles.loginLink}>Ir para próxima etapa</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -121,7 +130,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
+    maxWidth: 300,
     fontWeight: "bold",
     color: "#FFFFFF",
   },

@@ -2,35 +2,48 @@
   "expo": {
     "name": "CEO",
     "slug": "CEO",
-    "scheme": "Centro Espírita Online",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
+    "newArchEnabled": false,
     "android": {
+      "package": "com.nicolasmenega.CEO",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#003B73"
       },
       "splash": {
-        "image": "./assets/images/icon.png",
-        "backgroundColor": "white"
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.nicolasmenega.CEO"
+      "runtimeVersion": "1.0.0"
     },
-    "web": {
-      "favicon": "./assets/images/favicon.png"
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nicolasmenega.CEO",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "color": "#003B73"
+        }
+      ]
     ],
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "216d5079-4557-4c1a-a35c-61bf37503b70"
       }
+    },
+    "owner": "nicolasmenega",
+    "updates": {
+      "url": "https://u.expo.dev/216d5079-4557-4c1a-a35c-61bf37503b70"
     }
   }
 }
