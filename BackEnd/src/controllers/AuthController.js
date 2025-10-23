@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const OtpGenerator = require("otp-generator");
 
-exports.login = async (req, res) => {
+exports.login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -15,49 +15,52 @@ exports.login = async (req, res) => {
     });
   }
 
-  try {
-    const query = "SELECT idUser, email, password, status_permission, image_profile FROM User WHERE email = ?";
-    const [result] = await db.query(query, [email]);
-
-    if (result.length === 0) {
-      return res.status(400).json({
-        message: "Usuário não existe.",
-        success: false,
-      });
-    }
-
-    const user = result[0];
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(400).json({
-        message: "Email ou senha estão incorretos.",
-        success: false,
-      });
-    }
-
-    const token = jwt.sign(
-      { id: user.idUser, email: user.email, role: user.status_permission },
-      process.env.JWT_SECRET || "senhaSuperSecreto",
-      {
-        expiresIn: "4days",
+  connection.query(
+    "SELECT idUser, email, password, status_permission, image_profile FROM User WHERE email = ?",
+    [email],
+    async (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Erro ao se conectar com o servidor.",
+          success: false,
+          body: null
+        });
       }
-    );
-    return res.status(200).json({
-      message: "Login realizado com sucesso",
-      success: true,
-      data: { user: user, token: token },
-    });
-  } catch (error) {
-    console.error('Erro ao criar um login do usuário: ', error)
-    return res.status(500).json({
-      message: "Erro ao se conectar com o servidor.",
-      success: false,
-      body: null
-    })
-  }
-};
 
+      if (result.length === 0) {
+        return res.status(400).json({
+          message: "Usuário não existe.",
+          success: false,
+        });
+      }
+
+      const user = result[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        return res.status(400).json({
+          message: "Email ou senha estão incorretos.",
+          success: false,
+        });
+      }
+
+      const token = jwt.sign(
+        { id: user.idUser, email: user.email, role: user.status_permission },
+        process.env.JWT_SECRET || "senhaSuperSecreto",
+        {
+          expiresIn: "4days",
+        }
+      );
+      
+      return res.status(200).json({
+        message: "Login realizado com sucesso",
+        success: true,
+        data: { user: user, token: token },
+      });
+    }
+  );
+  
+};
 exports.GenerateOtp = (req, res) => {
   const { email } = req.body;
 
