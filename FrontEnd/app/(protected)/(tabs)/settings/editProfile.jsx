@@ -26,8 +26,12 @@ import { AuthContext } from "../../../../context/auth";
 import * as ImagePicker from "expo-image-picker";
 
 const EditProfile = () => {
-  const { user, updatePerfilImage } = useContext(AuthContext);
+  const { user, updatePerfilImage, handleUpdateNameUser } = useContext(AuthContext);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [updateUserName, setUpdateUserName] = useState(
+    user.nameUser ? user.nameUser : ""
+  );
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -62,13 +66,20 @@ const EditProfile = () => {
   };
 
   const handleChange = async () => {
-    if(!selectedImage) return
+    if(!selectedImage && updateUserName && user.nameUser === updateUserName){
+      return 
+    }
 
     try {
-      await updatePerfilImage(selectedImage);
-      setSelectedImage(null)
-      Alert.alert("Sucesso", "Foto de perfil atualizada com Sucesso!");
-      
+      if (selectedImage) {
+        await updatePerfilImage(selectedImage);
+        setSelectedImage(null);
+        Alert.alert("Sucesso", "Foto de perfil atualizada com Sucesso!");
+      }
+
+      if (updateUserName && user.nameUser !== updateUserName) {
+        await handleUpdateNameUser(updateUserName);
+      }
     } catch (error) {
       console.error(error);
       Alert.alert(
@@ -77,7 +88,6 @@ const EditProfile = () => {
       );
     }
   };
-
 
   const handleChangePhoto = () => {
     // Lógica para alterar foto
@@ -99,9 +109,7 @@ const EditProfile = () => {
         <Text style={styles.headerTitle}>Editar Perfil</Text>
         <TouchableOpacity
           style={styles.saveButton}
-          onPress={() =>
-            handleChange()
-          }
+          onPress={() => handleChange()}
         >
           <Text style={styles.saveButtonText}>Salvar</Text>
         </TouchableOpacity>
@@ -111,7 +119,17 @@ const EditProfile = () => {
           <View style={styles.avatarContainer}>
             <Image
               style={styles.avatar}
-              source={selectedImage ? {uri: selectedImage} : user?.image_profile ? { uri: `http://192.168.1.15:3001/uploads/${user?.image_profile}?t=${Date.now()}`} : require("../../../../assets/images/default-profile.jpg")}
+              source={
+                selectedImage
+                  ? { uri: selectedImage }
+                  : user?.image_profile
+                  ? {
+                      uri: `http://192.168.1.15:3001/uploads/${
+                        user?.image_profile
+                      }`,
+                    }
+                  : require("../../../../assets/images/default-profile.jpg")
+              }
             />
             <TouchableOpacity
               style={styles.editIcon}
@@ -132,8 +150,8 @@ const EditProfile = () => {
               style={styles.input}
               placeholder="Nome de usuário"
               placeholderTextColor="#AAAAAA"
-              value={user.nameUser}
-              onChangeText={(text) => handleChange("username", text)}
+              value={updateUserName}
+              onChangeText={(text) => setUpdateUserName(text)}
             />
           </View>
 
@@ -149,27 +167,13 @@ const EditProfile = () => {
               numberOfLines={3}
             />
           </View> */}
-          {/* <View style={styles.inputContainer}>
-            <LinkIcon size={20} color="#60A3D9" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Website"
-              placeholderTextColor="#AAAAAA"
-              value={profileData.website}
-              onChangeText={(text) => handleChange("website", text)}
-              autoCapitalize="none"
-            />
-          </View> */}
 
           <View style={[styles.inputContainer, styles.disableInputContainer]}>
             <LockIcon size={20} color="#60A3D9" style={styles.inputIcon} />
             <TextInput
               style={[styles.input, styles.disableText]}
-              placeholder="E-mail"
-              placeholderTextColor="#AAAAAA"
               value={user.status_permission}
               onChangeText={(text) => handleChange("email", text)}
-              keyboardType="email-address"
               selectTextOnFocus={false}
               editable={false}
               autoCapitalize="none"
@@ -202,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#60A3D9",
-    height: 120,
+    height: 80,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
     paddingHorizontal: 20,

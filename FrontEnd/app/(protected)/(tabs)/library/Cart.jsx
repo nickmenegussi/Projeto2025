@@ -9,7 +9,12 @@ import {
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import ButtonIcons from "../../../../components/ButtonIcons";
-import { ArrowLeftIcon, Trash2, Edit3, ShoppingCartIcon } from "lucide-react-native";
+import {
+  ArrowLeftIcon,
+  Trash2,
+  Edit3,
+  ShoppingCartIcon,
+} from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import useCart from "../../../../hooks/useCart";
 import React, { useContext, useEffect, useState } from "react";
@@ -80,38 +85,40 @@ const CartLoan = () => {
       setLoadingConfirm(false);
     }
   };
-
-  if (!data || (data.length === 0 && loan)) {
+  if (!data || (data.length === 0 && !loan)) {
     return (
       <View style={styles.centeredEmpty}>
         <View style={styles.emptyIconContainer}>
           <ShoppingCartIcon color="#FFFFFF" size={64} />
         </View>
-        
+
         <Text style={styles.emptyTitle}>Seu carrinho está vazio</Text>
-        
+
         <Text style={styles.emptySubText}>
-          No entanto, percebemos que você já realizou alguns empréstimos. 
-          Que tal dar uma olhada neles?
+          No entanto, percebemos que você já realizou alguns empréstimos. Que
+          tal dar uma olhada neles?
         </Text>
 
         <TouchableOpacity
           style={styles.emptyPrimaryButton}
           onPress={() => router.push("/library/historicalLoans")}
         >
-          <Text style={styles.emptyPrimaryButtonText}>Ver meus Empréstimos</Text>
+          <Text style={styles.emptyPrimaryButtonText}>
+            Ver meus Empréstimos
+          </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={styles.emptySecondaryButton}
           onPress={() => router.push("/library")}
         >
-          <Text style={styles.emptySecondaryButtonText}>Explorar Biblioteca</Text>
+          <Text style={styles.emptySecondaryButtonText}>
+            Explorar Biblioteca
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
-
 
   return (
     <View style={styles.container}>
@@ -124,7 +131,7 @@ const CartLoan = () => {
             <ArrowLeftIcon color={color} size={size} />
           )}
         />
-        <Text style={styles.headerTitle}>Carrinho de Empréstimos</Text>
+        <Text style={styles.headerTitle}>Carrinho de Compras</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -136,10 +143,10 @@ const CartLoan = () => {
           <Text style={styles.linkText}>Aguardando confirmação</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => router.push(`library/historicalLoans`)}
+          onPress={() => router.push(`library/historicalShopping`)}
           style={styles.button}
         >
-          <Text style={{ color: "#7D7D91" }}>Histórico Empréstimos</Text>
+          <Text style={{ color: "#7D7D91" }}>Histórico de Compras</Text>
         </TouchableOpacity>
       </View>
 
@@ -159,7 +166,7 @@ const CartLoan = () => {
               <Image
                 source={{
                   uri: item.image
-                    ? `http://192.168.1.10:3001/uploads/${item.image}`
+                    ? `${process.env.enderecoUrlImage}/uploads/${item.image}`
                     : null,
                 }}
                 style={styles.image}
@@ -226,7 +233,7 @@ const CartLoan = () => {
         )}
         ListFooterComponent={
           <>
-            <View style={styles.scheduleContainer}>
+            {/* <View style={styles.scheduleContainer}>
               <Text style={styles.sectionTitle}>Horários Disponíveis</Text>
 
               {schedules.map((item) => (
@@ -257,7 +264,7 @@ const CartLoan = () => {
                   )}
                 </TouchableOpacity>
               ))}
-            </View>
+            </View> */}
             <View style={{ flex: 1, gap: 15, marginTop: 15, marginBottom: 70 }}>
               <TouchableOpacity
                 style={styles.actionButton}
@@ -589,7 +596,8 @@ const styles = StyleSheet.create({
   buttonTextNoItemCart: {
     color: "#fff",
     fontSize: 16,
-  }, centeredEmpty: {
+  },
+  centeredEmpty: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

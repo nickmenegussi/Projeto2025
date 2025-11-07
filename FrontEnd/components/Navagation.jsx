@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { router } from "expo-router";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
 const Trending = ({
   navagations,
@@ -17,6 +17,21 @@ const Trending = ({
   disablePress = true,
   textTitlle = false,
 }) => {
+  const handleNavigation = (item) => {
+    if (item.onPress) {
+      item.onPress();
+    }
+    else if (item.path) {
+      router.navigate(item.path);
+    }
+    else if (item.data) {
+      router.navigate({
+        pathname: item.path,
+        params: { data: JSON.stringify(item.data) },
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -32,15 +47,7 @@ const Trending = ({
             ) : null}
             <TouchableOpacity
               style={styles.CardNavagation}
-              onPress={
-                disablePress === false
-                  ? null
-                  : () =>
-                      router.navigate({
-                        pathname: item.path,
-                        params: { data: JSON.stringify(item.data) },
-                      })
-              }
+              onPress={() => handleNavigation(item)}
               activeOpacity={0.6}
             >
               <Text style={styles.TextContent}>{item.name}</Text>

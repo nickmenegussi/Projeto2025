@@ -271,24 +271,17 @@ export default function HomeLocalization() {
       <View style={styles.header}>
          <View style={styles.Container}>
           <Header
-            title="Home"
+            title="Centro Espírita Próximos"
             onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)}
           />
           <Trending
             navagations={[
               {
                 type: "Navegação",
-                name: "Acervo Encomendas",
+                name: "Centros Espírita",
                 path: "/library/ReserveCollection",
               },
-              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
-              { name: "Buscar Livros", path: "/library/searchBook" },
-              { name: "Minha Biblioteca", path: "/library/myLibrary" },
-              {
-                name: "Histórico de movimentos",
-                path: "/library/historicalRequests",
-              },
-              { name: "Explorar", path: "/library/explore" },
+              
             ]}
             textTitlle={false}
           />

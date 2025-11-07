@@ -8,16 +8,13 @@ const RootLayout = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="reserves" options={{ headerShown: false }} />
       <Stack.Screen name="LoanCollection" options={{ headerShown: false }} />
-            <Stack.Screen name="ReserveCollection" options={{ headerShown: false }} />
-
-      <Stack.Screen name="aboutBook" options={{ headerShown: false }} />
-      <Stack.Screen name="bookLoan" options={{ headerShown: false }} />
-      <Stack.Screen name="CartLoan" options={{ headerShown: false }} />
+      <Stack.Screen name="ReserveCollection" options={{ headerShown: false }} />
+      <Stack.Screen name="Cart" options={{ headerShown: false }} />
       <Stack.Screen
         name="MessageLoanConfirmed"
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="historicalLoans" options={{ headerShown: false }} />
+      <Stack.Screen name="historicalShopping" options={{ headerShown: false }} />
       <Stack.Screen name="explore" options={{ headerShown: false }} />
       <Stack.Screen name="myLibrary" options={{ headerShown: false }} />
       <Stack.Screen
@@ -25,8 +22,16 @@ const RootLayout = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="searchBook" options={{ headerShown: false }} />
-        <Stack.Screen name="ObrasBasicas" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="aboutBook/[LibraryId]"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="bookType/[LibraryId]"
+        options={{ headerShown: false }}
+      />
 
+      <Stack.Screen name="ObrasBasicas" options={{ headerShown: false }} />
     </Stack>
   );
 };

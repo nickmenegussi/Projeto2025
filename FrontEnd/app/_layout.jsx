@@ -46,6 +46,10 @@ const RootLayout = () => {
             name="emailSendForgotPassword"
             options={{ animation: "none" }}
           />
+          <Stack.Screen
+            name="notification"
+            options={{ animation: "none" }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
         <Toast />

@@ -1,4 +1,4 @@
-package com.nicolasmenega.ceo
+package com.nicolasmenega.CEO
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

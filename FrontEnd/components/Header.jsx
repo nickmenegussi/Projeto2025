@@ -45,7 +45,7 @@ const Header = ({ title, onMenuPress, content }) => {
             source={
               user?.image_profile
                 ? {
-                    uri: `http://192.168.1.15:3001/uploads/${user.image_profile}?t=${Date.now()}`,
+                    uri: `http://192.168.1.16:3001/uploads/${user.image_profile}?t=${Date.now()}`,
                   }
                 : require("../assets/images/default-profile.jpg")
             }

@@ -85,6 +85,7 @@ export default function SignIn() {
 
           <FormField
             title="Senha"
+            type="Password"
             value={form.password}
             placeholder="Digite sua senha"
             handleChangeText={(e) => setform({ ...form, password: e })}

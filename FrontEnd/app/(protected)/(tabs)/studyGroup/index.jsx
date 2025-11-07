@@ -124,7 +124,7 @@ const Index = () => {
   const headerSection = () => (
     <View style={styles.Container}>
           <Header
-            title="Home"
+            title="Grupo de Estudos"
             onMenuPress={() => setIsSideBarOpen(!isSideBarOpen)}
           />
           <Trending

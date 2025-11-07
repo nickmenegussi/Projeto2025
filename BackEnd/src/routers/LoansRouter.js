@@ -4,7 +4,7 @@ const {viewAllLoans, viewLoansByUser, createLoan, updateReturnDate, deleteLoan} 
 const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 
-router.get('/loan/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin'])  ,viewLoansByUser)
+router.get('/loan/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin', 'User'])  ,viewLoansByUser)
 router.get('/loan', authMiddleware, viewAllLoans)
 
 router.post('/loan/:Cart_idCart/register', authMiddleware, verifyPermission(['admin', 'SuperAdmin', 'User']) ,createLoan)

@@ -11,14 +11,23 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useContext,
+} from "react";
 import {
   CircleUserRoundIcon,
   Download,
+  Edit3,
+  EllipsisVertical,
   Heart,
   Menu,
   MessageSquare,
   Plus,
+  Trash2,
 } from "lucide-react-native";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import Sidebar from "../../../../components/Sidebar";
@@ -30,8 +39,10 @@ import LoadingScreen from "../../../../components/AcitivityIndicator";
 import Header from "../../../../components/Header";
 import Trending from "../../../../components/Navagation";
 import SidebarWeb from "../../../../components/SidebarWeb";
+import { AuthContext } from "../../../../context/auth";
 
 const Index = () => {
+  const { user } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLikes, setUserLikes] = useState({});
@@ -40,6 +51,11 @@ const Index = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  const toggleMenu = (postId) => {
+    setOpenMenuId(openMenuId === postId ? null : postId);
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -73,7 +89,7 @@ const Index = () => {
   const currentUserId = useCallback(async () => {
     const userDataString = await AsyncStorage.getItem("@Auth:user");
     return userDataString ? JSON.parse(userDataString).id : null;
-  }, []);
+  }, [])
 
   const fetchUserLikes = useCallback(async () => {
     try {
@@ -128,13 +144,18 @@ const Index = () => {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <View style={[styles.postCard, isMobile ? styles.mobilePostCard : styles.webPostCard]}>
+      <View
+        style={[
+          styles.postCard,
+          isMobile ? styles.mobilePostCard : styles.webPostCard,
+        ]}
+      >
         <View style={styles.headerRow}>
           {item.image_profile ? (
             <Image
               style={styles.profile}
               source={{
-                uri: `http://192.168.1.19:3001/uploads/${item.image}`,
+                uri: `http://192.168.1.16:3001/uploads/${item.image}`,
               }}
             />
           ) : (
@@ -156,14 +177,57 @@ const Index = () => {
                 </View>
               )}
             </View>
-            <Text style={styles.postTime}>{formatDate(item.created_at)}</Text>
+            <View style={{ gap: 10 }}>
+              <Text style={styles.postTime}>{formatDate(item.created_at)}</Text>
+              {item.user_id === user.idUser && (
+                <View>
+                  <TouchableOpacity onPress={() => toggleMenu(item.idPost)}>
+                    <EllipsisVertical color={"white"} />
+                  </TouchableOpacity>
+
+                  {item.idPost === openMenuId && (
+                    <View style={styles.menuDropdown}>
+                      <TouchableOpacity
+                        style={styles.menuItem}
+                        onPress={() => {
+                          setOpenMenuId(null);
+                          // handleDeletePost(item.idPost);
+                        }}
+                        activeOpacity={0.6}
+                      >
+                        <Trash2 size={16} color="#FF6B6B" />
+                        <Text style={[styles.menuText, styles.deleteText]}>
+                          Deletar
+                        </Text>
+                      </TouchableOpacity>
+
+                      <View style={styles.menuDivider} />
+
+                      <TouchableOpacity
+                        style={styles.menuItem}
+                        onPress={() => {
+                          setOpenMenuId(null);
+                          // handleEditPost(item);
+                        }}
+                        activeOpacity={0.6}
+                      >
+                        <Edit3 size={16} color="#007AFF" />
+                        <Text style={[styles.menuText, styles.updateText]}>
+                          Editar
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
           </View>
         </View>
 
         <Text style={styles.postContent}>{item.content}</Text>
         {item.image && (
           <Image
-            source={{ uri: `http://192.168.1.19:3001/uploads/${item.image}` }}
+            source={{ uri: `http://192.168.1.16:3001/uploads/${item.image}` }}
             style={styles.postImage}
             resizeMode="cover"
           />
@@ -197,12 +261,14 @@ const Index = () => {
         </View>
       </View>
     ),
-    [userLikes, isMobile]
+    [userLikes, isMobile, openMenuId]
   );
 
   const renderFlatlistContainerMobile = () => {
     return (
       <>
+        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} data={dataSidebar} />
+
         <FlatList
           contentContainerStyle={styles.conteinerFlatlist}
           data={postData}
@@ -211,7 +277,7 @@ const Index = () => {
           ListHeaderComponent={() => {
             return (
               <View style={styles.headerComponent}>
-                <View style={{flex: 1,}}>
+                <View style={{ flex: 1 }}>
                   <Header title="Home" onMenuPress={() => setIsOpen(!isOpen)} />
                   <Trending
                     navagations={[
@@ -271,7 +337,7 @@ const Index = () => {
     return (
       <View style={styles.webContainer}>
         <SidebarWeb />
-        
+
         <View style={styles.webMainContent}>
           <View style={styles.webContentContainer}>
             <View style={styles.webHeader}>
@@ -307,8 +373,6 @@ const Index = () => {
               </ScrollView>
             </View> */}
 
-
-
             {loading ? (
               <View style={styles.loadingContainerWeb}>
                 <LoadingScreen image={false} />
@@ -316,7 +380,9 @@ const Index = () => {
               </View>
             ) : postData.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>Nenhuma postagem encontrada</Text>
+                <Text style={styles.emptyStateText}>
+                  Nenhuma postagem encontrada
+                </Text>
                 <Text style={styles.emptyStateSubtext}>
                   Seja o primeiro a compartilhar algo na comunidade!
                 </Text>
@@ -324,13 +390,18 @@ const Index = () => {
                   style={styles.emptyStateButton}
                   onPress={() => router.push("/community/createPost")}
                 >
-                  <Text style={styles.emptyStateButtonText}>Criar Primeira Postagem</Text>
+                  <Text style={styles.emptyStateButtonText}>
+                    Criar Primeira Postagem
+                  </Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.postsGrid}>
                 {postData.map((item) => (
-                  <ScrollView key={item.idPost.toString()} style={styles.gridItem}>
+                  <ScrollView
+                    key={item.idPost.toString()}
+                    style={styles.gridItem}
+                  >
                     {renderItem({ item })}
                   </ScrollView>
                 ))}
@@ -393,7 +464,7 @@ const styles = StyleSheet.create({
   },
   webPostCard: {
     marginBottom: 0,
-    height: '100%',
+    height: "100%",
   },
   headerRow: {
     flexDirection: "row",
@@ -498,32 +569,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 40,
   },
-  
+
   // Web Styles
   webContainer: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#003B73',
-    minHeight: '100vh',
+    flexDirection: "row",
+    backgroundColor: "#003B73",
+    minHeight: "100vh",
   },
   webMainContent: {
     flex: 1,
     marginLeft: 280,
-    backgroundColor: '#f5f7fa',
+    backgroundColor: "#f5f7fa",
   },
   webContentContainer: {
     flex: 1,
     padding: 30,
-    maxWidth: 'auto',
-    marginHorizontal: 'auto',
-    width: '100%',
+    maxWidth: "auto",
+    marginHorizontal: "auto",
+    width: "100%",
   },
   webHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 24,
-    marginTop: 50
+    marginTop: 50,
   },
   webTitle: {
     color: "#023047",
@@ -563,75 +634,114 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginRight: 12,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: "#e9ecef",
   },
   filterPillActive: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
+    backgroundColor: "#4A90E2",
+    borderColor: "#4A90E2",
   },
   filterText: {
-    color: '#023047',
-    fontWeight: '500',
+    color: "#023047",
+    fontWeight: "500",
   },
   filterTextActive: {
-    color: 'white',
+    color: "white",
   },
   postsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 20,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   gridItem: {
     minWidth: 400,
     flexGrow: 1,
   },
   emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 60,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
     marginTop: 20,
   },
   emptyStateText: {
-    color: '#023047',
+    color: "#023047",
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptyStateSubtext: {
-    color: '#6c757d',
+    color: "#6c757d",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
   },
   emptyStateButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: "#4A90E2",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
   },
   emptyStateButtonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
     fontSize: 16,
   },
   loadingContainerWeb: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 60,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
     marginTop: 20,
   },
   loadingText: {
     marginTop: 16,
-    color: '#6c757d',
+    color: "#6c757d",
     fontSize: 16,
-  },
+  }, menuDropdown: {
+  position: 'absolute',
+  top: 30,
+  right: 0,
+  backgroundColor: 'white',
+  borderRadius: 8,
+  paddingVertical: 8,
+  minWidth: 140,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.2,
+  shadowRadius: 8,
+  elevation: 5,
+  borderWidth: 1,
+  borderColor: 'rgba(0,0,0,0.1)',
+  zIndex: 1000,
+},
+menuItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  paddingVertical: 8,
+  gap: 12,
+},
+menuText: {
+  fontSize: 14,
+  fontWeight: '500',
+},
+deleteText: {
+  color: '#FF6B6B',
+},
+updateText: {
+  color: '#007AFF',
+},
+menuDivider: {
+  height: 1,
+  backgroundColor: '#F1F3F4',
+  marginHorizontal: 8,
+  marginVertical: 4,
+},
 });

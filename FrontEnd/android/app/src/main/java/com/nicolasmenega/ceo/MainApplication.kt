@@ -1,4 +1,4 @@
-package com.nicolasmenega.ceo
+package com.nicolasmenega.CEO
 
 import android.app.Application
 import android.content.res.Configuration

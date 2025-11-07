@@ -179,7 +179,7 @@ const HomeSettings = () => {
           title: "Sair da conta",
           icon: LogOutIcon,
           action: logout,
-          description: `Conectado como ${user?.name || "Usuário"}`,
+          description: `Conectado como ${user?.nameUser || "Usuário"}`,
           isDestructive: true,
         },
       ],
@@ -213,7 +213,7 @@ const HomeSettings = () => {
             source={
               user?.image_profile
                 ? {
-                    uri: `http://192.168.1.15:3001/uploads/${
+                    uri: `http://192.168.1.16:3001/uploads/${
                       user?.image_profile
                     }?t=${Date.now()}`,
                   }
@@ -221,7 +221,7 @@ const HomeSettings = () => {
             }
           />
           <View style={styles.userDetails}>
-            <Text style={styles.userName}>{user?.nameUser || "Usuário"}</Text>
+            <Text style={styles.userName}>{user.nameUser || "Usuário"}</Text>
             <Text style={styles.userEmail}>
               {user?.email || "usuario@email.com"}
             </Text>

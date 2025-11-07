@@ -71,7 +71,7 @@ export function AuthProvider({ children }) {
     await AsyncStorage.setItem("@Auth:email", email);
   }
   async function OtpVerification(otp, email) {
-        // const email = await AsyncStorage.getItem("@Auth:email");
+    // const email = await AsyncStorage.getItem("@Auth:email");
     const response = await api.post("/auth/otp/verification", {
       email,
       otp,
@@ -140,7 +140,7 @@ export function AuthProvider({ children }) {
         router.replace("/sign-up");
       }
     } catch (error) {
-      handleApiError(error)
+      handleApiError(error);
     }
   }
   async function updatePerfilImage(imageUri) {
@@ -192,16 +192,19 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const response = await OtpVerification(otp, email)
-      if(!response.success === true){
-        console.error("erro ao verificar otp! tente novamente!")
+      const response = await OtpVerification(otp, email);
+      if (!response.success === true) {
+        console.error("erro ao verificar otp! tente novamente!");
       }
- 
-      const responseChangePassword = await api.patch("/user/user/forgot-password", {
-        email,
-        newPassword,
-        otp,
-      });
+
+      const responseChangePassword = await api.patch(
+        "/user/user/forgot-password",
+        {
+          email,
+          newPassword,
+          otp,
+        }
+      );
 
       if (responseChangePassword.status === 200) {
         Toast.show({
@@ -261,6 +264,31 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function handleUpdateNameUser(newNameUser) {
+    if(!newNameUser) return
+
+    try {
+      const token = await AsyncStorage.getItem("@Auth:token");
+
+      const response = await api.patch("/user/user/nameUser", {nameUser: newNameUser}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if(response.status >= 200 && response.status < 300){
+        Alert.alert(
+          "Sucesso!",
+          "Nome do usuário mudado com sucesso."
+        )
+        setUser(prev => ({...prev, nameUser: newNameUser}))
+      }
+    } catch (error) {
+      console.error("Erro no servidor ao atualizar nome de usuário:", error);
+      handleApiError(error);
+    }
+  }
+
   function logout() {
     setUser(null);
     setOtpDigits(null);
@@ -286,6 +314,7 @@ export function AuthProvider({ children }) {
         updatePerfilImage,
         updatePasswordForgotten,
         updatePasswordForgotWithNoLogin,
+        handleUpdateNameUser
       }}
     >
       {children}

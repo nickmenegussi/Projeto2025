@@ -45,7 +45,7 @@ exports.login = (req, res) => {
       }
 
       const token = jwt.sign(
-        { id: user.idUser, email: user.email, role: user.status_permission },
+        { id: user.idUser, nameUser: user.nameUser, email: user.email, role: user.status_permission },
         process.env.JWT_SECRET || "senhaSuperSecreto",
         {
           expiresIn: "4days",

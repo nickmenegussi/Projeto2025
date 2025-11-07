@@ -73,91 +73,54 @@ const HomeLibrary = () => {
     );
   }
 
-  function renderHeader() {
-    return (
-      <View style={styles.ContainerHeader}>
-        
-         <View style={styles.Container}>
-          <Header
-            title="Biblioteca"
-            onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
-            content={
-               <View style={styles.actionButton}>
-                <ButtonIcons
-                  handleChange={() => router.push("/library/CartLoan")}
-                  color="#ffff"
-                  size={28}
-                  Icon={({ color, size }) => (
-                    <ShoppingCart color={color} size={size} />
-                  )}
-                />
-                {/* {itemsCartQuantity > 0 && (
-                  <View style={styles.cartBadge}>
-                    <Text style={styles.cartBadgeText}>
-                      {itemsCartQuantity}
-                    </Text>
-                  </View>
-                )} */}
-              </View>
-            }
-          />
-          <Trending
-            navagations={[
-              {
-                type: "Navegação",
-                name: "Acervo Encomendas",
-                path: "/library/ReserveCollection",
-              },
-              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
-              { name: "Buscar Livros", path: "/library/searchBook" },
-              { name: "Minha Biblioteca", path: "/library/myLibrary" },
-              {
-                name: "Histórico de movimentos",
-                path: "/library/historicalRequests",
-              },
-              { name: "Explorar", path: "/library/explore" },
-            ]}
-            textTitlle={false}
-          />
-        </View>
-        <View>
-          <View style={styles.navigationContainer}>
-            <Text style={styles.sectionTitle}>Navegação</Text>
-            <Trending
-              navagations={[
-                {
-                  type: "Navegação",
-                  name: "Acervo Encomendas",
-                  path: "/library/ReserveCollection",
-                },
-                { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
-                { name: "Buscar Livros", path: "/library/searchBook" },
-                { name: "Minha Biblioteca", path: "/library/myLibrary" },
-                {
-                  name: "Histórico de movimentos",
-                  path: "/library/historicalRequests",
-                },
-                { name: "Explorar", path: "/library/explore" },
-              ]}
-              textTitlle={false}
+ function renderHeader() {
+  return (
+    <View style={styles.ContainerHeader}>
+      <Header
+        title="Biblioteca"
+        onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
+        content={
+          <View style={styles.actionButton}>
+            <ButtonIcons
+              handleChange={() => router.push("/library/Cart")}
+              color="#ffff"
+              size={28}
+              Icon={({ color, size }) => (
+                <ShoppingCart color={color} size={size} />
+              )}
             />
           </View>
-
-          <View style={styles.genresContainer}>
-            <Text style={styles.sectionTitle}>Gêneros</Text>
-            <Trending
-              navagations={[
-                { name: "Todos", path: "" },
-                { name: "Obras Básicas", path: "" },
-                { name: "Obras Complementares", path: "" },
-              ]}
-              textTitlle={false}
-            />
-          </View>
-        </View>
+        }
+      />
+      <View style={styles.navigationContainer}>
+        <Text style={styles.sectionTitle}>Navegação</Text>
+        <Trending
+          navagations={[
+            { name: "Acervo Encomendas", path: "/library/ReserveCollection" },
+            { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+            { name: "Buscar Livros", path: "/library/searchBook" },
+            { name: "Minha Biblioteca", path: "/library/myLibrary" },
+            { name: "Histórico de movimentos", path: "/library/historicalRequests" },
+            { name: "Explorar", path: "/library/explore" },
+          ]}
+          textTitlle={false}
+        />
       </View>
-    );
-  }
+
+      <View style={styles.genresContainer}>
+        <Text style={styles.sectionTitle}>Gêneros</Text>
+        <Trending
+          navagations={[
+            { name: "Todos", path: "" },
+            { name: "Obras Básicas", path: "" },
+            { name: "Obras Complementares", path: "" },
+          ]}
+          textTitlle={false}
+        />
+      </View>
+    </View>
+  );
+}
 
   if (loading) {
     return (

@@ -32,18 +32,12 @@ export default function CardCustom({
   }, [data]);
 
   const handleCardPress = (item) => {
-    if (aboutBookLoan) {
-      const encodedData = encodeURIComponent(JSON.stringify([item]));
-      router.push(`/library/aboutBook?data=${encodedData}`);
+    if (aboutBookLoan || aboutBookReserves) {
+      router.push(`/library/aboutBook/${item.idLibrary}`);
     } else if (loan) {
-      const encodedData = encodeURIComponent(JSON.stringify(books));
-      router.push(`/library/LoanCollection?data=${encodedData}`);
-    } else if (aboutBookReserves) {
-      const encodedData = encodeURIComponent(JSON.stringify([item]));
-      router.push(`/library/aboutBook?data=${encodedData}`);
+      router.push(`/library/aboutBook/${item.idLibrary}?type=empréstimo`);
     } else if (reserves) {
-      const encodedData = encodeURIComponent(JSON.stringify(books));
-      router.push(`/library/ReserveCollection?data=${encodedData}`);
+      router.push(`/library/aboutBook/${item.idLibrary}?type=reserva`);
     } else if (obrasComplementares) {
       router.push(`/library/ObrasComplementares`);
     } else if (obrasBasicas) {
@@ -66,7 +60,7 @@ export default function CardCustom({
             onPress={() => handleCardPress(item)}
           >
             <ImageBackground
-              source={{ uri: `http://192.168.1.10:3001/uploads/${item.image}` }}
+              source={{ uri: `http://192.168.1.16:3001/uploads/${item.image}` }}
               style={styles.image}
               resizeMode="cover"
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}

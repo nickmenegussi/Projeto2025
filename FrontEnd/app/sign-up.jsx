@@ -172,6 +172,12 @@ export default function App() {
                   >
                     <Text style={{ color: "#7D7D91" }}>Cadastro</Text>
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => router.push(`/notification`)}
+                    style={styles.button}
+                  >
+                    <Text style={{ color: "#7D7D91" }}>enviar notificacao</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
 

@@ -10,7 +10,7 @@ router.get('/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin']) ,v
 
 router.post('/user/register' ,register)
 
-router.patch('/user/name',authMiddleware , updateUserName)
+router.patch('/user/nameUser',authMiddleware , updateUserName)
 router.patch('/user/profile', authMiddleware ,updateUser)
 router.patch('/user/password', authMiddleware ,updateUserPassword )
 router.patch('/user/forgot-password', updateUserForgotPassword)
