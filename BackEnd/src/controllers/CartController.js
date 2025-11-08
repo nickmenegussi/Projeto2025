@@ -1,7 +1,10 @@
-const connection = require("../config/db")
+const connection = require("../config/db");
+const  pool  = require("../config/promise");
+const { processLoan } = require("./LoansController");
+const { processReservation } = require("./ReservesController");
 
 exports.viewCartAll = (req, res) => {
-  const idUser = req.data.id
+  const idUser = req.data.id;
   connection.query(
     `SELECT c.*, b. *
 FROM Cart c
@@ -14,21 +17,21 @@ WHERE c.User_idUser = ?`,
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        })
+        });
       } else {
         return res.status(200).json({
           message: "Sucesso ao exibir os livros reservados",
           success: true,
           data: result,
-        })
+        });
       }
     }
-  )
-}
+  );
+};
 
 exports.viewCartByUser = (req, res) => {
-  const idUser = req.params.idUser
-  const idLibrary = req.params.idLibrary
+  const idUser = req.params.idUser;
+  const idLibrary = req.params.idLibrary;
 
   connection.query(
     `SELECT * FROM Cart c, User u, Book b
@@ -43,33 +46,33 @@ exports.viewCartByUser = (req, res) => {
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        })
+        });
       }
       if (result.length === 0) {
         return response.status(400).json({
           success: false,
           message: `Não há itens adicionados ao carrinho ainda!`,
-        })
+        });
       } else {
         return res.status(200).json({
           message: "Sucesso ao exibir o carrinho.",
           success: true,
           data: result,
-        })
+        });
       }
     }
-  )
-}
+  );
+};
 
 exports.updateAction = (req, res) => {
-  const idCart = req.params.id
-  const { action } = req.body
+  const idCart = req.params.id;
+  const { action } = req.body;
 
   if (!action || !idCart) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos.",
-    })
+    });
   }
 
   connection.query(
@@ -81,14 +84,14 @@ exports.updateAction = (req, res) => {
           success: false,
           message: "Erro ao se conectar com o servidor.",
           data: err,
-        })
+        });
       }
 
       if (result.length === 0) {
         return res.status(404).json({
           success: false,
           message: `Não foi possível encontrar o respectivo carrinho. Por favor, tente novamente.`,
-        })
+        });
       }
 
       connection.query(
@@ -100,7 +103,7 @@ exports.updateAction = (req, res) => {
               success: false,
               message: "Erro ao atualizar a categoria do item do carrinho",
               data: err,
-            })
+            });
           }
 
           return res.status(201).json({
@@ -108,22 +111,22 @@ exports.updateAction = (req, res) => {
             message:
               "A categoria do item do carrinho foi atualizada com sucesso.",
             data: result,
-          })
+          });
         }
-      )
+      );
     }
-  )
-}
+  );
+};
 
 exports.updateQuantity = (req, res) => {
-  const User_idUser = req.data.id
-  const { Book_idLibrary, quantity } = req.body
+  const User_idUser = req.data.id;
+  const { Book_idLibrary, quantity } = req.body;
 
   if (!User_idUser || !Book_idLibrary || !quantity) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
-    })
+    });
   }
   connection.query(
     ` SELECT * FROM User u
@@ -138,7 +141,7 @@ exports.updateQuantity = (req, res) => {
           success: false,
           message: "Erro ao se conectar com o servidor.",
           data: err,
-        })
+        });
       }
 
       if (result.length === 0) {
@@ -146,7 +149,7 @@ exports.updateQuantity = (req, res) => {
           success: false,
           message:
             "Não foi possível encontrar o item no carrinho para atualizar a quantidade.",
-        })
+        });
       }
 
       connection.query(
@@ -158,7 +161,7 @@ exports.updateQuantity = (req, res) => {
               success: false,
               message: "Erro ao atualizar a quantidade do item no carrinho.",
               data: err,
-            })
+            });
           }
 
           if (result.affectedRows === 0) {
@@ -166,28 +169,28 @@ exports.updateQuantity = (req, res) => {
               success: false,
               message:
                 "Nenhum item foi atualizado. Verifique os dados e tente novamente.",
-            })
+            });
           }
 
           return res.status(200).json({
             success: true,
             message: "Quantidade do item no carrinho atualizada com sucesso.",
             data: result,
-          })
+          });
         }
-      )
+      );
     }
-  )
-}
+  );
+};
 
 exports.createCart = (req, res) => {
-  const User_idUser = req.data.id
-  const { Book_idLibrary, action, quantity } = req.body
+  const User_idUser = req.data.id;
+  const { Book_idLibrary, action, quantity } = req.body;
   if (!User_idUser || !Book_idLibrary || !action || !quantity) {
     return res.status(400).json({
       success: false,
       message: "Preencha todos os campos de cadastro",
-    })
+    });
   }
 
   // Verifica se o usuário existe
@@ -200,7 +203,7 @@ exports.createCart = (req, res) => {
           success: false,
           message: "Erro ao se conectar com o servidor.",
           data: err,
-        })
+        });
       }
 
       if (userResult.length === 0) {
@@ -208,7 +211,7 @@ exports.createCart = (req, res) => {
           success: false,
           message: "Usuário não encontrado.",
           data: err,
-        })
+        });
       }
 
       // Verifica se o livro existe
@@ -220,7 +223,7 @@ exports.createCart = (req, res) => {
             return res.status(404).json({
               success: false,
               message: "Livro não encontrado.",
-            })
+            });
           }
 
           // Verifica se já existe no carrinho
@@ -236,44 +239,45 @@ exports.createCart = (req, res) => {
                   message: "Erro ao se conectar com o servidor.",
                   success: false,
                   data: err,
-                })
+                });
               }
               if (result.length > 0) {
                 return res.status(200).json({
                   success: true,
-                  message: "Esse produto já foi finalizado como um empréstimo, por isso não pode ser adicionado de novo no carrinho.",
-                })
-              } 
+                  message:
+                    "Esse produto já foi finalizado como um empréstimo, por isso não pode ser adicionado de novo no carrinho.",
+                });
+              }
               // Insere no carrinho
-                connection.query(
-                  "INSERT INTO Cart(User_idUser, Book_idLibrary, action, quantity) VALUES(?, ?, ?, ?)",
-                  [User_idUser, Book_idLibrary, action, quantity],
-                  (err, insertResult) => {
-                    if (err) {
-                      return res.status(500).json({
-                        message: "Erro ao criar carrinho.",
-                        success: false,
-                        data: err,
-                      })
-                    } else {
-                      return res.status(201).json({
-                        success: true,
-                        message: "Carrinho cadastrado com sucesso",
-                        data: insertResult,
-                      })
-                    }
+              connection.query(
+                "INSERT INTO Cart(User_idUser, Book_idLibrary, action, quantity) VALUES(?, ?, ?, ?)",
+                [User_idUser, Book_idLibrary, action, quantity],
+                (err, insertResult) => {
+                  if (err) {
+                    return res.status(500).json({
+                      message: "Erro ao criar carrinho.",
+                      success: false,
+                      data: err,
+                    });
+                  } else {
+                    return res.status(201).json({
+                      success: true,
+                      message: "Carrinho cadastrado com sucesso",
+                      data: insertResult,
+                    });
                   }
-                )
+                }
+              );
             }
-          )
+          );
         }
-      )
+      );
     }
-  )
-}
+  );
+};
 
 exports.deleteCart = (req, res) => {
-  const idCart = req.params.idCart
+  const idCart = req.params.idCart;
 
   connection.query(
     "SELECT idCart FROM Cart where idCart = ?",
@@ -284,7 +288,7 @@ exports.deleteCart = (req, res) => {
           message: "Erro ao se conectar com o servidor.",
           success: false,
           data: err,
-        })
+        });
       }
 
       if (result.length === 0) {
@@ -292,7 +296,7 @@ exports.deleteCart = (req, res) => {
           message: `Infelizmente, o item ainda não foi adicionado para o carrinho ser removido. `,
           success: false,
           data: err,
-        })
+        });
       } else {
         connection.query(
           "DELETE FROM Cart where idCart = ?",
@@ -303,7 +307,7 @@ exports.deleteCart = (req, res) => {
                 message: "Erro ao se conectar com o servidor.",
                 success: false,
                 data: err,
-              })
+              });
             }
 
             if (result.affectedRows === 0) {
@@ -312,17 +316,74 @@ exports.deleteCart = (req, res) => {
                   "Erro ao deletar carrinho. Verifique os dados e tente novamente.",
                 success: false,
                 data: err,
-              })
+              });
             } else {
               return res.status(201).json({
                 message: "Carrinho deletado com sucesso",
                 success: true,
                 data: result,
-              })
+              });
             }
           }
-        )
+        );
       }
     }
-  )
-}
+  );
+};
+
+exports.confirmCart = async (req, res) => {
+  const User_idUser = req.data.id;
+  const { cartItems } = req.body;
+  console.log(cartItems)
+
+  if (!User_idUser || !cartItems || !Array.isArray(cartItems)) {
+    return res.status(400).json({
+      success: false,
+      message: "Preencha todos os campos de cadastro",
+    });
+  }
+
+  try {
+    for (const item of cartItems) {
+      const [cartItem] = await pool.query(
+        `SELECT * FROM Cart WHERE idCart = ?`,
+        [item.idCart]
+      );
+
+      if (cartItem.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Item do carrinho não encontrado: ${item.nameBook}`,
+        });
+      }
+
+      const action = cartItem[0].action;
+
+      if (action.toLowerCase().trim() === "emprestar") {
+        await processLoan(item, User_idUser);
+      } else if (action.toLowerCase().trim() === "reservar") {
+        await processReservation(item, User_idUser);
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: `Ação inválida no item: 
+          Nome: ${item.nameBook}
+          Ação: ${action}`,
+        });
+      }
+
+      await pool.query(`DELETE FROM CART WHERE idCart = ?`, [item.idCart])
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Todos os itens foram processados com sucesso!",
+    });
+  } catch (error) {
+    console.error("Erro na API:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

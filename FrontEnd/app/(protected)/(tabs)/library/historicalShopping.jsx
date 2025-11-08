@@ -7,73 +7,111 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { router } from "expo-router";
 import ButtonIcons from "../../../../components/ButtonIcons";
-import { ArrowLeftIcon, Calendar, Clock, BookOpen, Tag, Library } from "lucide-react-native";
+import { ArrowLeftIcon, Calendar, Clock, BookOpen, Library } from "lucide-react-native";
 import useLoan from "../../../../hooks/useLoan";
+import useReservation from "../../../../hooks/useReservation";
 import EmptyContent from "../../../../components/EmptyContent";
 import Constants from 'expo-constants';
 
 const HistoricalLoans = () => {
-  const { loan, hasLoan, loading } = useLoan();
+  const { loan, hasLoan, loading: loansLoading } = useLoan();
+  const { reservation, hasReservation, loading: reservesLoading } = useReservation();
+  const [activeTab, setActiveTab] = useState('loans'); // 'loans' ou 'reserves'
   const { enderecoUrlImage } = Constants.expoConfig.extra;
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Carregando empréstimos...</Text>
-      </View>
-    );
-  }
+  const loading = loansLoading || reservesLoading;
 
-  const getStatusStyle = (returnDate) => {
+  const currentData = activeTab === 'loans' ? loan : reservation;
+
+  const getStatusStyle = (returnDate, type = 'loan') => {
     const today = new Date();
     const returnDateObj = new Date(returnDate);
     const daysUntilReturn = Math.ceil((returnDateObj - today) / (1000 * 60 * 60 * 24))
 
-    if (daysUntilReturn < 0) {
+    if (type === 'reserve') {
+      if (daysUntilReturn < 0) {
+        return { 
+          backgroundColor: '#FF6B6B', 
+          text: 'Reserva Expirada',
+          icon: '❌'
+        };
+      } else if (daysUntilReturn <= 1) {
+        return { 
+          backgroundColor: '#FFA726', 
+          text: 'Vence Hoje',
+          icon: '⏰'
+        };
+      } else {
+        return { 
+          backgroundColor: '#9C27B0', 
+          text: 'Reserva Ativa',
+          icon: '📋'
+        };
+      }
+    } else {
+      if (daysUntilReturn < 0) {
+        return { 
+          backgroundColor: '#FF6B6B', 
+          text: 'Atrasado',
+          icon: '⚠️'
+        };
+      } else if (daysUntilReturn <= 3) {
+        return { 
+          backgroundColor: '#FFA726', 
+          text: 'Próximo do vencimento',
+          icon: '⏰'
+        };
+      } else {
+        return { 
+          backgroundColor: '#4CAF50', 
+          text: 'Em dia',
+          icon: '✅'
+        };
+      }
+    }
+  };
+
+  const getCategoryInfo = (type = 'loan') => {
+    if (type === 'reserve') {
       return { 
-        backgroundColor: '#FF6B6B', 
-        text: 'Atrasado',
-        icon: '⚠️'
-      };
-    } else if (daysUntilReturn <= 3) {
-      return { 
-        backgroundColor: '#FFA726', 
-        text: 'Próximo do vencimento',
-        icon: '⏰'
+        name: 'Reserva', 
+        color: '#9C27B0',
+        icon: '📋'
       };
     } else {
       return { 
-        backgroundColor: '#4CAF50', 
-        text: 'Em dia',
-        icon: '✅'
+        name: 'Empréstimo', 
+        color: '#007AFF',
+        icon: '📚'
       };
     }
   };
 
-  const getCategoryInfo = (category) => {
-    const categories = {
-      'emprestimo': { 
-        name: 'Empréstimo', 
-        color: '#007AFF',
-        icon: '📚'
-      },
-      'reserva': { 
-        name: 'Reserva', 
-        color: '#9C27B0',
-        icon: '📋'
-      },
-      'default': { 
-        name: 'Empréstimo', 
-        color: '#007AFF',
-        icon: '📚'
-      }
-    };
-    return categories[category] || categories.default;
+  const getDateLabels = (type = 'loan') => {
+    if (type === 'reserve') {
+      return {
+        startLabel: 'Data da Reserva',
+        endLabel: 'Validade da Reserva'
+      };
+    } else {
+      return {
+        startLabel: 'Data do Empréstimo',
+        endLabel: 'Devolução Prevista'
+      };
+    }
   };
+
+  if (loading) { 
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -87,37 +125,53 @@ const HistoricalLoans = () => {
             <ArrowLeftIcon color={color} size={size} />
           )}
         />
-        <Text style={styles.headerTitle}>Histórico de Compras</Text>
+        <Text style={styles.headerTitle}>Meus Livros</Text>
         <View style={{ width: 24 }} />
       </View>
 
+      {/* Navegação entre Empréstimos e Reservas */}
       <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={() => router.push(``)}
-                activeOpacity={0.7}
-                style={styles.button}
-              >
-                <Text style={styles.linkText}>Aguardando confirmação</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => router.push(`library/historicalShopping`)}
-                style={[styles.button,  styles.buttonActive]}
-              >
-                <Text style={styles.linkText}>Histórico de Compras</Text>
-              </TouchableOpacity>
-            </View>
+        <TouchableOpacity
+          onPress={() => router.back('/cart')}
+          activeOpacity={0.7}
+          style={
+            styles.button
+          }
+        >
+          <Text style={styles.linkText}>Processando</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setActiveTab('loans')}
+          activeOpacity={0.7}
+          style={[
+            styles.button,
+            activeTab === 'loans' && styles.buttonActive
+          ]}
+        >
+          <Text style={styles.linkText}>Empréstimos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setActiveTab('reserves')}
+          activeOpacity={0.7}
+          style={[
+            styles.button,
+            activeTab === 'reserves' && styles.buttonActive
+          ]}
+        >
+          <Text style={styles.linkText}>Reservas</Text>
+        </TouchableOpacity>
+      </View>
 
-      
-
-      
+      {/* Lista */}
       <FlatList
         contentContainerStyle={styles.containerFlatlist}
-        data={loan}
+        data={currentData}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item, index) => item.id?.toString() || index.toString()}
         renderItem={({ item }) => {
-          const status = getStatusStyle(item.returnDate);
-          const category = getCategoryInfo(item.bookCategory);
+          const status = getStatusStyle(item.returnDate, activeTab === 'reserves' ? 'reserve' : 'loan');
+          const category = getCategoryInfo(activeTab === 'reserves' ? 'reserve' : 'loan');
+          const dateLabels = getDateLabels(activeTab === 'reserves' ? 'reserve' : 'loan');
           
           return (
             <View style={styles.card}>
@@ -157,11 +211,11 @@ const HistoricalLoans = () => {
                 <View style={styles.datesContainer}>
                   <View style={styles.dateRow}>
                     <View style={styles.dateItem}>
-                      <Calendar size={16} color="#007AFF" />
+                      <Calendar size={16} color={category.color} />
                       <View style={styles.dateTextContainer}>
-                        <Text style={styles.dateLabel}>Data do Empréstimo</Text>
+                        <Text style={styles.dateLabel}>{dateLabels.startLabel}</Text>
                         <Text style={styles.dateValue}>
-                          {new Date(item.date_aquisition).toLocaleDateString('pt-BR', {
+                          {new Date(item.date_at_create).toLocaleDateString('pt-BR', {
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric'
@@ -171,9 +225,9 @@ const HistoricalLoans = () => {
                     </View>
 
                     <View style={styles.dateItem}>
-                      <Clock size={16} color="#007AFF" />
+                      <Clock size={16} color={category.color} />
                       <View style={styles.dateTextContainer}>
-                        <Text style={styles.dateLabel}>Devolução Prevista</Text>
+                        <Text style={styles.dateLabel}>{dateLabels.endLabel}</Text>
                         <Text style={styles.dateValue}>
                           {new Date(item.returnDate).toLocaleDateString('pt-BR', {
                             day: '2-digit',
@@ -195,8 +249,10 @@ const HistoricalLoans = () => {
                   </View>
                   
                   <View style={styles.libraryContainer}>
-                    <Library size={12} color="#007AFF" />
-                    <Text style={styles.libraryName}>Gabriel Delanne</Text>
+                    <Library size={12} color={category.color} />
+                    <Text style={[styles.libraryName, { color: category.color }]}>
+                      Gabriel Delanne
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -206,8 +262,11 @@ const HistoricalLoans = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <EmptyContent
-              title="Nenhum empréstimo ativo"
-              subtitle="Pegue um empréstimo do seu próximo livro favorito"
+              title={activeTab === 'loans' ? "Nenhum empréstimo ativo" : "Nenhuma reserva ativa"}
+              subtitle={activeTab === 'loans' 
+                ? "Pegue um empréstimo do seu próximo livro favorito" 
+                : "Faça uma reserva do seu próximo livro favorito"
+              }
               actionText="Explorar Biblioteca"
               onAction={() => router.push("/library")}
             />
@@ -222,7 +281,6 @@ export default HistoricalLoans;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#003B73",
   },
   header: {
@@ -271,7 +329,7 @@ const styles = StyleSheet.create({
   },
   containerFlatlist: {
     padding: 16,
-    paddingBottom: 120,
+    paddingBottom: 320,
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -310,7 +368,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   image: {
-    width: 100, // Imagem 25% maior
+    width: 100,
     height: 150,
     borderRadius: 12,
     backgroundColor: "#F8F9FA",
@@ -407,7 +465,6 @@ const styles = StyleSheet.create({
   },
   libraryName: {
     fontSize: 11,
-    color: "#007AFF",
     fontWeight: "600",
   },
   centered: {

@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import Constants from 'expo-constants';
 
 const {width} = Dimensions.get("window")
 const CARD_WIDTH = (width - 48) / 2; // Mantendo sua largura original
@@ -26,7 +27,7 @@ export default function CardCustom({
   obrasBasicas = false,
 }) {
   const [books, setBooks] = useState(data || []);
-
+  const {enderecoUrlImage} = Constants.expoConfig.extra 
   useEffect(() => {
     setBooks(data || []);
   }, [data]);
@@ -60,7 +61,11 @@ export default function CardCustom({
             onPress={() => handleCardPress(item)}
           >
             <ImageBackground
-              source={{ uri: `http://192.168.1.16:3001/uploads/${item.image}` }}
+              source={{
+                      uri: item.image
+                        ? `${enderecoUrlImage}/uploads/${item.image}`
+                        : null,
+                    }}
               style={styles.image}
               resizeMode="cover"
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}

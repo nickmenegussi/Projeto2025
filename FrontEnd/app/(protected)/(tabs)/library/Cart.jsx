@@ -14,6 +14,8 @@ import {
   Trash2,
   Edit3,
   ShoppingCartIcon,
+  MapPin,
+  CreditCard,
 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import useCart from "../../../../hooks/useCart";
@@ -25,14 +27,19 @@ import {
 import { createLoanConfirmation } from "../../../../services/ServiceLoan";
 import CustomModal from "../../../../components/ModalCustom";
 import useLoan from "../../../../hooks/useLoan";
+import Constants from "expo-constants";
+import api from "../../../../services/api";
 
 const CartLoan = () => {
   const { data, loading, refresh } = useCart();
-  const { loan } = useLoan();
   const [loadingConfirm, setLoadingConfirm] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [deletingItems, setDeletingItems] = useState({});
+  const [updatingItems, setUpdatingItems] = useState({});
+  const { enderecoUrlImage } = Constants.expoConfig.extra;
+
   const schedules = [
     { id: 1, dia: "Segunda-feira", horario: "10:00 - 12:00", disponivel: true },
     { id: 2, dia: "Terça-feira", horario: "14:00 - 16:00", disponivel: true },
@@ -50,42 +57,69 @@ const CartLoan = () => {
   }
 
   const handleUpdateQuantity = async (Book_idLibrary, quantity) => {
+    setUpdatingItems((prev) => ({ ...prev, [Book_idLibrary]: true }));
     try {
       await updateQuantity({ Book_idLibrary, quantity });
       Alert.alert("Sucesso", "Quantidade atualizada com sucesso!");
+      refresh();
     } catch (error) {
       Alert.alert("Erro", "Não foi possível atualizar a quantidade.");
+    } finally {
+      setUpdatingItems((prev) => ({ ...prev, [Book_idLibrary]: false }));
     }
   };
 
   const handleDeleteCart = async (idCart) => {
+    setDeletingItems((prev) => ({ ...prev, [idCart]: true }));
     try {
       await deleteBookInCart({ idCart });
-      Alert.alert("Sucesso", "Carrinho deletado com sucesso!");
+      Alert.alert("Sucesso", "Item removido do carrinho!");
+      refresh();
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível deletar o item do carrinho.");
+      Alert.alert("Erro", "Não foi possível remover o item do carrinho.");
+    } finally {
+      setDeletingItems((prev) => ({ ...prev, [idCart]: false }));
     }
+  };
+
+  const getCategoryInfo = (category) => {
+    const categories = {
+      emprestimo: {
+        name: "Empréstimo",
+        color: "#007AFF",
+      },
+      reserva: {
+        name: "Reserva",
+        color: "#1565C0",
+      },
+      default: {
+        name: "Categoria",
+        color: "#666666",
+      },
+    };
+    return categories[category] || categories.default;
   };
 
   const handleConfirmationLoan = async () => {
     setLoadingConfirm(true);
     try {
-      // aqui eu tenho que iterar de novo nos items que tem em data por conta de que eu estou pegando os dados que estão vindo da api que mostra os carrinhos com os itens dentro
-      for (const item of data) {
-        await createLoanConfirmation({
-          Cart_idCart: item.idCart,
-          Book_idLibrary: item.idLibrary,
-          quantity: item.quantity,
-        });
+      const response = await api.post("/cart/cart/process-shopping", {
+        cartItems: data,
+      });
+
+      if (response.data.success) {
+        Alert.alert("Sucesso!", response.data.message);
+        refresh();
       }
-      Alert.alert("Sucesso", "Reserva confirmada com sucesso!");
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível confirmar a reserva.");
+      console.log
+      Alert.alert("Erro", "Não foi possível confirmar os itens do carrinho.");
     } finally {
       setLoadingConfirm(false);
     }
   };
-  if (!data || (data.length === 0 && !loan)) {
+
+  if (!data || data.length === 0) {
     return (
       <View style={styles.centeredEmpty}>
         <View style={styles.emptyIconContainer}>
@@ -101,10 +135,10 @@ const CartLoan = () => {
 
         <TouchableOpacity
           style={styles.emptyPrimaryButton}
-          onPress={() => router.push("/library/historicalLoans")}
+          onPress={() => router.push("/library/historicalShopping")}
         >
           <Text style={styles.emptyPrimaryButtonText}>
-            Ver meus Empréstimos
+            Ver minhas Compras
           </Text>
         </TouchableOpacity>
 
@@ -119,6 +153,10 @@ const CartLoan = () => {
       </View>
     );
   }
+
+  // Calcular totais para o resumo
+  const totalItems = data.reduce((total, item) => total + item.quantity, 0);
+  const totalBooks = data.length;
 
   return (
     <View style={styles.container}>
@@ -160,130 +198,185 @@ const CartLoan = () => {
         leftOpenValue={75}
         rightOpenValue={-75}
         previewOpenDelay={3000}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Image
-                source={{
-                  uri: item.image
-                    ? `${process.env.enderecoUrlImage}/uploads/${item.image}`
-                    : null,
-                }}
-                style={styles.image}
-              />
-              <View style={styles.cardInfo}>
-                <Text style={styles.bookTitle}>{item.nameBook}</Text>
-                <Text style={styles.bookAuthor}>{item.authorBook}</Text>
-                <Text style={styles.libraryName}>
-                  Quantidade items: {item.quantity}
-                </Text>
-                <Text style={styles.libraryName}>
-                  Biblioteca Gabriel Delanne
-                </Text>
+        renderItem={({ item }) => {
+          const category = getCategoryInfo(item.bookCategory);
+
+          return (
+            <View style={styles.card}>
+              <View
+                style={[
+                  styles.cardCategoryBook,
+                  { backgroundColor: category.color },
+                ]}
+              >
+                <Text style={styles.categoryText}>{category.name}</Text>
+              </View>
+              <View style={styles.cardHeader}>
+                <Image
+                  source={{
+                    uri: item.image
+                      ? `${enderecoUrlImage}/uploads/${item.image}`
+                      : null,
+                  }}
+                  style={styles.image}
+                />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.bookTitle} numberOfLines={2}>
+                    {item.nameBook}
+                  </Text>
+                  <Text style={styles.bookAuthor} numberOfLines={1}>
+                    {item.authorBook}
+                  </Text>
+
+                  {/* Nova seção de quantidade com controle visual */}
+                  <View style={styles.quantityContainer}>
+                    <Text style={styles.quantityLabel}>Quantidade:</Text>
+                    <View style={styles.quantityBadge}>
+                      <Text style={styles.quantityText}>{item.quantity}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.libraryInfo}>
+                    <Text style={styles.libraryName}>
+                      Biblioteca Gabriel Delanne
+                    </Text>
+                    <View style={styles.statusIndicator}>
+                      <View style={[styles.statusDot, styles.available]} />
+                      <Text style={styles.statusText}>
+                        Disponível para retirada
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.cardFooter}>
+                <View style={styles.footerColumn}>
+                  <View style={styles.footerItem}>
+                    <MapPin color="#007AFF" size={16} />
+                    <View style={styles.footerTextContainer}>
+                      <Text style={styles.footerTitle}>
+                        Endereço para retirada
+                      </Text>
+                      <Text style={styles.footerText} numberOfLines={2}>
+                        Sociedade Gabriel Delanne, Rua Coração de Maria, 341,
+                        Centro - Esteio, RS
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.divider} />
+
+                  <View style={styles.footerItem}>
+                    <CreditCard color="#007AFF" size={16} />
+                    <View style={styles.footerTextContainer}>
+                      <Text style={styles.footerTitle}>Forma de pagamento</Text>
+                      <Text style={styles.footerText} numberOfLines={2}>
+                        Na livraria da sociedade. Aceitamos Pix, cartão de
+                        crédito e débito.
+                      </Text>
+                    </View>
+                  </View>
+                </View>
               </View>
             </View>
-
-            <View style={styles.cardFooter}>
-              <View style={styles.footerSection}>
-                <Text style={styles.footerTitle}>Endereço para retirada</Text>
-                <Text style={styles.footerText}>
-                  Sociedade Gabriel Delanne, Rua Coração de Maria, 341, Centro -
-                  Esteio, RS
-                </Text>
-              </View>
-
-              <View style={styles.divider} />
-
-              <View style={styles.footerSection}>
-                <Text style={styles.footerTitle}>Forma de pagamento</Text>
-                <Text style={styles.footerText}>
-                  Na livraria da sociedade. Aceitamos Pix, cartão de crédito e
-                  débito.
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
+          );
+        }}
         renderHiddenItem={({ item }) => (
           <View style={styles.rowBack}>
+            {/* Botão Editar */}
             <TouchableOpacity
-              style={styles.backLeftBtn}
+              style={[
+                styles.backLeftBtn,
+                updatingItems[item.idLibrary] && styles.buttonDisabled,
+              ]}
               onPress={() => {
                 setVisibleModal(true);
                 setSelectedItem(item);
               }}
+              disabled={updatingItems[item.idLibrary]}
             >
-              <Edit3 color="#fff" size={20} />
-              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
-                Editar
-              </Text>
+              {updatingItems[item.idLibrary] ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <>
+                  <Edit3 color="#fff" size={20} />
+                  <Text style={styles.hiddenButtonText}>Editar</Text>
+                </>
+              )}
             </TouchableOpacity>
 
-            {/* Direita: Remover */}
+            {/* Botão Remover */}
             <TouchableOpacity
-              style={styles.backRightBtn}
+              style={[
+                styles.backRightBtn,
+                deletingItems[item.idCart] && styles.buttonDisabled,
+              ]}
               onPress={() => handleDeleteCart(item.idCart)}
+              disabled={deletingItems[item.idCart]}
             >
-              <Trash2 color="#fff" size={20} />
-              <Text style={{ color: "#fff", fontSize: 12, marginTop: 4 }}>
-                Remover
-              </Text>
+              {deletingItems[item.idCart] ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <>
+                  <Trash2 color="#fff" size={20} />
+                  <Text style={styles.hiddenButtonText}>Remover</Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
         )}
         ListFooterComponent={
           <>
-            {/* <View style={styles.scheduleContainer}>
-              <Text style={styles.sectionTitle}>Horários Disponíveis</Text>
+            {/* Resumo do pedido */}
+            <View style={styles.orderSummary}>
+              <Text style={styles.summaryTitle}>Resumo do Pedido</Text>
 
-              {schedules.map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.scheduleItem,
-                    selectedSchedule === item.id && styles.scheduleItemSelected,
-                    !item.disponivel && styles.scheduleItemDisabled,
-                  ]}
-                  onPress={() =>
-                    item.disponivel && setSelectedSchedule(item.id)
-                  }
-                  disabled={!item.disponivel}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.radioCircle}>
-                    {selectedSchedule === item.id && (
-                      <View style={styles.radioDot} />
-                    )}
-                  </View>
-                  <View style={styles.scheduleInfo}>
-                    <Text style={styles.dayText}>{item.dia}</Text>
-                    <Text style={styles.timeText}>{item.horario}</Text>
-                  </View>
-                  {!item.disponivel && (
-                    <Text style={styles.unavailableText}>Indisponível</Text>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View> */}
-            <View style={{ flex: 1, gap: 15, marginTop: 15, marginBottom: 70 }}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Total de itens:</Text>
+                <Text style={styles.summaryValue}>{totalItems}</Text>
+              </View>
+
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Livros diferentes:</Text>
+                <Text style={styles.summaryValue}>{totalBooks}</Text>
+              </View>
+
+              <View style={[styles.summaryRow, styles.summaryTotal]}>
+                <Text style={styles.summaryTotalLabel}>
+                  Total para retirada:
+                </Text>
+                <Text style={styles.summaryTotalValue}>
+                  {totalBooks} {totalBooks === 1 ? "item" : "itens"}
+                </Text>
+              </View>
+            </View>
+
+            {/* Botões de ação */}
+            <View style={styles.actionsContainer}>
               <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => {
-                  handleConfirmationLoan();
-                }}
+                style={[
+                  styles.actionButton,
+                  styles.primaryButton,
+                  loadingConfirm && styles.buttonDisabled,
+                ]}
+                onPress={handleConfirmationLoan}
                 disabled={loadingConfirm}
               >
                 {loadingConfirm ? (
-                  <ActivityIndicator size="small" color="003B73" />
+                  <ActivityIndicator size="small" color="#003B73" />
                 ) : (
-                  <Text style={styles.actionButtonText}>Confirmar Reserva</Text>
+                  <Text style={styles.primaryButtonText}>
+                    Confirmar Reserva
+                  </Text>
                 )}
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => router.back("/library/bookLoan")}
+                style={[styles.actionButton, styles.secondaryButton]}
+                onPress={() => router.push("/library/bookLoan")}
               >
-                <Text style={styles.actionButtonText}>
+                <Text style={styles.secondaryButtonText}>
                   Adicionar mais itens
                 </Text>
               </TouchableOpacity>
@@ -291,6 +384,8 @@ const CartLoan = () => {
           </>
         }
       />
+
+      {/* Modal para editar quantidade */}
       {selectedItem && (
         <CustomModal
           visible={visibleModal}
@@ -304,7 +399,7 @@ const CartLoan = () => {
             if (selectedItem.quantity == items[0].quantity) {
               Alert.alert(
                 "Atenção!",
-                "a quantidade selecionada é a mesma que já está no produto inserido no carrinho."
+                "A quantidade selecionada é a mesma que já está no produto inserido no carrinho."
               );
             } else {
               handleUpdateQuantity(items[0].idLibrary, items[0].quantity);
@@ -341,193 +436,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  statusBar: {
-    flexDirection: "row",
-    gap: 10,
-    padding: 5,
-    margin: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    color: "white",
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  statusItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  statusText: {
-    fontSize: 14,
-    color: "#FFFFFF",
-    fontWeight: "500",
-  },
-  listContent: {
-    padding: 16,
-    paddingBottom: 100,
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 12,
-  },
-  image: {
-    width: 80,
-    height: 120,
-    borderRadius: 8,
-    backgroundColor: "#EEE",
-  },
-  cardInfo: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  bookTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 4,
-  },
-  bookAuthor: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  libraryName: {
-    fontSize: 13,
-    color: "#007AFF",
-    fontWeight: "500",
-  },
-  cardFooter: {
-    flexDirection: "row",
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#EEE",
-  },
-  footerSection: {
-    flex: 1,
-  },
-  footerTitle: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#666",
-    marginBottom: 4,
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#888",
-    lineHeight: 16,
-  },
-  divider: {
-    width: 1,
-    backgroundColor: "#DDD",
-    marginHorizontal: 12,
-  },
-  scheduleContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#003B73",
-    marginBottom: 12,
-  },
-  scheduleItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#F5F5F5",
-    marginBottom: 8,
-  },
-  scheduleItemSelected: {
-    backgroundColor: "#E3F2FD",
-    borderWidth: 1,
-    borderColor: "#003B73",
-  },
-  scheduleItemDisabled: {
-    opacity: 0.6,
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#003B73",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#003B73",
-  },
-  scheduleInfo: {
-    flex: 1,
-  },
-  dayText: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#333",
-  },
-  timeText: {
-    fontSize: 13,
-    color: "#666",
-  },
-  unavailableText: {
-    fontSize: 12,
-    color: "#F44336",
-    fontWeight: "500",
-  },
-  actionButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 15,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  actionButtonText: {
-    color: "#003B73",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#003B73",
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-  },
-  buttonStyle: {
-    borderRadius: 15,
-  },
   buttonContainer: {
     flexDirection: "row",
     width: "95%",
@@ -555,6 +463,155 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 13,
   },
+  listContent: {
+    padding: 16,
+    paddingBottom: 100,
+  },
+
+  cardCategoryBook: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 8,
+    borderTopLeftRadius: 16, // Borda superior esquerda
+    borderTopRightRadius: 16, // Borda superior direita
+  },
+
+  categoryText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    gap: 16,
+    padding: 12,
+  },
+  image: {
+    width: 80,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: "#F8F9FA",
+  },
+  cardInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  bookTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1A1A1A",
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  bookAuthor: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 12,
+    fontWeight: "500",
+  },
+  quantityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  quantityLabel: {
+    fontSize: 13,
+    color: "#666",
+    marginRight: 8,
+  },
+  quantityBadge: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+  },
+  quantityText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  libraryInfo: {
+    marginTop: 4,
+  },
+  libraryName: {
+    fontSize: 13,
+    color: "#007AFF",
+    fontWeight: "500",
+  },
+  statusIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  available: {
+    backgroundColor: "#4CAF50",
+  },
+  unavailable: {
+    backgroundColor: "#F44336",
+  },
+  statusText: {
+    fontSize: 12,
+    color: "#666",
+  },
+  cardFooter: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#EEE",
+  },
+  footerColumn: {
+    flex: 1,
+  },
+  footerItem: {
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  footerTextContainer: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  footerTitle: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#666",
+    marginBottom: 4,
+  },
+  footerText: {
+    fontSize: 12,
+    color: "#888",
+    lineHeight: 16,
+  },
+  divider: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "#EEE",
+    marginVertical: 8,
+  },
+
+  // Botões Ocultos (Swipe)
   rowBack: {
     alignItems: "center",
     backgroundColor: "#DDD",
@@ -562,40 +619,123 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: "hidden",
   },
-
   backLeftBtn: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#007AFF", // azul para Editar
+    backgroundColor: "#007AFF",
     width: 75,
     height: "100%",
   },
-
   backRightBtn: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FF3B30", // vermelho para Remover
+    backgroundColor: "#FF3B30",
     width: 75,
     height: "100%",
   },
-  subText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  buttonNoItemCart: {
-    backgroundColor: "#4B8DF8",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  buttonTextNoItemCart: {
+  hiddenButtonText: {
     color: "#fff",
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: "500",
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+
+  // Resumo do Pedido
+  orderSummary: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#003B73",
+    marginBottom: 16,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  summaryLabel: {
+    fontSize: 15,
+    color: "#666",
+  },
+  summaryValue: {
+    fontSize: 15,
+    color: "#333",
+    fontWeight: "600",
+  },
+  summaryTotal: {
+    borderTopWidth: 1,
+    borderTopColor: "#EEE",
+    marginTop: 8,
+    paddingTop: 12,
+  },
+  summaryTotalLabel: {
     fontSize: 16,
+    color: "#003B73",
+    fontWeight: "700",
+  },
+  summaryTotalValue: {
+    fontSize: 16,
+    color: "#003B73",
+    fontWeight: "700",
+  },
+
+  // Container de Ações
+  actionsContainer: {
+    gap: 12,
+    marginBottom: 30,
+  },
+  actionButton: {
+    borderRadius: 12,
+    padding: 18,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  primaryButton: {
+    backgroundColor: "#FFFFFF",
+  },
+  secondaryButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  primaryButtonText: {
+    color: "#003B73",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  secondaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  // Estados de Loading e Vazio
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#003B73",
   },
   centeredEmpty: {
     flex: 1,
@@ -661,5 +801,73 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+
+  // Horários (comentado, mas mantido para referência)
+  scheduleContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#003B73",
+    marginBottom: 12,
+  },
+  scheduleItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#F5F5F5",
+    marginBottom: 8,
+  },
+  scheduleItemSelected: {
+    backgroundColor: "#E3F2FD",
+    borderWidth: 1,
+    borderColor: "#003B73",
+  },
+  scheduleItemDisabled: {
+    opacity: 0.6,
+  },
+  radioCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#003B73",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#003B73",
+  },
+  scheduleInfo: {
+    flex: 1,
+  },
+  dayText: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#333",
+  },
+  timeText: {
+    fontSize: 13,
+    color: "#666",
+  },
+  unavailableText: {
+    fontSize: 12,
+    color: "#F44336",
+    fontWeight: "500",
   },
 });

@@ -1,3 +1,4 @@
+// app/library/index.js
 import React, { useState } from "react";
 import {
   View,
@@ -6,15 +7,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import Trending from "../../../../components/Navagation";
-import {
-  Bell,
-  CircleUserRoundIcon,
-  MenuIcon,
-  ShoppingCart,
-} from "lucide-react-native";
+import { ShoppingCart } from "lucide-react-native";
 import ButtonIcons from "../../../../components/ButtonIcons";
 import SideBar from "../../../../components/Sidebar";
 import CardCustom from "../../../../components/CardCustom";
@@ -39,23 +34,22 @@ const HomeLibrary = () => {
       data: books?.booksReserves?.slice(0, 6) || [],
       path: "/library/ReserveCollection",
     },
-    { type: "Reflexões" },
+    { 
+      type: "Reflexões",
+      path: "/library/reflections" 
+    },
   ];
 
   function renderSection({ item }) {
     return (
       <View style={styles.sectionContainer}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+        <View style={styles.sectionHeader}>
           <Text style={styles.headerTitle}>{item.type}</Text>
-          <TouchableOpacity onPress={() => router.push(`${item.path}`)}>
-            <Text style={styles.verTodos}>Ver todos</Text>
-          </TouchableOpacity>
+          {item.path && (
+            <TouchableOpacity onPress={() => router.push(item.path)}>
+              <Text style={styles.verTodos}>Ver todos</Text>
+            </TouchableOpacity>
+          )}
         </View>
         {item.type === "Acervo para Encomendas" ? (
           <CardCustom data={item.data} loan={true} />
@@ -65,7 +59,7 @@ const HomeLibrary = () => {
           <QuoteCard />
         ) : (
           <View style={styles.errorDataFlatlistContent}>
-            <Text>Carregando item</Text>
+            <Text style={styles.loadingText}>Carregando item</Text>
             <ActivityIndicator size="large" color="#FFFFFF" />
           </View>
         )}
@@ -73,54 +67,55 @@ const HomeLibrary = () => {
     );
   }
 
- function renderHeader() {
-  return (
-    <View style={styles.ContainerHeader}>
-      <Header
-        title="Biblioteca"
-        onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
-        content={
-          <View style={styles.actionButton}>
-            <ButtonIcons
-              handleChange={() => router.push("/library/Cart")}
-              color="#ffff"
-              size={28}
-              Icon={({ color, size }) => (
-                <ShoppingCart color={color} size={size} />
-              )}
-            />
-          </View>
-        }
-      />
-      <View style={styles.navigationContainer}>
-        <Text style={styles.sectionTitle}>Navegação</Text>
-        <Trending
-          navagations={[
-            { name: "Acervo Encomendas", path: "/library/ReserveCollection" },
-            { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
-            { name: "Buscar Livros", path: "/library/searchBook" },
-            { name: "Minha Biblioteca", path: "/library/myLibrary" },
-            { name: "Histórico de movimentos", path: "/library/historicalRequests" },
-            { name: "Explorar", path: "/library/explore" },
-          ]}
-          textTitlle={false}
+  function renderHeader() {
+    return (
+      <View style={styles.ContainerHeader}>
+        <Header
+          title="Biblioteca"
+          onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
+          content={
+            <View style={styles.actionButton}>
+              <ButtonIcons
+                handleChange={() => router.push("/library/Cart")}
+                color="#ffff"
+                size={28}
+                Icon={({ color, size }) => (
+                  <ShoppingCart color={color} size={size} />
+                )}
+              />
+            </View>
+          }
         />
-      </View>
+        <View style={styles.navigationContainer}>
+          <Text style={styles.sectionTitle}>Navegação</Text>
+          <Trending
+            navagations={[
+              { name: "Acervo Encomendas", path: "/library/ReserveCollection" },
+              { name: "Acervo Empréstimos", path: "/library/LoanCollection" },
+              { name: "Buscar Livros", path: "/library/searchBook" },
+              { name: "Minha Biblioteca", path: "/library/myLibrary" },
+              { name: "Histórico de movimentos", path: "/library/historicalRequests" },
+              { name: "Explorar", path: "/library/explore" },
+              { name: "Reflexões", path: "/library/reflections" }, // Adicionei aqui
+            ]}
+            textTitlle={false}
+          />
+        </View>
 
-      <View style={styles.genresContainer}>
-        <Text style={styles.sectionTitle}>Gêneros</Text>
-        <Trending
-          navagations={[
-            { name: "Todos", path: "" },
-            { name: "Obras Básicas", path: "" },
-            { name: "Obras Complementares", path: "" },
-          ]}
-          textTitlle={false}
-        />
+        <View style={styles.genresContainer}>
+          <Text style={styles.sectionTitle}>Gêneros</Text>
+          <Trending
+            navagations={[
+              { name: "Todos", path: "" },
+              { name: "Obras Básicas", path: "" },
+              { name: "Obras Complementares", path: "" },
+            ]}
+            textTitlle={false}
+          />
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  }
 
   if (loading) {
     return (
@@ -128,7 +123,7 @@ const HomeLibrary = () => {
         <ActivityIndicator
           size="large"
           color="#fff"
-          style={{ flex: 1, justifyContent: "center" }}
+          style={styles.loadingIndicator}
         />
       </SafeAreaView>
     );
@@ -140,17 +135,15 @@ const HomeLibrary = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
-        style={{flex: 1,}}
+        style={styles.flatList}
         keyExtractor={(item) => item.type}
         renderItem={renderSection}
         ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent} // Espaço no final para scroll
+        contentContainerStyle={styles.listContent}
       />
     </SafeAreaView>
   );
 };
-
-export default React.memo(HomeLibrary);
 
 const styles = StyleSheet.create({
   safeAreaView: {
@@ -160,9 +153,15 @@ const styles = StyleSheet.create({
   sectionContainer: {
     gap: 15,
     marginBottom: 15,
-  },  listContent: {
-    paddingHorizontal: 16, // Mesmo padding horizontal do Study Group
-    paddingBottom: 100,     // Mesmo padding bottom do Study Group
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
   },
   headerTitle: {
     fontSize: 17,
@@ -176,26 +175,15 @@ const styles = StyleSheet.create({
     gap: 30,
     justifyContent: "center",
   },
+  loadingText: {
+    color: "#FFFFFF",
+  },
   ContainerHeader: {
-    paddingVertical: 10, // Menos espaço no header
+    paddingVertical: 10,
     backgroundColor: "#003B73",
   },
-  containerIcons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  IconsContent: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-
-  }, avatarImage: {
-    width: 42, 
-    height: 42, 
-    borderRadius: 21,
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)'
+  actionButton: {
+    // Estilos para o botão de ação
   },
   sectionTitle: {
     fontSize: 18,
@@ -209,4 +197,19 @@ const styles = StyleSheet.create({
     textAlign: "right",
     fontSize: 14,
   },
+  flatList: {
+    flex: 1,
+  },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  navigationContainer: {
+    marginBottom: 10,
+  },
+  genresContainer: {
+    marginBottom: 10,
+  },
 });
+
+export default HomeLibrary;

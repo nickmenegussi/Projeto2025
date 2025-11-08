@@ -1,5 +1,6 @@
 const connection = require("../config/db");
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+const  pool  = require("../config/promise");
 
 exports.viewAllLoans = (req, res) => {
   connection.query("SELECT * FROM Loans", (err, result) => {
@@ -25,7 +26,7 @@ exports.viewLoansByUser = (req, res) => {
 
   // Fazer um join, pois, eu só vou querer algumas informações ou todas do empréstimo que eu armazenei no carrinho para ,por fim, armazenado como um Empréstimo.
   connection.query(
-    `SELECT idLoans, quantity, User_idUser, Book_idLibrary,  nameBook, authorBook, image, tagsBook, bookCategory, date_aquisition, returnDate FROM 
+    `SELECT idLoans, quantity, User_idUser, Book_idLibrary,  nameBook, authorBook, image, tagsBook, bookCategory, l.date_at_create, returnDate FROM 
     Loans l, Book b, User u
     where b.idLibrary = l.Book_idLibrary
     AND u.idUser = l.User_idUser
@@ -76,7 +77,9 @@ async function sendEmailPurchase(data) {
     auth: {
       user: process.env.EMAILAPP,
       pass: process.env.SENHAEMAILAPP,
-    },
+    },tls: {
+    rejectUnauthorized: false 
+  }
   });
 
   await transporter.sendMail({
@@ -147,246 +150,117 @@ async function sendEmailPurchase(data) {
 `
 });
 }
+ 
 
-exports.createLoan = (req, res) => {
-  const Cart_idCart = req.params.Cart_idCart;
-  const User_idUser = req.data.id;
-  const { Book_idLibrary, quantity } = req.body;
+exports.processLoan = async (item, User_idUser) => {
+  const { idCart, Book_idLibrary, quantity } = item;
+  
+  try {
+    const [cartResult] = await pool.query(
+      "SELECT * FROM Cart WHERE idCart = ?",
+      [idCart]
+    );
 
-  if (!User_idUser || !Book_idLibrary || !quantity) {
-    return res.status(400).json({
-      success: false,
-      message: "Preencha todos os campos de cadastro",
-    });
-  }
-
-  // Primeiro verifica se o carrinho existe e se a ação é de empréstimo, se não, quer dizer que depois ele pode cadastrar se a ação for de empréstimo
-  connection.query(
-    `SELECT * FROM Cart where idCart = ?
-
-        `,
-    [Cart_idCart],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          message: "Erro ao se conectar com o servidor.",
-          success: false,
-          data: err,
-        });
-      }
-      if (result.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: `Não conseguimos localizar o carrinho do item. Por favor, verifique os dados e tente novamente.`,
-        });
-      }
-      if (result[0].action !== "emprestar") {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Ação inválida. Apenas carrinhos com a ação 'empréstimo' podem gerar empréstimos.",
-        });
-      }
-
-      // verificar duplicidade de empréstimos
-      if (result[0].action === "emprestar") {
-        connection.query(
-          "SELECT * FROM Loans where Book_idLibrary = ? and User_idUser = ?",
-          [Book_idLibrary, User_idUser],
-          (err, result) => {
-            if (err) {
-              return res.status(500).json({
-                message: "Erro ao verificar Empréstimos realizados.",
-                success: false,
-                data: err,
-              });
-            }
-
-            if (result.length === 0) {
-              return res.status(400).json({
-                message: "Dados não encontrados com os critérios informados.",
-                success: false,
-              });
-            }
-
-            connection.query(
-              "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
-              [Book_idLibrary],
-              (err, result) => {
-                if (err) {
-                  return res.status(500).json({
-                    success: false,
-                    message: "Erro ao se conectar com o servidor.",
-                    data: err,
-                  });
-                }
-                if (result.length === 0) {
-                  return res.status(404).json({
-                    success: false,
-                    message: "Livro não encontrado ou erro ao acessar estoque.",
-                    data: err,
-                  });
-                }
-                const available = result[0].bookQuantity;
-
-                if (available < quantity) {
-                  return res.status(400).json({
-                    success: false,
-                    message: `Quantidade indisponível. Só há ${available} unidade(s) disponível(is).`,
-                  });
-                }
-
-                connection.query(
-                  `INSERT INTO Loans(User_idUser, Book_idLibrary, quantity, returnDate) 
-         VALUES(?, ?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY))`,
-                  [User_idUser, Book_idLibrary, quantity],
-                  (errInsert, resultInsert) => {
-                    if (errInsert) {
-                      return res.status(500).json({
-                        success: false,
-                        message: "Erro ao criar empréstimo.",
-                        data: errInsert,
-                      });
-                    }
-
-                    connection.query(
-                      "UPDATE Book SET bookQuantity = bookQuantity - ? WHERE idLibrary = ?",
-                      [quantity, Book_idLibrary],
-                      (errUpdate, result) => {
-                        if (errUpdate) {
-                          return res.status(500).json({
-                            success: false,
-                            message:
-                              "Erro ao atualizar a quantidade de livros.",
-                            data: errUpdate,
-                          });
-                        }
-
-                        // Verifica a nova quantidade para definir o status
-                        connection.query(
-                          "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
-                          [Book_idLibrary],
-                          (errQty, resultQty) => {
-                            if (errQty) {
-                              return res.status(500).json({
-                                success: false,
-                                message:
-                                  "Erro ao verificar nova quantidade de livros.",
-                                data: errQty,
-                              });
-                            }
-
-                            const newQty = resultQty[0].bookQuantity;
-                            let newStatus = "disponível";
-                            if (newQty === 0) {
-                              newStatus = "emprestado";
-                            } else if (newQty < 0) {
-                              newStatus = "indisponível"; // só se houve erro de lógica
-                            }
-
-                            // Atualiza o status_Available
-                            connection.query(
-                              "UPDATE Book SET status_Available = ? WHERE idLibrary = ?",
-                              [newStatus, Book_idLibrary],
-                              (errStatusUpdate) => {
-                                if (errStatusUpdate) {
-                                  return res.status(500).json({
-                                    success: false,
-                                    message:
-                                      "Erro ao atualizar o status do livro.",
-                                    data: errStatusUpdate,
-                                  });
-                                }
-
-                                connection.query(
-                                  `
-                                    SELECT 
-                                      l.idLoans,
-                                      u.nameUser,
-                                      u.email,
-                                      b.nameBook,
-                                      b.authorBook,
-                                      b.image,
-                                      l.quantity,
-                                      DATE_FORMAT(l.date_at_create, '%d/%m/%Y') AS date_at_create,
-                                      DATE_FORMAT(l.returnDate, '%d/%m/%Y') AS returnDate
-                                    FROM Loans l
-                                    JOIN user u ON l.User_idUser = u.idUser
-                                    JOIN book b ON l.Book_idLibrary = b.idLibrary
-                                    WHERE u.idUser = ? AND b.idLibrary = ?
-                                    ORDER BY l.idLoans DESC
-                                    LIMIT 1
-  `,
-                                  [User_idUser, Book_idLibrary],
-                                  async (errRecibo, resultRecibo) => {
-                                    if (errRecibo) {
-                                      return res.status(500).json({
-                                        success: false,
-                                        message:
-                                          "Erro ao buscar dados do recibo.",
-                                        data: errRecibo,
-                                      });
-                                    }
-
-                                    if (
-                                      
-                                      resultRecibo.length === 0
-                                    ) {
-                                      return res.status(404).json({
-                                        success: false,
-                                        message:
-                                          "Nenhum empréstimo encontrado para gerar recibo.",
-                                      });
-                                    }
-
-                                    const recibo = resultRecibo[0];
-
-                                    try {
-                                      await sendEmailPurchase(recibo); // envia o e-mail antes de deletar o carrinho
-                                    } catch (emailError) {
-                                      console.error(
-                                        "Erro ao enviar e-mail:",
-                                        emailError
-                                      );
-                                    }
-
-                                    connection.query(
-                                      `DELETE FROM Cart WHERE idCart = ?`,
-                                      [Cart_idCart],
-                                      (errDelete) => {
-                                        if (errDelete) {
-                                          return res.status(500).json({
-                                            success: false,
-                                            message:
-                                              "Erro ao remover o item do carrinho.",
-                                            data: errDelete,
-                                          });
-                                        }
-
-                                        return res.status(201).json({
-                                          success: true,
-                                          message:
-                                            "Empréstimo realizado com sucesso! Recibo enviado por e-mail.",
-                                        });
-                                      }
-                                    );
-                                  }
-                                );
-                              }
-                            );
-                          }
-                        );
-                      }
-                    );
-                  }
-                );
-              }
-            );
-          }
-        );
-      }
+    if (cartResult.length === 0) {
+      throw new Error("Carrinho não encontrado");
     }
-  );
+
+    if (cartResult[0].action !== "emprestar") {
+      throw new Error("Ação inválida para empréstimo");
+    }
+
+    const [bookResult] = await pool.query(
+      "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
+      [Book_idLibrary]
+    );
+
+    if (bookResult.length === 0) {
+      throw new Error("Livro não encontrado");
+    }
+
+    const available = bookResult[0].bookQuantity;
+    const currentStatus = bookResult[0].status_Available
+
+    if (available < quantity || currentStatus === "indisponível") {
+      throw new Error(`Quantidade indisponível. Disponível: ${available}`);
+    }
+
+    const [loanResult] = await pool.query(
+      `INSERT INTO Loans(User_idUser, Book_idLibrary, quantity, returnDate) 
+       VALUES(?, ?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY))`,
+      [User_idUser, Book_idLibrary, quantity]
+    );
+
+    await pool.query(
+      "UPDATE Book SET bookQuantity = bookQuantity - ? WHERE idLibrary = ?",
+      [quantity, Book_idLibrary]
+    );
+
+    const [newQtyResult] = await pool.query(
+      "SELECT bookQuantity FROM Book WHERE idLibrary = ?",
+      [Book_idLibrary]
+    );
+
+    const newQty = newQtyResult[0].bookQuantity;
+    let newStatus = "disponível";
+    if (newQty === 0) {
+      newStatus = "emprestado";
+    } else if (newQty < 0) {
+      newStatus = "indisponível";
+    }
+
+    await pool.query(
+      "UPDATE Book SET status_Available = ? WHERE idLibrary = ?",
+      [newStatus, Book_idLibrary]
+    );
+
+    const [receiptResult] = await pool.query(
+      `SELECT 
+        l.idLoans,
+        u.nameUser,
+        u.email,
+        b.nameBook,
+        b.authorBook,
+        b.image,
+        l.quantity,
+        DATE_FORMAT(l.date_at_create, '%d/%m/%Y') AS date_at_create,
+        DATE_FORMAT(l.returnDate, '%d/%m/%Y') AS returnDate
+      FROM Loans l
+      JOIN user u ON l.User_idUser = u.idUser
+      JOIN book b ON l.Book_idLibrary = b.idLibrary
+      WHERE u.idUser = ? AND b.idLibrary = ?
+      ORDER BY l.idLoans DESC
+      LIMIT 1`,
+      [User_idUser, Book_idLibrary]
+    );
+
+    if (receiptResult.length === 0) {
+      throw new Error("Erro ao gerar recibo do empréstimo");
+    }
+
+    const recibo = receiptResult[0];
+
+    try {
+      await sendEmailPurchase(recibo);
+    } catch (emailError) {
+      console.error("Erro ao enviar e-mail:", emailError);
+    }
+
+    await pool.query(
+      "DELETE FROM Cart WHERE idCart = ?",
+      [idCart]
+    );
+
+    return {
+      success: true,
+      message: "Empréstimo realizado com sucesso",
+      loanId: loanResult.insertId
+    };
+
+  } catch (error) {
+    console.error("Erro no processLoan:", error);
+    throw new Error(`Falha no empréstimo: ${error.message}`);
+  }
 };
 
 exports.updateReturnDate = (req, res) => {
@@ -420,7 +294,6 @@ exports.updateReturnDate = (req, res) => {
         });
       }
 
-      // verificar se o usuário logado é o mesmo que criou o tópico
       if (result[0].User_idUser !== idUser) {
         {
           return res.status(403).json({

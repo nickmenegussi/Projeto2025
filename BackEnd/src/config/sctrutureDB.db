@@ -105,7 +105,6 @@ CREATE TABLE Loans (
     quantity INT NOT NULL DEFAULT 1,
     returnDate DATETIME NOT NULL,
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('active', 'returned', 'overdue') DEFAULT 'active',
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );
@@ -116,10 +115,8 @@ CREATE TABLE Reserves (
     User_idUser INT NOT NULL,
     Book_idLibrary INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
-    reserveDate DATETIME NOT NULL,
-    expirationDate DATETIME NOT NULL,
+    returnDate DATETIME NOT NULL,
     date_at_create DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('active', 'expired', 'cancelled') DEFAULT 'active',
     FOREIGN KEY (User_idUser) REFERENCES User(idUser),
     FOREIGN KEY (Book_idLibrary) REFERENCES Book(idLibrary)
 );

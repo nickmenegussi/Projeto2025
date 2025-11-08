@@ -65,8 +65,6 @@ app.use("/auth", auth);
 app.use("/favorite", favorite);
 app.use("/category", category);
 app.use("/groupOfStudy", groupOfStudy);
-const testRouter = require("./routers/TestRouter");
-app.use("/test", testRouter);
 
 app.get("/teste", (req, res) => {
   res.send("Bem-vindo à API do Fórum!");
