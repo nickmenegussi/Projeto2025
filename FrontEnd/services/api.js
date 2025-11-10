@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL =  "http://192.168.1.12:3001"
+const API_BASE_URL =  "https://deploy-back-end-ceo.vercel.app"
 
 // Para acesso normal 
   const api = axios.create({

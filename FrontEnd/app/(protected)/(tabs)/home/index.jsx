@@ -720,6 +720,7 @@ const styles = StyleSheet.create({
     padding: Platform.OS === "web" ? 24 : 16,
     paddingVertical: Platform.OS === "web" ? 20 : 0,
     backgroundColor: "#003B73",
+    
   },
   container: {
     flexGrow: 1,
@@ -914,8 +915,7 @@ const styles = StyleSheet.create({
   },
   SmallcarouselItem: {
     borderRadius: 10,
-        alignItems: "center",
-
+    alignItems: "center",
     flex: 1,
     marginRight: 10,
     flexDirection: "column",

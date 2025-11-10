@@ -9,7 +9,7 @@ export default function ProtectedLayout() {
   if(loading) return null
 
   if (!user) {
-    return <Redirect href="/sign-up" />;
+    return <Redirect href="/index" />;
   }
 
   return (
@@ -20,6 +20,7 @@ export default function ProtectedLayout() {
           headerShown: false,
         }}
       />
+      
     </Stack>
   );
 }

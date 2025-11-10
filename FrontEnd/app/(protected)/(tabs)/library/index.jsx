@@ -135,7 +135,6 @@ const HomeLibrary = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
-        style={styles.flatList}
         keyExtractor={(item) => item.type}
         renderItem={renderSection}
         ListHeaderComponent={renderHeader}
@@ -160,7 +159,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   listContent: {
-    paddingHorizontal: 16,
     paddingBottom: 100,
   },
   headerTitle: {
@@ -168,6 +166,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginVertical: 10,
+    marginLeft: 16,
   },
   errorDataFlatlistContent: {
     flexDirection: "row",
@@ -180,6 +179,8 @@ const styles = StyleSheet.create({
   },
   ContainerHeader: {
     paddingVertical: 10,
+        paddingHorizontal: 16,
+
     backgroundColor: "#003B73",
   },
   actionButton: {

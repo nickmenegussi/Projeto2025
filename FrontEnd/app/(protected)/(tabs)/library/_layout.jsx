@@ -10,6 +10,9 @@ const RootLayout = () => {
       <Stack.Screen name="LoanCollection" options={{ headerShown: false }} />
       <Stack.Screen name="ReserveCollection" options={{ headerShown: false }} />
       <Stack.Screen name="Cart" options={{ headerShown: false }} />
+            <Stack.Screen name="reflections" options={{ headerShown: false }} />
+
+      <Stack.Screen name="reflections/category/[id]" options={{ headerShown: false }} />
       <Stack.Screen
         name="MessageLoanConfirmed"
         options={{ headerShown: false }}

@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import ReflectionCard from "../../../../../components/MotivationalCard";
+import ReflectionCard from "../../../../../../components/MotivationalCard";
 
 const CategoryReflections = () => {
   const { id } = useLocalSearchParams();

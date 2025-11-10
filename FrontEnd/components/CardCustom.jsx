@@ -118,6 +118,7 @@ export default function CardCustom({
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
+    marginLeft: 15
   },
   card: {
     backgroundColor: "#fff",

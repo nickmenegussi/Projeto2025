@@ -45,7 +45,7 @@ export default function App() {
       });
       router.replace("/emailOtp")
     } catch (error) {
-      handleApiError(error)
+      handleApiError(error, true)
     }
   }
 
