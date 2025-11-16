@@ -223,10 +223,7 @@ export default function Index() {
         // O loop do brilho da logo é iniciado abaixo, separadamente
       ]),
     ]).start(() => {
-        // 2. Agenda a navegação automática APÓS o tempo total
-        autoNavigateTimer = setTimeout(() => {
-            router.replace('/sign-in');
-        }, TOTAL_ANIMATION_TIME - 1500 - 800); // Ajuste o atraso se a sequência for menor que o tempo total
+       setAnimated(true)
     });
 
     // 3. Loop do Brilho da Logo (independente da sequência principal)

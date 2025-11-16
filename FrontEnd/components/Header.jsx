@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { MenuIcon, Bell } from "lucide-react-native";
 import { router } from "expo-router";
-
+import Constants from 'expo-constants';
 import ButtonIcons from "../components/ButtonIcons";
 import { AuthContext } from "../context/auth";
 
 const Header = ({ title, onMenuPress, content }) => {
   const { user } = useContext(AuthContext);
+  const {enderecoUrlImage} = Constants.expoConfig.extra 
 
   return (
     <View
@@ -42,13 +43,12 @@ const Header = ({ title, onMenuPress, content }) => {
 
         <TouchableOpacity onPress={() => router.push("/settings")}>
           <Image
-            source={
-              user?.image_profile
-                ? {
-                    uri: `http://192.168.1.16:3001/uploads/${user.image_profile}?t=${Date.now()}`,
-                  }
-                : require("../assets/images/default-profile.jpg")
-            }
+          source={{
+                      uri: user?.image_profile
+                        ? `${enderecoUrlImage}/uploads/${user.image_profile}`
+                        : require("../assets/images/default-profile.jpg"),
+                    }}
+            
             style={{
               width: 40,
               height: 40,

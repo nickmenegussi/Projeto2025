@@ -124,7 +124,7 @@ const EditProfile = () => {
                   ? { uri: selectedImage }
                   : user?.image_profile
                   ? {
-                      uri: `http://192.168.1.15:3001/uploads/${
+                      uri: `http://192.168.1.12:3001/uploads/${
                         user?.image_profile
                       }`,
                     }

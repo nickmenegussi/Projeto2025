@@ -16,7 +16,7 @@ exports.login = (req, res) => {
   }
 
   connection.query(
-    "SELECT idUser, email, password, status_permission, image_profile FROM User WHERE email = ?",
+    "SELECT idUser, email, password, status_permission, image_profile, nameUser FROM User WHERE email = ?",
     [email],
     async (err, result) => {
       if (err) {

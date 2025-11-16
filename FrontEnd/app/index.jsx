@@ -38,9 +38,6 @@ export default function Index() {
       end={{ x: 0, y: 1 }}
     >
       <View style={styles.content}>
-        
-        {/* Ícone (Logo) */}
-        {/* ⚠️ Verifique se o caminho "../assets/images/icon.png" está correto! */}
         <Image
           source={LOGO_PATH}
           style={styles.logo}

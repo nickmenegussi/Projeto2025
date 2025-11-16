@@ -278,7 +278,7 @@ const Index = () => {
             return (
               <View style={styles.headerComponent}>
                 <View style={{ flex: 1 }}>
-                  <Header title="Home" onMenuPress={() => setIsOpen(!isOpen)} />
+                  <Header title="Fórum" onMenuPress={() => setIsOpen(!isOpen)} />
                   <Trending
                     navagations={[
                       {

@@ -33,6 +33,7 @@ import {
 import { router } from "expo-router";
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../../../context/auth";
+import Constants from 'expo-constants';
 
 const HomeSettings = () => {
   const { logout, user } = useContext(AuthContext);
@@ -40,6 +41,7 @@ const HomeSettings = () => {
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [loanReminders, setLoanReminders] = useState(true);
   const [personalizedSuggestions, setPersonalizedSuggestions] = useState(true);
+  const {enderecoUrlImage} = Constants.expoConfig.extra 
 
   const sections = [
     {
@@ -210,18 +212,14 @@ const HomeSettings = () => {
         <View style={styles.userInfo}>
           <Image
             style={styles.avatar}
-            source={
-              user?.image_profile
-                ? {
-                    uri: `http://192.168.1.16:3001/uploads/${
-                      user?.image_profile
-                    }?t=${Date.now()}`,
-                  }
-                : require("../../../../assets/images/default-profile.jpg")
-            }
+            source={{
+                      uri: user?.image_profile
+                        ? `${enderecoUrlImage}/uploads/${user.image_profile}`
+                        : require("../../../../assets/images/default-profile.jpg"),
+                    }}
           />
           <View style={styles.userDetails}>
-            <Text style={styles.userName}>{user.nameUser || "Usuário"}</Text>
+            <Text style={styles.userName}>{user?.nameUser || "Usuário"}</Text>
             <Text style={styles.userEmail}>
               {user?.email || "usuario@email.com"}
             </Text>
