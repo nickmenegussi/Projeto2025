@@ -1,1 +1,106 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 255 255 255;
+  --fg: 17 24 39;
+  --muted: 107 114 128;
+  --card: 255 255 255;
+  --border: 229 231 235;
+}
+
+.dark {
+  --bg: 17 24 39;
+  --fg: 243 244 246;
+  --muted: 156 163 175;
+  --card: 31 41 55;
+  --border: 55 65 81;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+}
+
+.container {
+  @apply max-w-7xl mx-auto px-4;
+}
+
+.card {
+  @apply bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium bg-brand-600 text-white hover:bg-brand-700 transition;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center rounded-xl px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.btn-outline {
+  @apply inline-flex items-center rounded-xl px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700;
+}
+
+.input {
+  @apply w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900;
+}
+
+.label {
+  @apply text-sm font-medium text-gray-600 dark:text-gray-300;
+}
+
+.link {
+  @apply text-brand-600 hover:underline;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200;
+}
+
+.table {
+  @apply min-w-full text-sm;
+}
+
+.th {
+  @apply text-left font-semibold text-gray-700 dark:text-gray-200 px-3 py-2 border-b border-gray-200 dark:border-gray-700;
+}
+
+.td {
+  @apply px-3 py-2 border-b border-gray-200 dark:border-gray-700;
+}
+
+.skeleton {
+  @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+}
+
+.sep {
+  @apply border-t border-gray-200 dark:border-gray-700;
+}
+
+.toolbar {
+  @apply flex items-center justify-between gap-3 p-3;
+}
+
+.kpi {
+  @apply card p-4;
+}
+
+.nav-link {
+  @apply flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.nav-active {
+  @apply bg-brand-600 text-white hover:bg-brand-600;
+}
+
+.sidebar {
+  @apply w-72 shrink-0 hidden md:block p-4;
+}
