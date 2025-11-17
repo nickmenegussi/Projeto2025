@@ -47,45 +47,42 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function OtpSendEmail(email) {
-    const response = await api.post("/auth/otp/create", {
-      email,
-    });
-    if (response.data.error) {
-      setOtpEmail(null);
+    try {
+      const response = await api.post("/auth/otp/create", {
+        email,
+      });
 
-      console.log("Erro", response.data.error);
+      setOtpEmail(response.data.data);
       Toast.show({
-        type: "error",
-        text1: `${error.response.data.message}`,
+        type: "success",
+        text1: `$${response.data.message}`,
         position: "top",
       });
-      return;
+      await AsyncStorage.setItem("@Auth:email", email);
+      router.push("/sign-otp-verification");
+    } catch (error) {
+      setOtpEmail(null);
+      handleApiError(error, true);
     }
-
-    setOtpEmail(response.data.data);
-    Toast.show({
-      type: "success",
-      text1: `$${response.data.message}`,
-      position: "top",
-    });
-    await AsyncStorage.setItem("@Auth:email", email);
   }
   async function OtpVerification(otp, email) {
-    // const email = await AsyncStorage.getItem("@Auth:email");
-    const response = await api.post("/auth/otp/verification", {
-      email,
-      otp,
-    });
-    if (response.data.error) {
-      setOtpDigits(false);
+    try {
+      // const email = await AsyncStorage.getItem("@Auth:email");
+      const response = await api.post("/auth/otp/verification", {
+        email,
+        otp,
+      });
 
-      console.log("Erro", response.data.error);
-      return error.response.data.message;
-    } else {
       await AsyncStorage.setItem("@Auth:email", "true");
       await AsyncStorage.setItem("@Auth:otp", "verificado!");
       setOtpDigits(true);
+      router.push("/otpMessage");
+
       return response.data;
+    } catch (error) {
+      setOtpDigits(false);
+
+      handleApiError(error, true);
     }
   }
   // criando uma função para o futuro login do usuário e a partir desse contexto gerando o token
@@ -265,23 +262,24 @@ export function AuthProvider({ children }) {
   }
 
   async function handleUpdateNameUser(newNameUser) {
-    if(!newNameUser) return
+    if (!newNameUser) return;
 
     try {
       const token = await AsyncStorage.getItem("@Auth:token");
 
-      const response = await api.patch("/user/user/nameUser", {nameUser: newNameUser}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await api.patch(
+        "/user/user/nameUser",
+        { nameUser: newNameUser },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if(response.status >= 200 && response.status < 300){
-        Alert.alert(
-          "Sucesso!",
-          "Nome do usuário mudado com sucesso."
-        )
-        setUser(prev => ({...prev, nameUser: newNameUser}))
+      if (response.status >= 200 && response.status < 300) {
+        Alert.alert("Sucesso!", "Nome do usuário mudado com sucesso.");
+        setUser((prev) => ({ ...prev, nameUser: newNameUser }));
       }
     } catch (error) {
       console.error("Erro no servidor ao atualizar nome de usuário:", error);
@@ -314,7 +312,7 @@ export function AuthProvider({ children }) {
         updatePerfilImage,
         updatePasswordForgotten,
         updatePasswordForgotWithNoLogin,
-        handleUpdateNameUser
+        handleUpdateNameUser,
       }}
     >
       {children}

@@ -21,27 +21,26 @@ Notifications.setNotificationHandler({
 const RootLayout = () => {
   const [appIsReady, setAppIsReady] = useState(false);
 
-    useEffect(() => {
-        async function prepare() {
-            try {
-                // Simulação de carregamento inicial rápido (ex: 500ms)
-                await new Promise(resolve => setTimeout(resolve, 500)); 
-            } catch (e) {
-                console.warn(e);
-            } finally {
-                // 2. Após o carregamento inicial, defina como pronto
-                setAppIsReady(true);
-                SplashScreen.hideAsync(); // 3. ESCONDE A SPLASH NATIVA!
-            }
-        }
-        prepare();
-    }, []);
-
-    // 4. NÃO RENDERIZE NADA até que o appIsReady seja true
-    if (!appIsReady) {
-        return null;
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Simulação de carregamento inicial rápido (ex: 500ms)
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // 2. Após o carregamento inicial, defina como pronto
+        setAppIsReady(true);
+        SplashScreen.hideAsync(); // 3. ESCONDE A SPLASH NATIVA!
+      }
     }
+    prepare();
+  }, []);
 
+  // 4. NÃO RENDERIZE NADA até que o appIsReady seja true
+  if (!appIsReady) {
+    return null;
+  }
 
   return (
     <NotificationProvider>
@@ -60,7 +59,10 @@ const RootLayout = () => {
               animation: "none",
             }}
           />
-          <Stack.Screen name="ApresentationScreen" options={{ animation: "none" }} />
+          <Stack.Screen
+            name="ApresentationScreen"
+            options={{ animation: "none" }}
+          />
           <Stack.Screen name="index" options={{ animation: "none" }} />
 
           <Stack.Screen name="sign-up" options={{ animation: "none" }} />
@@ -75,10 +77,6 @@ const RootLayout = () => {
           <Stack.Screen name="otpPassword" options={{ animation: "none" }} />
           <Stack.Screen
             name="emailSendForgotPassword"
-            options={{ animation: "none" }}
-          />
-          <Stack.Screen
-            name="notification"
             options={{ animation: "none" }}
           />
           <Stack.Screen name="+not-found" />

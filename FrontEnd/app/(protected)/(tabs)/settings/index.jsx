@@ -307,7 +307,6 @@ const HomeSettings = () => {
           </Text>
         </View>
       </ScrollView>
-      <View style={{ height: 130 }} />
     </SafeAreaView>
   );
 };
@@ -324,7 +323,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 20,
-    marginTop: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff22",
     position: "relative",

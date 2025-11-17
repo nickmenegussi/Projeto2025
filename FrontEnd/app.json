@@ -40,7 +40,7 @@
       ]
     ],
     "extra": {
-      "enderecoUrlImage": "http://192.168.1.12:3001",
+      "enderecoUrlImage": "http://192.168.1.21:3001",
       "eas": {
         "projectId": "216d5079-4557-4c1a-a35c-61bf37503b70"
       }

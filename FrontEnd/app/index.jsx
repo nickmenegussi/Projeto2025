@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router'; // Para navegação automática
-import { useEffect } from 'react';
+import { Redirect, useRouter } from 'expo-router'; // Para navegação automática
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../context/auth';
 
 const { height } = Dimensions.get('window');
 
@@ -14,9 +15,12 @@ const LOGO_PATH = require('../assets/images/icon.png');
 
 export default function Index() {
   const router = useRouter();
-  
+ 
+    
   // Lógica para Navegação Automática
   useEffect(() => {
+
+   
     // 3 segundos antes de navegar para a próxima tela
     const AUTO_NAVIGATE_TIME = 3000; 
 

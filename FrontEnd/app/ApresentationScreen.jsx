@@ -1,9 +1,10 @@
 // app/index.tsx
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Image, Easing } from 'react-native';
 // ⚠️ MODIFICAÇÃO: Importando useRouter
-import { Link, useRouter } from 'expo-router'; 
+import { Link, Redirect, useRouter } from 'expo-router'; 
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { AuthContext } from '../context/auth';
 
 const { width, height } = Dimensions.get('window');
 
@@ -179,6 +180,7 @@ const FloatingParticles = () => {
 };
 
 export default function Index() {
+  
   const router = useRouter(); // ⬅️ MODIFICAÇÃO: Inicializa o router
   const [animated, setAnimated] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -187,12 +189,17 @@ export default function Index() {
   const subtitleSlideAnim = useState(new Animated.Value(50))[0];
   const logoGlowAnim = useState(new Animated.Value(0.5))[0];
   const buttonScaleAnim = useState(new Animated.Value(1))[0];
-
+ const {user, loading} = useContext(AuthContext);
   const particle1Anim = useState(new Animated.Value(0))[0];
-  const particle2Anim = useState(new Animated.Value(0))[0];
+  const particle2Anim = useState(new Animated.Value(0))[0]
+
+  if(loading) return null
 
   // ⚠️ MODIFICAÇÃO: Lógica de Navegação Automática
   useEffect(() => {
+    if(user) {
+      return router.replace('/home')
+    }
     // 5.5 segundos de animação total antes de navegar
     const TOTAL_ANIMATION_TIME = 5500; 
     let autoNavigateTimer: NodeJS.Timeout;
@@ -266,10 +273,7 @@ export default function Index() {
     }).start();
   }, []);
 
-  // ⚠️ MODIFICAÇÃO: Função de navegação manual (no clique do botão)
   const handleJourneyPress = useCallback(() => {
-    console.log("Iniciando a Jornada...");
-    // 5. NAVEGAÇÃO IMEDIATA: Substitui a tela de introdução pela de login
     router.replace('/sign-in');
   }, [router]);
 

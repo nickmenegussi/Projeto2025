@@ -254,14 +254,6 @@ export default function HomeLocalization() {
     });
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#4A90E2" />
-        <Text style={styles.loadingText}>Buscando centros próximos...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -364,6 +356,7 @@ export default function HomeLocalization() {
       <ScrollView
         style={styles.listContainer}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
       >
         <Text style={styles.sectionTitle}>Centros Espíritas Próximos</Text>
 
@@ -474,7 +467,6 @@ export default function HomeLocalization() {
           ))
         )}
       </ScrollView>
-      <View style={{ height: 115 }} />
     </View>
   );
 }
@@ -484,7 +476,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#003B73",
     padding: 16,
-    paddingTop: 38,
+    paddingTop: 10,
+    paddingBottom: 0,
   },
   centerContainer: {
     flex: 1,
@@ -512,7 +505,6 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
-    paddingTop: 10,
   },
   timeText: {
     fontSize: 15,
@@ -596,6 +588,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+  }, scrollContent: {
+    flexGrow: 1,
   },
   sectionTitle: {
     fontSize: 20,

@@ -16,37 +16,17 @@ import Button from "../components/Button";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { AuthContext } from "../context/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import handleApiError from "../utils/handleApiError";
 
 export default function EmailOtp() {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const { OtpSendEmail } = useContext(AuthContext);
 
   async function OtpEntrar() {
-    setLoading(true);
-    if (loading) {
-      Alert.alert("Carregando", "Aguarde um momento...");
-    }
     try {
       await OtpSendEmail(email);
-
-      router.push("/sign-otp-verification");
-
-      Alert.alert("Sucesso!", "Email enviado com sucesso!");
-      setLoading(false);
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        console.log("Erro", error.response.data.message);
-        Alert.alert("Erro:", error.response.data.message);
-      } else {
-        console.log("Erro", error);
-        Alert.alert("Erro", "Erro ao enviar email");
-        return 
-      }
+      handleApiError(error)
     }
   }
 

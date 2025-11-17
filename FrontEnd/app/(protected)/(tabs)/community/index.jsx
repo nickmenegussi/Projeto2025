@@ -155,7 +155,7 @@ const Index = () => {
             <Image
               style={styles.profile}
               source={{
-                uri: `http://192.168.1.16:3001/uploads/${item.image}`,
+                uri: `http://192.168.1.21:3001/uploads/${item.image}`,
               }}
             />
           ) : (
@@ -227,7 +227,7 @@ const Index = () => {
         <Text style={styles.postContent}>{item.content}</Text>
         {item.image && (
           <Image
-            source={{ uri: `http://192.168.1.16:3001/uploads/${item.image}` }}
+            source={{ uri: `http://192.168.1.21:3001/uploads/${item.image}` }}
             style={styles.postImage}
             resizeMode="cover"
           />
@@ -421,6 +421,7 @@ export default React.memo(Index);
 const styles = StyleSheet.create({
   conteinerFlatlist: {
     padding: 16,
+    paddingTop: 10,
     flexGrow: 1,
     paddingBottom: 180,
     backgroundColor: "#003B73",
@@ -430,7 +431,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#003B73",
-    paddingTop: 32,
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",

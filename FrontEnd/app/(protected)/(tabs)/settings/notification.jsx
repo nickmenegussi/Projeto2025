@@ -2,145 +2,302 @@ import { useEffect, useState } from "react";
 import { 
   View, 
   Text, 
-  Button, 
+  Switch,
   Alert, 
   Platform, 
   SafeAreaView, 
   StatusBar,
   ScrollView,
-  StyleSheet 
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl
 } from "react-native";
 import { useNotification } from "../../../../context/NotificationContext";
-import * as Updates from "expo-updates";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function HomeScreen() {
+export default function NotificationsScreen() {
   const { notification, expoPushToken, error } = useNotification();
-  const { currentlyRunning, isUpdateAvailable, isUpdatePending } = Updates.useUpdates();
+  const [notifications, setNotifications] = useState([]);
+  const [settings, setSettings] = useState({
+    pushEnabled: true,
+    marketing: true,
+    reminders: true,
+    security: false,
+    sound: true,
+    vibration: true,
+  });
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [dummyState, setDummyState] = useState(0);
-
-  // 🔥 FUNÇÃO PARA ENVIAR NOTIFICAÇÃO DE TESTE
-  const sendTestNotification = async () => {
-    if (!expoPushToken) {
-      Alert.alert("Erro", "Token push não disponível ainda");
-      return;
-    }
-
-    try {
-      const response = await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: expoPushToken,
-          title: "Teste do CEO App! 🎉",
-          body: "Esta é uma notificação de teste do seu app!",
-          data: { screen: "Home", test: "123" },
-          sound: "default"
-        }),
-      });
-
-      const result = await response.json();
-      
-      if (result.data?.status === 'ok') {
-        Alert.alert("Sucesso!", "Notificação enviada! Verifique seu celular.");
-      } else {
-        Alert.alert("Erro", "Falha ao enviar notificação");
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível enviar a notificação");
-      console.error(error);
-    }
-  };
-
-  // 🔥 FUNÇÃO PARA COPIAR O TOKEN
-  const copyToken = () => {
-    if (expoPushToken) {
-      // Em React Native, usamos Alert para mostrar o token
-      Alert.alert(
-        "Seu Token Push", 
-        expoPushToken,
-        [
-          { text: "OK" },
-          { text: "Copiar", onPress: () => console.log("Token:", expoPushToken) }
-        ]
-      );
-    }
-  };
-
+  // Simular histórico de notificações
   useEffect(() => {
-    if (isUpdatePending) {
-      dummyFunction();
-    }
-  }, [isUpdatePending]);
+    const mockNotifications = [
+      {
+        id: 1,
+        title: "Bem-vindo ao App!",
+        body: "Sua conta foi criada com sucesso",
+        time: "2 horas atrás",
+        read: true,
+        type: "system",
+        icon: "checkmark-circle"
+      },
+      {
+        id: 2,
+        title: "Promoção Especial",
+        body: "Desconto de 20% em todos os produtos",
+        time: "1 dia atrás",
+        read: true,
+        type: "marketing",
+        icon: "pricetag"
+      },
+      {
+        id: 3,
+        title: "Lembrete Importante",
+        body: "Não se esqueça de completar seu perfil",
+        time: "2 dias atrás",
+        read: false,
+        type: "reminder",
+        icon: "time"
+      },
+      {
+        id: 4,
+        title: "Atividade Suspeita",
+        body: "Novo login detectado na sua conta",
+        time: "3 dias atrás",
+        read: false,
+        type: "security",
+        icon: "shield-checkmark"
+      }
+    ];
+    setNotifications(mockNotifications);
+  }, []);
 
-  const dummyFunction = async () => {
-    try {
-      await Updates.reloadAsync();
-    } catch (e) {
-      Alert.alert("Error");
+  // Adicionar nova notificação recebida
+  useEffect(() => {
+    if (notification) {
+      const newNotification = {
+        id: Date.now(),
+        title: notification.request.content.title,
+        body: notification.request.content.body,
+        time: "Agora mesmo",
+        read: false,
+        type: "system",
+        icon: "notifications",
+        data: notification.request.content.data
+      };
+      setNotifications(prev => [newNotification, ...prev]);
     }
+  }, [notification]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Simular carregamento de novas notificações
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  const toggleSetting = (key) => {
+    setSettings(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notif => ({ ...notif, read: true }))
+    );
+  };
+
+  const clearAllNotifications = () => {
+    Alert.alert(
+      "Limpar Notificações",
+      "Tem certeza que deseja limpar todas as notificações?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Limpar", style: "destructive", onPress: () => setNotifications([]) }
+      ]
+    );
+  };
+
+  const getUnreadCount = () => {
+    return notifications.filter(notif => !notif.read).length;
+  };
+
+  const getIconColor = (type) => {
+    const colors = {
+      system: "#007AFF",
+      marketing: "#34C759",
+      reminder: "#FF9500",
+      security: "#FF3B30"
+    };
+    return colors[type] || "#8E8E93";
   };
 
   if (error) {
     return (
       <View style={styles.container}>
-        <Text>Error: {error.message}</Text>
+        <Text>Erro ao carregar notificações: {error.message}</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        
-        <Text style={styles.title}>CEO App</Text>
-        
-        <Text style={styles.subtitle}>Sistema de Atualizações</Text>
-        <Text>
-          {currentlyRunning.isEmbeddedLaunch
-            ? "App rodando código built-in"
-            : "App rodando uma atualização"}
-        </Text>
-        
-        <Button
-          onPress={() => Updates.checkForUpdateAsync()}
-          title="Verificar atualizações"
-        />
-        
-        {isUpdateAvailable && (
-          <Button
-            onPress={() => Updates.fetchUpdateAsync()}
-            title="Baixar e instalar atualização"
-          />
+      <ScrollView 
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {/* Cabeçalho */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Notificações</Text>
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={markAllAsRead} style={styles.headerButton}>
+              <Ionicons name="checkmark-done" size={20} color="#007AFF" />
+              <Text style={styles.headerButtonText}>Marcar lidas</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={clearAllNotifications} style={styles.headerButton}>
+              <Ionicons name="trash" size={20} color="#FF3B30" />
+              <Text style={styles.headerButtonText}>Limpar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Contador de não lidas */}
+        {getUnreadCount() > 0 && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadText}>
+              {getUnreadCount()} {getUnreadCount() === 1 ? 'não lida' : 'não lidas'}
+            </Text>
+          </View>
         )}
 
-        {/* 🔥 SEÇÃO DE NOTIFICAÇÕES PUSH */}
-        <View style={styles.notificationSection}>
-          <Text style={styles.sectionTitle}>🔔 Teste de Notificações Push</Text>
-          
-          <Text style={styles.label}>Seu Push Token:</Text>
-          <Text style={styles.tokenText} onPress={copyToken}>
-            {expoPushToken || "Carregando token..."}
-          </Text>
+        {/* Lista de Notificações */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Histórico</Text>
+          {notifications.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="notifications-off" size={48} color="#C7C7CC" />
+              <Text style={styles.emptyStateText}>Nenhuma notificação</Text>
+              <Text style={styles.emptyStateSubtext}>
+                Novas notificações aparecerão aqui
+              </Text>
+            </View>
+          ) : (
+            notifications.map((notif) => (
+              <TouchableOpacity 
+                key={notif.id} 
+                style={[
+                  styles.notificationItem,
+                  !notif.read && styles.unreadNotification
+                ]}
+              >
+                <View style={styles.notificationIcon}>
+                  <Ionicons 
+                    name={notif.icon} 
+                    size={20} 
+                    color={getIconColor(notif.type)} 
+                  />
+                </View>
+                <View style={styles.notificationContent}>
+                  <Text style={styles.notificationTitle}>{notif.title}</Text>
+                  <Text style={styles.notificationBody}>{notif.body}</Text>
+                  <Text style={styles.notificationTime}>{notif.time}</Text>
+                </View>
+                {!notif.read && <View style={styles.unreadDot} />}
+              </TouchableOpacity>
+            ))
+          )}
+        </View>
 
-          {/* BOTÃO PARA ENVIAR NOTIFICAÇÃO DE TESTE */}
-          <View style={styles.buttonContainer}>
-            <Button 
-              title="📱 Enviar Notificação de Teste" 
-              onPress={sendTestNotification}
-              disabled={!expoPushToken}
-              color="#007AFF"
+        {/* Configurações */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Configurações</Text>
+          
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Ionicons name="notifications" size={20} color="#007AFF" />
+              <View style={styles.settingText}>
+                <Text style={styles.settingTitle}>Notificações Push</Text>
+                <Text style={styles.settingDescription}>
+                  {settings.pushEnabled ? "Ativado" : "Desativado"}
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={settings.pushEnabled}
+              onValueChange={() => toggleSetting('pushEnabled')}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={settings.pushEnabled ? "#007AFF" : "#f4f3f4"}
             />
           </View>
 
-          <Text style={styles.label}>Última Notificação Recebida:</Text>
-          <Text>Título: {notification?.request.content.title || "Nenhuma"}</Text>
-          <Text>Corpo: {notification?.request.content.body || "Nenhuma"}</Text>
-          <Text style={styles.dataText}>
-            Dados: {JSON.stringify(notification?.request.content.data, null, 2) || "{}"}
-          </Text>
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Ionicons name="megaphone" size={20} color="#34C759" />
+              <View style={styles.settingText}>
+                <Text style={styles.settingTitle}>Promoções e Ofertas</Text>
+                <Text style={styles.settingDescription}>Notificações de marketing</Text>
+              </View>
+            </View>
+            <Switch
+              value={settings.marketing}
+              onValueChange={() => toggleSetting('marketing')}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={settings.marketing ? "#34C759" : "#f4f3f4"}
+            />
+          </View>
+
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Ionicons name="time" size={20} color="#FF9500" />
+              <View style={styles.settingText}>
+                <Text style={styles.settingTitle}>Lembretes</Text>
+                <Text style={styles.settingDescription}>Notificações de lembrete</Text>
+              </View>
+            </View>
+            <Switch
+              value={settings.reminders}
+              onValueChange={() => toggleSetting('reminders')}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={settings.reminders ? "#FF9500" : "#f4f3f4"}
+            />
+          </View>
+
+          <View style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Ionicons name="shield-checkmark" size={20} color="#FF3B30" />
+              <View style={styles.settingText}>
+                <Text style={styles.settingTitle}>Segurança</Text>
+                <Text style={styles.settingDescription}>Alertas de segurança</Text>
+              </View>
+            </View>
+            <Switch
+              value={settings.security}
+              onValueChange={() => toggleSetting('security')}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={settings.security ? "#FF3B30" : "#f4f3f4"}
+            />
+          </View>
+        </View>
+
+        {/* Informações do Dispositivo */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Informações do Dispositivo</Text>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Push Token:</Text>
+            <Text style={styles.infoValue} numberOfLines={1}>
+              {expoPushToken || "Carregando..."}
+            </Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Status:</Text>
+            <Text style={styles.infoValue}>
+              {settings.pushEnabled ? "✅ Notificações ativas" : "❌ Notificações desativadas"}
+            </Text>
+          </View>
         </View>
 
       </ScrollView>
@@ -152,58 +309,166 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "#fff",
+    backgroundColor: "#f2f2f7",
   },
   scrollView: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e5ea",
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
+    color: "#000",
   },
-  subtitle: {
-    fontSize: 18,
+  headerActions: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  headerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  headerButtonText: {
+    fontSize: 14,
+    color: "#007AFF",
+    fontWeight: "500",
+  },
+  unreadBadge: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+    marginLeft: 16,
+    marginTop: 8,
+  },
+  unreadText: {
+    color: "#fff",
+    fontSize: 12,
     fontWeight: "600",
-    marginBottom: 8,
   },
-  notificationSection: {
-    marginTop: 24,
+  section: {
+    backgroundColor: "#fff",
+    marginTop: 16,
     padding: 16,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 12,
-    color: "#007AFF",
+    color: "#000",
   },
-  label: {
-    fontSize: 14,
+  notificationItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f2f2f7",
+  },
+  unreadNotification: {
+    backgroundColor: "#f8f9ff",
+  },
+  notificationIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#f2f2f7",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationTitle: {
+    fontSize: 16,
     fontWeight: "600",
-    marginTop: 8,
+    color: "#000",
+    marginBottom: 2,
+  },
+  notificationBody: {
+    fontSize: 14,
+    color: "#8E8E93",
     marginBottom: 4,
   },
-  tokenText: {
+  notificationTime: {
     fontSize: 12,
-    backgroundColor: '#f1f3f4',
-    padding: 8,
-    borderRadius: 4,
-    marginBottom: 12,
+    color: "#C7C7CC",
   },
-  dataText: {
-    fontSize: 10,
-    backgroundColor: '#f1f3f4',
-    padding: 8,
+  unreadDot: {
+    width: 8,
+    height: 8,
     borderRadius: 4,
+    backgroundColor: "#007AFF",
+    marginLeft: 8,
     marginTop: 4,
   },
-  buttonContainer: {
-    marginVertical: 12,
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: "#8E8E93",
+    marginTop: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "#C7C7CC",
+    marginTop: 4,
+  },
+  settingItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f2f2f7",
+  },
+  settingInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  settingText: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  settingTitle: {
+    fontSize: 16,
+    color: "#000",
+    fontWeight: "500",
+  },
+  settingDescription: {
+    fontSize: 14,
+    color: "#8E8E93",
+    marginTop: 2,
+  },
+  infoItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  infoLabel: {
+    fontSize: 14,
+    color: "#8E8E93",
+    fontWeight: "500",
+  },
+  infoValue: {
+    fontSize: 14,
+    color: "#000",
+    flex: 1,
+    textAlign: "right",
+    marginLeft: 8,
   },
 });
