@@ -16,9 +16,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [otpEmail, setOtpEmail] = useState(null);
   const [otpDigits, setOtpDigits] = useState(null);
+  const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
   // verificar se já existe um login
   // em react-native, é necessário ter para o uso de AsyncStorage uma funcao async await
   useEffect(() => {
@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
       );
       const dadosOtp = (await AsyncStorage.getItem("@Auth:otp")) || "";
       const dadosEmail = (await AsyncStorage.getItem("@Auth:email")) || "";
+              setToken(dadosToken)
 
       if (dadosToken && dadosUser) {
         setUser(dadosUser);
@@ -307,6 +308,7 @@ export function AuthProvider({ children }) {
         logout,
         loading,
         OtpSendEmail,
+        token,
         OtpVerification,
         register,
         updatePerfilImage,

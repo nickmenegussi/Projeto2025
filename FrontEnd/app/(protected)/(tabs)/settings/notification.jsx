@@ -1,112 +1,211 @@
-import { useEffect, useState } from "react";
-import { 
-  View, 
-  Text, 
+import { useContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
   Switch,
-  Alert, 
-  Platform, 
-  SafeAreaView, 
+  Alert,
+  Platform,
+  SafeAreaView,
   StatusBar,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { useNotification } from "../../../../context/NotificationContext";
+import { AuthContext } from "../../../../context/auth";
 import { Ionicons } from "@expo/vector-icons";
+import api from "../../../../services/api";
+
+const API_URL = "http://192.168.1.21:3001/notifications";
 
 export default function NotificationsScreen() {
   const { notification, expoPushToken, error } = useNotification();
+  const { user, token } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
   const [settings, setSettings] = useState({
     pushEnabled: true,
     marketing: true,
     reminders: true,
-    security: false,
+    security: true,
     sound: true,
     vibration: true,
   });
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [tokenSent, setTokenSent] = useState(false);
 
-  // Simular histórico de notificações
-  useEffect(() => {
-    const mockNotifications = [
-      {
-        id: 1,
-        title: "Bem-vindo ao App!",
-        body: "Sua conta foi criada com sucesso",
-        time: "2 horas atrás",
-        read: true,
-        type: "system",
-        icon: "checkmark-circle"
-      },
-      {
-        id: 2,
-        title: "Promoção Especial",
-        body: "Desconto de 20% em todos os produtos",
-        time: "1 dia atrás",
-        read: true,
-        type: "marketing",
-        icon: "pricetag"
-      },
-      {
-        id: 3,
-        title: "Lembrete Importante",
-        body: "Não se esqueça de completar seu perfil",
-        time: "2 dias atrás",
-        read: false,
-        type: "reminder",
-        icon: "time"
-      },
-      {
-        id: 4,
-        title: "Atividade Suspeita",
-        body: "Novo login detectado na sua conta",
-        time: "3 dias atrás",
-        read: false,
-        type: "security",
-        icon: "shield-checkmark"
+  const fetchNotifications = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/notifications`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
       }
-    ];
-    setNotifications(mockNotifications);
-  }, []);
 
-  // Adicionar nova notificação recebida
+      const result = await response.json();
+
+      if (result.success) {
+        const formattedNotifications = result.data.map((notif) => ({
+          id: notif.idNotifications,
+          title: extractTitle(notif.message),
+          body: notif.message,
+          time: formatTime(notif.created_at),
+          read: notif.isRead,
+          type: getNotificationType(notif.message),
+          icon: getNotificationIcon(notif.message),
+        }));
+
+        setNotifications(formattedNotifications);
+      } else {
+        Alert.alert("Erro", result.message);
+      }
+    } catch (error) {
+      Alert.alert(
+        "Erro de Conexão",
+        `Não foi possível conectar com o servidor.\n\nVerifique:\n1. Se o backend está rodando\n2. Se a URL está correta\n3. Sua conexão com a rede\n\nErro: ${error.message}`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔥 MARCAR TODAS COMO LIDAS
+  const markAllAsRead = async () => {
+    try {
+      const response = await fetch(`${API_URL}/notifications/read-all`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setNotifications((prev) =>
+          prev.map((notif) => ({ ...notif, read: true }))
+        );
+        Alert.alert("Sucesso", result.message);
+      } else {
+        Alert.alert("Erro", result.message);
+      }
+    } catch (error) {
+      console.error("Erro ao marcar como lidas:", error);
+      Alert.alert("Erro", "Não foi possível marcar como lidas");
+    }
+  };
+
+  const markAsRead = async (notificationId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/notifications/${notificationId}/read`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === notificationId ? { ...notif, read: true } : notif
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao marcar notificação como lida:", error);
+    }
+  };
+
+  const sendTokenToBackend = async () => {
+    if (!expoPushToken || !token) return;
+
+    try {
+      const response = await api.post(
+        `${API_URL}/notifications`,
+        {
+          message: "Dispositivo registrado para notificações push",
+          expoPushToken: expoPushToken,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.success) {
+        setTokenSent(true);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar token:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchNotifications();
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (expoPushToken && token && !tokenSent) {
+      sendTokenToBackend();
+    }
+  }, [expoPushToken, token, tokenSent]);
+
   useEffect(() => {
     if (notification) {
       const newNotification = {
         id: Date.now(),
-        title: notification.request.content.title,
-        body: notification.request.content.body,
+        title: notification.request.content.title || "Nova Notificação",
+        body:
+          notification.request.content.body || "Você tem uma nova notificação",
         time: "Agora mesmo",
         read: false,
         type: "system",
         icon: "notifications",
-        data: notification.request.content.data
+        data: notification.request.content.data,
       };
-      setNotifications(prev => [newNotification, ...prev]);
+      setNotifications((prev) => [newNotification, ...prev]);
     }
   }, [notification]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    // Simular carregamento de novas notificações
+    fetchNotifications();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   };
 
   const toggleSetting = (key) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notif => ({ ...notif, read: true }))
-    );
+    const newSettings = {
+      ...settings,
+      [key]: !settings[key],
+    };
+    setSettings(newSettings);
   };
 
   const clearAllNotifications = () => {
@@ -115,13 +214,95 @@ export default function NotificationsScreen() {
       "Tem certeza que deseja limpar todas as notificações?",
       [
         { text: "Cancelar", style: "cancel" },
-        { text: "Limpar", style: "destructive", onPress: () => setNotifications([]) }
+        {
+          text: "Limpar",
+          style: "destructive",
+          onPress: () => setNotifications([]),
+        },
       ]
     );
   };
 
+  const testNotification = async () => {
+    if (!expoPushToken || !token) {
+      Alert.alert("Aviso", "Token não disponível");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/notifications`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "🔔 Esta é uma notificação de teste do app!",
+          expoPushToken: expoPushToken,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        Alert.alert("Sucesso", "Notificação de teste criada!");
+        fetchNotifications();
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao enviar notificação de teste");
+    }
+  };
+
+  const extractTitle = (message) => {
+    if (message.includes(":")) return message.split(":")[0];
+    if (message.length > 30) return message.substring(0, 30) + "...";
+    return message;
+  };
+
+  const formatTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return "Agora mesmo";
+      if (diffMins < 60) return `${diffMins} min atrás`;
+      if (diffHours < 24) return `${diffHours} h atrás`;
+      return `${diffDays} dias atrás`;
+    } catch {
+      return "Data desconhecida";
+    }
+  };
+
+  const getNotificationType = (message) => {
+    const lowerMessage = message.toLowerCase();
+    if (lowerMessage.includes("promoção") || lowerMessage.includes("oferta"))
+      return "marketing";
+    if (
+      lowerMessage.includes("lembrete") ||
+      lowerMessage.includes("importante")
+    )
+      return "reminder";
+    if (lowerMessage.includes("segurança") || lowerMessage.includes("alerta"))
+      return "security";
+    return "system";
+  };
+
+  const getNotificationIcon = (message) => {
+    const lowerMessage = message.toLowerCase();
+    if (lowerMessage.includes("promoção") || lowerMessage.includes("oferta"))
+      return "pricetag";
+    if (lowerMessage.includes("lembrete")) return "time";
+    if (lowerMessage.includes("segurança")) return "shield-checkmark";
+    if (lowerMessage.includes("bem-vindo")) return "checkmark-circle";
+    return "notifications";
+  };
+
   const getUnreadCount = () => {
-    return notifications.filter(notif => !notif.read).length;
+    return notifications.filter((notif) => !notif.read).length;
   };
 
   const getIconColor = (type) => {
@@ -129,52 +310,82 @@ export default function NotificationsScreen() {
       system: "#007AFF",
       marketing: "#34C759",
       reminder: "#FF9500",
-      security: "#FF3B30"
+      security: "#FF3B30",
     };
     return colors[type] || "#8E8E93";
   };
 
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.loadingText}>Carregando notificações...</Text>
+      </View>
+    );
+  }
+
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text>Erro ao carregar notificações: {error.message}</Text>
+      <View style={[styles.container, styles.center]}>
+        <Ionicons name="alert-circle" size={48} color="#FF3B30" />
+        <Text style={styles.errorText}>Erro ao carregar notificações</Text>
+        <Text style={styles.errorSubtext}>{error.message}</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={fetchNotifications}
+        >
+          <Text style={styles.retryButtonText}>Tentar Novamente</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Cabeçalho */}
+        {/* CABEÇALHO */}
         <View style={styles.header}>
           <Text style={styles.title}>Notificações</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity onPress={markAllAsRead} style={styles.headerButton}>
+            <TouchableOpacity
+              onPress={markAllAsRead}
+              style={styles.headerButton}
+            >
               <Ionicons name="checkmark-done" size={20} color="#007AFF" />
-              <Text style={styles.headerButtonText}>Marcar lidas</Text>
+              <Text style={styles.headerButtonText}>Ler todas</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={clearAllNotifications} style={styles.headerButton}>
+            <TouchableOpacity
+              onPress={clearAllNotifications}
+              style={styles.headerButton}
+            >
               <Ionicons name="trash" size={20} color="#FF3B30" />
               <Text style={styles.headerButtonText}>Limpar</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Contador de não lidas */}
+        {/* CONTADOR */}
         {getUnreadCount() > 0 && (
           <View style={styles.unreadBadge}>
             <Text style={styles.unreadText}>
-              {getUnreadCount()} {getUnreadCount() === 1 ? 'não lida' : 'não lidas'}
+              {getUnreadCount()}{" "}
+              {getUnreadCount() === 1 ? "não lida" : "não lidas"}
             </Text>
           </View>
         )}
 
-        {/* Lista de Notificações */}
+        {/* BOTÃO TESTE */}
+        <TouchableOpacity style={styles.testButton} onPress={testNotification}>
+          <Ionicons name="notifications" size={20} color="#FFF" />
+          <Text style={styles.testButtonText}>Testar Notificação</Text>
+        </TouchableOpacity>
+
+        {/* LISTA DE NOTIFICAÇÕES */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Histórico</Text>
           {notifications.length === 0 ? (
@@ -187,18 +398,19 @@ export default function NotificationsScreen() {
             </View>
           ) : (
             notifications.map((notif) => (
-              <TouchableOpacity 
-                key={notif.id} 
+              <TouchableOpacity
+                key={notif.id}
                 style={[
                   styles.notificationItem,
-                  !notif.read && styles.unreadNotification
+                  !notif.read && styles.unreadNotification,
                 ]}
+                onPress={() => !notif.read && markAsRead(notif.id)}
               >
                 <View style={styles.notificationIcon}>
-                  <Ionicons 
-                    name={notif.icon} 
-                    size={20} 
-                    color={getIconColor(notif.type)} 
+                  <Ionicons
+                    name={notif.icon}
+                    size={20}
+                    color={getIconColor(notif.type)}
                   />
                 </View>
                 <View style={styles.notificationContent}>
@@ -212,10 +424,10 @@ export default function NotificationsScreen() {
           )}
         </View>
 
-        {/* Configurações */}
+        {/* CONFIGURAÇÕES */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Configurações</Text>
-          
+
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
               <Ionicons name="notifications" size={20} color="#007AFF" />
@@ -223,14 +435,13 @@ export default function NotificationsScreen() {
                 <Text style={styles.settingTitle}>Notificações Push</Text>
                 <Text style={styles.settingDescription}>
                   {settings.pushEnabled ? "Ativado" : "Desativado"}
+                  {tokenSent && " ✅ Conectado"}
                 </Text>
               </View>
             </View>
             <Switch
               value={settings.pushEnabled}
-              onValueChange={() => toggleSetting('pushEnabled')}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={settings.pushEnabled ? "#007AFF" : "#f4f3f4"}
+              onValueChange={() => toggleSetting("pushEnabled")}
             />
           </View>
 
@@ -239,14 +450,14 @@ export default function NotificationsScreen() {
               <Ionicons name="megaphone" size={20} color="#34C759" />
               <View style={styles.settingText}>
                 <Text style={styles.settingTitle}>Promoções e Ofertas</Text>
-                <Text style={styles.settingDescription}>Notificações de marketing</Text>
+                <Text style={styles.settingDescription}>
+                  Notificações de marketing
+                </Text>
               </View>
             </View>
             <Switch
               value={settings.marketing}
-              onValueChange={() => toggleSetting('marketing')}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={settings.marketing ? "#34C759" : "#f4f3f4"}
+              onValueChange={() => toggleSetting("marketing")}
             />
           </View>
 
@@ -255,51 +466,42 @@ export default function NotificationsScreen() {
               <Ionicons name="time" size={20} color="#FF9500" />
               <View style={styles.settingText}>
                 <Text style={styles.settingTitle}>Lembretes</Text>
-                <Text style={styles.settingDescription}>Notificações de lembrete</Text>
+                <Text style={styles.settingDescription}>
+                  Notificações de lembrete
+                </Text>
               </View>
             </View>
             <Switch
               value={settings.reminders}
-              onValueChange={() => toggleSetting('reminders')}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={settings.reminders ? "#FF9500" : "#f4f3f4"}
-            />
-          </View>
-
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Ionicons name="shield-checkmark" size={20} color="#FF3B30" />
-              <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Segurança</Text>
-                <Text style={styles.settingDescription}>Alertas de segurança</Text>
-              </View>
-            </View>
-            <Switch
-              value={settings.security}
-              onValueChange={() => toggleSetting('security')}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={settings.security ? "#FF3B30" : "#f4f3f4"}
+              onValueChange={() => toggleSetting("reminders")}
             />
           </View>
         </View>
 
-        {/* Informações do Dispositivo */}
+        {/* INFORMAÇÕES DO DISPOSITIVO */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações do Dispositivo</Text>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Push Token:</Text>
-            <Text style={styles.infoValue} numberOfLines={1}>
-              {expoPushToken || "Carregando..."}
-            </Text>
-          </View>
+          <Text style={styles.sectionTitle}>Informações</Text>
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Status:</Text>
             <Text style={styles.infoValue}>
-              {settings.pushEnabled ? "✅ Notificações ativas" : "❌ Notificações desativadas"}
+              {settings.pushEnabled ? "✅ Ativas" : "❌ Desativadas"}
             </Text>
           </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Total:</Text>
+            <Text style={styles.infoValue}>
+              {notifications.length} notificações
+            </Text>
+          </View>
+          {expoPushToken && (
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Token:</Text>
+              <Text style={styles.infoValue} numberOfLines={1}>
+                {expoPushToken.substring(0, 20)}...
+              </Text>
+            </View>
+          )}
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -310,6 +512,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
     backgroundColor: "#f2f2f7",
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollView: {
     flex: 1,
@@ -336,6 +542,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+    padding: 8,
   },
   headerButtonText: {
     fontSize: 14,
@@ -348,12 +555,26 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 12,
     alignSelf: "flex-start",
-    marginLeft: 16,
-    marginTop: 8,
+    margin: 16,
   },
   unreadText: {
     color: "#fff",
     fontSize: 12,
+    fontWeight: "600",
+  },
+  testButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: "#007AFF",
+    margin: 16,
+    padding: 12,
+    borderRadius: 8,
+  },
+  testButtonText: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "600",
   },
   section: {
@@ -470,5 +691,34 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "right",
     marginLeft: 8,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#8E8E93",
+  },
+  errorText: {
+    fontSize: 18,
+    color: "#FF3B30",
+    fontWeight: "600",
+    marginTop: 12,
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: "#8E8E93",
+    marginTop: 4,
+    textAlign: "center",
+  },
+  retryButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  retryButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
