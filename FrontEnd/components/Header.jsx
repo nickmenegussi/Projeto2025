@@ -1,0 +1,66 @@
+import React, { useContext } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { MenuIcon, Bell } from "lucide-react-native";
+import { router } from "expo-router";
+import Constants from 'expo-constants';
+import ButtonIcons from "../components/ButtonIcons";
+import { AuthContext } from "../context/auth";
+
+const Header = ({ title, onMenuPress, content }) => {
+  const { user } = useContext(AuthContext);
+  const {enderecoUrlImage} = Constants.expoConfig.extra 
+
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 0,
+      }}
+    >
+      {/* Botão Menu */}
+      <ButtonIcons
+        color="white"
+        size={30}
+        handleChange={onMenuPress}
+        Icon={({ color, size }) => <MenuIcon color={color} size={size} />}
+      />
+
+      {/* Título */}
+      <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+        {title}
+      </Text>
+
+      {/* Notificação + Avatar */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        {content && (content)}
+        <ButtonIcons
+          color="white"
+          size={30}
+          Icon={({ color, size }) => <Bell color={color} size={size} />}
+        />
+
+        <TouchableOpacity onPress={() => router.push("/settings")}>
+          <Image
+          source={{
+                      uri: user?.image_profile
+                        ? `${enderecoUrlImage}/uploads/${user.image_profile}`
+                        : require("../assets/images/default-profile.jpg"),
+                    }}
+            
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: "white",
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+export default Header;

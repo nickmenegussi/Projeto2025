@@ -1,7 +1,6 @@
 const verifyPermission = (allowedRoles) => {
   return (req, res, next) => {
     const user = req.data
-
     if (!user) {
       return res.status(401).json({
         success: false,

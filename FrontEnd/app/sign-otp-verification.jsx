@@ -15,27 +15,43 @@ import Button from "../components/Button";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { SafeAreaView } from "react-native";
 import { AuthContext } from "../context/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import handleApiError from "../utils/handleApiError";
+import Toast from "react-native-toast-message";
 
 export default function OtpSignIn() {
-  const { OtpVerification, otpDigits } = useContext(AuthContext);
+  const { OtpVerification, otpDigits, OtpSendEmail } = useContext(AuthContext);
   const [otp, setOtp] = useState("");
-
+  const [sendAgainOtpCode, setSendAgainOtpCode] = useState(false);
   async function OtpVerify() {
+    if (!sendAgainOtpCode && otp.length > 4) {
+      Toast.show({
+        type: "info",
+        text1: "O tamanho do código não deve ultrapassar 4 dígitos",
+        position: "bottom",
+      });
+      return;
+    }
+
     try {
-      await OtpVerification(otp);
-      router.push("/otpMessage");
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        console.log("Erro", error.response.data.message);
-        Alert.alert("Erro", error.response.data.message);
-      } else {
-        console.log("Erro", error);
-        Alert.alert("Erro", "Erro ao verificar código");
+      const email = await AsyncStorage.getItem("@Auth:email");
+      if (!email) {
+        Toast.show({
+          type: "error",
+          text1: "Email não encontrado",
+          position: "bottom",
+        });
+        return;
       }
+
+      if (sendAgainOtpCode) {
+        await OtpSendEmail(email);
+        setSendAgainOtpCode(false);
+      } else {
+        await OtpVerification(otp, email);
+      }
+    } catch (error) {
+      handleApiError(error, true);
     }
   }
 
@@ -69,6 +85,16 @@ export default function OtpSignIn() {
               value={otp}
             />
             <View style={styles.buttonContainer}>
+              <Button
+                title="Enviar Novo Código"
+                textStyles={styles.TextButton}
+                buttonStyle={styles.colorButton}
+                othersStyles={styles.Button}
+                handlePress={() => {
+                  OtpVerify();
+                  setSendAgainOtpCode(true);
+                }}
+              />
               <Button
                 title="Enviar Código"
                 textStyles={styles.TextButton}
@@ -124,7 +150,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFFFFF",
     width: 400,
-    right: 5
+    right: 5,
   },
   subtitle: {
     marginTop: 10,

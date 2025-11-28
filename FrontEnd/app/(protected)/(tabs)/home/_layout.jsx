@@ -1,26 +1,55 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 
-const RootLayout = () => {
+const Layout = () => {
   return (
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="lectures" options={{ headerShown: false }} />
-        <Stack.Screen name="aboutLecture" options={{ headerShown: false }} />
-        <Stack.Screen name="speaker" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="lecturesObjective"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="targetPublicLectures"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="reviewSociety" options={{ headerShown: false }} />
-        <Stack.Screen name="volunteerWork" options={{ headerShown: false }} />
-        <Stack.Screen name="faq" options={{ headerShown: false }} />
-      </Stack>
+    <Stack>
+      <Stack.Screen 
+        name="index" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="lectures" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="aboutLecture" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="speaker" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="lecturesObjective" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="targetPublicLectures" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="reviewSociety" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="volunteerWork" 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="faq" 
+        options={{ headerShown: false }} 
+      />
+      {/* <Stack.Screen 
+        name="createCalender" 
+        options={{ headerShown: false }} 
+      /> */}
+      <Stack.Screen 
+        name="feebackCentro" 
+        options={{ headerShown: false }} 
+      />
+    </Stack>
   );
 };
 
-export default RootLayout;
+export default Layout;

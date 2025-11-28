@@ -2,9 +2,6 @@ import { Redirect, Stack } from "expo-router";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)", // anchor
-};
 
 export default function ProtectedLayout() {
   const {user, loading} = useContext(AuthContext);
@@ -12,7 +9,7 @@ export default function ProtectedLayout() {
   if(loading) return null
 
   if (!user) {
-    return <Redirect href="/sign-up" />;
+    return <Redirect href="/index" />;
   }
 
   return (
@@ -23,6 +20,7 @@ export default function ProtectedLayout() {
           headerShown: false,
         }}
       />
+      
     </Stack>
   );
 }

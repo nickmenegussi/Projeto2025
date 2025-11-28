@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const {viewOnlyUser, viewAllUser, register, updateUser, updateUserName ,updateUserPassword,  updateUserImageProfile,deleteAccountUser} = require('../controllers/UserController')
+const {viewOnlyUser, viewAllUser, register, updateUser, updateUserName ,updateUserPassword,updateUserForgotPassword,  updateUserImageProfile,deleteAccountUser} = require('../controllers/UserController')
 const authMiddleware = require('../middleware/authMidleware')
 const upload = require("../multerConfig/multer")
 const verifyPermission = require('../middleware/roleMiddleware')
@@ -10,10 +10,11 @@ router.get('/user', authMiddleware, verifyPermission(['admin', 'SuperAdmin']) ,v
 
 router.post('/user/register' ,register)
 
-router.patch('/user/name',authMiddleware , updateUserName)
+router.patch('/user/nameUser',authMiddleware , updateUserName)
 router.patch('/user/profile', authMiddleware ,updateUser)
 router.patch('/user/password', authMiddleware ,updateUserPassword )
-router.patch('/user/picture', authMiddleware , upload.single('imagem'), updateUserImageProfile)
+router.patch('/user/forgot-password', updateUserForgotPassword)
+router.patch('/user/picture', authMiddleware , upload.single('image'), updateUserImageProfile)
 
 router.delete('/user/:idUser/delete', authMiddleware ,verifyPermission(['SuperAdmin','admin']) , deleteAccountUser)
 

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import api from "./api"
 import { router } from "expo-router"
 import { Alert } from "react-native"
-import { handleApiError } from "../utils/handleApiError"
+import  handleApiError from "../utils/handleApiError"
 
 export const createLoanConfirmation = async ({Cart_idCart, Book_idLibrary, User_idUser, quantity}) => {
   try {
@@ -59,7 +59,7 @@ export const getLoanById = async () => {
     })
     return {loans: response.data.data, HasALoan: response.data.isBookHasALoan};
   } catch (error) {
-    handleApiError(error)
+    handleApiError(error, false)
     return null
   }
 }

@@ -10,7 +10,11 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  Modal,
+  Platform,
+  Dimensions,
 } from "react-native";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Carousel from "react-native-reanimated-carousel"; // Nova biblioteca de carrossel
@@ -34,6 +38,8 @@ import FAQ from "../../../../components/FAQ";
 import DropDownPicker from "react-native-dropdown-picker";
 import Button from "../../../../components/Button";
 import LoadingScreen from "../../../../components/AcitivityIndicator";
+import Header from "../../../../components/Header";
+const { width } = Dimensions.get("window");
 
 const Home = () => {
   const objetivos = [
@@ -52,8 +58,67 @@ const Home = () => {
   ];
   const [lectures, setLectures] = useState([]);
   const [VolunteerWork, setVolunteerWork] = useState([]);
-  const [calendar, setCalendar] = useState([]);
+  const [calendar, setCalendar] = useState([
+    {
+      id: 1,
+      date: "2025-09-15",
+      time: "19:30",
+      name: "Palestra: Os Ensinamentos de Jesus",
+      description: "Palestra sobre os princípios cristãos na doutrina espírita",
+      status_permission: "user",
+    },
+    {
+      id: 2,
+      date: "2025-09-20",
+      time: "15:00",
+      name: "Campanha do Agasalho",
+      description: "Arrecadação de roupas para famílias carentes",
+      status_permission: "user",
+    },
+    {
+      id: 3,
+      date: "2025-09-25",
+      time: "20:00",
+      name: "Estudo Sistematizado da Doutrina Espírita",
+      description: "Grupo de estudo semanal",
+      status_permission: "admin",
+    },
+    {
+      id: 4,
+      date: "2025-09-05",
+      time: "09:00",
+      name: "Trabalho Voluntário - Creche",
+      description: "Visita e atividades com crianças",
+      status_permission: "user",
+    },
+    {
+      id: 5,
+      date: "2025-09-10",
+      time: "19:00",
+      name: "Reunião de Passes",
+      description: "Aplicação de passes magnéticos",
+      status_permission: "SuperAdmin",
+    },
+    {
+      id: 6,
+      date: "2025-09-15",
+      time: "14:00",
+      name: "Bazar Beneficente",
+      description: "Venda de produtos com renda revertida para obras sociais",
+      status_permission: "user",
+    },
+    {
+      id: 7,
+      date: "2025-09-15", // Mesma data do primeiro evento
+      time: "16:00",
+      name: "Reunião de Juventude",
+      description: "Encontro dos jovens espíritas",
+      status_permission: "user",
+    },
+  ]);
   const [IsSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDateEvents, setSelectedDateEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [review, setReview] = useState([]);
   const [open, setOpen] = useState(false);
@@ -62,111 +127,119 @@ const Home = () => {
     { label: "Mais recente", value: "newSet" },
     { label: "Mais antigo", value: "oldest" },
   ]);
-  const [isLoading, setIsLoading] = useState(false)
-  
-  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDateSelect = (day) => {
+    setSelectedDate(day.dateString);
+    const eventsForDate = calendar.filter(
+      (event) => event.date === day.dateString
+    );
+    setSelectedDateEvents(eventsForDate);
+    setModalVisible(true);
+  };
+
   useEffect(() => {
     const carregarDados = async () => {
       setIsLoading(true);
-  
+
       await ViewLectures();
       await ViewVolunteerWork();
-      await ViewCalendar();
+      // await ViewCalendar();
       await GetReview();
-  
-      setIsLoading(false)
-    }
-  
-    carregarDados()
-  }, [])
+
+      setIsLoading(false);
+    };
+
+    carregarDados();
+  }, []);
 
   async function ViewLectures() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/lectures/lectures", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setLectures(response.data.data)
+      });
+      setLectures(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
   async function ViewVolunteerWork() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/volunteerWork/work", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setVolunteerWork(response.data.data)
+      });
+      setVolunteerWork(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
 
   async function ViewCalendar() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
+      const token = await AsyncStorage.getItem("@Auth:token");
       const response = await api.get("/calendar/calendar", {
         headers: {
           Authorization: "Bearer " + token,
         },
-      })
-      setCalendar(response.data.data)
+      });
+      // setCalendar(response.data.data);
     } catch (error) {
       if (error.response) {
         if (error.response.data.loginRequired === true) {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
-          router.push("/sign-up")
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
+          router.push("/sign-up");
         } else {
-          console.log("Erro", error.response.data)
-          Alert.alert("Erro", error.response.data.message)
+          console.log("Erro", error.response.data);
+          Alert.alert("Erro", error.response.data.message);
         }
       } else {
-        console.log("Erro", error)
+        console.log("Erro", error);
       }
     }
   }
 
   async function GetReview() {
     try {
-      const token = await AsyncStorage.getItem("@Auth:token")
-      const user = await AsyncStorage.getItem("@Auth:user")
+      const token = await AsyncStorage.getItem("@Auth:token");
+      const user = await AsyncStorage.getItem("@Auth:user");
       const response = await api.get(
         `/review/reviewSociety?sortOrder=${value}`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:` Bearer ${token}`,
+            Authorization: ` Bearer ${token}`,
           },
         }
-      )
+      );
       setReview(response.data.data);
     } catch (error) {
       if (error.response) {
@@ -186,7 +259,16 @@ const Home = () => {
 
   if (isLoading) {
     return (
-      <LoadingScreen image={false} />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#003B73",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <LoadingScreen image={false} />
+      </View>
     );
   }
 
@@ -218,46 +300,62 @@ const Home = () => {
               {item.type === "Palestras da Casa" ? (
                 lectures.length > 0 ? (
                   <Carousel
-                    width={350}
-                    height={170}
+                    width={340}
+                    height={200}
                     data={item.content}
-                    renderItem={(item) => (
-                      <View
-                        style={styles.SmallcarouselItem}
-                        key={item.item.idLecture}
-                      >
+                    renderItem={({ item: gi }) => (
+                      <View style={styles.SmallcarouselItem} key={gi.idLecture}>
                         <ImageBackground
-                          source={require("../../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
+                          source={
+                            gi.ImageUrl
+                              ? { uri: gi.ImageUrl }
+                              : require("../../../../assets/images/Jesus-Cristo.png")
+                          }
                           style={styles.BackgroundImage}
                           imageStyle={styles.imageStyle}
                         >
-                          <TouchableOpacity
-                            style={styles.overlay}
-                            activeOpacity={0.5}
-                            onPress={() =>
-                              router.push({
-                                pathname: "/home/lectures",
-                                params: { data: JSON.stringify(lectures) },
-                              })
-                            }
+                          <LinearGradient
+                            colors={["transparent", "rgba(0,0,0,0.8)"]}
+                            style={styles.gradientOverlay}
                           >
-                            <View style={styles.item}>
-                              <Text style={styles.titlePost}>
-                                {item.item.nameLecture}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
+                            <TouchableOpacity
+                              style={styles.overlay}
+                              activeOpacity={0.7}
+                              onPress={() =>
+                                router.push({
+                                  pathname: "/home/lectures",
+                                  params: { data: JSON.stringify(lectures) },
+                                })
+                              }
+                            >
+                              <View style={styles.item}>
+                                <Text
+                                  style={styles.titlePost}
+                                  numberOfLines={2}
+                                >
+                                  {gi.nameLecture}
+                                </Text>
+                                <View style={styles.detailsContainer}>
+                                  <Text style={styles.SubtitlePost}>
+                                    {gi.timeLecture}
+                                  </Text>
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+                          </LinearGradient>
                         </ImageBackground>
                       </View>
                     )}
                     scrollAnimationDuration={1000}
-                    autoPlay={true}
-                    loop={true}
-                    autoPlayInterval={3000}
+                    loop
+                    autoPlay
+                    autoPlayInterval={4000}
+                    windowSize={3}
+                    panGestureHandlerProps={{ activeOffsetX: [-10, 10] }}
                     mode="parallax"
                     modeConfig={{
                       parallaxScrollingScale: 0.9,
-                      parallaxScrollingOffset: 54,
+                      parallaxScrollingOffset: 50,
                     }}
                   />
                 ) : (
@@ -268,48 +366,65 @@ const Home = () => {
               ) : item.type === "Trabalho Voluntário" ? (
                 VolunteerWork.length > 0 ? (
                   <Carousel
-                    width={350}
-                    height={220}
+                    width={340}
+                    height={200}
                     data={item.content}
-                    renderItem={(item) => (
+                    renderItem={({ item: gi }) => (
                       <View
                         style={styles.SmallcarouselItem}
-                        key={item.idVolunteerWork}
+                        key={gi.idVolunteerWork}
                       >
                         <ImageBackground
-                          source={require("../../../../assets/images/Jesus-Cristo.png")} // URL da sua imagem
+                          source={
+                            gi.ImageUrl
+                              ? { uri: gi.ImageUrl }
+                              : require("../../../../assets/images/Jesus-Cristo.png")
+                          }
                           style={styles.BackgroundImage}
                           imageStyle={styles.imageStyle}
                         >
-                          <TouchableOpacity
-                            style={styles.overlay}
-                            activeOpacity={0.5}
-                            onPress={() =>
-                              router.push({
-                                pathname: "/home/volunteerWork",
-                                params: { data: JSON.stringify(item.item) },
-                              })
-                            }
+                          <LinearGradient
+                            colors={["transparent", "rgba(0,0,0,0.8)"]}
+                            style={styles.gradientOverlay}
                           >
-                            <View style={styles.item}>
-                              <Text style={styles.titlePostBigger}>
-                                {item.item.nameVolunteerWork
-                                  ? item.item.nameVolunteerWork
-                                  : ""}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
+                            <TouchableOpacity
+                              style={styles.overlay}
+                              activeOpacity={0.7}
+                              onPress={() =>
+                                router.push({
+                                  pathname: "/home/volunteerWork",
+                                  params: { data: JSON.stringify(item) },
+                                })
+                              }
+                            >
+                              <View style={styles.item}>
+                                <Text
+                                  style={styles.titlePost}
+                                  numberOfLines={2}
+                                >
+                                  {gi.nameVolunteerWork}
+                                </Text>
+                                <View style={styles.detailsContainer}>
+                                  <Text style={styles.SubtitlePost}>
+                                    {gi.address}
+                                  </Text>
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+                          </LinearGradient>
                         </ImageBackground>
                       </View>
                     )}
                     scrollAnimationDuration={1000}
-                    autoPlay={true}
-                    loop={true}
-                    autoPlayInterval={3000}
+                    loop
+                    autoPlay
+                    autoPlayInterval={4000}
+                    windowSize={3}
+                    panGestureHandlerProps={{ activeOffsetX: [-10, 10] }}
                     mode="parallax"
                     modeConfig={{
                       parallaxScrollingScale: 0.9,
-                      parallaxScrollingOffset: 54,
+                      parallaxScrollingOffset: 50,
                     }}
                   />
                 ) : (
@@ -320,46 +435,114 @@ const Home = () => {
                 )
               ) : item.type === "Calendário de Eventos" ? (
                 calendar.length > 0 ? (
-                  <>
+                  <View style={styles.calendarSection}>
                     <Calendar
                       accessibilityLanguage="PT-BR"
                       style={styles.calendar}
                       theme={{
-                        backgroundColor: "#60A3D9",
-                        calendarBackground: "#60A3D9",
-                        textSectionTitleColor: "#fff",
+                        backgroundColor: "#ffffff",
+                        calendarBackground: "#ffffff",
+                        textSectionTitleColor: "#003B73",
                         selectedDayBackgroundColor: "#0A73D9",
                         selectedDayTextColor: "#ffffff",
                         todayTextColor: "#0A73D9",
-                        dayTextColor: "#ffffff",
+                        dayTextColor: "#2d4150",
                         textDisabledColor: "#A0C1E8",
-                        arrowColor: "#ffffff",
-                        monthTextColor: "#ffffff",
+                        arrowColor: "#0A73D9",
+                        monthTextColor: "#003B73",
+                        indicatorColor: "#0A73D9",
+                        textDayFontWeight: "300",
+                        textMonthFontWeight: "bold",
+                        textDayHeaderFontWeight: "500",
+                        textDayFontSize: 14,
+                        textMonthFontSize: 16,
+                        textDayHeaderFontSize: 14,
                       }}
-                      onDayPress={(day) => setSelectedDate(day.dateString)}
+                      onDayPress={handleDateSelect}
+                      markedDates={{
+                        ...calendar.reduce((acc, event) => {
+                          acc[event.date] = {
+                            marked: true,
+                            dotColor: "#FF6B6B",
+                            activeOpacity: 0.7,
+                          };
+                          return acc;
+                        }, {}),
+                        [selectedDate]: {
+                          selected: true,
+                          selectedColor: "#0A73D9",
+                          selectedTextColor: "#ffffff",
+                        },
+                      }}
                     />
 
-                    {selectedDate ? (
-                      <View style={styles.eventsContainer}>
-                        <Text style={styles.eventTitle}>Eventos do dia:</Text>
-                        <View></View>
-                        {item.content[0].status_permission === "admin" ||
-                        item.content[0].status_permission === "SuperAdmin" ? (
-                          <View style={styles.eventContent}>
-                            <TouchableOpacity>
-                              <PencilIcon color="black" size={20} />
+                    <Text style={styles.selectDateHint}>
+                      Toque em uma data para ver os eventos
+                    </Text>
+
+                    {/* Modal para mostrar eventos */}
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={modalVisible}
+                      onRequestClose={() => setModalVisible(false)}
+                    >
+                      <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                          <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                              Eventos do dia {selectedDate}
+                            </Text>
+                            <TouchableOpacity
+                              style={styles.closeButton}
+                              onPress={() => setModalVisible(false)}
+                            >
+                              <Text style={styles.closeButtonText}>×</Text>
                             </TouchableOpacity>
                           </View>
-                        ) : null}
+
+                          <ScrollView style={styles.modalScrollView}>
+                            {selectedDateEvents.length > 0 ? (
+                              selectedDateEvents.map((event, index) => (
+                                <View key={index} style={styles.eventItem}>
+                                  <View style={styles.eventTimeContainer}>
+                                    <Text style={styles.eventTime}>
+                                      {event.time || "Horário não especificado"}
+                                    </Text>
+                                  </View>
+                                  <View style={styles.eventDetails}>
+                                    <Text style={styles.eventName}>
+                                      {event.name}
+                                    </Text>
+                                    <Text style={styles.eventDescription}>
+                                      {event.description || "Sem descrição"}
+                                    </Text>
+                                  </View>
+                                </View>
+                              ))
+                            ) : (
+                              <View style={styles.noEventsContainer}>
+                                <Text style={styles.noEventsText}>
+                                  Nenhum evento para esta data
+                                </Text>
+                              </View>
+                            )}
+                          </ScrollView>
+
+                          {(calendar[0]?.status_permission === "admin" ||
+                            calendar[0]?.status_permission ===
+                              "SuperAdmin") && (
+                            <TouchableOpacity style={styles.addEventButton}>
+                              <PencilIcon color="white" size={20} />
+                              <Text style={styles.addEventText}>
+                                Adicionar Evento
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
-                    ) : (
-                      <View style={styles.eventsContainer}>
-                        <Text style={styles.eventText}>
-                          Nenhum evento para o dia
-                        </Text>
-                      </View>
-                    )}
-                  </>
+                    </Modal>
+                  </View>
                 ) : (
                   <EmptyContent
                     title="Ops! Nada por aqui"
@@ -370,7 +553,15 @@ const Home = () => {
                 <>
                   <View style={styles.ContainerReviews}>
                     <View style={styles.reviewsHeader}>
-                      <Text style={styles.header}>Avaliações</Text>
+                      <Text
+                        style={{
+                          color: "#FFFFFF",
+                          fontSize: 20,
+                          fontWeight: "700",
+                        }}
+                      >
+                        Avaliações
+                      </Text>
 
                       <DropDownPicker
                         open={open}
@@ -439,7 +630,14 @@ const Home = () => {
                     ) : (
                       <Text>Nenhum review encontrado</Text>
                     )}
-                    <Button title={"Ver mais"} handlePress={() => router.push('/home/reviewSociety')} buttonStyle={{backgroundColor: '#003B73', width: '100%'}}/>
+                    <Button
+                      title={"Ver mais"}
+                      handlePress={() => router.push("/home/reviewSociety")}
+                      buttonStyle={{
+                        backgroundColor: "#003B73",
+                        width: "100%",
+                      }}
+                    />
                   </View>
                 </>
               ) : item.type === "Esclarecimentos sobre o Centro Espírita" ? (
@@ -485,134 +683,246 @@ const Home = () => {
             </View>
           )}
           ListHeaderComponent={() => (
-            <View contentContainerStyle={styles.Container}>
-
-              <View style={styles.containerIcons}>
-                <ButtonIcons
-                  color={"white"}
-                  size={30}
-                  handleChange={() => setIsSideBarOpen(!IsSideBarOpen)}
-                  Icon={({ color, size }) => (
-                    <MenuIcon color={color} size={size} />
-                  )}
-                />
-                <View style={styles.IconsContent}>
-                  <ButtonIcons
-                    color={"white"}
-                    size={30}
-                    Icon={({ color, size }) => (
-                      <Bell color={color} size={size} />
-                    )}
-                  />
-                  <ButtonIcons
-                    color={"white"}
-                    size={30}
-                    handleChange={() => router.push('/settings')}
-                    Icon={({ color, size }) => (
-                      <CircleUserRoundIcon color={color} size={size} />
-                    )}
-                  />
-                </View>
-              </View>
+            <View style={styles.Container}>
+              <Header
+                title="Home"
+                onMenuPress={() => setIsSideBarOpen(!IsSideBarOpen)}
+              />
               <Trending
-                navagations={
-                  [
-                    {
-                      name: "Palestras da Casa",
-                      path: "/home/lectures",
-                      data: lectures,
-                    },
-
-                    { name: "FAQ", path: "/home/faq" },
-                  ] ?? []
-                }
+                navagations={[
+                  {
+                    name: "Palestras da Casa",
+                    path: "/home/lectures",
+                    data: lectures,
+                  },
+                  { name: "FAQ", path: "/home/faq" },
+                ]}
               />
             </View>
           )}
-          contentContainerStyle={{paddingBottom: 100,}}
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
       </SafeAreaView>
     </>
   );
 };
 
-export default React.memo(Home)
+export default React.memo(Home);
 
 const styles = StyleSheet.create({
+  // ===== ESTILOS GERAIS E DE LAYOUT =====
   linearGradient: {
     flex: 1,
-  },
-  cardContainer: {
     backgroundColor: "#003B73",
-    padding: 10,
-    borderRadius: 10,
   },
   safeAreaView: {
     flex: 1,
-    padding: 10,
-    paddingVertical: 20,
+    padding: Platform.OS === "web" ? 24 : 16,
+    paddingVertical: Platform.OS === "web" ? 20 : 0,
+    backgroundColor: "#003B73",
+    
+  },
+  container: {
+    flexGrow: 1,
     backgroundColor: "#003B73",
   },
-  eventContent: {
-    backgroundColor: "#fff",
-    width: "12%",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: 10,
-    top: 50,
-    left: "88%",
-    position: "relative",
+
+  // ===== LAYOUT ESPECÍFICO PARA WEB =====
+  webContainer: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#003B73",
   },
-  Container: {
-    flexGrow: 1,
-    padding: 10,
-    paddingVertical: 20,
+  webContent: {
+    flex: 1,
+    padding: Platform.OS === "web" ? 24 : 16,
   },
-  header: {
-    fontSize: 17,
+  webMainLayout: {
+    flex: 1,
+    flexDirection: Platform.OS === "web" ? "row" : "column",
+    marginTop: 20,
+    gap: Platform.OS === "web" ? 24 : 0,
+  },
+  webLeftColumn: {
+    flex: 1,
+    marginRight: Platform.OS === "web" ? 16 : 0,
+    maxWidth: Platform.OS === "web" ? "60%" : "100%",
+  },
+  webRightColumn: {
+    flex: 1,
+    maxWidth: Platform.OS === "web" ? "40%" : "100%",
+  },
+  webSection: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    ...Platform.select({
+      web: {
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        cursor: "pointer",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+      },
+      default: {
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+    }),
+  },
+  webSectionTitle: {
+    fontSize: Platform.OS === "web" ? 20 : 17,
     fontWeight: "bold",
     color: "#fff",
-    marginVertical: 10,
+    marginBottom: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.2)",
+  },
+
+  // ===== CABEÇALHOS E TÍTULOS =====
+  Container: {
+    backgroundColor: "#003B73",
+    marginBottom: Platform.OS === "web" ? 24 : 16,
+  },
+  header: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#4A90E2",
+    color: "#fff",
     marginBottom: 25,
   },
+  headerTitle: {
+    color: "white",
+    fontSize: Platform.OS === "web" ? 28 : 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    marginBottom: Platform.OS === "web" ? 20 : 16,
+  },
+  title: {
+    fontSize: Platform.OS === "web" ? 22 : 20,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+
+  // ===== CARTÕES E CONTAINERS =====
+  cardContainer: {
+    backgroundColor:
+      Platform.OS === "web" ? "rgba(255, 255, 255, 0.08)" : "#003B73",
+    padding: Platform.OS === "web" ? 16 : 10,
+    borderRadius: 12,
+    marginBottom: Platform.OS === "web" ? 20 : 16,
+    ...Platform.select({
+      web: {
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.1)",
+      },
+    }),
+  },
+  containerFaq: {
+    marginBottom: Platform.OS === "web" ? 32 : 40,
+  },
+  ContainerReviews: {
+    position: "relative",
+    backgroundColor: "#60A3D9",
+    borderRadius: 10,
+    padding:  20,
+    ...Platform.select({
+      web: {
+        boxShadow: "0 6px 16px rgba(0, 59, 115, 0.3)",
+      },
+    }),
+  },
+
+  // ===== AVATAR E IMAGENS =====
+  avatarImage: {
+    width: Platform.OS === "web" ? 50 : 42,
+    height: Platform.OS === "web" ? 50 : 42,
+    borderRadius: Platform.OS === "web" ? 25 : 21,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  BackgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  imageStyle: {
+    borderRadius: 10,
+    resizeMode: "cover",
+  },
+
+  // ===== COMPONENTES DE FORMULÁRIO =====
   picker: {
-    height: 55,
+    height: Platform.OS === "web" ? 48 : 55,
     backgroundColor: "#fff",
     borderRadius: 10,
-    borderColor: "#fff",
-    width: "50%",
+    borderWidth: 0,
+    width: Platform.OS === "web" ? "40%" : "50%",
+    ...Platform.select({
+      web: {
+        padding: 12,
+        fontSize: 16,
+      },
+    }),
   },
   itemDropDrown: {
     backgroundColor: "#fff",
     borderWidth: 0,
     borderRadius: 8,
-    width: "50%", // Mesma largura do picker
+    width: Platform.OS === "web" ? "40%" : "50%",
   },
+
+  // ===== LAYOUT E DISPOSIÇÃO DE ELEMENTOS =====
   containerIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: Platform.OS === "web" ? 20 : 16,
   },
   IconsContent: {
     flexDirection: "row",
     gap: 10,
+    alignItems: "center",
   },
+  reviewsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 50,
+    flex: 1,
+    marginBottom: Platform.OS === "web" ? 20 : 16,
+  },
+
+  // ===== ITENS DO CAROUSEL =====
   carouselItem: {
     backgroundColor: "white",
     padding: 15,
     borderRadius: 10,
     marginRight: 10,
     justifyContent: "center",
-    alignItems: "start",
-    height: 200,
+    alignItems: "flex-start",
+    height: Platform.OS === "web" ? 220 : 200,
   },
   SmallcarouselItem: {
     borderRadius: 10,
-    marginRight: 10,
+    alignItems: "center",
     flex: 1,
+    marginRight: 10,
     flexDirection: "column",
-    height: 150,
+    height: Platform.OS === "web" ? 170 : 150,
   },
+
+  // ===== OVERLAY E TÍTULOS DE POSTS =====
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
@@ -629,67 +939,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     position: "relative",
-    top: 160,
+    top: 100,
     left: 20,
     right: 10,
   },
-  calendar: {
-    height: 550,
-    borderRadius: 10,
-    marginBottom: 40,
-  },
-  containerFaq: {
-    marginBottom: 40,
-  },
-  ContainerReviews: {
-    backgroundColor: "#60A3D9",
-    borderRadius: 10,
-    padding: 20,
-  },
-  reviewsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 70,
-    alignItems: "center",
-    width: "100%",
-  },
-  eventsContainer: {
-    justifyContent: "space-between",
-    position: "absolute",
-    bottom: 100,
-    left: 10,
-    right: 10,
-  },
-  BackgroundImage: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  imageStyle: {
-    borderRadius: 10,
-    resizeMode: "cover",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#60A3D9",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 20,
-    textAlign: "center",
-  },
+
+  // ===== CARTÕES DE CONTEÚDO =====
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    marginBottom: 16,
+    padding: Platform.OS === "web" ? 20 : 16,
+    marginBottom: Platform.OS === "web" ? 20 : 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -697,27 +959,375 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   icon: {
-    width: 48,
-    height: 48,
-    marginRight: 16,
+    width: Platform.OS === "web" ? 56 : 48,
+    height: Platform.OS === "web" ? 56 : 48,
+    marginRight: Platform.OS === "web" ? 20 : 16,
     resizeMode: "contain",
   },
   textContainer: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: Platform.OS === "web" ? 18 : 16,
+    fontWeight: "bold",
+    color: "#003B73",
+    marginBottom: 6,
+  },
+  cardDescription: {
+    fontSize: Platform.OS === "web" ? 15 : 14,
+    color: "#555",
+    lineHeight: Platform.OS === "web" ? 1.5 : 20,
+  },
+
+  // ===== CONTAINER DE REVIEWS =====
+  reviewsContainer: {
+    height:  300,
+    flex: 1,
+  },
+
+  // ===== BOTÕES =====
+  editButton: {
+    backgroundColor: "#0A73D9",
+    width: Platform.OS === "web" ? 44 : 40,
+    height: Platform.OS === "web" ? 44 : 40,
+    borderRadius: Platform.OS === "web" ? 22 : 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // ===== CALENDÁRIO =====
+  calendarSection: {
+    marginBottom: Platform.OS === "web" ? 32 : 30,
+  },
+  calendar: {
+    height: Platform.OS === "web" ? 400 : 380,
+    borderRadius: 15,
+    overflow: "hidden",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  selectDateHint: {
+    textAlign: "center",
+    color: "#fff",
+    fontStyle: "italic",
+    marginTop: 10,
+    fontSize: Platform.OS === "web" ? 15 : 14,
+  },
+
+  // ===== MODAL =====
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: Platform.OS === "web" ? 16 : 20,
+    padding: Platform.OS === "web" ? 24 : 20,
+    width: Platform.OS === "web" ? "50%" : "90%",
+    maxWidth: Platform.OS === "web" ? 600 : "90%",
+    maxHeight: "80%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    paddingBottom: 10,
+  },
+  modalTitle: {
+    fontSize: Platform.OS === "web" ? 22 : 20,
+    fontWeight: "bold",
+    color: "#003B73",
+    flex: 1,
+  },
+  closeButton: {
+    width: Platform.OS === "web" ? 34 : 30,
+    height: Platform.OS === "web" ? 34 : 30,
+    borderRadius: Platform.OS === "web" ? 17 : 15,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    fontSize: Platform.OS === "web" ? 20 : 18,
+    fontWeight: "bold",
+    color: "#003B73",
+  },
+  modalScrollView: {
+    maxHeight: 400,
+    marginBottom: 10,
+  },
+
+  // ===== EVENTOS (DENTRO DO MODAL) =====
+  eventItem: {
+    flexDirection: "row",
+    backgroundColor: "#F8F9FA",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: "#0A73D9",
+  },
+  eventTimeContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+    minWidth: Platform.OS === "web" ? 80 : 70,
+    backgroundColor: "#0A73D9",
+    borderRadius: 8,
+    padding: 5,
+  },
+  eventTime: {
+    fontSize: Platform.OS === "web" ? 15 : 14,
+    fontWeight: "600",
+    color: "white",
+    textAlign: "center",
+  },
+  eventDetails: {
+    flex: 1,
+  },
+  eventName: {
+    fontSize: Platform.OS === "web" ? 17 : 16,
     fontWeight: "bold",
     color: "#003B73",
     marginBottom: 4,
   },
-  cardDescription: {
-    fontSize: 14,
-    color: "#555",
+  eventDescription: {
+    fontSize: Platform.OS === "web" ? 15 : 14,
+    color: "#666",
+    lineHeight: Platform.OS === "web" ? 1.5 : 20,
   },
-  reviewsContainer: {
-    height: 300,
+
+  // ===== ESTADOS VAZIOS E MENSAGENS =====
+  noEventsContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noEventsText: {
+    fontSize: Platform.OS === "web" ? 17 : 16,
+    color: "#888",
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+
+  // ===== BOTÃO DE ADICIONAR EVENTO =====
+  addEventButton: {
+    flexDirection: "row",
+    backgroundColor: "#0A73D9",
+    borderRadius: 10,
+    padding: Platform.OS === "web" ? 14 : 12,
+    marginTop: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addEventText: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 8,
+    fontSize: Platform.OS === "web" ? 15 : 14,
+  },
+  containerTextGroup: {
+    marginBottom: 32,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  TextStudyGroup: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#4A90E2",
+  },
+  IconsContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+  },
+  SmallcarouselItem: {
+    borderRadius: 16,
+    marginRight: 10,
+    flex: 1,
+    flexDirection: "column",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  BackgroundImage: {
+    flex: 1,
     width: "100%",
-    marginVertical: 10,
+    height: 200,
+  },
+  Container: {
+    paddingVertical: 10.5,
+  },
+  imageStyle: {
+    borderRadius: 16,
+  },
+  gradientOverlay: {
+    flex: 1,
+    borderRadius: 16,
+    justifyContent: "flex-end",
+  },
+  overlay: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 16,
+    justifyContent: "flex-end",
+  },
+  item: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  titlePost: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  SubtitlePost: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.95)",
+    marginLeft: 6,
+    fontWeight: "500",
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  detailsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  timeText: {
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.9)",
+    marginLeft: 6,
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  containerTextGroup: {
+    marginBottom: 32,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  TextStudyGroup: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#4A90E2",
+  },
+  IconsContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+  },
+  SmallcarouselItem: {
+    borderRadius: 16,
+    marginRight: 10,
+    flex: 1,
+    flexDirection: "column",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  BackgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: 200,
+  },
+  Container: {
+    paddingVertical: 10.5,
+  },
+  imageStyle: {
+    borderRadius: 16,
+  },
+  gradientOverlay: {
+    flex: 1,
+    borderRadius: 16,
+    justifyContent: "flex-end",
+  },
+  overlay: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 16,
+    justifyContent: "flex-end",
+  },
+  item: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  titlePost: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  SubtitlePost: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.95)",
+    marginLeft: 6,
+    fontWeight: "500",
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  detailsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  timeText: {
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.9)",
+    marginLeft: 6,
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });

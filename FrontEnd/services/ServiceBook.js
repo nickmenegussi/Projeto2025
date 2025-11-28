@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api";
 import { Alert } from "react-native";
 import { router } from "expo-router";
+import handleApiError from "../utils/handleApiError";
 
 export const getBooks = async () => {
   try {
@@ -28,3 +29,18 @@ export const getBooks = async () => {
     }
   }
 };
+
+export const getBookById = async (LibraryId) => {
+  try {
+    const token = await AsyncStorage.getItem("@Auth:token");
+    const response = await api.get(`/library/library/${LibraryId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.data
+  } catch (error) {
+    handleApiError(error, true)
+  }
+}

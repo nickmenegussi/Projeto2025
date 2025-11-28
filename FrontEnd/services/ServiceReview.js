@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api";
 import { Alert } from "react-native";
 import { router } from "expo-router";
-import { handleApiError } from "../utils/handleApiError";
+import handleApiError  from "../utils/handleApiError";
 
 export const getReview = async (sortOrderValue) => {
   try {
@@ -62,7 +62,8 @@ export const DeleteReview = async (idReviewSociety, userId) => {
     return response.data.data
   } catch (error) {
     handleApiError(error)
-    return null
+    throw error.response.status  
+  
   }
 }
 

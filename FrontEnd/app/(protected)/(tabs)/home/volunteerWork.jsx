@@ -17,8 +17,6 @@ import Button from "../../../../components/Button"
 const VolunteerWork = () => {
   const params = useLocalSearchParams();
   const data = params.data ? JSON.parse(params.data) : {};
-  const [volunteerWork, seVolunteerWork] = useState([data]);
-
   return (
     <SafeAreaView style={styles.ContainerSafeAreaView}>
       <ScrollView>
@@ -39,12 +37,13 @@ const VolunteerWork = () => {
           </ImageBackground>
         </View>
         <View style={styles.ContainerContent}>
-          {volunteerWork.length > 0 ? (
-            volunteerWork.map((item) => (
-              <View key={item.idVolunteerWork}>
+          {data.content.length > 0 ? (
+            
+              
+              <View key={data.content.idVolunteerWork}>
                 <Text style={styles.Text}>
-                  {item.nameVolunteerWork ? (
-                    item.nameVolunteerWork
+                  {data.content[0].nameVolunteerWork ? (
+                    data.content[0].nameVolunteerWork
                   ) : (
                     <Text>Informação não fornecida.</Text>
                   )}
@@ -87,16 +86,15 @@ const VolunteerWork = () => {
                     Tipo de Trabalho: Voluntário
                   </Text>
                   <Text style={styles.TextContent}>Requisito: Voluntário</Text>
-                  {item.work_description ? (
-                    <Text style={styles.TextContent}>{item.work_description}</Text>
+                  {data.content[0].work_description ? (
+                    <Text style={styles.TextContent}>{data.content[0].work_description}</Text>
                   ) : (
                     <Text style={styles.TextContent}>Ainda não há detalhes cadastrados sobre esta atividade.</Text>
                   )}
-                  <Button title={'Participar'} opacityNumber={0.5} handlePress={() => {item.work_description  && item.nameVolunteerWork ? router.push('https://docs.google.com/forms/d/e/1FAIpQLSfzfjsRZFl6KOVuafOdrO0YK9gh_XIkKuP-DRtECyxTMxBdVA/viewform?usp=sharing'): Alert.alert('Navegação Indisponível')}} />
+                  <Button title={'Participar'} opacityNumber={0.5} handlePress={() => {data.content[0].work_description  && data.content[0].nameVolunteerWork ? router.push('https://docs.google.com/forms/d/e/1FAIpQLSfzfjsRZFl6KOVuafOdrO0YK9gh_XIkKuP-DRtECyxTMxBdVA/viewform?usp=sharing'): Alert.alert('Navegação Indisponível')}} />
 
                 </View>
               </View>
-            ))
           ) : (
             <EmptyContent title="Oops! Nada por aqui..."
             subtitle="Estamos atualizando as informações. Fique ligado para novidades em breve." />

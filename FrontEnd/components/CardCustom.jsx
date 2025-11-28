@@ -12,8 +12,10 @@ import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import Constants from 'expo-constants';
 
-const CARD_WIDTH = 175; // Mantendo sua largura original
+const {width} = Dimensions.get("window")
+const CARD_WIDTH = (width - 48) / 2; // Mantendo sua largura original
 
 export default function CardCustom({
   data,
@@ -25,24 +27,18 @@ export default function CardCustom({
   obrasBasicas = false,
 }) {
   const [books, setBooks] = useState(data || []);
-
+  const {enderecoUrlImage} = Constants.expoConfig.extra 
   useEffect(() => {
     setBooks(data || []);
   }, [data]);
 
   const handleCardPress = (item) => {
-    if (aboutBookLoan) {
-      const encodedData = encodeURIComponent(JSON.stringify([item]));
-      router.push(`/library/aboutBook?data=${encodedData}`);
+    if (aboutBookLoan || aboutBookReserves) {
+      router.push(`/library/aboutBook/${item.idLibrary}`);
     } else if (loan) {
-      const encodedData = encodeURIComponent(JSON.stringify(books));
-      router.push(`/library/LoanCollection?data=${encodedData}`);
-    } else if (aboutBookReserves) {
-      const encodedData = encodeURIComponent(JSON.stringify([item]));
-      router.push(`/library/aboutBook?data=${encodedData}`);
+      router.push(`/library/aboutBook/${item.idLibrary}?type=empréstimo`);
     } else if (reserves) {
-      const encodedData = encodeURIComponent(JSON.stringify(books));
-      router.push(`/library/ReserveCollection?data=${encodedData}`);
+      router.push(`/library/aboutBook/${item.idLibrary}?type=reserva`);
     } else if (obrasComplementares) {
       router.push(`/library/ObrasComplementares`);
     } else if (obrasBasicas) {
@@ -65,7 +61,11 @@ export default function CardCustom({
             onPress={() => handleCardPress(item)}
           >
             <ImageBackground
-              source={{ uri: `http://192.168.1.10:3001/uploads/${item.image}` }}
+              source={{
+                      uri: item.image
+                        ? `${enderecoUrlImage}/uploads/${item.image}`
+                        : null,
+                    }}
               style={styles.image}
               resizeMode="cover"
               imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
@@ -117,8 +117,8 @@ export default function CardCustom({
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    paddingHorizontal: 0, // Seu padding original
-    paddingVertical: 0, // Seu padding original
+    flexGrow: 1,
+    marginLeft: 15
   },
   card: {
     backgroundColor: "#fff",

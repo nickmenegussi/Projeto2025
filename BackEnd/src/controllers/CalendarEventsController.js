@@ -17,13 +17,7 @@ exports.viewEventsByUser = (req, res) => {
           data: err,
         });
       }
-      if (result[0].User_idUser !== User_idUser) {
-        return res.status(403).json({
-          message: "Você não tem permissão para acessar essa seção.",
-          success: false,
-          data: result,
-        });
-      }
+      
       if (result.length === 0) {
         return res.status(404).json({
           message: "Nenhum evento encontrado.",
@@ -57,7 +51,7 @@ exports.viewAllEvents = (req, res) => {
       }
       if (result.length === 0) {
         return res.status(404).json({
-          message: "Você não tem permissão para acessar essa seção.",
+          message: "Eventos não encontrados.",
           success: false,
           data: result,
         });

@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/authMidleware')
 const verifyPermission = require('../middleware/roleMiddleware')
 const upload = require("../multerConfig/multer")
 
-router.get('/library/:idLibrary', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewOnlyOneBook)
+router.get('/library/:LibraryId', authMiddleware, verifyPermission(['SuperAdmin', 'admin']), viewOnlyOneBook)
 router.get('/library', authMiddleware, verifyPermission(['SuperAdmin', 'admin', 'User']), viewAllBooks)
 
 router.post('/library/register', authMiddleware, upload.single('image') ,verifyPermission(['SuperAdmin', 'admin']), createBook)

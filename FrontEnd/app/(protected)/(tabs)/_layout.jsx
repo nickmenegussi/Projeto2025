@@ -1,6 +1,10 @@
-import React, { lazy } from "react";
+import React from "react";
 import { Slot, Tabs } from "expo-router";
-import { Image, Settings, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+import Animated, { 
+  useAnimatedStyle, 
+  withSpring 
+} from "react-native-reanimated";
 import {
   LibraryIcon,
   GraduationCapIcon,
@@ -8,118 +12,167 @@ import {
   MapIcon,
   MessagesSquare,
   SettingsIcon,
-  Settings2,
 } from "lucide-react-native";
 
-const TabsLayout = () => {
+// Componente de Ícone Animado - APENAS EFEITO DE ESCALA
+const AnimatedTabIcon = ({ color, focused, IconComponent }) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { 
+        scale: withSpring(focused ? 1.2 : 1, {
+          damping: 8,
+          stiffness: 150
+        }) 
+      }
+    ],
+  }));
+
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          lazy: true,
-          tabBarActiveTintColor: "#60A3D9",
-          tabBarInactiveTintColor: "#003B73",
-          tabBarStyle: {
-            position: "absolute",
-            left: 16,
-            right: 16,
-            height: 120,
-            backgroundColor: "#ffffff",
-            borderRadius: 20,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.1,
-            shadowRadius: 10,
-            elevation: 10, // Para Android
-            borderTopWidth: 0,
-            paddingBottom: 10,
-          },
-
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontFamily: "Georgia",
-            marginTop: 4,
-          },
-
-          tabBarItemStyle: {
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 10,
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="home"
-          options={{
-            lazy: true,
-            headerShown: false,
-            title: "Home",
-            tabBarIcon: ({ color, size, focused }) => (
-              <House color={color} size={30} focused={focused} name="Home" />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="library"
-          options={{
-            lazy: true,
-            headerShown: false,
-            title: "Biblioteca",
-            tabBarIcon: ({ color, size, focused }) => (
-              <LibraryIcon color={color} size={30} focused={focused} />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="localization"
-          options={{
-            headerShown: false,
-            title: "Casas",
-            tabBarIcon: ({ color, size, focused }) => (
-              <MapIcon color={color} size={30} focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="studyGroup"
-          options={{
-            headerShown: false,
-            title: "Estudos",
-            tabBarIcon: ({ color, size, focused }) => (
-              <GraduationCapIcon color={color} size={30} focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="community"
-          options={{
-            headerShown: false,
-            title: "Fórum",
-            tabBarIcon: ({ color, size, focused }) => (
-              <MessagesSquare color={color} size={30} focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            headerShown: false,
-            title: "Perfil",
-            tabBarIcon: ({ color, size, focused }) => (
-              <SettingsIcon color={color} size={30} focused={focused} />
-            ),
-          }}
-        />
-      </Tabs>
-    </>
+    <Animated.View style={animatedStyle}>
+      <IconComponent color={color} size={focused ? 28 : 26} />
+    </Animated.View>
   );
 };
+
+const TabsLayout = () => {
+  const isWeb = Platform.OS === 'web';
+  
+  if (isWeb) {
+    return (
+      <View style={styles.webContainer}>
+        <Slot />
+      </View>
+    );
+  }
+
+  return (
+    <Tabs
+      screenOptions={{
+        lazy: true,
+        tabBarActiveTintColor: "#60A3D9",
+        tabBarInactiveTintColor: "#003B73",
+        tabBarStyle: {
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 0,
+          height: 75,
+          paddingBottom: 8,
+          // 🔥 CENTRALIZAÇÃO: Remove margens e centraliza conteúdo
+          marginHorizontal: 0,
+          paddingHorizontal: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontFamily: "Georgia",
+          // 🔥 Centraliza texto
+          textAlign: 'center',
+          width: '100%',
+        },
+        tabBarItemStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+          paddingHorizontal: 0,
+          paddingVertical: 5,
+          marginHorizontal: 0,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          lazy: true,
+          headerShown: false,
+          title: "Home",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={House}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="library"
+        options={{
+          lazy: true,
+          headerShown: false,
+          title: "Biblioteca",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={LibraryIcon}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="localization"
+        options={{
+          headerShown: false,
+          title: "Casas",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={MapIcon}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="studyGroup"
+        options={{
+          headerShown: false,
+          title: "Estudos",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={GraduationCapIcon}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          headerShown: false,
+          title: "Fórum",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={MessagesSquare}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          headerShown: false,
+          title: "Perfil",
+          tabBarIcon: ({ color, size, focused }) => (
+            <AnimatedTabIcon 
+              color={color} 
+              focused={focused} 
+              IconComponent={SettingsIcon}
+            />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+};
+
 const styles = StyleSheet.create({
-  container: {
+  webContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 });
+
 export default TabsLayout;

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
-import FormField from "../../components/FormField";
+import FormField from "../../components/ui/FormField";
 import { ArrowLeft, ArrowLeftCircle } from "lucide-react";
 import api from "../../services/api";
-import { AuthContext } from "../../context/auth";
+import { useAuth } from "../../modules/auth/AuthContext";
 
 export default function OtpVerification() {
-  const {user,otpEmail, otpDigits,OtpVerification} = useContext(AuthContext)
+  const {user,otpEmail, otpDigits,OtpVerification} = useAuth()
   const navigate = useNavigate();
   const [otp, setOtp] = useState("")
   
@@ -23,7 +23,7 @@ export default function OtpVerification() {
   }
 
   if (otpEmail && otpDigits){
-    return <Navigate to={"/OtpMessage"} />
+    return <Navigate to={"/auth/OtpMessage"} />
   }
 
   return (

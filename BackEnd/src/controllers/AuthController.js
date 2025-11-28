@@ -1,4 +1,5 @@
 const connection = require("../config/db");
+const db = require("../config/promise");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -15,14 +16,14 @@ exports.login = (req, res) => {
   }
 
   connection.query(
-    "SELECT * FROM User where email = ?",
+    "SELECT idUser, email, password, status_permission, image_profile, nameUser FROM User WHERE email = ?",
     [email],
     async (err, result) => {
       if (err) {
         return res.status(500).json({
           message: "Erro ao se conectar com o servidor.",
           success: false,
-          body: err,
+          body: null
         });
       }
 
@@ -34,31 +35,32 @@ exports.login = (req, res) => {
       }
 
       const user = result[0];
-      const hashPawword = await bcrypt.compare(password, user.password);
-      if (!hashPawword) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
         return res.status(400).json({
           message: "Email ou senha estão incorretos.",
           success: false,
-          body: err,
         });
       }
 
       const token = jwt.sign(
-        { id: user.idUser, email: user.email, role: user.status_permission },
-        process.env.JWT_SECRET,
+        { id: user.idUser, nameUser: user.nameUser, email: user.email, role: user.status_permission },
+        process.env.JWT_SECRET || "senhaSuperSecreto",
         {
           expiresIn: "4days",
         }
       );
-      return res.status(201).json({
+      
+      return res.status(200).json({
         message: "Login realizado com sucesso",
         success: true,
         data: { user: user, token: token },
       });
     }
   );
+  
 };
-
 exports.GenerateOtp = (req, res) => {
   const { email } = req.body;
 
@@ -73,7 +75,7 @@ exports.GenerateOtp = (req, res) => {
       [email],
       async (err, result) => {
         if (err) {
-          return result.status(500).json({
+          return res.status(500).json({
             message: "Erro ao se conectar com o servidor.",
             success: false,
             body: err,
@@ -113,6 +115,9 @@ exports.GenerateOtp = (req, res) => {
                     auth: {
                       user: process.env.EMAILAPP,
                       pass: process.env.SENHAEMAILAPP,
+                    },
+                    tls: {
+                      rejectUnauthorized: false, // <<< ISSO IGNORA O ERRO DE CERTIFICADO
                     },
                   });
                   transporter.sendMail({
@@ -169,7 +174,6 @@ Equipe [Centro Espírita Online]`,
 
 exports.VerificationOtp = (req, res) => {
   const { email, otp } = req.body;
-
   if (!email || !otp) {
     return res.status(400).json({
       message: "Preencha todos os campos",
@@ -207,8 +211,9 @@ exports.VerificationOtp = (req, res) => {
             data: err,
           });
         } else {
-          return res.status(201).json({
+          return res.status(200).json({
             message: "Otp verificado com sucesso!",
+            success: true,
           });
         }
       }

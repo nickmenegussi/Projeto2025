@@ -25,7 +25,8 @@ const MyLibrary = () => {
   }
 
   return (
-    <View style={styles.container}>  {/* Container principal */}
+    <View style={styles.container}>
+      {/* Container principal */}
       <View style={styles.header}>
         <ButtonIcons
           color="#fff"
@@ -36,9 +37,8 @@ const MyLibrary = () => {
             <ArrowLeftIcon color={color} size={size} />
           )}
         />
-        <Text style={styles.headerTitle}>Histórico de Empréstimos</Text>
+        <Text style={styles.headerTitle}>Minha Biblioteca</Text>
       </View>
-
       <View style={styles.containerHeader}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -55,18 +55,16 @@ const MyLibrary = () => {
           </TouchableOpacity>
         </View>
       </View>
-
-      <Text style={styles.textContainer}>Minha Biblioteca</Text>
+      {/* <Text style={styles.textContainer}>Minha Biblioteca</Text> */}
       <Text style={styles.titleRenderItem}>Livros Favoritados</Text>
-
       <FlatList
         data={favorite}
-        keyExtractor={item => item.Book_idLibrary.toString()}
+        keyExtractor={(item) => item.Book_idLibrary.toString()}
         renderItem={({ item }) => (
-          <View>
+          <View style={styles.containerCardCustom}>
             <TouchableOpacity activeOpacity={0.8}>
-            <CardCustom data={[item]} />
-          </TouchableOpacity>
+              <CardCustom data={[item]} />
+            </TouchableOpacity>
           </View>
         )}
         horizontal
@@ -83,7 +81,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#003B73",
-    paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 20,
   },
@@ -96,8 +93,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 40,
+    gap: 80,
     paddingBottom: 10,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
@@ -106,8 +104,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  containerCardCustom: {
+    gap: 15,
+  },
   containerHeader: {
     marginTop: 20,
+    paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -135,22 +137,25 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
   },
-  textContainer: {
-    color: "white",
-    fontSize: 18,
-    borderBottomWidth: 3,
-    borderBottomColor: "#60A3D9",
-    maxWidth: 150,
-    textAlign: "left",
-    paddingBottom: 4,
-    marginTop: 30,
-  },
+  // textContainer: {
+  //   color: "white",
+  //   fontSize: 18,
+  //   borderBottomWidth: 3,
+  //   borderBottomColor: "#60A3D9",
+  //   maxWidth: 200,
+  //   textAlign: "left",
+  //   paddingBottom: 4,
+  //   marginTop: 30,
+  // },
   titleRenderItem: {
     fontSize: 22,
+    paddingHorizontal: 20,
+    marginTop: 20,
     color: "white",
     marginBottom: 15,
   },
   flatListContent: {
-    
+    paddingLeft: 20,
+    gap: 5,
   },
 });

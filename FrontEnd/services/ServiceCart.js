@@ -19,7 +19,7 @@ export const addToCart = async ({ bookId, action, quantity }) => {
         },
       }
     )
-    router.push("/library/CartLoan")
+    router.push(`/library/bookType/${bookId}`)
     return response.data
     
   } catch (error) {

@@ -14,13 +14,14 @@ export default function CustomNavigation({
   otherStyles = false,
   sendData = false,
   normalPress = false,
+  onItemPress, // Nova prop para callback
   ...props
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
-
+  
   const handlePress = (index, item) => {
     setSelectedIndex(index);
 
@@ -35,6 +36,11 @@ export default function CustomNavigation({
       toValue: position,
       useNativeDriver: true,
     }).start();
+
+    // Chama o callback se fornecido
+    if (onItemPress) {
+      onItemPress(index, item);
+    }
 
     if (sendData === true) {
       const encodedData = encodeURIComponent(JSON.stringify(item));
@@ -112,7 +118,6 @@ export default function CustomNavigation({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     height: 60,
